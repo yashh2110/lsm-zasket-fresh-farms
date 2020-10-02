@@ -1,0 +1,84 @@
+import LottieView from 'lottie-react-native';
+import { Button, Text } from "native-base";
+import React from 'react';
+import { Image, StatusBar, StyleSheet, View } from 'react-native';
+// import Icon from 'react-native-vector-icons/Ionicons';
+import AppIntroSlider from 'react-native-app-intro-slider';
+import { connect } from 'react-redux';
+import { setDarkMode } from "../../actions/dark";
+import AsyncStorage from '@react-native-community/async-storage';
+
+const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) => {
+
+    const _onDone = async () => {
+        // await AsyncStorage.setItem('onBoardKey', 'onBoardKey');
+        // navigation.pop()
+        navigation.navigate("Login")
+    }
+    return (
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <StatusBar translucent backgroundColor="transparent" />
+            <Image
+                style={{ width: 150, height: 60, position: 'absolute', left: 20, zIndex: 1, top: "2.5%" }}
+                resizeMode="contain"
+                source={require('../../assets/png/logo.png')}
+            />
+            <Image
+                style={{ height: "60%", width: "100%" }}
+                source={require('../../assets/png/onBoard.png')}
+            />
+            <View style={{ flex: 1, alignItems: 'center', }}>
+                <Text style={{ fontSize: 20 }}>Welcome!</Text>
+                <Text style={{ textAlign: 'center', color: "#727272", marginTop: 10 }}>We care about your health,</Text>
+                <Text style={{ textAlign: 'center', color: "#727272", marginTop: 5 }}>Get fresh vegetables & fruits to door step.</Text>
+                <Button full style={{ backgroundColor: "#73C92D", borderRadius: 25, marginHorizontal: 20, marginTop: 25, }} onPress={() => _onDone()}><Text>Login/Signup</Text></Button>
+            </View>
+        </View>
+    );
+}
+const mapStateToProps = (state) => ({
+    darkMode: state.dark,
+    isAuthenticated: state.auth.isAuthenticated
+})
+
+
+export default connect(mapStateToProps, { setDarkMode })(OnBoard)
+const styles = StyleSheet.create({
+    buttonCircle: {
+        width: 40,
+        height: 40,
+        backgroundColor: 'rgba(0, 0, 0, .2)',
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    dot: {
+        backgroundColor: "rgba(0, 0, 0, .2)"
+    },
+    activeDotStyle: {
+        backgroundColor: "white"
+    },
+    slide: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'blue',
+    },
+    image: {
+        width: 320,
+        height: 320,
+        marginVertical: 32,
+    },
+    text: {
+        color: 'white',
+        fontSize: 18,
+        marginTop: 20,
+        textAlign: 'center',
+    },
+    title: {
+        fontSize: 22,
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+});
