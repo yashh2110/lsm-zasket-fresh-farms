@@ -35,9 +35,9 @@ const AppContainer = ({ darkMode }) => {
                     </View>
                 </Collapsible>
                 <Navigate />
-                <Modal visible={connection_Status} animationType={"fade"} transparent={true}>
+                {/* <Modal visible={connection_Status} animationType={"fade"} transparent={true}>
                     <NoInternetModal />
-                </Modal>
+                </Modal> */}
             </SafeAreaView>
         </View>
     )

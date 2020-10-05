@@ -7,6 +7,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { connect } from 'react-redux';
 import { setDarkMode } from "../../actions/dark";
 import AsyncStorage from '@react-native-community/async-storage';
+import Theme from '../../styles/Theme';
 
 const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) => {
 
@@ -27,11 +28,11 @@ const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) 
                 style={{ height: "60%", width: "100%" }}
                 source={require('../../assets/png/onBoard.png')}
             />
-            <View style={{ flex: 1, alignItems: 'center', }}>
+            <View style={{ flex: 1, alignItems: 'center', marginTop: "10%" }}>
                 <Text style={{ fontSize: 20 }}>Welcome!</Text>
                 <Text style={{ textAlign: 'center', color: "#727272", marginTop: 10 }}>We care about your health,</Text>
                 <Text style={{ textAlign: 'center', color: "#727272", marginTop: 5 }}>Get fresh vegetables & fruits to door step.</Text>
-                <Button full style={{ backgroundColor: "#73C92D", borderRadius: 25, marginHorizontal: 20, marginTop: 25, }} onPress={() => _onDone()}><Text>Login/Signup</Text></Button>
+                <Button full style={{ backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, marginTop: "10%", }} onPress={() => _onDone()}><Text>Login/Signup</Text></Button>
             </View>
         </View>
     );

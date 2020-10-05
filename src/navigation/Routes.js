@@ -6,6 +6,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Login from "../components/auth/Login"
+import OtpScreen from "../components/auth/OtpScreen"
+import EmailScreen from "../components/auth/EmailScreen"
 import SignUp from "../components/auth/SignUp"
 import OnBoard from "../components/auth/OnBoard"
 import Dashboard from "../components/dashboard/Dashboard"
@@ -46,6 +48,8 @@ const Navigate = ({ alerts, darkMode }) => {
             <Stack.Screen name="OnBoardScreen" component={OnBoard} />
             <Stack.Screen name="Login" component={Login} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="SignUp" component={SignUp} options={{ cardStyleInterpolator: forFade }} />
+            <Stack.Screen name="EmailScreen" component={EmailScreen} options={{ cardStyleInterpolator: forFade }} />
+            <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ cardStyleInterpolator: forFade }} />
         </Stack.Navigator>
     );
 
