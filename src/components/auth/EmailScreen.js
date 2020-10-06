@@ -103,7 +103,7 @@ const EmailScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProvid
                             </View>
 
 
-                            <Button full style={{ marginTop: "10%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => null}><Text>Sign Up</Text></Button>
+                            <Button full style={{ marginTop: "10%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => navigation.navigate('PincodeScreen')}><Text>Sign Up</Text></Button>
                             <Text style={{ marginTop: "10%", fontSize: 14, color: "#727272", textAlign: 'center' }}>By proceeding to create your account you are agreeing to our <Text style={{ fontWeight: 'bold', fontSize: 14 }}>Terms of Service</Text> and <Text style={{ fontWeight: 'bold', fontSize: 14 }}>Privacy Policy</Text></Text>
                         </View>
 
