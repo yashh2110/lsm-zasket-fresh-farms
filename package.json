@@ -1,5 +1,5 @@
 {
-  "name": "GreenTomato",
+  "name": "Zasket",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -48,6 +48,7 @@
     "react-native-motion": "^1.0.5",
     "react-native-paper": "^4.2.0",
     "react-native-reanimated": "^1.13.1",
+    "react-native-rename": "^2.4.1",
     "react-native-responsive-fontsize": "^0.4.3",
     "react-native-safe-area-context": "^3.1.8",
     "react-native-screens": "^2.11.0",

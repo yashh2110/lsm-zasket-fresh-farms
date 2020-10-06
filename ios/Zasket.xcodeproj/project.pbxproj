@@ -7,19 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* GreenTomatoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* GreenTomatoTests.m */; };
+		00E356F31AD99517003FC87E /* ZasketTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* ZasketTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1ADBE1F1C12A8FD2454F6974 /* libPods-GreenTomato.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BD92DF9891CB50143C5391C /* libPods-GreenTomato.a */; };
+		1ADBE1F1C12A8FD2454F6974 /* libPods-Zasket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BD92DF9891CB50143C5391C /* libPods-Zasket.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2DCD954D1E0B4F2C00145EB5 /* GreenTomatoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* GreenTomatoTests.m */; };
-		5416BC0D47F218138F2E761D /* libPods-GreenTomato-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3314AD4AE2B5F42E5A91BDDC /* libPods-GreenTomato-tvOSTests.a */; };
-		67DDA5E7DAE40B0AE4074339 /* libPods-GreenTomato-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 10A360295DA41CEB3C3DD397 /* libPods-GreenTomato-tvOS.a */; };
+		2DCD954D1E0B4F2C00145EB5 /* ZasketTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* ZasketTests.m */; };
+		5416BC0D47F218138F2E761D /* libPods-Zasket-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3314AD4AE2B5F42E5A91BDDC /* libPods-Zasket-tvOSTests.a */; };
+		67DDA5E7DAE40B0AE4074339 /* libPods-Zasket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 10A360295DA41CEB3C3DD397 /* libPods-Zasket-tvOS.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		B55E585A1258FACA7C8877CE /* libPods-GreenTomato-GreenTomatoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12A63233BABE411C8AB13591 /* libPods-GreenTomato-GreenTomatoTests.a */; };
+		B55E585A1258FACA7C8877CE /* libPods-Zasket-ZasketTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12A63233BABE411C8AB13591 /* libPods-Zasket-ZasketTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,53 +28,53 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = GreenTomato;
+			remoteInfo = Zasket;
 		};
 		2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
-			remoteInfo = "GreenTomato-tvOS";
+			remoteInfo = "Zasket-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		00E356EE1AD99517003FC87E /* GreenTomatoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GreenTomatoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* ZasketTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZasketTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* GreenTomatoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GreenTomatoTests.m; sourceTree = "<group>"; };
+		00E356F21AD99517003FC87E /* ZasketTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZasketTests.m; sourceTree = "<group>"; };
 		08D2E353DF74480893BE12D8 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
-		10A360295DA41CEB3C3DD397 /* libPods-GreenTomato-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GreenTomato-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		12A63233BABE411C8AB13591 /* libPods-GreenTomato-GreenTomatoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GreenTomato-GreenTomatoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		12EF80CFECF970D4F3406E7F /* Pods-GreenTomato.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GreenTomato.release.xcconfig"; path = "Target Support Files/Pods-GreenTomato/Pods-GreenTomato.release.xcconfig"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* GreenTomato.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenTomato.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = GreenTomato/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = GreenTomato/AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = GreenTomato/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = GreenTomato/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = GreenTomato/main.m; sourceTree = "<group>"; };
+		10A360295DA41CEB3C3DD397 /* libPods-Zasket-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Zasket-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		12A63233BABE411C8AB13591 /* libPods-Zasket-ZasketTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Zasket-ZasketTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		12EF80CFECF970D4F3406E7F /* Pods-Zasket.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Zasket.release.xcconfig"; path = "Target Support Files/Pods-Zasket/Pods-Zasket.release.xcconfig"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* Zasket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zasket.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Zasket/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Zasket/AppDelegate.m; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Zasket/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Zasket/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Zasket/main.m; sourceTree = "<group>"; };
 		19D5E0C18F544809BD30EB6C /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
-		20197CFDEF575A11899BEF07 /* Pods-GreenTomato-GreenTomatoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GreenTomato-GreenTomatoTests.debug.xcconfig"; path = "Target Support Files/Pods-GreenTomato-GreenTomatoTests/Pods-GreenTomato-GreenTomatoTests.debug.xcconfig"; sourceTree = "<group>"; };
-		24938ED6579CB8F024C37967 /* Pods-GreenTomato-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GreenTomato-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-GreenTomato-tvOSTests/Pods-GreenTomato-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		20197CFDEF575A11899BEF07 /* Pods-Zasket-ZasketTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Zasket-ZasketTests.debug.xcconfig"; path = "Target Support Files/Pods-Zasket-ZasketTests/Pods-Zasket-ZasketTests.debug.xcconfig"; sourceTree = "<group>"; };
+		24938ED6579CB8F024C37967 /* Pods-Zasket-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Zasket-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Zasket-tvOSTests/Pods-Zasket-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		25E3ACAD9F83414EA9F8F386 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
-		2D02E47B1E0B4A5D006451C7 /* GreenTomato-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GreenTomato-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D02E4901E0B4A5D006451C7 /* GreenTomato-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GreenTomato-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D02E47B1E0B4A5D006451C7 /* Zasket-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Zasket-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D02E4901E0B4A5D006451C7 /* Zasket-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Zasket-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E7D6FE652884E49887CEDD4 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
-		3314AD4AE2B5F42E5A91BDDC /* libPods-GreenTomato-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GreenTomato-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3314AD4AE2B5F42E5A91BDDC /* libPods-Zasket-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Zasket-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DBD709CF2E04489A90FCAC3 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		475D8796BA02462EAB8B1623 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		514DB23C8441484CADADC4A0 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
-		5C18737718F046D6CF184578 /* Pods-GreenTomato.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GreenTomato.debug.xcconfig"; path = "Target Support Files/Pods-GreenTomato/Pods-GreenTomato.debug.xcconfig"; sourceTree = "<group>"; };
+		5C18737718F046D6CF184578 /* Pods-Zasket.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Zasket.debug.xcconfig"; path = "Target Support Files/Pods-Zasket/Pods-Zasket.debug.xcconfig"; sourceTree = "<group>"; };
 		7479AD3BED3D4F6F965C0CC7 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		7BDDEE5587CD4F7DAC68F191 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		7C16C2C8480B44E896A1D38A /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = GreenTomato/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		85B54EF12C5B5B4FE8098635 /* Pods-GreenTomato-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GreenTomato-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-GreenTomato-tvOS/Pods-GreenTomato-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		9B1F847EFF2AD6CD40FE7DB4 /* Pods-GreenTomato-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GreenTomato-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-GreenTomato-tvOSTests/Pods-GreenTomato-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
-		9BD92DF9891CB50143C5391C /* libPods-GreenTomato.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GreenTomato.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		AEB4E2924428604788CC99F6 /* Pods-GreenTomato-GreenTomatoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GreenTomato-GreenTomatoTests.release.xcconfig"; path = "Target Support Files/Pods-GreenTomato-GreenTomatoTests/Pods-GreenTomato-GreenTomatoTests.release.xcconfig"; sourceTree = "<group>"; };
-		CADB9613533D0091E3D55DAE /* Pods-GreenTomato-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GreenTomato-tvOS.release.xcconfig"; path = "Target Support Files/Pods-GreenTomato-tvOS/Pods-GreenTomato-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Zasket/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		85B54EF12C5B5B4FE8098635 /* Pods-Zasket-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Zasket-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Zasket-tvOS/Pods-Zasket-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		9B1F847EFF2AD6CD40FE7DB4 /* Pods-Zasket-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Zasket-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-Zasket-tvOSTests/Pods-Zasket-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		9BD92DF9891CB50143C5391C /* libPods-Zasket.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Zasket.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AEB4E2924428604788CC99F6 /* Pods-Zasket-ZasketTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Zasket-ZasketTests.release.xcconfig"; path = "Target Support Files/Pods-Zasket-ZasketTests/Pods-Zasket-ZasketTests.release.xcconfig"; sourceTree = "<group>"; };
+		CADB9613533D0091E3D55DAE /* Pods-Zasket-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Zasket-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Zasket-tvOS/Pods-Zasket-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		CDFC455C46E54F0C85D5AC7B /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		D11BDB5A1DD64607929BE827 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		D31ED731C77E4F3BB82F8E50 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
@@ -90,7 +90,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B55E585A1258FACA7C8877CE /* libPods-GreenTomato-GreenTomatoTests.a in Frameworks */,
+				B55E585A1258FACA7C8877CE /* libPods-Zasket-ZasketTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,7 +98,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1ADBE1F1C12A8FD2454F6974 /* libPods-GreenTomato.a in Frameworks */,
+				1ADBE1F1C12A8FD2454F6974 /* libPods-Zasket.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,7 +106,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				67DDA5E7DAE40B0AE4074339 /* libPods-GreenTomato-tvOS.a in Frameworks */,
+				67DDA5E7DAE40B0AE4074339 /* libPods-Zasket-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,20 +114,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5416BC0D47F218138F2E761D /* libPods-GreenTomato-tvOSTests.a in Frameworks */,
+				5416BC0D47F218138F2E761D /* libPods-Zasket-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* GreenTomatoTests */ = {
+		00E356EF1AD99517003FC87E /* ZasketTests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* GreenTomatoTests.m */,
+				00E356F21AD99517003FC87E /* ZasketTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = GreenTomatoTests;
+			path = ZasketTests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -138,7 +138,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* GreenTomato */ = {
+		13B07FAE1A68108700A75B9A /* Zasket */ = {
 			isa = PBXGroup;
 			children = (
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -149,7 +149,7 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
-			name = GreenTomato;
+			name = Zasket;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -157,10 +157,10 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				9BD92DF9891CB50143C5391C /* libPods-GreenTomato.a */,
-				12A63233BABE411C8AB13591 /* libPods-GreenTomato-GreenTomatoTests.a */,
-				10A360295DA41CEB3C3DD397 /* libPods-GreenTomato-tvOS.a */,
-				3314AD4AE2B5F42E5A91BDDC /* libPods-GreenTomato-tvOSTests.a */,
+				9BD92DF9891CB50143C5391C /* libPods-Zasket.a */,
+				12A63233BABE411C8AB13591 /* libPods-Zasket-ZasketTests.a */,
+				10A360295DA41CEB3C3DD397 /* libPods-Zasket-tvOS.a */,
+				3314AD4AE2B5F42E5A91BDDC /* libPods-Zasket-tvOSTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -168,14 +168,14 @@
 		6DDD54C63C26B81FD72FE419 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				5C18737718F046D6CF184578 /* Pods-GreenTomato.debug.xcconfig */,
-				12EF80CFECF970D4F3406E7F /* Pods-GreenTomato.release.xcconfig */,
-				20197CFDEF575A11899BEF07 /* Pods-GreenTomato-GreenTomatoTests.debug.xcconfig */,
-				AEB4E2924428604788CC99F6 /* Pods-GreenTomato-GreenTomatoTests.release.xcconfig */,
-				85B54EF12C5B5B4FE8098635 /* Pods-GreenTomato-tvOS.debug.xcconfig */,
-				CADB9613533D0091E3D55DAE /* Pods-GreenTomato-tvOS.release.xcconfig */,
-				9B1F847EFF2AD6CD40FE7DB4 /* Pods-GreenTomato-tvOSTests.debug.xcconfig */,
-				24938ED6579CB8F024C37967 /* Pods-GreenTomato-tvOSTests.release.xcconfig */,
+				5C18737718F046D6CF184578 /* Pods-Zasket.debug.xcconfig */,
+				12EF80CFECF970D4F3406E7F /* Pods-Zasket.release.xcconfig */,
+				20197CFDEF575A11899BEF07 /* Pods-Zasket-ZasketTests.debug.xcconfig */,
+				AEB4E2924428604788CC99F6 /* Pods-Zasket-ZasketTests.release.xcconfig */,
+				85B54EF12C5B5B4FE8098635 /* Pods-Zasket-tvOS.debug.xcconfig */,
+				CADB9613533D0091E3D55DAE /* Pods-Zasket-tvOS.release.xcconfig */,
+				9B1F847EFF2AD6CD40FE7DB4 /* Pods-Zasket-tvOSTests.debug.xcconfig */,
+				24938ED6579CB8F024C37967 /* Pods-Zasket-tvOSTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -190,9 +190,9 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* GreenTomato */,
+				13B07FAE1A68108700A75B9A /* Zasket */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* GreenTomatoTests */,
+				00E356EF1AD99517003FC87E /* ZasketTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				6DDD54C63C26B81FD72FE419 /* Pods */,
@@ -206,10 +206,10 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* GreenTomato.app */,
-				00E356EE1AD99517003FC87E /* GreenTomatoTests.xctest */,
-				2D02E47B1E0B4A5D006451C7 /* GreenTomato-tvOS.app */,
-				2D02E4901E0B4A5D006451C7 /* GreenTomato-tvOSTests.xctest */,
+				13B07F961A680F5B00A75B9A /* Zasket.app */,
+				00E356EE1AD99517003FC87E /* ZasketTests.xctest */,
+				2D02E47B1E0B4A5D006451C7 /* Zasket-tvOS.app */,
+				2D02E4901E0B4A5D006451C7 /* Zasket-tvOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -240,9 +240,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* GreenTomatoTests */ = {
+		00E356ED1AD99517003FC87E /* ZasketTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "GreenTomatoTests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "ZasketTests" */;
 			buildPhases = (
 				8DCCECB72634AACAF2A0B1E5 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
@@ -255,14 +255,14 @@
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = GreenTomatoTests;
-			productName = GreenTomatoTests;
-			productReference = 00E356EE1AD99517003FC87E /* GreenTomatoTests.xctest */;
+			name = ZasketTests;
+			productName = ZasketTests;
+			productReference = 00E356EE1AD99517003FC87E /* ZasketTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* GreenTomato */ = {
+		13B07F861A680F5B00A75B9A /* Zasket */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "GreenTomato" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Zasket" */;
 			buildPhases = (
 				4FFE9E8BD92A3C8A90D8DE93 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
@@ -276,14 +276,14 @@
 			);
 			dependencies = (
 			);
-			name = GreenTomato;
-			productName = GreenTomato;
-			productReference = 13B07F961A680F5B00A75B9A /* GreenTomato.app */;
+			name = Zasket;
+			productName = Zasket;
+			productReference = 13B07F961A680F5B00A75B9A /* Zasket.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2D02E47A1E0B4A5D006451C7 /* GreenTomato-tvOS */ = {
+		2D02E47A1E0B4A5D006451C7 /* Zasket-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "GreenTomato-tvOS" */;
+			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Zasket-tvOS" */;
 			buildPhases = (
 				07DBF79A76E961BCC9C2EB19 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F122414F3F0027D42C /* Start Packager */,
@@ -296,14 +296,14 @@
 			);
 			dependencies = (
 			);
-			name = "GreenTomato-tvOS";
-			productName = "GreenTomato-tvOS";
-			productReference = 2D02E47B1E0B4A5D006451C7 /* GreenTomato-tvOS.app */;
+			name = "Zasket-tvOS";
+			productName = "Zasket-tvOS";
+			productReference = 2D02E47B1E0B4A5D006451C7 /* Zasket-tvOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2D02E48F1E0B4A5D006451C7 /* GreenTomato-tvOSTests */ = {
+		2D02E48F1E0B4A5D006451C7 /* Zasket-tvOSTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "GreenTomato-tvOSTests" */;
+			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Zasket-tvOSTests" */;
 			buildPhases = (
 				A6B3FF85040129CE3A216F53 /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
@@ -315,9 +315,9 @@
 			dependencies = (
 				2D02E4921E0B4A5D006451C7 /* PBXTargetDependency */,
 			);
-			name = "GreenTomato-tvOSTests";
-			productName = "GreenTomato-tvOSTests";
-			productReference = 2D02E4901E0B4A5D006451C7 /* GreenTomato-tvOSTests.xctest */;
+			name = "Zasket-tvOSTests";
+			productName = "Zasket-tvOSTests";
+			productReference = 2D02E4901E0B4A5D006451C7 /* Zasket-tvOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -347,7 +347,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "GreenTomato" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Zasket" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -360,10 +360,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* GreenTomato */,
-				00E356ED1AD99517003FC87E /* GreenTomatoTests */,
-				2D02E47A1E0B4A5D006451C7 /* GreenTomato-tvOS */,
-				2D02E48F1E0B4A5D006451C7 /* GreenTomato-tvOSTests */,
+				13B07F861A680F5B00A75B9A /* Zasket */,
+				00E356ED1AD99517003FC87E /* ZasketTests */,
+				2D02E47A1E0B4A5D006451C7 /* Zasket-tvOS */,
+				2D02E48F1E0B4A5D006451C7 /* Zasket-tvOSTests */,
 			);
 		};
 /* End PBXProject section */
@@ -423,7 +423,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-GreenTomato-GreenTomatoTests/Pods-GreenTomato-GreenTomatoTests-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Zasket-ZasketTests/Pods-Zasket-ZasketTests-resources.sh",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -464,7 +464,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-GreenTomato-GreenTomatoTests/Pods-GreenTomato-GreenTomatoTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Zasket-ZasketTests/Pods-Zasket-ZasketTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		07DBF79A76E961BCC9C2EB19 /* [CP] Check Pods Manifest.lock */ = {
@@ -482,7 +482,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-GreenTomato-tvOS-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Zasket-tvOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -509,7 +509,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-GreenTomato/Pods-GreenTomato-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Zasket/Pods-Zasket-resources.sh",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -550,7 +550,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-GreenTomato/Pods-GreenTomato-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Zasket/Pods-Zasket-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		4FFE9E8BD92A3C8A90D8DE93 /* [CP] Check Pods Manifest.lock */ = {
@@ -568,7 +568,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-GreenTomato-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Zasket-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -590,7 +590,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-GreenTomato-GreenTomatoTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Zasket-ZasketTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -612,7 +612,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-GreenTomato-tvOSTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Zasket-tvOSTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -664,7 +664,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* GreenTomatoTests.m in Sources */,
+				00E356F31AD99517003FC87E /* ZasketTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -690,7 +690,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DCD954D1E0B4F2C00145EB5 /* GreenTomatoTests.m in Sources */,
+				2DCD954D1E0B4F2C00145EB5 /* ZasketTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -699,12 +699,12 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* GreenTomato */;
+			target = 13B07F861A680F5B00A75B9A /* Zasket */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 		2D02E4921E0B4A5D006451C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 2D02E47A1E0B4A5D006451C7 /* GreenTomato-tvOS */;
+			target = 2D02E47A1E0B4A5D006451C7 /* Zasket-tvOS */;
 			targetProxy = 2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -712,14 +712,14 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 20197CFDEF575A11899BEF07 /* Pods-GreenTomato-GreenTomatoTests.debug.xcconfig */;
+			baseConfigurationReference = 20197CFDEF575A11899BEF07 /* Pods-Zasket-ZasketTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = GreenTomatoTests/Info.plist;
+				INFOPLIST_FILE = ZasketTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -729,17 +729,17 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GreenTomato.app/GreenTomato";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Zasket.app/Zasket";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AEB4E2924428604788CC99F6 /* Pods-GreenTomato-GreenTomatoTests.release.xcconfig */;
+			baseConfigurationReference = AEB4E2924428604788CC99F6 /* Pods-Zasket-ZasketTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = GreenTomatoTests/Info.plist;
+				INFOPLIST_FILE = ZasketTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -749,20 +749,20 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GreenTomato.app/GreenTomato";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Zasket.app/Zasket";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5C18737718F046D6CF184578 /* Pods-GreenTomato.debug.xcconfig */;
+			baseConfigurationReference = 5C18737718F046D6CF184578 /* Pods-Zasket.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SDUDMXF794;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = GreenTomato/Info.plist;
+				INFOPLIST_FILE = Zasket/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -770,7 +770,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = GreenTomato;
+				PRODUCT_NAME = Zasket;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -780,13 +780,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 12EF80CFECF970D4F3406E7F /* Pods-GreenTomato.release.xcconfig */;
+			baseConfigurationReference = 12EF80CFECF970D4F3406E7F /* Pods-Zasket.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SDUDMXF794;
-				INFOPLIST_FILE = GreenTomato/Info.plist;
+				INFOPLIST_FILE = Zasket/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -794,7 +794,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = GreenTomato;
+				PRODUCT_NAME = Zasket;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -803,7 +803,7 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 85B54EF12C5B5B4FE8098635 /* Pods-GreenTomato-tvOS.debug.xcconfig */;
+			baseConfigurationReference = 85B54EF12C5B5B4FE8098635 /* Pods-Zasket-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -814,14 +814,14 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "GreenTomato-tvOS/Info.plist";
+				INFOPLIST_FILE = "Zasket-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.GreenTomato-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.Zasket-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -831,7 +831,7 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CADB9613533D0091E3D55DAE /* Pods-GreenTomato-tvOS.release.xcconfig */;
+			baseConfigurationReference = CADB9613533D0091E3D55DAE /* Pods-Zasket-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -842,14 +842,14 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "GreenTomato-tvOS/Info.plist";
+				INFOPLIST_FILE = "Zasket-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.GreenTomato-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.Zasket-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -859,7 +859,7 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9B1F847EFF2AD6CD40FE7DB4 /* Pods-GreenTomato-tvOSTests.debug.xcconfig */;
+			baseConfigurationReference = 9B1F847EFF2AD6CD40FE7DB4 /* Pods-Zasket-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -869,24 +869,24 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "GreenTomato-tvOSTests/Info.plist";
+				INFOPLIST_FILE = "Zasket-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.GreenTomato-tvOSTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.Zasket-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GreenTomato-tvOS.app/GreenTomato-tvOS";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Zasket-tvOS.app/Zasket-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 			};
 			name = Debug;
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 24938ED6579CB8F024C37967 /* Pods-GreenTomato-tvOSTests.release.xcconfig */;
+			baseConfigurationReference = 24938ED6579CB8F024C37967 /* Pods-Zasket-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -896,17 +896,17 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "GreenTomato-tvOSTests/Info.plist";
+				INFOPLIST_FILE = "Zasket-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.GreenTomato-tvOSTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.Zasket-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GreenTomato-tvOS.app/GreenTomato-tvOS";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Zasket-tvOS.app/Zasket-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 			};
 			name = Release;
@@ -1027,7 +1027,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "GreenTomatoTests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "ZasketTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -1036,7 +1036,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "GreenTomato" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Zasket" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -1045,7 +1045,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "GreenTomato-tvOS" */ = {
+		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Zasket-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D02E4971E0B4A5E006451C7 /* Debug */,
@@ -1054,7 +1054,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "GreenTomato-tvOSTests" */ = {
+		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Zasket-tvOSTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D02E4991E0B4A5E006451C7 /* Debug */,
@@ -1063,7 +1063,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "GreenTomato" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Zasket" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

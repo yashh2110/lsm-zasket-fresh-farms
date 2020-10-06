@@ -129,7 +129,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.greentomato"
+        applicationId "com.zasket"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

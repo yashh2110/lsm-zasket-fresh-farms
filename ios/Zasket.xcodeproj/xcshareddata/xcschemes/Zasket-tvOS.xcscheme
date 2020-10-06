@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-               BuildableName = "GreenTomato-tvOS.app"
-               BlueprintName = "GreenTomato-tvOS"
-               ReferencedContainer = "container:GreenTomato.xcodeproj">
+               BuildableName = "Zasket-tvOS.app"
+               BlueprintName = "Zasket-tvOS"
+               ReferencedContainer = "container:Zasket.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
-               BuildableName = "GreenTomato-tvOSTests.xctest"
-               BlueprintName = "GreenTomato-tvOSTests"
-               ReferencedContainer = "container:GreenTomato.xcodeproj">
+               BuildableName = "Zasket-tvOSTests.xctest"
+               BlueprintName = "Zasket-tvOSTests"
+               ReferencedContainer = "container:Zasket.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "GreenTomato-tvOS.app"
-            BlueprintName = "GreenTomato-tvOS"
-            ReferencedContainer = "container:GreenTomato.xcodeproj">
+            BuildableName = "Zasket-tvOS.app"
+            BlueprintName = "Zasket-tvOS"
+            ReferencedContainer = "container:Zasket.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "GreenTomato-tvOS.app"
-            BlueprintName = "GreenTomato-tvOS"
-            ReferencedContainer = "container:GreenTomato.xcodeproj">
+            BuildableName = "Zasket-tvOS.app"
+            BlueprintName = "Zasket-tvOS"
+            ReferencedContainer = "container:Zasket.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

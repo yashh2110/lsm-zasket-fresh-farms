@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:135821146938:android:c3c6b8bc8105f1d60a6e03",
+        "mobilesdk_app_id": "1:135821146938:android:6d8fb1d6d7c086620a6e03",
         "android_client_info": {
-          "package_name": "com.greentomato"
+          "package_name": "com.zasket"
         }
       },
       "oauth_client": [
