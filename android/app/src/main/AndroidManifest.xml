@@ -2,6 +2,7 @@
   package="com.zasket">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
       android:name=".MainApplication"
@@ -24,7 +25,7 @@
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
             <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyCtonAWeBy_RXdCMySzY4m6WVyNeX5p9sc"/>
+        android:value="AIzaSyAu6f9dUxz6XRVNbwIzqyF4fe1S1ZnebWw"/>
     </application>
 
 </manifest>

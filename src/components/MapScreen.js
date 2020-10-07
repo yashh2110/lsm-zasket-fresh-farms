@@ -1,102 +1,81 @@
-import React from 'react';
-import { Text, View, Dimensions, StyleSheet } from 'react-native';
-
+import React from 'react'
+import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import MapView, { Marker, Callout, ProviderPropType } from 'react-native-maps';
-import flagImg from '../assets/flag-blue.png';
+import marker from '../assets/png/locationIcon.png';
+import Geolocation from '@react-native-community/geolocation';
 
-const { width, height } = Dimensions.get('window');
+const latitudeDelta = 0.005
+const longitudeDelta = 0.005
 
-const ASPECT_RATIO = width / height;
-const LATITUDE = 37.78825;
-const LONGITUDE = -122.4324;
-const LATITUDE_DELTA = 0.0922;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-const SPACE = 0.01;
+export default class LocationPickerDemo extends React.Component {
+    state = {
+        region: {
+            latitudeDelta,
+            longitudeDelta,
+            latitude: 11.929001,
+            longitude: 79.791480
+        }
+    }
 
-class LoadingMap extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            region: {
-                latitude: LATITUDE,
-                longitude: LONGITUDE,
-                latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA,
-            },
-        };
+    onRegionChange = region => {
+        this.setState({
+            region
+        })
     }
 
     render() {
+        const { region } = this.state
+
         return (
-            <View style={styles.container}>
-                <MapView
-                    provider={this.props.provider}
-                    style={styles.map}
-                    initialRegion={this.state.region}
-                    onPress={this.onMapPress}
-                    loadingEnabled
-                    loadingIndicatorColor="#666666"
-                    loadingBackgroundColor="#eeeeee"
-                >
-                    <Marker
-                        coordinate={{
-                            latitude: LATITUDE + SPACE,
-                            longitude: LONGITUDE + SPACE,
-                        }}
-                        centerOffset={{ x: -18, y: -60 }}
-                        anchor={{ x: 0.69, y: 1 }}
-                        image={flagImg}
+            <View style={{ flex: 1, backgroundColor: 'white' }}>
+                <View style={styles.map}>
+                    <MapView
+                        style={styles.map}
+                        initialRegion={region}
+                        onRegionChangeComplete={this.onRegionChange}
+                        showsUserLocation={true}
+                        showsMyLocationButton={true}
+                        followsUserLocation={true}
+                        showsCompass={true}
+                        toolbarEnabled={true}
+                        loadingEnabled={true}
                     />
-                    <Marker
-                        coordinate={{
-                            latitude: LATITUDE - SPACE,
-                            longitude: LONGITUDE - SPACE,
-                        }}
-                        centerOffset={{ x: -42, y: -60 }}
-                        anchor={{ x: 0.84, y: 1 }}
-                    >
-                        <Callout>
-                            <View>
-                                <Text>This is a plain view</Text>
-                            </View>
-                        </Callout>
-                    </Marker>
-                </MapView>
-                {/* <View style={styles.buttonContainer}>
-                    <View style={styles.bubble}>
-                        <Text>Map with Loading</Text>
+                    <View style={styles.markerFixed}>
+                        <Image style={styles.marker} source={marker} />
                     </View>
-                </View> */}
+                </View>
+                {/* <SafeAreaView style={styles.footer}>
+                    <Text style={styles.region}>{JSON.stringify(region, null, 2)}</Text>
+                </SafeAreaView> */}
             </View>
-        );
+        )
     }
 }
 
-LoadingMap.propTypes = {
-    provider: ProviderPropType,
-};
-
 const styles = StyleSheet.create({
-    container: {
-        ...StyleSheet.absoluteFillObject,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-    },
     map: {
-        ...StyleSheet.absoluteFillObject,
+        flex: 1
     },
-    bubble: {
-        backgroundColor: 'rgba(255,255,255,0.7)',
-        paddingHorizontal: 18,
-        paddingVertical: 12,
-        borderRadius: 20,
+    markerFixed: {
+        left: '50%',
+        marginLeft: -25,
+        marginTop: -25,
+        position: 'absolute',
+        top: '50%'
     },
-    buttonContainer: {
-        flexDirection: 'row',
-        marginVertical: 20,
-        backgroundColor: 'transparent',
+    marker: {
+        height: 48,
+        width: 48
     },
-});
-
-export default LoadingMap;
+    footer: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        bottom: 0,
+        position: 'absolute',
+        width: '100%'
+    },
+    region: {
+        color: '#fff',
+        lineHeight: 20,
+        margin: 20
+    }
+})

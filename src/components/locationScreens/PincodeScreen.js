@@ -28,7 +28,7 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProv
 
     const onSubmit = async () => {
         try {
-            navigation.navigate('EmailScreen')
+            navigation.navigate('MapScreen')
             // Alert.alert('success')
             // await login(mobileNumber, (response, status) => {
             //     alert(JSON.stringify(response, null, "      "))
