@@ -23,7 +23,7 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProv
     }
 
     const [pinCode, setPinCode] = useState("")
-    const [availablity, setAvailablity] = useState(Mode.AVAILABLE)
+    const [availablity, setAvailablity] = useState(Mode.DEFAULT)
 
 
     const onSubmit = async () => {
