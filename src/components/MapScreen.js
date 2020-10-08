@@ -11,7 +11,9 @@ import Geolocation from '@react-native-community/geolocation';
 import marker from '../assets/png/locationIcon.png';
 import { } from 'react-native-gesture-handler';
 import { Icon } from 'native-base';
-
+import { MapApiKey } from "../../env"
+import LottieView from 'lottie-react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 const LATITUDE_DELTA = 0.005
 const LONGITUDE_DELTA = 0.005
 
@@ -28,13 +30,16 @@ class MyMapView extends React.Component {
 
     state = {
         region: {
-            latitude: 11.929001,
-            longitude: 79.791480,
+            latitude: null,
+            longitude: null,
             latitudeDelta: LONGITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
         },
         ready: true,
-        filteredMarkers: []
+        filteredMarkers: [],
+        address: null,
+        latitude: null,
+        longitude: null
     };
 
     setRegion(region) {
@@ -51,14 +56,24 @@ class MyMapView extends React.Component {
     getCurrentPosition() {
         try {
             Geolocation.getCurrentPosition(
-                (position) => {
+                async (position) => {
+                    // alert(JSON.stringify(position, null, "      "))
                     const region = {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
                         latitudeDelta: LATITUDE_DELTA,
                         longitudeDelta: LONGITUDE_DELTA,
                     };
-                    this.setRegion(region);
+                    await this.setRegion(region);
+
+                    fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
+                        .then((response) => {
+                            response.json().then(async (json) => {
+                                await this.setLocation(json.results[0].formatted_address, position.coords.latitude, position.coords.longitude)
+                            });
+                        }).catch((err) => {
+                            console.warn(err)
+                        })
                 },
                 (error) => {
                     //TODO: better design
@@ -80,22 +95,47 @@ class MyMapView extends React.Component {
         }
     };
 
+    getCurrentLocation = async () => {
+        fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + this.state.region.latitude + ',' + this.state.region.longitude + '&key=' + MapApiKey)
+            .then((response) => {
+                response.json().then(async (json) => {
+                    // console.warn(json)
+                    await this.setLocation(json.results[0].formatted_address, this.state.region.latitude, this.state.region.longitude)
+                });
+            }).catch((err) => {
+                console.warn(err)
+            })
+    }
+    setLocation = async (address, latitude, longitude) => {
+        this.setState({
+            address: address,
+            latitude: latitude,
+            longitude: longitude
+        })
+        await AsyncStorage.setItem("location", JSON.stringify({
+            address: address,
+            latitude: latitude,
+            longitude: longitude
+        }));
+    }
+
     onMapReady = (e) => {
         if (!this.state.ready) {
             this.setState({ ready: true });
         }
     };
 
-    onRegionChange = (region) => {
-        this.setState({
-            region
-        })
+    onRegionChange = async (region) => {
+        // await this.setState({
+        //     region
+        // })
     };
 
-    onRegionChangeComplete = (region) => {
-        this.setState({
+    onRegionChangeComplete = async (region) => {
+        await this.setState({
             region
         })
+        await this.getCurrentLocation()
     };
 
     render() {
@@ -128,11 +168,27 @@ class MyMapView extends React.Component {
                         {children && children || null}
                     </MapView>
                     <View style={styles.markerFixed}>
-                        <Image style={styles.marker} source={marker} />
+                        {/* <Image style={styles.marker} source={marker} /> */}
+                        <LottieView
+                            style={styles.marker}
+                            source={require("../assets/animations/favoriteDoctorHeart.json")}
+                            autoPlay
+                        />
                     </View>
                     <TouchableOpacity onPress={() => this.getCurrentPosition()} style={styles.getcurrentlocation} activeOpacity={0.6}>
                         <Icon name='gps-fixed' type="MaterialIcons" style={{ color: '#979197', fontSize: 20 }} />
                     </TouchableOpacity>
+                </View>
+                <View style={{ flex: 1, width: "90%", alignSelf: 'center' }}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <Text style={{ color: "#727272", fontSize: 13 }}>Your current location</Text>
+                        </View>
+                        <TouchableOpacity activeOpacity={0.7} onPress={() => { }} style={{ padding: 10 }}>
+                            <Text style={{ color: "#73C92D" }}>Change</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <Text>{this.state.address}</Text>
                 </View>
                 <SafeAreaView style={styles.footer}>
                     <Text style={styles.region}>{JSON.stringify(region, null, 2)}</Text>
@@ -148,16 +204,27 @@ const styles = StyleSheet.create({
     map: {
         height: "50%"
     },
+    // markerFixed: {
+    //     left: '50%',
+    //     marginLeft: -24,
+    //     marginTop: -35,
+    //     position: 'absolute',
+    //     top: '50%',
+    // },
     markerFixed: {
         left: '50%',
-        marginLeft: -24,
-        marginTop: -35,
+        marginLeft: -49,
+        marginTop: -50,
         position: 'absolute',
-        top: '50%'
+        top: '50%',
     },
+    // marker: {
+    //     height: 48,
+    //     width: 48
+    // },
     marker: {
-        height: 48,
-        width: 48
+        height: 100,
+        width: 100
     },
     footer: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
