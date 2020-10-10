@@ -12,7 +12,6 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
       someRef.setAddressText(defaultValue)
     }
   }, [defaultValue])
-
   const [currentPosition, setCurrentPosition] = useState({})
   useEffect(() => {
     Geolocation.getCurrentPosition(({ coords }) => {
@@ -41,6 +40,7 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
       placeholder='Search'
       minLength={1} // minimum length of text to search
       autoFocus={true}
+      placeholder="Search for a location"
       // styles={[commonStyle.fullHeight, commonStyle.greenBg]}
       // textInputContainer={[commonStyle.fullHeight, commonStyle.greenBg]}
       returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
@@ -51,44 +51,49 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
       onPress={getLocation}
       value={defaultValue}
       getDefaultValue={() => ''}
-      nearbyPlacesAPI="GooglePlacesSearch"
       query={{
         // available options: https://developers.google.com/places/web-service/autocomplete
         key: MapApiKey,
         language: 'en', // language of the results
-        types: 'geocode', // default: 'geocode'
+        // types: 'geocode', // default: 'geocode'
         //types: "(regions)"
+        components: "country:ind",
       }}
-
       styles={{
-        textInputContainer: {
-          backgroundColor: 'white'
+        description: {
+          color: "black",
+          fontSize: 12,
         },
-        // description: {
-        //   fontWeight: 'bold'
+        predefinedPlacesDescription: {
+          color: "black",
+        },
+        listView: {
+          position: "absolute",
+          marginTop: 44,
+          backgroundColor: "white",
+          borderBottomEndRadius: 15,
+          elevation: 2,
+        },
+        // textInputContainer: {
+        //   backgroundColor: 'white'
         // },
-        // predefinedPlacesDescription: {
-        //   color: '#1faadb'
-        // },
-        ...styles
       }}
-
-      // currentLocation={false}
+      // currentLocation={true}
       // currentLocationLabel='Current location'
       nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
       GoogleReverseGeocodingQuery={{
         // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
       }}
-      // GooglePlacesSearchQuery={{
-      //   // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
-      //   rankby: 'distance',
-      //   type: 'cafe'
-      // }}
 
       GooglePlacesDetailsQuery={{ fields: 'geometry', }}
-
-
-      filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+      enableHighAccuracyLocation={true}
+      listUnderlayColor="lightgrey"
+      nearbyPlacesAPI="GooglePlacesSearch"
+      GooglePlacesSearchQuery={{
+        rankby: "distance", // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+        types: "building",
+      }}
+      filterReverseGeocodingByTypes={["locality", "administrative_area_level_3",]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
       // predefinedPlaces={[currentPosition]}
 
       debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
