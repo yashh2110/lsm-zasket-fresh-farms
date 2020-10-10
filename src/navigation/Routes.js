@@ -25,7 +25,6 @@ import FeatherIcons from "react-native-vector-icons/Feather"
 import CustomDrawerContent from "./CustomDrawerContent"
 import Theme from '../styles/Theme';
 import PincodeScreen from '../components/locationScreens/PincodeScreen';
-import GooglePlacesInput from '../components/locationScreens/AutoCompleteInput';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -47,7 +46,7 @@ const Navigate = ({ alerts, darkMode }) => {
             screenOptions={{
                 headerShown: false
             }}>
-            <Stack.Screen name="OnBoardScreen" component={GooglePlacesInput} />
+            <Stack.Screen name="OnBoardScreen" component={OnBoard} />
             <Stack.Screen name="Login" component={Login} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="SignUp" component={SignUp} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="EmailScreen" component={EmailScreen} options={{ cardStyleInterpolator: forFade }} />

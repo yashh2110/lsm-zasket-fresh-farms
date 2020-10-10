@@ -12,8 +12,8 @@ import AutoCompleteLocation from '../components/locationScreens/AutoCompleteInpu
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 
-const latitudeDelta = 0.005;
-const longitudeDelta = 0.005;
+const latitudeDelta = 0.025;
+const longitudeDelta = 0.025;
 
 const initialRegion = {
     latitude: -37.78825,
@@ -175,6 +175,12 @@ class MyMapView extends React.Component {
                             ref={map => { this.map = map }}
                             data={markers}
                             initialRegion={initialRegion}
+                            // region={{
+                            //     latitude: this.state.latitude ? this.state.latitude : undefined,
+                            //     longitude: this.state.longitude ? this.state.longitude : undefined,
+                            //     latitudeDelta: LONGITUDE_DELTA,
+                            //     longitudeDelta: LONGITUDE_DELTA,
+                            // }}
                             onMapReady={this.onMapReady}
                             showsMyLocationButton={true}
                             onRegionChange={this.onRegionChange}

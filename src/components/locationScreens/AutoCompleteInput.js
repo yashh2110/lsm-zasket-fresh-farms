@@ -4,8 +4,8 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import Geolocation from '@react-native-community/geolocation';
 import { Icon } from 'native-base';
 import { MapApiKey } from '../../../env';
-
-const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions }) => {
+navigator.geolocation = require('@react-native-community/geolocation');
+const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRequestClose }) => {
   let someRef = useRef()
   useEffect(() => {
     if (defaultValue) {
@@ -16,7 +16,6 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions }) =>
   const [currentPosition, setCurrentPosition] = useState({})
   useEffect(() => {
     Geolocation.getCurrentPosition(({ coords }) => {
-      console.warn(coords);
       fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + coords.latitude + ',' + coords.longitude + '&key=' + "AIzaSyAu6f9dUxz6XRVNbwIzqyF4fe1S1ZnebWw")
         .then((response) => {
           response.json().then(async (json) => {
@@ -40,31 +39,31 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions }) =>
     <GooglePlacesAutocomplete
       ref={ref => { someRef = ref }}
       placeholder='Search'
-      minLength={2} // minimum length of text to search
-      autoFocus={false}
+      minLength={1} // minimum length of text to search
+      autoFocus={true}
       // styles={[commonStyle.fullHeight, commonStyle.greenBg]}
       // textInputContainer={[commonStyle.fullHeight, commonStyle.greenBg]}
       returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
       keyboardAppearance={'light'} // Can be left out for default keyboardAppearance https://facebook.github.io/react-native/docs/textinput.html#keyboardappearance
-      listViewDisplayed='auto'    // true/false/undefined
+      listViewDisplayed={false}    // true/false/undefined
       fetchDetails={true}
       renderDescription={row => row.description} // custom description render
       onPress={getLocation}
       value={defaultValue}
-      listViewDisplayed={false}
       getDefaultValue={() => ''}
+      nearbyPlacesAPI="GooglePlacesSearch"
       query={{
         // available options: https://developers.google.com/places/web-service/autocomplete
         key: MapApiKey,
         language: 'en', // language of the results
-        types: regions ? "(regions)" : '(cities)', // default: 'geocode'
+        types: 'geocode', // default: 'geocode'
         //types: "(regions)"
       }}
 
       styles={{
-        // textInputContainer: {
-        //   width: '100%',
-        // },
+        textInputContainer: {
+          backgroundColor: 'white'
+        },
         // description: {
         //   fontWeight: 'bold'
         // },
@@ -74,26 +73,28 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions }) =>
         ...styles
       }}
 
-      currentLocation={false} // Will add a 'Current location' button at the top of the predefined places list
-      currentLocationLabel="Current location"
+      // currentLocation={false}
+      // currentLocationLabel='Current location'
       nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
       GoogleReverseGeocodingQuery={{
         // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
       }}
-      GooglePlacesSearchQuery={{
-        // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
-        rankby: 'distance',
-        type: 'cafe'
-      }}
+      // GooglePlacesSearchQuery={{
+      //   // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+      //   rankby: 'distance',
+      //   type: 'cafe'
+      // }}
 
       GooglePlacesDetailsQuery={{ fields: 'geometry', }}
 
 
       filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
-      predefinedPlaces={[currentPosition]}
+      // predefinedPlaces={[currentPosition]}
 
       debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
-      // renderLeftButton={() => <Text>X</Text>}
+      renderLeftButton={() => <TouchableOpacity style={{ justifyContent: 'center' }} onPress={onRequestClose}>
+        <Icon name="arrowleft" type="AntDesign" style={{ fontSize: 20, marginLeft: 10, color: "grey" }} />
+      </TouchableOpacity>}
       // renderRightButton={() => <Text>Custom text after the input</Text>}
       renderRightButton={() =>
         Platform.OS === "ios" ?
