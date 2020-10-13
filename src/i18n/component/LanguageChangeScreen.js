@@ -2,8 +2,8 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
-import LanguageSwitcher from '../i18n/component/languageSwitcher';
-import { updateLanguage } from '../i18n/store/actions';
+import LanguageSwitcher from './languageSwitcher';
+import { updateLanguage } from '../store/actions';
 
 const LanguageChangeScreen = (props) => {
     const { Translate } = props;

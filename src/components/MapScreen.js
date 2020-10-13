@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Theme from '../styles/Theme';
 import AutoCompleteLocation from '../components/locationScreens/AutoCompleteInput'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-
+import { CheckBox } from 'react-native-elements'
 
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
@@ -43,6 +43,10 @@ class MyMapView extends React.Component {
         saveAs: "",
         addressLoading: false,
         modalVisible: false,
+        homeCheck: false,
+        officeCheck: false,
+        othersCheck: false,
+        deliverFor: "self"
     };
 
 
@@ -74,7 +78,7 @@ class MyMapView extends React.Component {
                     fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
                         .then((response) => {
                             response.json().then(async (json) => {
-                                await this.setLocation(json.results[0].formatted_address, position.coords.latitude, position.coords.longitude)
+                                await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude)
                             });
                         }).catch((err) => {
                             console.warn(err)
@@ -107,7 +111,7 @@ class MyMapView extends React.Component {
             .then((response) => {
                 response.json().then(async (json) => {
                     // console.warn(json)
-                    await this.setLocation(json.results[0].formatted_address, this.state.region.latitude, this.state.region.longitude)
+                    await this.setLocation(json?.results?.[0]?.formatted_address, this.state.region.latitude, this.state.region.longitude)
                     await this.setState({ addressLoading: false })
                 });
             }).catch(async (err) => {
@@ -152,6 +156,43 @@ class MyMapView extends React.Component {
 
 
     onSubmit = async () => {
+    }
+
+    onPressCheckbox = (option) => {
+        if (option === "homeCheck") {
+            this.setState({
+                homeCheck: true,
+                officeCheck: false,
+                othersCheck: false,
+            })
+        }
+        if (option === "officeCheck") {
+            this.setState({
+                homeCheck: false,
+                officeCheck: true,
+                othersCheck: false,
+            })
+        }
+        if (option === "othersCheck") {
+            this.setState({
+                homeCheck: false,
+                officeCheck: false,
+                othersCheck: true,
+            })
+        }
+    }
+
+    onPressDeliverFor = (option) => {
+        if (option === "self") {
+            this.setState({
+                deliverFor: "self"
+            })
+        }
+        if (option === "others") {
+            this.setState({
+                deliverFor: "others"
+            })
+        }
     }
 
     render() {
@@ -233,6 +274,40 @@ class MyMapView extends React.Component {
                                 <Text>{this.state.address}</Text>
                             </View>
                         }
+                        <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
+                        <View style={{ flexDirection: 'row', justifyContent: "space-around", marginTop: 10, }}>
+                            <TouchableOpacity onPress={() => this.onPressDeliverFor('self')} style={{ justifyContent: 'center', borderColor: this.state.deliverFor == "self" ? Theme.Colors.primary : "#EFEFEF", borderWidth: 2, borderRadius: 6, justifyContent: 'center', alignItems: 'center', width: "40%", padding: 15 }}>
+                                <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Self</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => this.onPressDeliverFor('others')} style={{ justifyContent: 'center', borderColor: this.state.deliverFor == "others" ? Theme.Colors.primary : "#EFEFEF", borderWidth: 2, borderRadius: 6, justifyContent: 'center', alignItems: 'center', width: "40%", padding: 15 }}>
+                                <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Others</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {this.state.deliverFor === "others" ?
+                            <>
+                                <View style={{ marginTop: 10 }}>
+                                    <Text style={{ color: "#727272", fontSize: 14 }}>Name</Text>
+                                    <TextInput
+                                        style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
+                                        onChangeText={text => this.setState({
+                                            houseNumber: text
+                                        })}
+                                        value={this.state.houseNumber}
+                                    />
+                                </View>
+                                <View style={{ marginTop: 10 }}>
+                                    <Text style={{ color: "#727272", fontSize: 14 }}>Phone Number</Text>
+                                    <TextInput
+                                        style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
+                                        onChangeText={text => this.setState({
+                                            houseNumber: text
+                                        })}
+                                        value={this.state.houseNumber}
+                                        keyboardType={"number-pad"}
+                                    />
+                                </View>
+                            </> : undefined}
                         <View style={{ marginTop: 20 }}>
                             <Text style={{ color: "#727272", fontSize: 14 }}>House No/ Flat No/Floor/Building</Text>
                             <TextInput
@@ -255,12 +330,37 @@ class MyMapView extends React.Component {
                         </View>
                         <View style={{ marginTop: 10 }}>
                             <Text style={{ color: "#727272", fontSize: 14 }}>Save as</Text>
-                            <TextInput
-                                style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
-                                onChangeText={text => this.setState({
-                                    houseNumber: text
-                                })}
-                                value={this.state.houseNumber}
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <CheckBox
+                                // center
+                                containerStyle={{ backgroundColor: "transparent", borderWidth: 0 }}
+                                title='Home'
+                                checkedIcon='dot-circle-o'
+                                uncheckedIcon='circle-o'
+                                checked={this.state.homeCheck}
+                                onPress={() => this.onPressCheckbox('homeCheck')}
+                                checkedColor={Theme.Colors.primary}
+                            />
+                            <CheckBox
+                                // center
+                                containerStyle={{ backgroundColor: "transparent", borderWidth: 0 }}
+                                title='Office'
+                                checkedIcon='dot-circle-o'
+                                uncheckedIcon='circle-o'
+                                checked={this.state.officeCheck}
+                                onPress={() => this.onPressCheckbox('officeCheck')}
+                                checkedColor={Theme.Colors.primary}
+                            />
+                            <CheckBox
+                                // center
+                                containerStyle={{ backgroundColor: "transparent", borderWidth: 0 }}
+                                title='Others'
+                                checkedIcon='dot-circle-o'
+                                uncheckedIcon='circle-o'
+                                checked={this.state.othersCheck}
+                                onPress={() => this.onPressCheckbox('othersCheck')}
+                                checkedColor={Theme.Colors.primary}
                             />
                         </View>
                         <Button full style={{ marginTop: 20, backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => this.onSubmit()}><Text>Save & continue</Text></Button>

@@ -3,9 +3,10 @@ import LottieView from 'lottie-react-native';
 import { Button, Icon, Input, Item, Label, Text } from "native-base";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, Image, ImageBackground, Keyboard, Platform, ScrollView, StyleSheet, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import { login, loginWithProvider } from '../../actions/auth';
+import { requestOtp } from '../../actions/auth';
 import { setDarkMode } from "../../actions/dark";
 import AnimateLoadingButton from '../../lib/ButtonAnimated';
 import alert from '../../reducers/alert';
@@ -14,42 +15,42 @@ import { Validation } from "../../utils/validate";
 import DarkModeToggle from '../common/DarkModeToggle';
 
 
-const Login = ({ navigation, darkMode, setDarkMode, login, loginWithProvider, isAuthenticated }) => {
+const Login = ({ navigation, darkMode, requestOtp }) => {
 
-    const [mobileNumber, setMobileNumber] = useState("9898989898")
-
+    const [mobileNumber, setMobileNumber] = useState("")
+    const [loading, setLoading] = useState(false)
     const onSubmit = async () => {
+        setLoading(true)
+        let number = mobileNumber
         var filter = /^((\+[1-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}?[ \-]*[0-9]{3,4}?$/;
-        if (filter.test(mobileNumber)) {
-            if (mobileNumber.length == 10) {
+        if (filter.test(number)) {
+            if (number.length == 10) {
                 var validate = true;
             } else {
+                setLoading(false)
                 Alert.alert('Please put 10  digit mobile number');
-                console.warn('working')
                 var validate = false;
             }
         }
         else {
             Alert.alert('Enter a valid mobile number');
+            setLoading(false)
             var validate = false;
         }
         if (validate) {
             try {
-                // Alert.alert('success')
-                // await login(mobileNumber, (response, status) => {
-                //     alert(JSON.stringify(response, null, "      "))
-                //     if (status) {
-                //         loadingButton.showLoading(false)
-                navigation.navigate('OtpScreen')
-                //         navigation.navigate('DrawerRoute', { screen: 'Settings' })
-                //     } else {
-
-                //     }
-                // })
+                let number = "+91" + mobileNumber
+                await requestOtp(number, (response, status) => {
+                    if (status) {
+                        navigation.navigate('OtpScreen', { mobileNumber: number })
+                        setLoading(false)
+                    } else {
+                        setLoading(false)
+                    }
+                })
             } catch {
-
+                setLoading(false)
             }
-
         }
     }
 
@@ -81,10 +82,16 @@ const Login = ({ navigation, darkMode, setDarkMode, login, loginWithProvider, is
                                     style={{ height: 40, fontWeight: 'bold' }}
                                     onChangeText={text => setMobileNumber(text)}
                                     value={mobileNumber}
+                                    maxLength={10}
+                                    keyboardType={"number-pad"}
                                 />
                             </View>
                         </View>
-                        <Button full style={{ marginTop: "20%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text>Continue</Text></Button>
+                        {loading ?
+                            <ActivityIndicator style={{ marginTop: "20%", }} color={Theme.Colors.primary} size="large" />
+                            :
+                            <Button full style={{ marginTop: "20%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text>Continue</Text></Button>
+                        }
                     </View>
                     <View style={{ justifyContent: 'flex-end', alignItems: 'center' }}>
                         <Image
@@ -95,7 +102,7 @@ const Login = ({ navigation, darkMode, setDarkMode, login, loginWithProvider, is
                     </View>
                 </ScrollView>
             </View>
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback >
     );
 }
 
@@ -105,7 +112,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, login, loginWithProvider })(Login)
+export default connect(mapStateToProps, { setDarkMode, requestOtp })(Login)
 
 const styles = StyleSheet.create({
     container: {

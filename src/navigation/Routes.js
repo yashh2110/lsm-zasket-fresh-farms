@@ -10,28 +10,25 @@ import OtpScreen from "../components/auth/OtpScreen"
 import EmailScreen from "../components/auth/EmailScreen"
 import SignUp from "../components/auth/SignUp"
 import OnBoard from "../components/auth/OnBoard"
-import Dashboard from "../components/dashboard/Dashboard"
 import { View, Text } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import HomeScreen from "../components/HomeScreen"
 import InfiniteLoading from "../components/InfiniteLoading"
-import SnapshotTestScreen from "../components/SnapshotTestScreen"
-import LanguageChangeScreen from "../components/LanguageChangeScreen"
 import MapScreen from "../components/MapScreen"
-import SettingsScreen from "../components/SettingsScreen"
+import AccountScreen from "../components/AccountScreen"
 import Pagination from "../components/Pagination"
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
 import FeatherIcons from "react-native-vector-icons/Feather"
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons"
 import CustomDrawerContent from "./CustomDrawerContent"
 import Theme from '../styles/Theme';
 import PincodeScreen from '../components/locationScreens/PincodeScreen';
+import CartScreen from '../components/cartStack/CartScreen';
+import SearchScreen from '../components/SearchStack/SearchScreen';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
-
-
-
 
 const Navigate = ({ alerts, darkMode }) => {
 
@@ -58,29 +55,17 @@ const Navigate = ({ alerts, darkMode }) => {
 
 
 
-    const DrawerRoute = () => (
-        <Drawer.Navigator
-            initialRouteName="Dashboard"
-            drawerContent={(props) => (
-                <CustomDrawerContent {...props} />
-            )}
-        >
-            <Drawer.Screen name="Dashboard" component={BottomTabRoute} />
-            <Drawer.Screen name="Login" component={AuthRoute} />
-        </Drawer.Navigator>
-    )
-
     const BottomTabRoute = () => (
         <Tab.Navigator
-            initialRouteName="Feed"
+            initialRouteName="HomeScreen"
             tabBarOptions={{
-                activeTintColor: darkMode ? "#42f44b" : "#000",
+                activeTintColor: darkMode ? "#42f44b" : Theme.Colors.primary,
                 activeBackgroundColor: darkMode ? Theme.Dark.backgroundColor : "#fff",
                 inactiveBackgroundColor: darkMode ? Theme.Dark.backgroundColor : "#fff",
             }}>
             <Tab.Screen
-                name="HomeStack"
-                component={Dashboard}
+                name="HomeScreen"
+                component={HomeScreen}
                 options={{
                     tabBarLabel: 'Home',
                     tabBarIcon: ({ color, size }) => (
@@ -89,12 +74,32 @@ const Navigate = ({ alerts, darkMode }) => {
                 }}
             />
             <Tab.Screen
-                name="SettingsStack"
-                component={SettingsStack}
+                name="SearchStack"
+                component={SearchStack}
                 options={{
-                    tabBarLabel: 'Settings',
+                    tabBarLabel: 'Search',
                     tabBarIcon: ({ color, size }) => (
-                        <FeatherIcons name="settings" color={color} size={size} />
+                        <FeatherIcons name="search" color={color} size={size} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="CartStack"
+                component={CartStack}
+                options={{
+                    tabBarLabel: 'Cart',
+                    tabBarIcon: ({ color, size }) => (
+                        <SimpleLineIcons name="handbag" color={color} size={size} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="AccountStack"
+                component={AccountStack}
+                options={{
+                    tabBarLabel: 'Account',
+                    tabBarIcon: ({ color, size }) => (
+                        <FeatherIcons name="user" color={color} size={size} />
                     ),
                 }}
             />
@@ -123,11 +128,40 @@ const Navigate = ({ alerts, darkMode }) => {
             </Stack.Navigator>
         );
     }
-
-    function SettingsStack() {
+    function SearchStack() {
         return (
             <Stack.Navigator
-                initialRouteName="Settings"
+                initialRouteName="Search"
+                screenOptions={{
+                    headerShown: false
+                }}>
+                <Stack.Screen
+                    name="Search"
+                    component={SearchScreen}
+                    options={{ title: 'Search Page' }}
+                />
+            </Stack.Navigator>
+        );
+    }
+    function CartStack() {
+        return (
+            <Stack.Navigator
+                initialRouteName="Cart"
+                screenOptions={{
+                    headerShown: false
+                }}>
+                <Stack.Screen
+                    name="Cart"
+                    component={CartScreen}
+                    options={{ title: 'Cart Page' }}
+                />
+            </Stack.Navigator>
+        );
+    }
+    function AccountStack() {
+        return (
+            <Stack.Navigator
+                initialRouteName="Account"
                 screenOptions={{
                     // headerStyle: { backgroundColor: '#42f44b' },
                     // headerTintColor: '#fff',
@@ -135,9 +169,9 @@ const Navigate = ({ alerts, darkMode }) => {
                     headerShown: false
                 }}>
                 <Stack.Screen
-                    name="Settings"
-                    component={SettingsScreen}
-                    options={{ title: 'Setting Page' }}
+                    name="Account"
+                    component={AccountScreen}
+                    options={{ title: 'Account Page' }}
                 />
                 <Stack.Screen
                     name="InfiniteLoading"
@@ -148,16 +182,6 @@ const Navigate = ({ alerts, darkMode }) => {
                     name="Pagination"
                     component={Pagination}
                     options={{ title: 'Pagination' }}
-                />
-                <Stack.Screen
-                    name="SnapshotTestScreen"
-                    component={SnapshotTestScreen}
-                    options={{ title: 'SnapshotTestScreen' }}
-                />
-                <Stack.Screen
-                    name="LanguageChangeScreen"
-                    component={LanguageChangeScreen}
-                    options={{ title: 'LanguageChangeScreen' }}
                 />
                 <Stack.Screen
                     name="MapScreen"
@@ -181,14 +205,12 @@ const Navigate = ({ alerts, darkMode }) => {
             </View>
             <NavigationContainer>
                 <Stack.Navigator
-                    initialRouteName="AuthRoute"
+                    initialRouteName="BottomTabRoute"
                     screenOptions={{
                         headerShown: false
                     }}>
                     <Stack.Screen name="AuthRoute" component={AuthRoute} />
-                    <Stack.Screen name="DrawerRoute" component={DrawerRoute} />
                     <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
-
                 </Stack.Navigator>
             </NavigationContainer>
         </>

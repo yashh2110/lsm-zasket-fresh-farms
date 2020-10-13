@@ -29,7 +29,6 @@ setAuthorizationFromAsyncStorage()
 // Add a request interceptor
 axiosinstance.interceptors.request.use(
     async config => {
-        console.warn('working')
         await setAuthorizationFromAsyncStorage()
         return config;
     },

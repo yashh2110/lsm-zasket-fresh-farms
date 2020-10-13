@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView } from 'react-native';
 
-const SettingsScreen = ({ route, navigation }) => {
+const AccountScreen = ({ route, navigation }) => {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={{ flex: 1, padding: 16 }}>
@@ -32,16 +32,6 @@ const SettingsScreen = ({ route, navigation }) => {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('SnapshotTestScreen')}>
-                        <Text>Snapshot Test</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => navigation.navigate('LanguageChangeScreen')}>
-                        <Text>LanguageChange Screen</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.button}
                         onPress={() => navigation.navigate('MapScreen')}>
                         <Text>MapScreen</Text>
                     </TouchableOpacity>
@@ -59,4 +49,4 @@ const styles = StyleSheet.create({
         marginTop: 16,
     },
 });
-export default SettingsScreen;
+export default AccountScreen;

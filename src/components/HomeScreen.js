@@ -1,37 +1,16 @@
 import * as React from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, ScrollView } from 'react-native';
+import { Icon } from 'native-base';
 
 const HomeScreen = ({ navigation }) => {
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={{ flex: 1, padding: 16 }}>
-                <View
-                    style={{
-                        flex: 1,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}>
-                    <Text
-                        style={{
-                            fontSize: 25,
-                            textAlign: 'center',
-                            marginBottom: 16
-                        }}>
-                        You are on Home Screen
-          </Text>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => navigation.navigate('SettingsStack', { screen: 'Settings' })}>
-                        <Text>Go to settng Tab</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => navigation.navigate('Details')}>
-                        <Text>Open Details Screen</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </SafeAreaView>
+        <ScrollView style={{ flex: 1, backgroundColor: 'white' }} showsVerticalScrollIndicator={false}>
+            <TouchableOpacity onPress={() => { }} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Icon name="location-pin" type="Entypo" />
+                <Text>Jubilee Hills, Hyderabad</Text>
+                <Icon name="arrow-drop-down" type="MaterialIcons" />
+            </TouchableOpacity>
+        </ScrollView>
     );
 }
 

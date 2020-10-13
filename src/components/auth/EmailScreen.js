@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, Image, ImageBackground, Keyboard, Platform, ScrollView, StyleSheet, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import { login, loginWithProvider } from '../../actions/auth';
+import { createNewCustomer } from '../../actions/auth';
 import { setDarkMode } from "../../actions/dark";
 import AnimateLoadingButton from '../../lib/ButtonAnimated';
 import alert from '../../reducers/alert';
@@ -14,41 +14,68 @@ import { Validation } from "../../utils/validate";
 import DarkModeToggle from '../common/DarkModeToggle';
 import CodeInput from 'react-native-confirmation-code-input';
 import RF from "react-native-responsive-fontsize";
-const EmailScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProvider, isAuthenticated }) => {
+import { ActivityIndicator } from 'react-native';
+const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWithProvider, isAuthenticated }) => {
 
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
+    const [emailErrorText, setemailErrorText] = useState("")
+    const [nameErrorText, setNameErrorText] = useState("")
+    const [loading, setLoading] = useState(false)
+    const { mobileNumber, otp } = route.params;
 
-    const onSubmit = async () => {
-        var filter = /^((\+[1-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}?[ \-]*[0-9]{3,4}?$/;
-        if (filter.test(mobileNumber)) {
-            if (mobileNumber.length == 10) {
-                var validate = true;
+    const validate = () => {
+        let status = true
+        if (email == undefined || email.trim() == "") {
+            setemailErrorText("Email ID Required")
+            status = false
+            setLoading(false)
+        } else {
+            if (email.indexOf('@') > -1) {
+                let validation = new Validation()
+                if (!validation.validEmail(email)) {
+                    setemailErrorText("Please enter a valid email address")
+                    status = false
+                    setLoading(false)
+                }
             } else {
-                Alert.alert('Please put 10  digit mobile number');
-                console.warn('working')
-                var validate = false;
+                setemailErrorText("Please enter a valid email address")
+                status = false
+                setLoading(false)
             }
         }
-        else {
-            Alert.alert('Enter a valid mobile number');
-            var validate = false;
+        if (name == undefined || name.trim() == "") {
+            setNameErrorText("Name required")
+            status = false
+            setLoading(false)
         }
-        if (validate) {
+        return status
+    }
+
+
+    const onSubmit = async () => {
+        setLoading(true)
+        if (validate()) {
+            let payLoad = {
+                "name": name,
+                "otp": otp,
+                "userEmail": email,
+                "userMobileNumber": mobileNumber
+            }
             try {
-                Alert.alert('success')
-                // await login(mobileNumber, (response, status) => {
-                //     alert(JSON.stringify(response, null, "      "))
-                //     if (status) {
-                //         loadingButton.showLoading(false)
-                //         // navigation.navigate('DrawerRoute')
-                //         navigation.navigate('DrawerRoute', { screen: 'Settings' })
-                //     } else {
-
-                //     }
-                // })
+                await createNewCustomer(payLoad, (response, status) => {
+                    // Alert.alert(JSON.stringify(response, null, "     "))
+                    if (status) {
+                        navigation.navigate('PincodeScreen')
+                        setLoading(false)
+                    } else {
+                        Alert.alert(response?.response?.data?.description);
+                        setLoading(false)
+                        navigation.goBack()
+                    }
+                })
             } catch {
-
+                setLoading(false)
             }
 
         }
@@ -80,12 +107,21 @@ const EmailScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProvid
                                         value={name}
                                         placeholder={"Name"}
                                         placeholderTextColor={"#727272"}
+                                        onTouchStart={() => {
+                                            setemailErrorText("")
+                                            setNameErrorText("")
+                                        }}
                                     />
                                 </View>
                                 <View style={{ justifyContent: 'center' }}>
                                     <Icon name='user' type="Entypo" style={{ color: '#C3C3C3', fontSize: 20 }} />
                                 </View>
                             </View>
+                            {nameErrorText ?
+                                <>
+                                    <Text style={{ color: 'red', fontSize: 14 }}>{nameErrorText}</Text>
+                                </>
+                                : undefined}
 
                             <View style={{ marginTop: "10%", borderBottomColor: "#D8D8D8", flexDirection: 'row', borderBottomWidth: 1 }}>
                                 <View style={{ flex: 1 }}>
@@ -93,17 +129,28 @@ const EmailScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProvid
                                         style={{ height: 40, }}
                                         onChangeText={text => setEmail(text)}
                                         value={email}
+                                        keyboardType={"email-address"}
                                         placeholder={"Email Address"}
                                         placeholderTextColor={"#727272"}
+                                        onTouchStart={() => {
+                                            setemailErrorText("")
+                                            setNameErrorText("")
+                                        }}
                                     />
                                 </View>
                                 <View style={{ justifyContent: 'center' }}>
                                     <Icon name='mail' style={{ color: '#C3C3C3', fontSize: 20 }} />
                                 </View>
                             </View>
-
-
-                            <Button full style={{ marginTop: "10%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => navigation.navigate('PincodeScreen')}><Text>Sign Up</Text></Button>
+                            {emailErrorText ?
+                                <>
+                                    <Text style={{ color: 'red', fontSize: 14 }}>{emailErrorText}</Text>
+                                </>
+                                : undefined}
+                            {loading ?
+                                <ActivityIndicator style={{ marginTop: "10%", }} color={Theme.Colors.primary} size="large" />
+                                :
+                                <Button full style={{ marginTop: "10%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text>Sign Up</Text></Button>}
                             <Text style={{ marginTop: "10%", fontSize: 14, color: "#727272", textAlign: 'center' }}>By proceeding to create your account you are agreeing to our <Text style={{ fontWeight: 'bold', fontSize: 14 }}>Terms of Service</Text> and <Text style={{ fontWeight: 'bold', fontSize: 14 }}>Privacy Policy</Text></Text>
                         </View>
 
@@ -121,7 +168,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, login, loginWithProvider })(EmailScreen)
+export default connect(mapStateToProps, { setDarkMode, createNewCustomer })(EmailScreen)
 
 const styles = StyleSheet.create({
     container: {
