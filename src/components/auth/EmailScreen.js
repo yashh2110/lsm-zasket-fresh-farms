@@ -24,6 +24,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWith
     const [nameErrorText, setNameErrorText] = useState("")
     const [loading, setLoading] = useState(false)
     const { mobileNumber, otp } = route.params;
+    const { signIn } = React.useContext(AuthContext);
 
     const validate = () => {
         let status = true
@@ -68,7 +69,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWith
                     // Alert.alert(JSON.stringify(response, null, "     "))
                     if (status) {
                         Alert.alert(JSON.stringify(response));
-                        AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
+                        signIn(response?.data)
                         navigation.navigate('PincodeScreen')
                         setLoading(false)
                     } else {

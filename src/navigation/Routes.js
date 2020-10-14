@@ -25,11 +25,13 @@ import Theme from '../styles/Theme';
 import PincodeScreen from '../components/locationScreens/PincodeScreen';
 import CartScreen from '../components/cartStack/CartScreen';
 import SearchScreen from '../components/SearchStack/SearchScreen';
+import AsyncStorage from '@react-native-community/async-storage';
+import { ActivityIndicator } from 'react-native';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
-const AuthContext = React.createContext();
+export const AuthContext = React.createContext();
 
 const Navigate = ({ alerts, darkMode }) => {
 
@@ -38,6 +40,17 @@ const Navigate = ({ alerts, darkMode }) => {
             opacity: current.progress,
         },
     });
+
+
+
+    function SplashScreen() {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>
+                <ActivityIndicator size="large" color={Theme.Colors.primary} />
+            </View>
+        );
+    }
+
     const AuthRoute = () => (
         <Stack.Navigator
             initialRouteName="OnBoardScreen"
@@ -192,6 +205,82 @@ const Navigate = ({ alerts, darkMode }) => {
             </Stack.Navigator>
         );
     }
+
+
+
+
+
+
+
+
+
+
+    const [state, dispatch] = React.useReducer(
+        (prevState, action) => {
+            switch (action.type) {
+                case 'RESTORE_USER_DETAIL':
+                    return {
+                        ...prevState,
+                        userDetails: action.token,
+                        isLoading: false,
+                    };
+                case 'SIGN_IN':
+                    return {
+                        ...prevState,
+                        isSignout: false,
+                        userDetails: action.token,
+                    };
+                case 'SIGN_OUT':
+                    return {
+                        ...prevState,
+                        isSignout: true,
+                        userDetails: null,
+                    };
+            }
+        },
+        {
+            isLoading: true,
+            isSignout: false,
+            userDetails: null,
+        }
+    );
+    React.useEffect(() => {
+        const bootstrapAsync = async () => {
+            let userDetails;
+            let value;
+            try {
+                userDetails = await AsyncStorage.getItem('userDetails');
+                value = await JSON.parse(userDetails);
+            } catch (e) {
+                // Restoring token failed
+            }
+            dispatch({ type: 'RESTORE_USER_DETAIL', token: value });
+        };
+
+        bootstrapAsync();
+    }, []);
+
+
+    const authContext = React.useMemo(
+        () => ({
+            signIn: async data => {
+                AsyncStorage.setItem('userDetails', JSON.stringify(data))
+                dispatch({ type: 'SIGN_IN', token: data });
+            },
+            signOut: async () => {
+                AsyncStorage.clear()
+                dispatch({ type: 'SIGN_OUT' })
+            },
+            signUp: async data => {
+                dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+            },
+        }),
+        []
+    );
+
+
+
+
     return (
         <>
             <View style={{ flex: 1, position: 'absolute', zIndex: 1, width: '100%' }}>
@@ -204,16 +293,26 @@ const Navigate = ({ alerts, darkMode }) => {
                     )
                 })}
             </View>
-            <NavigationContainer>
-                <Stack.Navigator
-                    initialRouteName="AuthRoute"
-                    screenOptions={{
-                        headerShown: false
-                    }}>
-                    <Stack.Screen name="AuthRoute" component={AuthRoute} />
-                    <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
-                </Stack.Navigator>
-            </NavigationContainer>
+            <AuthContext.Provider value={authContext}>
+                <NavigationContainer>
+                    <Stack.Navigator
+                        screenOptions={{
+                            headerShown: false
+                        }}>
+                        {state.isLoading ? (
+                            <Stack.Screen name="Splash" component={SplashScreen} />
+                        ) : state.userDetails == null ? (
+                            <Stack.Screen
+                                options={{
+                                    animationTypeForReplace: state.isSignout ? 'pop' : 'push',
+                                }}
+                                name="AuthRoute" component={AuthRoute} />
+                        ) : (
+                                    <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
+                                )}
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </AuthContext.Provider>
         </>
     )
 }

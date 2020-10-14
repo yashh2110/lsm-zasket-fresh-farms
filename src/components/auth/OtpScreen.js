@@ -16,6 +16,7 @@ import CodeInput from 'react-native-confirmation-code-input';
 import RF from "react-native-responsive-fontsize";
 import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import { AuthContext } from "../../navigation/Routes"
 
 const OtpScreen = ({ navigation, darkMode, setDarkMode, verifyOtp, route }) => {
 
@@ -23,7 +24,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, verifyOtp, route }) => {
     const [loading, setLoading] = useState(false)
 
     const { mobileNumber } = route.params;
-
+    const { signIn } = React.useContext(AuthContext);
     const onSubmit = async () => {
         setLoading(true)
         if (otp) {
@@ -36,7 +37,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, verifyOtp, route }) => {
                     // Alert.alert(JSON.stringify(response, null, "     "))
                     if (status) {
                         setLoading(false)
-                        AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
+                        signIn(response?.data)
                         const userLocation = await AsyncStorage.getItem("userLocation");
                         const value = JSON.parse(userLocation);
                         if (value !== null) {
