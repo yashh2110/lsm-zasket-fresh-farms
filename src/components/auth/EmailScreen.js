@@ -15,6 +15,7 @@ import DarkModeToggle from '../common/DarkModeToggle';
 import CodeInput from 'react-native-confirmation-code-input';
 import RF from "react-native-responsive-fontsize";
 import { ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWithProvider, isAuthenticated }) => {
 
     const [name, setName] = useState("")
@@ -66,12 +67,20 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWith
                 await createNewCustomer(payLoad, (response, status) => {
                     // Alert.alert(JSON.stringify(response, null, "     "))
                     if (status) {
+                        Alert.alert(JSON.stringify(response));
+                        AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
                         navigation.navigate('PincodeScreen')
                         setLoading(false)
                     } else {
-                        Alert.alert(response?.response?.data?.description);
                         setLoading(false)
-                        navigation.goBack()
+                        // Alert.alert(response?.response?.data?.description);
+                        if (response?.response?.data?.description == "Customer with details already exist!!. Please sign in") {
+                            navigation.navigate("Login")
+                        }
+                        if (response?.response?.data?.description == "OTP validation failed") {
+                            Alert.alert(response?.response?.data?.description);
+                            navigation.goBack()
+                        }
                     }
                 })
             } catch {

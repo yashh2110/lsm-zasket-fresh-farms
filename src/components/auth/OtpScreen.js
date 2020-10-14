@@ -1,6 +1,6 @@
 
 import LottieView from 'lottie-react-native';
-import { Button, Icon, Input, Item, Label, Text } from "native-base";
+import { Button, Icon, Input, Item, Label, Text, Toast } from "native-base";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, Image, ImageBackground, Keyboard, Platform, ScrollView, StyleSheet, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
@@ -32,17 +32,33 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, verifyOtp, route }) => {
                 "userMobileNumber": mobileNumber
             }
             try {
-                await verifyOtp(payLoad, (response, status) => {
+                await verifyOtp(payLoad, async (response, status) => {
                     // Alert.alert(JSON.stringify(response, null, "     "))
                     if (status) {
-                        navigation.navigate('BottomTabRoute', { screen: 'SearchStack' })
-                        // Alert.alert(JSON.stringify(response?.data, null, "     "))
-                        AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
                         setLoading(false)
+                        AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
+                        const userLocation = await AsyncStorage.getItem("userLocation");
+                        const value = JSON.parse(userLocation);
+                        if (value !== null) {
+                            navigation.navigate('BottomTabRoute', { screen: 'SearchStack' })
+                            // Alert.alert(JSON.stringify(response?.data, null, "     "))
+                        } else {
+                            navigation.navigate('PincodeScreen')
+                        }
                     } else {
                         setLoading(false)
-                        navigation.navigate('EmailScreen', { mobileNumber: mobileNumber, otp: otp })
-                        Alert.alert(response?.response?.data?.description);
+                        if (response?.response?.data?.description == "OTP validation failed") {
+                            Alert.alert(response?.response?.data?.description);
+                        }
+                        if (response?.response?.data?.description == "Customer with details doesn't exist!!. Please sign Up") {
+                            // Alert.alert(JSON.stringify(response?.response, null, "        "));
+                            // Toast.show({
+                            //     text: "Welcome To Zasket",
+                            //     buttonText: "Okay",
+                            //     type: "success"
+                            // })
+                            navigation.navigate('EmailScreen', { mobileNumber: mobileNumber, otp: otp })
+                        }
                     }
                 })
             } catch {

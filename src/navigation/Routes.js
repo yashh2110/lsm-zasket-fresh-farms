@@ -29,6 +29,7 @@ import SearchScreen from '../components/SearchStack/SearchScreen';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
+const AuthContext = React.createContext();
 
 const Navigate = ({ alerts, darkMode }) => {
 
@@ -205,7 +206,7 @@ const Navigate = ({ alerts, darkMode }) => {
             </View>
             <NavigationContainer>
                 <Stack.Navigator
-                    initialRouteName="BottomTabRoute"
+                    initialRouteName="AuthRoute"
                     screenOptions={{
                         headerShown: false
                     }}>
