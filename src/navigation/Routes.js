@@ -27,6 +27,7 @@ import CartScreen from '../components/cartStack/CartScreen';
 import SearchScreen from '../components/SearchStack/SearchScreen';
 import AsyncStorage from '@react-native-community/async-storage';
 import { ActivityIndicator } from 'react-native';
+import SetAuthContext from '../components/MapStack/setAuthContext';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -75,6 +76,7 @@ const Navigate = ({ alerts, darkMode }) => {
             }}>
             <Stack.Screen name="PincodeScreen" component={PincodeScreen} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
+            <Stack.Screen name="SetAuthContext" component={SetAuthContext} options={{ cardStyleInterpolator: forFade }} />
         </Stack.Navigator>
     );
 
@@ -136,9 +138,10 @@ const Navigate = ({ alerts, darkMode }) => {
             <Stack.Navigator
                 initialRouteName="Home"
                 screenOptions={{
-                    headerStyle: { backgroundColor: '#42f44b' },
-                    headerTintColor: '#fff',
-                    headerTitleStyle: { fontWeight: 'bold' },
+                    // headerStyle: { backgroundColor: '#42f44b' },
+                    // headerTintColor: '#fff',
+                    // headerTitleStyle: { fontWeight: 'bold' },
+                    headerShown: false
                 }}>
                 <Stack.Screen
                     name="Home"

@@ -48,7 +48,8 @@ class MyMapView extends React.Component {
         homeCheck: false,
         officeCheck: false,
         othersCheck: false,
-        deliverFor: "self"
+        deliverFor: "self",
+        mode: "ON_INITIAL"
     };
 
 
@@ -176,6 +177,9 @@ class MyMapView extends React.Component {
             if (status) {
                 Alert.alert(JSON.stringify(response, null, "   "))
                 this.setState({ loading: false })
+                if (this.state.mode === "ON_INITIAL") {
+                    this.props.navigation.navigate('SetAuthContext', { userLocation: null })
+                }
             } else {
                 Alert.alert(JSON.stringify(response, null, "   "))
                 this.setState({ loading: false })
