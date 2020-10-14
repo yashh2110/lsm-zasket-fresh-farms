@@ -2,15 +2,17 @@ import React from 'react';
 import { Alert, Platform, StyleSheet, Image, SafeAreaView, Modal, View, TouchableOpacity, TextInput, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, ScrollView } from 'react-native';
 import MapView, { Marker, Callout, ProviderPropType } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
-import marker from '../assets/png/locationIcon.png';
+import marker from '../../assets/png/locationIcon.png';
 import { Icon, Button, Text } from 'native-base';
-import { MapApiKey } from "../../env"
+import { MapApiKey } from "../../../env"
 import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import Theme from '../styles/Theme';
-import AutoCompleteLocation from '../components/locationScreens/AutoCompleteInput'
+import Theme from '../../styles/Theme';
+import AutoCompleteLocation from './AutoCompleteInput'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { CheckBox } from 'react-native-elements'
+import { addNewCustomerAddress } from '../../actions/map'
+import { connect } from 'react-redux';
 
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
@@ -156,6 +158,30 @@ class MyMapView extends React.Component {
 
 
     onSubmit = async () => {
+        await this.setState({ loading: true })
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let payload = {
+            "addressLine1": this.state.address,
+            "cityId": 0,
+            "isActive": true,
+            "landmark": this.state.landMark,
+            "lat": this.state.latitude,
+            "lon": this.state.longitude,
+            "recepientMobileNumber": parsedUserDetails?.customerDetails?.userMobileNumber,
+            "recepientName": parsedUserDetails?.customerDetails?.name,
+            "saveAs": this.state.saveAs
+        }
+        await this.props.addNewCustomerAddress(payload, (response, status) => {
+            if (status) {
+                Alert.alert(JSON.stringify(response, null, "   "))
+                this.setState({ loading: false })
+            } else {
+                Alert.alert(JSON.stringify(response, null, "   "))
+                this.setState({ loading: false })
+            }
+        })
+
     }
 
     onPressCheckbox = (option) => {
@@ -208,7 +234,7 @@ class MyMapView extends React.Component {
                             <Image
                                 style={{ width: 20, height: 20, }}
                                 resizeMode="contain"
-                                source={require('../assets/png/backIcon.png')}
+                                source={require('../../assets/png/backIcon.png')}
                             />
                         </TouchableOpacity>
                         <MapView
@@ -229,7 +255,7 @@ class MyMapView extends React.Component {
                             {/* <Image style={styles.marker} source={marker} /> */}
                             <LottieView
                                 style={styles.marker}
-                                source={require("../assets/animations/favoriteDoctorHeart.json")}
+                                source={require("../../assets/animations/favoriteDoctorHeart.json")}
                                 autoPlay
                             />
                         </View>
@@ -241,7 +267,7 @@ class MyMapView extends React.Component {
                         {this.state.addressLoading ?
                             <LottieView
                                 style={{ width: "100%", }}
-                                source={require("../assets/animations/lineLoading.json")}
+                                source={require("../../assets/animations/lineLoading.json")}
                                 autoPlay
                             />
                             :
@@ -261,7 +287,7 @@ class MyMapView extends React.Component {
                             <View style={{ flexDirection: "row" }}>
                                 <Image
                                     style={{ width: 30, height: 30, marginLeft: -5 }}
-                                    source={require('../assets/png/locationIcon.png')}
+                                    source={require('../../assets/png/locationIcon.png')}
                                 />
                                 <Text style={{ fontWeight: "bold" }}>Locating...</Text>
                             </View>
@@ -269,7 +295,7 @@ class MyMapView extends React.Component {
                             <View style={{ flexDirection: "row" }}>
                                 <Image
                                     style={{ width: 30, height: 30, marginLeft: -5 }}
-                                    source={require('../assets/png/locationIcon.png')}
+                                    source={require('../../assets/png/locationIcon.png')}
                                 />
                                 <Text>{this.state.address}</Text>
                             </View>
@@ -334,9 +360,10 @@ class MyMapView extends React.Component {
                         <View style={{ flexDirection: 'row' }}>
                             <CheckBox
                                 // center
-                                containerStyle={{ backgroundColor: "transparent", borderWidth: 0 }}
+                                containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
                                 title='Home'
                                 checkedIcon='dot-circle-o'
+                                textStyle={{ fontSize: 13 }}
                                 uncheckedIcon='circle-o'
                                 checked={this.state.homeCheck}
                                 onPress={() => this.onPressCheckbox('homeCheck')}
@@ -344,26 +371,28 @@ class MyMapView extends React.Component {
                             />
                             <CheckBox
                                 // center
-                                containerStyle={{ backgroundColor: "transparent", borderWidth: 0 }}
+                                containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
                                 title='Office'
                                 checkedIcon='dot-circle-o'
                                 uncheckedIcon='circle-o'
+                                textStyle={{ fontSize: 13 }}
                                 checked={this.state.officeCheck}
                                 onPress={() => this.onPressCheckbox('officeCheck')}
                                 checkedColor={Theme.Colors.primary}
                             />
                             <CheckBox
                                 // center
-                                containerStyle={{ backgroundColor: "transparent", borderWidth: 0 }}
+                                containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
                                 title='Others'
                                 checkedIcon='dot-circle-o'
                                 uncheckedIcon='circle-o'
+                                textStyle={{ fontSize: 13 }}
                                 checked={this.state.othersCheck}
                                 onPress={() => this.onPressCheckbox('othersCheck')}
                                 checkedColor={Theme.Colors.primary}
                             />
                         </View>
-                        <Button full style={{ marginTop: 20, backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => this.onSubmit()}><Text>Save & continue</Text></Button>
+                        <Button full style={{ marginVertical: 20, backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => this.onSubmit()}><Text>Save & continue</Text></Button>
                     </ScrollView>
                     {/* <SafeAreaView style={styles.footer}>
                         <Text style={styles.region}>{JSON.stringify(region, null, 2)}</Text>
@@ -409,7 +438,12 @@ class MyMapView extends React.Component {
     }
 }
 
-export default MyMapView;
+const mapStateToProps = (state) => ({
+    darkMode: state.dark,
+})
+
+
+export default connect(mapStateToProps, { addNewCustomerAddress })(MyMapView)
 
 const styles = StyleSheet.create({
     map: {

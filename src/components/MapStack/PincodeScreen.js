@@ -54,14 +54,14 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProv
                 showsVerticalScrollIndicator={false}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                     <View style={{ width: "90%", alignSelf: "center", flex: 1, }}>
-                        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 10, width: 40, height: 40, justifyContent: 'center', }}>
+                        {/* <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 10, width: 40, height: 40, justifyContent: 'center', }}>
                             <Image
                                 style={{ width: 20, height: 20, }}
                                 resizeMode="contain"
                                 source={require('../../assets/png/backIcon.png')}
                             />
-                        </TouchableOpacity>
-                        <View style={{}}>
+                        </TouchableOpacity> */}
+                        <View style={{ marginTop: "10%" }}>
                             {availablity == "DEFAULT" || availablity == "AVAILABLE" ?
                                 <Image
                                     style={{ width: "100%", height: 250, }}

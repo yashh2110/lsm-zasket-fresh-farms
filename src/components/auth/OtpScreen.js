@@ -38,14 +38,6 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, verifyOtp, route }) => {
                     if (status) {
                         setLoading(false)
                         signIn(response?.data)
-                        const userLocation = await AsyncStorage.getItem("userLocation");
-                        const value = JSON.parse(userLocation);
-                        if (value !== null) {
-                            navigation.navigate('BottomTabRoute', { screen: 'SearchStack' })
-                            // Alert.alert(JSON.stringify(response?.data, null, "     "))
-                        } else {
-                            navigation.navigate('PincodeScreen')
-                        }
                     } else {
                         setLoading(false)
                         if (response?.response?.data?.description == "OTP validation failed") {

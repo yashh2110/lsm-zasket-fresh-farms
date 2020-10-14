@@ -14,7 +14,7 @@ import { View, Text } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import HomeScreen from "../components/HomeScreen"
 import InfiniteLoading from "../components/InfiniteLoading"
-import MapScreen from "../components/MapScreen"
+import MapScreen from "../components/MapStack/MapScreen"
 import AccountScreen from "../components/AccountScreen"
 import Pagination from "../components/Pagination"
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
@@ -22,7 +22,7 @@ import FeatherIcons from "react-native-vector-icons/Feather"
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons"
 import CustomDrawerContent from "./CustomDrawerContent"
 import Theme from '../styles/Theme';
-import PincodeScreen from '../components/locationScreens/PincodeScreen';
+import PincodeScreen from '../components/MapStack/PincodeScreen';
 import CartScreen from '../components/cartStack/CartScreen';
 import SearchScreen from '../components/SearchStack/SearchScreen';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -62,6 +62,17 @@ const Navigate = ({ alerts, darkMode }) => {
             <Stack.Screen name="SignUp" component={SignUp} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="EmailScreen" component={EmailScreen} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ cardStyleInterpolator: forFade }} />
+        </Stack.Navigator>
+    );
+
+
+
+    const MapStack = () => (
+        <Stack.Navigator
+            initialRouteName="PincodeScreen"
+            screenOptions={{
+                headerShown: false
+            }}>
             <Stack.Screen name="PincodeScreen" component={PincodeScreen} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
         </Stack.Navigator>
@@ -78,8 +89,8 @@ const Navigate = ({ alerts, darkMode }) => {
                 inactiveBackgroundColor: darkMode ? Theme.Dark.backgroundColor : "#fff",
             }}>
             <Tab.Screen
-                name="HomeScreen"
-                component={HomeScreen}
+                name="HomeStack"
+                component={HomeStack}
                 options={{
                     tabBarLabel: 'Home',
                     tabBarIcon: ({ color, size }) => (
@@ -221,20 +232,27 @@ const Navigate = ({ alerts, darkMode }) => {
                 case 'RESTORE_USER_DETAIL':
                     return {
                         ...prevState,
-                        userDetails: action.token,
+                        userDetails: action.userDetails,
                         isLoading: false,
                     };
                 case 'SIGN_IN':
                     return {
                         ...prevState,
                         isSignout: false,
-                        userDetails: action.token,
+                        userDetails: action.userDetails,
                     };
                 case 'SIGN_OUT':
                     return {
                         ...prevState,
                         isSignout: true,
                         userDetails: null,
+                        userLocation: null,
+                    };
+                case 'SAVE_USER_LOCATION':
+                    return {
+                        ...prevState,
+                        isLoading: false,
+                        userLocation: action.userLocation,
                     };
             }
         },
@@ -242,19 +260,29 @@ const Navigate = ({ alerts, darkMode }) => {
             isLoading: true,
             isSignout: false,
             userDetails: null,
+            userLocation: null,
         }
     );
     React.useEffect(() => {
         const bootstrapAsync = async () => {
             let userDetails;
-            let value;
+            let parsedUserDetails;
             try {
                 userDetails = await AsyncStorage.getItem('userDetails');
-                value = await JSON.parse(userDetails);
+                parsedUserDetails = await JSON.parse(userDetails);
             } catch (e) {
-                // Restoring token failed
             }
-            dispatch({ type: 'RESTORE_USER_DETAIL', token: value });
+            dispatch({ type: 'RESTORE_USER_DETAIL', userDetails: parsedUserDetails });
+
+
+            let userLocation;
+            let parsedUserLocation;
+            try {
+                userLocation = await AsyncStorage.getItem('userLocation');
+                parsedUserLocation = await JSON.parse(userLocation);
+            } catch (e) {
+            }
+            dispatch({ type: 'SAVE_USER_LOCATION', userLocation: parsedUserLocation });
         };
 
         bootstrapAsync();
@@ -265,14 +293,15 @@ const Navigate = ({ alerts, darkMode }) => {
         () => ({
             signIn: async data => {
                 AsyncStorage.setItem('userDetails', JSON.stringify(data))
-                dispatch({ type: 'SIGN_IN', token: data });
+                dispatch({ type: 'SIGN_IN', userDetails: data });
             },
             signOut: async () => {
                 AsyncStorage.clear()
                 dispatch({ type: 'SIGN_OUT' })
             },
-            signUp: async data => {
-                dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+            saveUserLocation: async data => {
+                AsyncStorage.setItem('userLocation', JSON.stringify(data))
+                dispatch({ type: 'SAVE_USER_LOCATION', userLocation: data });
             },
         }),
         []
@@ -307,9 +336,11 @@ const Navigate = ({ alerts, darkMode }) => {
                                     animationTypeForReplace: state.isSignout ? 'pop' : 'push',
                                 }}
                                 name="AuthRoute" component={AuthRoute} />
+                        ) : state.userLocation == null ? (
+                            <Stack.Screen name="MapStack" component={MapStack} options={{ cardStyleInterpolator: forFade }} />
                         ) : (
-                                    <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
-                                )}
+                                        <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
+                                    )}
                     </Stack.Navigator>
                 </NavigationContainer>
             </AuthContext.Provider>

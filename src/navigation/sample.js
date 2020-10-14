@@ -14,7 +14,7 @@ import OnBoard from "../components/auth/OnBoard"
 import * as Animatable from 'react-native-animatable';
 import HomeScreen from "../components/HomeScreen"
 import InfiniteLoading from "../components/InfiniteLoading"
-import MapScreen from "../components/MapScreen"
+import MapScreen from "../components/locationScreens/MapScreen"
 import AccountScreen from "../components/AccountScreen"
 import Pagination from "../components/Pagination"
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
