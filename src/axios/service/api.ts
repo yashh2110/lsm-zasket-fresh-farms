@@ -18,9 +18,10 @@ const axiosinstance = axios.create({
 })
 
 let setAuthorizationFromAsyncStorage = async () => {
-    let authorization = await AsyncStorage.getItem('Authorization')
-    if (authorization) {
-        new AxiosDefaultsManager().setAuthorizationHeader(authorization)
+    let userDetails = await AsyncStorage.getItem('userDetails');
+    let parsedUserDetails = await JSON.parse(userDetails!);
+    if (parsedUserDetails?.customerSessionDetails?.sessionId) {
+        new AxiosDefaultsManager().setAuthorizationHeader(parsedUserDetails?.customerSessionDetails?.sessionId)
     }
 }
 

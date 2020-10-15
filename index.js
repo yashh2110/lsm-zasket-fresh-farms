@@ -6,6 +6,8 @@ import { AppRegistry, YellowBox } from 'react-native';
 import App from './src/App';
 import { name as appName } from './app.json';
 import 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-community/async-storage';
+import { AxiosDefaultsManager } from './src/axios/default';
 if (__DEV__) {
     YellowBox.ignoreWarnings([
         'VirtualizedLists should never be nested',
@@ -15,8 +17,6 @@ if (__DEV__) {
         'Module RCTImageLoader requires',
         'Animated: `useNativeDriver`'
     ]);
-    XMLHttpRequest = GLOBAL.originalXMLHttpRequest ?
-        GLOBAL.originalXMLHttpRequest : GLOBAL.XMLHttpRequest;
 }
 
 AppRegistry.registerComponent(appName, () => App);

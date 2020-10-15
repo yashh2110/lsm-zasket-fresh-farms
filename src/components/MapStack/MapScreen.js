@@ -43,6 +43,8 @@ class MyMapView extends React.Component {
         houseNumber: "",
         landMark: "",
         saveAs: "",
+        name: "",
+        mobileNumber: "",
         addressLoading: false,
         modalVisible: false,
         homeCheck: false,
@@ -162,30 +164,48 @@ class MyMapView extends React.Component {
         await this.setState({ loading: true })
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
-        let payload = {
-            "addressLine1": this.state.address,
-            "cityId": 0,
-            "isActive": true,
-            "landmark": this.state.landMark,
-            "lat": this.state.latitude,
-            "lon": this.state.longitude,
-            "recepientMobileNumber": parsedUserDetails?.customerDetails?.userMobileNumber,
-            "recepientName": parsedUserDetails?.customerDetails?.name,
-            "saveAs": this.state.saveAs
+        let payload;
+        if (this.state.deliverFor === "self") {
+            payload = {
+                "addressLine1": this.state.houseNumber ? this.state.houseNumber + this.state.address : this.state.address,
+                "cityId": 1,
+                // "pincode": ,
+                "isActive": true,
+                "landmark": this.state.landMark,
+                "lat": this.state.latitude,
+                "lon": this.state.longitude,
+                "recepientMobileNumber": parsedUserDetails?.customerDetails?.userMobileNumber,
+                "recepientName": parsedUserDetails?.customerDetails?.name,
+                "saveAs": this.state.saveAs
+            }
         }
+        if (this.state.deliverFor === "others") {
+            payload = {
+                "addressLine1": this.state.houseNumber ? this.state.houseNumber + ", " + this.state.address : this.state.address,
+                "cityId": 1,
+                // "pincode": ,
+                "isActive": true,
+                "landmark": this.state.landMark,
+                "lat": this.state.latitude,
+                "lon": this.state.longitude,
+                "recepientMobileNumber": this.state.mobileNumber ? "+91" + this.state.mobileNumber : "",
+                "recepientName": this.state.name,
+                "saveAs": this.state.saveAs
+            }
+        }
+        console.warn(payload)
         await this.props.addNewCustomerAddress(payload, (response, status) => {
             if (status) {
-                Alert.alert(JSON.stringify(response, null, "   "))
+                // Alert.alert(JSON.stringify(response, null, "   "))
                 this.setState({ loading: false })
                 if (this.state.mode === "ON_INITIAL") {
-                    this.props.navigation.navigate('SetAuthContext', { userLocation: null })
+                    this.props.navigation.navigate('SetAuthContext', { userLocation: payload }) // if you send it as null it wont navigate
                 }
             } else {
                 Alert.alert(JSON.stringify(response, null, "   "))
                 this.setState({ loading: false })
             }
         })
-
     }
 
     onPressCheckbox = (option) => {
@@ -194,6 +214,7 @@ class MyMapView extends React.Component {
                 homeCheck: true,
                 officeCheck: false,
                 othersCheck: false,
+                saveAs: "Home"
             })
         }
         if (option === "officeCheck") {
@@ -201,6 +222,7 @@ class MyMapView extends React.Component {
                 homeCheck: false,
                 officeCheck: true,
                 othersCheck: false,
+                saveAs: "Office"
             })
         }
         if (option === "othersCheck") {
@@ -208,6 +230,7 @@ class MyMapView extends React.Component {
                 homeCheck: false,
                 officeCheck: false,
                 othersCheck: true,
+                saveAs: "Others"
             })
         }
     }
@@ -321,9 +344,9 @@ class MyMapView extends React.Component {
                                     <TextInput
                                         style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                         onChangeText={text => this.setState({
-                                            houseNumber: text
+                                            name: text
                                         })}
-                                        value={this.state.houseNumber}
+                                        value={this.state.name}
                                     />
                                 </View>
                                 <View style={{ marginTop: 10 }}>
@@ -331,9 +354,9 @@ class MyMapView extends React.Component {
                                     <TextInput
                                         style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                         onChangeText={text => this.setState({
-                                            houseNumber: text
+                                            mobileNumber: text
                                         })}
-                                        value={this.state.houseNumber}
+                                        value={this.state.mobileNumber}
                                         keyboardType={"number-pad"}
                                     />
                                 </View>
@@ -353,9 +376,9 @@ class MyMapView extends React.Component {
                             <TextInput
                                 style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                 onChangeText={text => this.setState({
-                                    houseNumber: text
+                                    landMark: text
                                 })}
-                                value={this.state.houseNumber}
+                                value={this.state.landMark}
                             />
                         </View>
                         <View style={{ marginTop: 10 }}>
