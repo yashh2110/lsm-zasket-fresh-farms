@@ -3,3 +3,5 @@ customer controller - /customers/sign-in
 customer controller - /customers/add
 address controller - /customer/{id}/address  [addNewCustomerAddress] ["cityId": 0,"isActive": true] ignore this by now  
 
+/categories  getAllCategories Homescreeen api
+/{category_name}/items getItemsByCategory (to get specific category)
