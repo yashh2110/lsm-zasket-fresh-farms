@@ -1,16 +1,44 @@
-import * as React from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView } from 'react-native';
+import React, { useEffect, useContext, useState } from 'react';
+import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert } from 'react-native';
 import { Icon } from 'native-base';
 import { AuthContext } from "../navigation/Routes"
 import Swiper from 'react-native-swiper';
 import Theme from '../styles/Theme';
+import { getAllCategories } from '../actions/home'
+import { connect } from 'react-redux';
 
-const HomeScreen = ({ navigation }) => {
-    const { signOut } = React.useContext(AuthContext);
-
-    React.useEffect(() => {
-
+const HomeScreen = ({ getAllCategories, categories }) => {
+    const { signOut } = useContext(AuthContext);
+    const [loading, setLoading] = useState(true)
+    const [sectionlistData, setSectionlistData] = useState([])
+    useEffect(() => {
+        initialFunction()
     }, [])
+
+    const initialFunction = () => {
+        getAllCategories((res, status) => {
+            if (status) {
+                // alert(JSON.stringify(res.data, null, "      "))
+                setLoading(false)
+            } else {
+                setLoading(false)
+            }
+        })
+    }
+
+    useEffect(() => {
+        let newArray = [...categories];
+        var i;
+        for (i = 0; i < newArray.length; i++) {
+            newArray[i].title = newArray[i]['categoryDescription'];
+            delete newArray[i].categoryDescription;
+
+            newArray[i].data = newArray[i]['items'];
+            delete newArray[i].items;
+        }
+        setSectionlistData(newArray)
+        // alert(JSON.stringify(newArray, null, "      "))
+    }, [categories])
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: 'white' }} showsVerticalScrollIndicator={false}>
@@ -475,10 +503,17 @@ const HomeScreen = ({ navigation }) => {
                     </View>
                 </ScrollView>
             </View>
+            <Text>{JSON.stringify(sectionlistData, null, "      ")}</Text>
         </ScrollView>
     );
 }
 
+const mapStateToProps = (state) => ({
+    categories: state.home.categories
+})
+
+
+export default connect(mapStateToProps, { getAllCategories })(HomeScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {
@@ -489,4 +524,3 @@ const styles = StyleSheet.create({
         paddingVertical: 10
     },
 });
-export default HomeScreen;
