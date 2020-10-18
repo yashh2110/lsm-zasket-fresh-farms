@@ -12,7 +12,9 @@ import SignUp from "../components/auth/SignUp"
 import OnBoard from "../components/auth/OnBoard"
 import { View, Text } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import HomeScreen from "../components/HomeScreen"
+import HomeScreen from "../components/HomeScreen/HomeScreen"
+import ProductDetailScreen from "../components/ProductScreens/ProductDetailScreen"
+import ProductListScreen from "../components/ProductScreens/ProductListScreen"
 import InfiniteLoading from "../components/InfiniteLoading"
 import MapScreen from "../components/MapStack/MapScreen"
 import AccountScreen from "../components/AccountScreen"
@@ -146,6 +148,16 @@ const Navigate = ({ alerts, darkMode }) => {
                 <Stack.Screen
                     name="Home"
                     component={HomeScreen}
+                    options={{ title: 'Home Page' }}
+                />
+                <Stack.Screen
+                    name="ProductDetailScreen"
+                    component={ProductDetailScreen}
+                    options={{ title: 'Home Page' }}
+                />
+                <Stack.Screen
+                    name="ProductListScreen"
+                    component={ProductListScreen}
                     options={{ title: 'Home Page' }}
                 />
                 <Stack.Screen

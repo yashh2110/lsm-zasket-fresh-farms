@@ -22,3 +22,16 @@ export const getAllCategories = (callback) => async dispatch => {
         callback(err, false)
     }
 };
+
+
+
+// Get posts
+export const getItemsByCategory = (category_name, callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.get(`/${category_name}/items`);
+        // alert(JSON.stringify(res.data, null, "      "))
+        callback(res, true)
+    } catch (err) {
+        callback(err, false)
+    }
+};

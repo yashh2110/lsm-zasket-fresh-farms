@@ -7,8 +7,9 @@ const Loader = () => {
         <>
             <View style={[styles.loading]}>
             </View>
-            <View style={{ position: 'absolute', elevation: 101, left: 0, right: 0, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
-                <LottieView source={require('../../assets/json/Loader1.json')} autoPlay loop style={{ width: 150, height: 150 }} />
+            <View style={{ position: 'absolute', elevation: 101, left: 0, right: 0, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', zIndex: 1 }}>
+                {/* <LottieView source={require('../../assets/json/Loader1.json')} autoPlay loop style={{ width: 150, height: 150 }} /> */}
+                <ActivityIndicator style={{}} size="large" color="white" />
             </View>
         </>
     )
@@ -21,6 +22,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         elevation: 100,
         left: 0,
+        zIndex: 1,
         right: 0,
         top: 0,
         bottom: 0,

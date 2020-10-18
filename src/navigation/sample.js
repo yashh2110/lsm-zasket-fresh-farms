@@ -12,7 +12,7 @@ import EmailScreen from "../components/auth/EmailScreen"
 import SignUp from "../components/auth/SignUp"
 import OnBoard from "../components/auth/OnBoard"
 import * as Animatable from 'react-native-animatable';
-import HomeScreen from "../components/HomeScreen"
+import HomeScreen from "../components/HomeScreen/HomeScreen"
 import InfiniteLoading from "../components/InfiniteLoading"
 import MapScreen from "../components/locationScreens/MapScreen"
 import AccountScreen from "../components/AccountScreen"
