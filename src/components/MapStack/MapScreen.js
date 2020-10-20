@@ -51,7 +51,8 @@ class MyMapView extends React.Component {
         officeCheck: false,
         othersCheck: false,
         deliverFor: "self",
-        mode: "ON_INITIAL"
+        mode: "ON_INITIAL",
+        pincode: ""
     };
 
 
@@ -83,7 +84,8 @@ class MyMapView extends React.Component {
                     fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
                         .then((response) => {
                             response.json().then(async (json) => {
-                                await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude)
+                                let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                                await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
                             });
                         }).catch((err) => {
                             console.warn(err)
@@ -116,7 +118,9 @@ class MyMapView extends React.Component {
             .then((response) => {
                 response.json().then(async (json) => {
                     // console.warn(json)
-                    await this.setLocation(json?.results?.[0]?.formatted_address, this.state.region.latitude, this.state.region.longitude)
+                    let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                    // alert(JSON.stringify(postal_code, null, "  "))
+                    await this.setLocation(json?.results?.[0]?.formatted_address, this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
                     await this.setState({ addressLoading: false })
                 });
             }).catch(async (err) => {
@@ -125,11 +129,12 @@ class MyMapView extends React.Component {
             })
     }
 
-    setLocation = async (address, latitude, longitude) => {
+    setLocation = async (address, latitude, longitude, postal_code) => {
         this.setState({
             address: address,
             latitude: latitude,
-            longitude: longitude
+            longitude: longitude,
+            pincode: postal_code
         })
         await AsyncStorage.setItem("location", JSON.stringify({
             address: address,
@@ -168,8 +173,7 @@ class MyMapView extends React.Component {
         if (this.state.deliverFor === "self") {
             payload = {
                 "addressLine1": this.state.houseNumber ? this.state.houseNumber + this.state.address : this.state.address,
-                "cityId": 1,
-                // "pincode": ,
+                "pincode": this.state.pincode,
                 "isActive": true,
                 "landmark": this.state.landMark,
                 "lat": this.state.latitude,
@@ -182,8 +186,7 @@ class MyMapView extends React.Component {
         if (this.state.deliverFor === "others") {
             payload = {
                 "addressLine1": this.state.houseNumber ? this.state.houseNumber + ", " + this.state.address : this.state.address,
-                "cityId": 1,
-                // "pincode": ,
+                "pincode": this.state.pincode,
                 "isActive": true,
                 "landmark": this.state.landMark,
                 "lat": this.state.latitude,
@@ -202,7 +205,7 @@ class MyMapView extends React.Component {
                     this.props.navigation.navigate('SetAuthContext', { userLocation: payload }) // if you send it as null it wont navigate
                 }
             } else {
-                Alert.alert(JSON.stringify(response, null, "   "))
+                Alert.alert(JSON.stringify(response?.data, null, "   "))
                 this.setState({ loading: false })
             }
         })

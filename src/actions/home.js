@@ -4,7 +4,7 @@ import {
     GET_CATEGORIES
 } from './types';
 
-// Get posts
+// getAllCategories
 export const getAllCategories = (callback) => async dispatch => {
     try {
         const res = await axiosinstance.get('/categories');
@@ -25,10 +25,36 @@ export const getAllCategories = (callback) => async dispatch => {
 
 
 
-// Get posts
+// getItemsByCategory
 export const getItemsByCategory = (category_name, callback) => async dispatch => {
     try {
         const res = await axiosinstance.get(`/${category_name}/items`);
+        // alert(JSON.stringify(res.data, null, "      "))
+        callback(res, true)
+    } catch (err) {
+        callback(err, false)
+    }
+};
+
+// Get item
+export const getItem = (item_id, callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.get(`/items/${item_id}`);
+        // alert(JSON.stringify(res.data, null, "      "))
+        callback(res, true)
+    } catch (err) {
+        callback(err, false)
+    }
+};
+
+
+// search query
+export const searchItems = (searchTerm, callback) => async dispatch => {
+    try {
+        let payload = {
+            items_like: searchTerm
+        }
+        const res = await axiosinstance.get(`/items/search`, { params: { items_like: searchTerm } })
         // alert(JSON.stringify(res.data, null, "      "))
         callback(res, true)
     } catch (err) {

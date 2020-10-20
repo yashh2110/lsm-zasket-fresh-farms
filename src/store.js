@@ -11,7 +11,7 @@ const middleware = [thunk]
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['dark', 'IntlReducers']
+    whitelist: ['dark', 'IntlReducers', 'home']
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

@@ -13,17 +13,15 @@ const CustomHeader = ({ navigation, title }) => {
                 style={{ width: 60, justifyContent: 'center', alignItems: 'center', }}
             >
                 <>
-                    <Icon name="left" type="AntDesign" style={[{ color: 'black', fontSize: 23 }]} />
+                    <Icon name="chevron-small-left" type="Entypo" style={[{ color: 'black', fontSize: 36 }]} />
                 </>
             </TouchableOpacity>
             <View style={{ flex: 1, justifyContent: 'center', }}>
-                <Text style={{ fontSize: 18, color: 'black' }}>{title}</Text>
+                <Text style={{ fontSize: 18, color: 'black', textTransform: 'capitalize' }}>{title}</Text>
             </View>
             <>
                 <TouchableOpacity
-                    onPress={() => {
-                        //   navigation.navigate('MasterSearch')
-                    }}
+                    onPress={() => navigation.navigate('SearchStack', { screen: 'Search' })}
                     style={{ justifyContent: 'center', alignItems: 'center', paddingHorizontal: 10 }}
                 >
                     <Icon name="search" type="Feather" style={[{ color: '#727272', fontSize: 22 }]} />

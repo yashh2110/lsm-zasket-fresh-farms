@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
+import Theme from '../../styles/Theme';
+import CustomHeader from '../common/CustomHeader';
 
-const BannerImages = ({ }) => {
+const BannerImages = ({ navigation }) => {
     const data = [
         {
             "imageable_id": 244,
@@ -20,34 +22,38 @@ const BannerImages = ({ }) => {
     const [image, setImage] = useState({ banner: null, position: 0 });
     useEffect(() => {
         setImage({ ...image, banner: data?.[0]?.filename, position: 0 });
-    }, [data]);
+    }, []);
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ backgroundColor: 'white' }}>
             <View style={[{
                 width: "100%",
-                aspectRatio: 1.7,
+                aspectRatio: 1.33333,
+                backgroundColor: 'red'
             },]}>
                 {/* todo: Alignment after Implementation */}
                 {/* <Text>{JSON.stringify(image.banner, null, "       ")}</Text> */}
                 <Image
-                    source={require('../../assets/png/HomeScreenVegetable.png')} style={{ height: "100%", width: "100%" }} resizeMode="contain"
+                    // source={require('../../assets/png/HomeScreenVegetable.png')} 
+                    source={{ uri: "https://i.picsum.photos/id/523/1248/936.jpg?hmac=myimbFBQoAaNy-bwZVM7jJbsgraeFWBTb8BtGlfaTvQ" }}
+                    style={{ height: "100%", width: "100%" }} resizeMode="contain"
                 />
             </View>
-            <ScrollView horizontal={true}>
+            <ScrollView horizontal={true} contentContainerStyle={{ height: 60 }}>
                 {data?.map((item, index) => {
                     return (
-                        <View style={[{ marginVertical: 8, marginHorizontal: 4, position: "relative" }]} key={index}>
+                        <View style={[{ marginVertical: 8, marginHorizontal: 4, position: "relative", borderRadius: 4 }]} key={index}>
                             <TouchableOpacity onPress={() => setImage({ ...image, banner: item.filename, position: index })}>
                                 <Image
-                                    source={require('../../assets/png/HomeScreenProduct.png')}
+                                    // source={require('../../assets/png/HomeScreenProduct.png')}
+                                    source={{ uri: "https://i.picsum.photos/id/835/111/81.jpg?hmac=tgyDI03VaG5zd4SFFifH0Muy4cW2e0hIuvU14QRv2Vk" }}
                                     style={[
-                                        { aspectRatio: 1, width: 40, backgroundColor: "#ccc", }
+                                        { backgroundColor: "#ccc", width: 50, height: 50, borderRadius: 4 }
                                     ]}
                                 />
 
                                 {image.position === index ? (
                                     <View style={styles.eyeOverlayContainer}>
-                                        <View style={[styles.eyeOverlay, { height: "100%", width: "100%" }]}></View>
+                                        <View style={[styles.eyeOverlay, { height: "100%", width: "100%", borderRadius: 4 }]}></View>
                                         <Icon
                                             iconStyle={[{ color: "white" }, styles.eyeOpacity]}
                                             name="remove-red-eye"
@@ -79,7 +85,9 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-
+        borderWidth: 1,
+        borderColor: Theme.Colors.primary,
+        borderRadius: 4
     },
     eyeOverlay: {
         position: "absolute",

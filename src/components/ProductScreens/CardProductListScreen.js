@@ -8,24 +8,27 @@ const CardProductListScreen = ({ item, navigation }) => {
     return (
         <View style={{ flex: 1, margin: 4, width: "90%", marginBottom: 10, alignSelf: 'center' }}>
             <TouchableOpacity
-                onPress={() => { navigation.navigate("ProductDetailScreen") }}
+                onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
                 style={styles.productCard}>
                 <View style={{
-                    backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', padding: 5, paddingVertical: 10, borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
+                    backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', padding: 10, borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
                 }} onPress={() => { }}>
                     {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
                     <Image
-                        style={{ width: 130, height: 100, }}
-                        source={require('../../assets/png/HomeScreenProduct.png')} />
-
+                        style={{ width: 130, height: 100, borderRadius: 5 }}
+                        resizeMode="contain"
+                        source={require('../../assets/png/Rectangle.png')}
+                    // source={{ uri: "https://i.picsum.photos/id/390/500/300.jpg?hmac=MTvu05oUf6PaVif2NTqWv7mLAYEYslPgtVOyjSZe-pk" }}
+                    />
                 </View>
                 <View style={[{ padding: 10 }]}>
                     <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice}</Text>
                         <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice}</Text>
+                        <Text style={{ fontSize: 14, color: Theme.Colors.primary, marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
                     </View>
-                    <Text style={{ fontSize: 12, color: '#909090', }}>500 grams</Text>
+                    <Text style={{ fontSize: 12, color: '#909090', }}>{item?.itemSubName}</Text>
                 </View>
             </TouchableOpacity>
 

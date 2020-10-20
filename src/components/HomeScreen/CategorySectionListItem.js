@@ -9,13 +9,13 @@ const CategorySectionListItem = ({ item, navigation }) => {
             {/* <Text>{JSON.stringify(item, null, "      ")}</Text> */}
             <View style={{ flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
-                    <Text style={{ color: '#2E2E2E', padding: 10, fontWeight: 'bold', fontSize: 16 }}>{item?.categoryName}</Text>
+                    <Text style={{ color: '#2E2E2E', padding: 10, fontWeight: 'bold', fontSize: 16, textTransform: 'capitalize' }}>{item?.categoryName}</Text>
                 </View>
                 <TouchableOpacity
                     onPress={() => { navigation.navigate('ProductListScreen', { categoryName: item?.categoryName }) }}
                     style={{ justifyContent: 'center', alignItems: 'center', padding: 10, }}
                 >
-                    <Text style={{ color: "#727272", }}>View All</Text>
+                    <Text style={{ color: "#727272", }}>View all</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.scrollChildParent}>
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         backgroundColor: 'white',
-        paddingVertical: 5,
+        marginTop: -5
     },
     productCard: {
         margin: 2,

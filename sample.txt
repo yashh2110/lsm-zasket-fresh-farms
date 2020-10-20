@@ -5,3 +5,4 @@ address controller - /customer/{id}/address  [addNewCustomerAddress] ["cityId": 
 
 /categories  getAllCategories Homescreeen api
 /{category_name}/items getItemsByCategory (to get specific category)
+/items/{item_id} get specific item details

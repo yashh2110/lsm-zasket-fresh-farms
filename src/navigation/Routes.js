@@ -180,6 +180,11 @@ const Navigate = ({ alerts, darkMode }) => {
                     component={SearchScreen}
                     options={{ title: 'Search Page' }}
                 />
+                <Stack.Screen
+                    name="ProductDetailScreen"
+                    component={ProductDetailScreen}
+                    options={{ title: 'Home Page' }}
+                />
             </Stack.Navigator>
         );
     }
