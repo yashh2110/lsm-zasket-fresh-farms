@@ -8,6 +8,7 @@ import { getAllCategories } from '../../actions/home'
 import { connect } from 'react-redux';
 import CategorySectionListItem from './CategorySectionListItem';
 import Loader from '../common/Loader';
+import DarkModeToggle from '../common/DarkModeToggle';
 
 const HomeScreen = ({ getAllCategories, categories, navigation }) => {
     const { signOut } = useContext(AuthContext);

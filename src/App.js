@@ -4,10 +4,9 @@ import React, { useEffect } from 'react';
 import 'react-native-gesture-handler'; //do not remove this line else app will get crash while using drawer in release mode due to gesture handling 
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Provider } from "react-redux";
-import { persistStore } from 'redux-persist';
-import { PersistGate } from 'redux-persist/integration/react';
+import { PersistGate } from 'redux-persist/es/integration/react'
 import AppContainer from './AppContainer';
-import store from "./store";
+import { store, persistor } from "./store";
 import setAuthToken from './utils/setAuthToken';
 
 (async () => {
@@ -25,23 +24,17 @@ const App = () => {
   useEffect(() => {
     // store.dispatch(loadUser())
   }, [])
-  let persistor = persistStore(store)
   return (
     <Root>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <PaperProvider>
+      <PaperProvider>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
             <AppContainer />
-          </PaperProvider>
-        </PersistGate>
-      </Provider>
+          </PersistGate>
+        </Provider>
+      </PaperProvider>
     </Root>
   );
 }
-
-
-
-
-
 
 export default App;

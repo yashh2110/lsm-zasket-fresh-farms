@@ -1,34 +1,42 @@
 import * as React from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, ScrollView } from 'react-native';
+import { connect } from 'react-redux';
+import { clearCart } from '../../actions/cart'
 
-const CartScreen = ({ navigation }) => {
+const CartScreen = ({ navigation, cartItems, clearCart }) => {
+
+    const onClearCart = async () => {
+        clearCart()
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <View style={{ flex: 1, padding: 16 }}>
+            <ScrollView style={{ flex: 1, padding: 16 }}>
                 <View
-                    style={{
-                        flex: 1,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}>
-                    <Text
-                        style={{
-                            fontSize: 25,
-                            textAlign: 'center',
-                            marginBottom: 16
-                        }}>
-                        You are on Home Screen
+                    style={{ flex: 1, }}>
+                    <Text style={{ textAlign: 'center', marginBottom: 16 }}>
+                        {JSON.stringify(cartItems, null, "       ")}
                     </Text>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('AccountStack', { screen: 'Account' })}>
-                        <Text>Go to account Tab</Text>
+                        // onPress={() => navigation.navigate('AccountStack', { screen: 'Account' })}
+                        onPress={() => onClearCart()}
+                    >
+                        <Text>clearCart</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }
+
+const mapStateToProps = (state) => ({
+    cartItems: state.cart.cartItems,
+    darkMode: state.dark,
+    categories: state.home.categories
+})
+
+export default connect(mapStateToProps, { clearCart })(CartScreen)
 
 const styles = StyleSheet.create({
     button: {
@@ -39,4 +47,3 @@ const styles = StyleSheet.create({
         marginTop: 16,
     },
 });
-export default CartScreen;

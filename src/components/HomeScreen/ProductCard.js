@@ -1,10 +1,20 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList } from 'react-native';
 import Theme from '../../styles/Theme';
+import { addToCart } from '../../actions/cart'
+import { connect } from 'react-redux';
 
-const ProductCard = ({ item, navigation }) => {
+const ProductCard = ({ item, navigation, addToCart }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(1)
+
+    const onAddToCart = async () => {
+        setAddButton(!addButton)
+        let obj = item
+        obj.count = count
+        addToCart(obj, count)
+    }
+
     return (
         <View style={{ flex: 1, margin: 4, width: 220, marginBottom: 20 }}>
             <TouchableOpacity
@@ -33,7 +43,7 @@ const ProductCard = ({ item, navigation }) => {
 
             {addButton ?
                 <TouchableOpacity
-                    onPress={() => { setAddButton(!addButton) }}
+                    onPress={() => onAddToCart()}
                     style={[styles.addButton, {}]}
                 >
                     <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+ Add</Text>
@@ -55,8 +65,11 @@ const ProductCard = ({ item, navigation }) => {
         </View>
     )
 }
-export default ProductCard;
+const mapStateToProps = (state) => ({
+})
 
+
+export default connect(mapStateToProps, { addToCart })(ProductCard)
 const styles = StyleSheet.create({
 
     scrollChildParent: {
