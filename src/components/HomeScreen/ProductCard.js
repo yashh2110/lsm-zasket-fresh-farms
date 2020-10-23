@@ -1,19 +1,55 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList } from 'react-native';
 import Theme from '../../styles/Theme';
-import { addToCart } from '../../actions/cart'
+import { addToCart, updateCart } from '../../actions/cart'
 import { connect } from 'react-redux';
 
-const ProductCard = ({ item, navigation, addToCart }) => {
+const ProductCard = ({ item, navigation, addToCart, updateCart, cartItems }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(1)
+    const [isUpdate, setIsUpdate] = useState(false)
+
+    useEffect(() => {
+        if (isUpdate) {
+            updateCart(item, count)
+        }
+    }, [count])
+
+    useEffect(() => {
+        if (cartItems.length > 0) {
+            cartItems?.forEach(el => {
+                if (el?.id == item?.id) {
+                    setAddButton(false)
+                    setCount(el.count)
+                }
+            })
+        } else {
+            setAddButton(true)
+            setCount(1)
+        }
+    }, [cartItems])
 
     const onAddToCart = async () => {
         setAddButton(!addButton)
         let obj = item
         obj.count = count
-        addToCart(obj, count)
+        addToCart(obj)
+        setIsUpdate(true)
     }
+
+    const onCartUpdate = async (option) => {
+        setIsUpdate(true)
+        if (option == "INCREASE") {
+            if (count > 1) {
+                setCount(count - 1)
+            }
+        }
+        if (option == "DECREASE") {
+            setCount(count + 1)
+        }
+    }
+
+
 
     return (
         <View style={{ flex: 1, margin: 4, width: 220, marginBottom: 20 }}>
@@ -50,13 +86,13 @@ const ProductCard = ({ item, navigation, addToCart }) => {
                 </TouchableOpacity>
                 :
                 <View style={[styles.addButton, {}]}>
-                    <TouchableOpacity onPress={() => { if (count > 1) setCount(count - 1) }} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                    <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
                         <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
                     </TouchableOpacity>
                     <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
                         <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count}</Text>
                     </View>
-                    <TouchableOpacity onPress={() => { setCount(count + 1) }} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                    <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
                         <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
                     </TouchableOpacity>
                 </View>
@@ -66,10 +102,11 @@ const ProductCard = ({ item, navigation, addToCart }) => {
     )
 }
 const mapStateToProps = (state) => ({
+    cartItems: state.cart.cartItems,
 })
 
 
-export default connect(mapStateToProps, { addToCart })(ProductCard)
+export default connect(mapStateToProps, { addToCart, updateCart })(ProductCard)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

@@ -1,4 +1,4 @@
-import { ADD_TO_CART, CLEAR_CART } from '../actions/types'
+import { ADD_TO_CART, CLEAR_CART, UPDATE_COUNT } from '../actions/types'
 const initialState = {
     cartItems: []
 }
@@ -10,6 +10,14 @@ const cart = (state = initialState, action) => {
             return {
                 ...state,
                 cartItems: [...state.cartItems, payload]
+            }
+        case UPDATE_COUNT:
+            const index = state?.cartItems?.findIndex(item => item?.id == payload?.item?.id)
+            const newArray = [...state.cartItems]
+            newArray[index].count = payload?.count
+            return {
+                ...state,
+                cartItems: newArray
             }
         case CLEAR_CART:
             return {
