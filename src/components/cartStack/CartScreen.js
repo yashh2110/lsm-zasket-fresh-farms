@@ -28,9 +28,9 @@ const CartScreen = ({ navigation, cartItems, clearCart }) => {
                         />
                     )}
                 />
-                <Text style={{ textAlign: 'center', marginBottom: 16 }}>
+                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>
                     {JSON.stringify(cartItems, null, "       ")}
-                </Text>
+                </Text> */}
                 <TouchableOpacity
                     style={styles.button}
                     // onPress={() => navigation.navigate('AccountStack', { screen: 'Account' })}
