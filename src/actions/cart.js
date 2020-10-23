@@ -1,4 +1,4 @@
-import { ADD_TO_CART, CLEAR_CART, UPDATE_COUNT } from './types'
+import { ADD_TO_CART, CLEAR_CART, UPDATE_COUNT, DELETE_ITEM_CART } from './types'
 
 export const addToCart = (item, count) => dispatch => {
     dispatch({
@@ -17,6 +17,13 @@ export const updateCart = (item, count) => dispatch => {
 export const clearCart = (payload) => dispatch => {
     dispatch({
         type: CLEAR_CART,
+        payload: payload
+    })
+}
+
+export const deleteCartItem = (payload) => dispatch => {
+    dispatch({
+        type: DELETE_ITEM_CART,
         payload: payload
     })
 }

@@ -1,14 +1,14 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList } from 'react-native';
 import Theme from '../../styles/Theme';
-import { addToCart, updateCart } from '../../actions/cart'
+import { addToCart, updateCart, deleteCartItem } from '../../actions/cart'
 import { connect } from 'react-redux';
+import { Icon } from 'native-base';
 
-const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartItems }) => {
+const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, deleteCartItem }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(1)
     const [isUpdate, setIsUpdate] = useState(false)
-
 
     useEffect(() => {
         if (cartItems.length > 0) {
@@ -51,7 +51,9 @@ const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartIt
         }
     }
 
-
+    const onDeleteItem = async () => {
+        deleteCartItem(item)
+    }
 
     return (
         <View style={{ flex: 1, margin: 4, width: "90%", marginBottom: 10, alignSelf: 'center' }}>
@@ -63,7 +65,7 @@ const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartIt
                 }} onPress={() => { }}>
                     {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
                     <Image
-                        style={{ width: 130, height: 100, borderRadius: 5 }}
+                        style={{ width: 100, height: 80, borderRadius: 5 }}
                         resizeMode="contain"
                         source={require('../../assets/png/Rectangle.png')}
                     // source={{ uri: "https://i.picsum.photos/id/390/500/300.jpg?hmac=MTvu05oUf6PaVif2NTqWv7mLAYEYslPgtVOyjSZe-pk" }}
@@ -71,35 +73,39 @@ const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartIt
                 </View>
                 <View style={[{ padding: 10 }]}>
                     <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice}</Text>
-                        <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice}</Text>
-                        <Text style={{ fontSize: 14, color: Theme.Colors.primary, marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
-                    </View>
-                    <Text style={{ fontSize: 12, color: '#909090', }}>{item?.itemSubName}</Text>
+
+                    <Text style={{ fontSize: 12, color: '#909090', marginVertical: 10 }}>{item?.itemSubName}</Text>
+                    {addButton ?
+                        <TouchableOpacity
+                            onPress={() => onAddToCart()}
+                            style={[styles.addButton, {}]}
+                        >
+                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+ Add</Text>
+                        </TouchableOpacity>
+                        :
+                        <View style={[styles.addButton, {}]}>
+                            <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
+                            </TouchableOpacity>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count}</Text>
+                            </View>
+                            <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
+                            </TouchableOpacity>
+                        </View>
+                    }
+                </View>
+                <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', padding: 10, }}>
+                    <TouchableOpacity onPress={() => onDeleteItem()} style={{ backgroundColor: 'white', position: 'absolute', top: 0, padding: 10 }}>
+                        <Icon name="trash-o" type="FontAwesome" style={{ fontSize: 20 }} />
+                    </TouchableOpacity>
+                    <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', }}>₹{item?.actualPrice * item?.count}</Text>
+                    <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice * item?.count}</Text>
                 </View>
             </TouchableOpacity>
 
-            {addButton ?
-                <TouchableOpacity
-                    onPress={() => onAddToCart()}
-                    style={[styles.addButton, {}]}
-                >
-                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+ Add</Text>
-                </TouchableOpacity>
-                :
-                <View style={[styles.addButton, {}]}>
-                    <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
-                    </TouchableOpacity>
-                    <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count}</Text>
-                    </View>
-                    <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
-                    </TouchableOpacity>
-                </View>
-            }
+
 
         </View>
     )
@@ -109,7 +115,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { addToCart, updateCart })(CardProductListScreen)
+export default connect(mapStateToProps, { addToCart, updateCart, deleteCartItem })(CardCartScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {
@@ -153,9 +159,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 4,
-        position: 'absolute',
-        zIndex: 1,
-        right: 10,
-        bottom: 12,
+        // position: 'absolute',
+        // zIndex: 1,
+        // right: 10,
+        // bottom: 12,
     }
 });

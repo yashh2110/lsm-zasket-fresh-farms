@@ -4,7 +4,7 @@ import { Text, TouchableOpacity, View, Image, AsyncStorage } from 'react-native'
 import { Icon } from 'native-base';
 import { connect } from 'react-redux';
 
-const CustomHeader = ({ navigation, title }) => {
+const CustomHeader = ({ navigation, title, showSearch = true }) => {
 
     return (
         <View style={{ flexDirection: 'row', minHeight: 60 }}>
@@ -20,12 +20,14 @@ const CustomHeader = ({ navigation, title }) => {
                 <Text style={{ fontSize: 18, color: 'black', textTransform: 'capitalize' }}>{title}</Text>
             </View>
             <>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('SearchStack', { screen: 'Search' })}
-                    style={{ justifyContent: 'center', alignItems: 'center', paddingHorizontal: 10 }}
-                >
-                    <Icon name="search" type="Feather" style={[{ color: '#727272', fontSize: 22 }]} />
-                </TouchableOpacity>
+                {showSearch ?
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('SearchStack', { screen: 'Search' })}
+                        style={{ justifyContent: 'center', alignItems: 'center', paddingHorizontal: 10 }}
+                    >
+                        <Icon name="search" type="Feather" style={[{ color: '#727272', fontSize: 22 }]} />
+                    </TouchableOpacity>
+                    : undefined}
             </>
             {/* <CartButton navigation={navigation} /> */}
         </View>

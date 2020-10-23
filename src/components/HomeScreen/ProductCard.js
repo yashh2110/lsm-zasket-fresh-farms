@@ -9,11 +9,6 @@ const ProductCard = ({ item, navigation, addToCart, updateCart, cartItems }) => 
     const [count, setCount] = useState(1)
     const [isUpdate, setIsUpdate] = useState(false)
 
-    useEffect(() => {
-        if (isUpdate) {
-            updateCart(item, count)
-        }
-    }, [count])
 
     useEffect(() => {
         if (cartItems.length > 0) {
@@ -26,8 +21,15 @@ const ProductCard = ({ item, navigation, addToCart, updateCart, cartItems }) => 
         } else {
             setAddButton(true)
             setCount(1)
+            setIsUpdate(false)
         }
     }, [cartItems])
+
+    useEffect(() => {
+        if (isUpdate) {
+            updateCart(item, count)
+        }
+    }, [count])
 
     const onAddToCart = async () => {
         setAddButton(!addButton)

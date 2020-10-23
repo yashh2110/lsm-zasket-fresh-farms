@@ -4,6 +4,7 @@ export const GET_CATEGORIES = 'GET_CATEGORIES'
 export const ADD_TO_CART = 'ADD_TO_CART'
 export const CLEAR_CART = 'CLEAR_CART'
 export const UPDATE_COUNT = 'UPDATE_COUNT'
+export const DELETE_ITEM_CART = 'DELETE_ITEM_CART'
 
 
 

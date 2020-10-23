@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, ScrollView } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, FlatList, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { clearCart } from '../../actions/cart'
+import CustomHeader from '../common/CustomHeader';
+import CardCartScreen from './CardCartScreen';
 
 const CartScreen = ({ navigation, cartItems, clearCart }) => {
 
@@ -10,23 +12,34 @@ const CartScreen = ({ navigation, cartItems, clearCart }) => {
     }
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <ScrollView style={{ flex: 1, padding: 16 }}>
-                <View
-                    style={{ flex: 1, }}>
-                    <Text style={{ textAlign: 'center', marginBottom: 16 }}>
-                        {JSON.stringify(cartItems, null, "       ")}
-                    </Text>
-                    <TouchableOpacity
-                        style={styles.button}
-                        // onPress={() => navigation.navigate('AccountStack', { screen: 'Account' })}
-                        onPress={() => onClearCart()}
-                    >
-                        <Text>clearCart</Text>
-                    </TouchableOpacity>
-                </View>
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <CustomHeader navigation={navigation} title={"Cart"} showSearch={false} />
+            <ScrollView style={{ flex: 1, padding: 16, backgroundColor: 'white' }}>
+                <FlatList
+                    data={cartItems}
+                    renderItem={({ item }) => (
+                        <CardCartScreen item={item} navigation={navigation} />
+                    )}
+                    keyExtractor={item => item?.id.toString()}
+                    // ListEmptyComponent={emptyComponent}
+                    ItemSeparatorComponent={() => (
+                        <View
+                            style={{ height: 0.7, width: "90%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }}
+                        />
+                    )}
+                />
+                <Text style={{ textAlign: 'center', marginBottom: 16 }}>
+                    {JSON.stringify(cartItems, null, "       ")}
+                </Text>
+                <TouchableOpacity
+                    style={styles.button}
+                    // onPress={() => navigation.navigate('AccountStack', { screen: 'Account' })}
+                    onPress={() => onClearCart()}
+                >
+                    <Text>clearCart</Text>
+                </TouchableOpacity>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
 
