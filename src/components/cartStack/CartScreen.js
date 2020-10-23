@@ -31,13 +31,13 @@ const CartScreen = ({ navigation, cartItems, clearCart }) => {
                 {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>
                     {JSON.stringify(cartItems, null, "       ")}
                 </Text> */}
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     style={styles.button}
                     // onPress={() => navigation.navigate('AccountStack', { screen: 'Account' })}
                     onPress={() => onClearCart()}
                 >
                     <Text>clearCart</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </ScrollView>
         </View>
     );

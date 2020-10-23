@@ -30,6 +30,7 @@ import SearchScreen from '../components/SearchStack/SearchScreen';
 import AsyncStorage from '@react-native-community/async-storage';
 import { ActivityIndicator } from 'react-native';
 import SetAuthContext from '../components/MapStack/setAuthContext';
+import CartButton from './CartButton';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -118,7 +119,7 @@ const Navigate = ({ alerts, darkMode }) => {
                 options={{
                     tabBarLabel: 'Cart',
                     tabBarIcon: ({ color, size }) => (
-                        <SimpleLineIcons name="handbag" color={color} size={size} />
+                        <CartButton color={color} size={size} />
                     ),
                 }}
             />
@@ -150,11 +151,11 @@ const Navigate = ({ alerts, darkMode }) => {
                     component={HomeScreen}
                     options={{ title: 'Home Page' }}
                 />
-                <Stack.Screen
+                {/* <Stack.Screen
                     name="ProductDetailScreen"
                     component={ProductDetailScreen}
                     options={{ title: 'Home Page' }}
-                />
+                /> */}
                 <Stack.Screen
                     name="ProductListScreen"
                     component={ProductListScreen}
@@ -180,11 +181,11 @@ const Navigate = ({ alerts, darkMode }) => {
                     component={SearchScreen}
                     options={{ title: 'Search Page' }}
                 />
-                <Stack.Screen
+                {/* <Stack.Screen
                     name="ProductDetailScreen"
                     component={ProductDetailScreen}
                     options={{ title: 'Home Page' }}
-                />
+                /> */}
             </Stack.Navigator>
         );
     }
@@ -359,7 +360,14 @@ const Navigate = ({ alerts, darkMode }) => {
                         ) : state.userLocation == null ? (
                             <Stack.Screen name="MapStack" component={MapStack} options={{ cardStyleInterpolator: forFade }} />
                         ) : (
-                                        <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
+                                        <>
+                                            <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
+                                            <Stack.Screen
+                                                name="ProductDetailScreen"
+                                                component={ProductDetailScreen}
+                                                options={{ title: 'Home Page' }}
+                                            />
+                                        </>
                                     )}
                     </Stack.Navigator>
                 </NavigationContainer>
