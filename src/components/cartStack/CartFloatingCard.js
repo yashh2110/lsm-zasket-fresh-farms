@@ -13,6 +13,8 @@ const CartFloatingCard = ({ color, size, cartItems, navigation }) => {
                 return sum + (item.discountedPrice * item.count);
             }, 0);
             settotalCartValue(total)
+        } else {
+            settotalCartValue(0)
         }
     }, [cartItems])
     return (

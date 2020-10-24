@@ -9,20 +9,23 @@ const ProductCard = ({ item, navigation, addToCart, updateCart, cartItems }) => 
     const [count, setCount] = useState(1)
     const [isUpdate, setIsUpdate] = useState(false)
 
-
     useEffect(() => {
-        if (cartItems.length > 0) {
-            cartItems?.forEach(el => {
-                if (el?.id == item?.id) {
-                    setAddButton(false)
-                    setCount(el.count)
-                }
-            })
+        // cartItems?.forEach(el => {
+        //     if (el?.id == item?.id) {
+        //         setAddButton(false)
+        //         setCount(el.count)
+        //     }
+        // })
+        let filteredItems = cartItems.filter(element => element?.id == item?.id);
+        if (filteredItems.length == 1) {
+            setAddButton(false)
+            setCount(filteredItems[0].count)
         } else {
             setAddButton(true)
             setCount(1)
             setIsUpdate(false)
         }
+
     }, [cartItems])
 
     useEffect(() => {
