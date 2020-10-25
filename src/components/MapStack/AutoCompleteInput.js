@@ -38,7 +38,7 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
     <GooglePlacesAutocomplete
       ref={ref => { someRef = ref }}
       placeholder='Search'
-      minLength={1} // minimum length of text to search
+      minLength={2} // minimum length of text to search
       autoFocus={true}
       placeholder="Search for a location"
       // styles={[commonStyle.fullHeight, commonStyle.greenBg]}
@@ -60,9 +60,26 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
         components: "country:ind",
       }}
       styles={{
+        ...styles,
         description: {
           color: "black",
           fontSize: 12,
+        },
+        textInputContainer: {
+          backgroundColor: '#F2F2F2',
+          height: 60
+        },
+        textInput: {
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 3,
+          },
+          shadowOpacity: 0.27,
+          shadowRadius: 4.65,
+
+          elevation: 6,
+          height: 40
         },
         predefinedPlacesDescription: {
           color: "black",

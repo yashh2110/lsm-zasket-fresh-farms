@@ -45,6 +45,7 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProv
         }
     }
 
+
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : null}
@@ -100,9 +101,10 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProv
 
                         {availablity == "AVAILABLE" ?
                             <View>
-                                <Text style={{ marginTop: "4%", fontSize: 20, fontWeight: Platform.OS == "ios" ? "500" : "700", letterSpacing: .3, textAlign: 'center', color: "#5CA123" }}>Good News!</Text>
-                                <Text style={{ marginTop: "2%", fontSize: 14, color: "#2B2E30", textAlign: 'center', fontWeight: 'bold' }}>We are available.</Text>
-                                <Text style={{ marginTop: "2%", fontSize: 14, color: "#2B2E30", textAlign: 'center', fontWeight: 'bold' }}>Now Choose your Delivery Address</Text>
+                                <Text style={{ marginTop: "4%", fontSize: 20, fontWeight: Platform.OS == "ios" ? "500" : "700", letterSpacing: .3, textAlign: 'center', color: "#5CA123" }}>Choose your Delivery Address</Text>
+                                <Text style={{ marginTop: "2%", fontSize: 14, color: "#727272", textAlign: 'center' }}>Let’s first check our service is available at
+                                your location or not? Because We Value your time!</Text>
+                                {/* <Text style={{ marginTop: "2%", fontSize: 14, color: "#2B2E30", textAlign: 'center', fontWeight: 'bold' }}>Now Choose your Delivery Address</Text> */}
                                 <Button full style={{ marginTop: "15%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text><Icon name='location-sharp' style={{ color: '#ffffff', fontSize: 20 }} /> Use My Current Location</Text></Button>
                             </View>
                             : undefined}
