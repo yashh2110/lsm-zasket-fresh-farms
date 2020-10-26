@@ -9,11 +9,11 @@ import { Icon } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage';
 import { getAllUserAddress } from '../../actions/map'
 
-const CartScreen = ({ navigation, cartItems, clearCart, getAllUserAddress }) => {
+const CartScreen = ({ navigation, cartItems, clearCart, getAllUserAddress, userLocation }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, settotalCartValue] = useState(0)
     const [savedValue, setSavedValue] = useState(0)
-    const [location, setLocation] = useState({})
+
     useEffect(() => {
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
@@ -32,30 +32,9 @@ const CartScreen = ({ navigation, cartItems, clearCart, getAllUserAddress }) => 
     }, [cartItems])
 
     useEffect(() => {
-        const getLocation = async () => {
-            try {
-                const value = await AsyncStorage.getItem('location')
-                let parsedUserLocation = await JSON.parse(value);
-                if (value !== null) {
-                    setLocation(parsedUserLocation)
-                }
-            } catch (error) {
-                console.warn(error);
-            }
-        }
-        getLocation()
-        getAddress()
+
     }, [])
 
-    const getAddress = () => {
-        getAllUserAddress((response, status) => {
-            if (status) {
-                alert(JSON.stringify(response?.data, null, "   "))
-            } else {
-                alert(JSON.stringify(response?.data, null, "   "))
-            }
-        })
-    }
 
     const onClearCart = async () => {
         clearCart()
@@ -76,12 +55,29 @@ const CartScreen = ({ navigation, cartItems, clearCart, getAllUserAddress }) => 
                     </View>
                     <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'center' }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Deliver to {location?.name}</Text>
-                            <TouchableOpacity onPress={() => { }} style={{}}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                {userLocation?.saveAs == "Home" &&
+                                    <View style={{ backgroundColor: "#FEF8FC", borderWidth: 1, borderRadius: 4, borderColor: "#FCD8EC", paddingVertical: 3, marginRight: 5 }}>
+                                        <Text style={{ color: "#F464AD", fontSize: 12, marginHorizontal: 5 }}>Home</Text>
+                                    </View>
+                                }
+                                {userLocation?.saveAs == "Office" &&
+                                    <View style={{ backgroundColor: "#FCF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#F0D4FA", paddingVertical: 3, marginRight: 5 }}>
+                                        <Text style={{ color: "#CD64F4", fontSize: 12, marginHorizontal: 5 }}>Office</Text>
+                                    </View>
+                                }
+                                {userLocation?.saveAs == "Others" &&
+                                    <View style={{ backgroundColor: "#EDF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#BEDCFF", paddingVertical: 3, marginRight: 5 }}>
+                                        <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
+                                    </View>
+                                }
+                                <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Deliver to {userLocation?.recepientName}</Text>
+                            </View>
+                            <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{}}>
                                 <Text style={{ color: "#73C92D" }}>Change</Text>
                             </TouchableOpacity>
                         </View>
-                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{location?.address}</Text>
+                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine1}</Text>
                     </View>
                 </View>
                 {cartItems.length > 0 ?
@@ -154,7 +150,8 @@ const CartScreen = ({ navigation, cartItems, clearCart, getAllUserAddress }) => 
 const mapStateToProps = (state) => ({
     cartItems: state.cart.cartItems,
     darkMode: state.dark,
-    categories: state.home.categories
+    categories: state.home.categories,
+    userLocation: state.location
 })
 
 export default connect(mapStateToProps, { clearCart, getAllUserAddress })(CartScreen)

@@ -28,7 +28,7 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProv
 
     const onSubmit = async () => {
         try {
-            navigation.navigate('MapScreen')
+            navigation.navigate('MapScreen', { fromScreen: "ON_INITIAL" })
             // Alert.alert('success')
             // await login(mobileNumber, (response, status) => {
             //     alert(JSON.stringify(response, null, "      "))
@@ -79,7 +79,7 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProv
                         {availablity == "DEFAULT" ?
                             <View>
                                 <Text style={{ marginTop: "4%", fontSize: 20, fontWeight: Platform.OS == "ios" ? "500" : "700", letterSpacing: .3, textAlign: 'center' }}>Enter your pincode</Text>
-                                <Text style={{ marginTop: "2%", fontSize: 14, color: "#727272", textAlign: 'center' }}>Let’s first check our service is available at your location or not? Because We Value your time!</Text>
+                                <Text style={{ marginTop: "2%", fontSize: 14, color: "#727272", textAlign: 'center' }}>Let’s first check our service is available at your location or not? Because We value your time!</Text>
                                 <View style={{ flex: 1, marginTop: "10%" }}>
                                     <View style={{ marginTop: "5%", borderBottomColor: "#D8D8D8", flexDirection: 'row', borderBottomWidth: 1 }}>
                                         <View style={{ flex: 1 }}>
@@ -103,7 +103,7 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProv
                             <View>
                                 <Text style={{ marginTop: "4%", fontSize: 20, fontWeight: Platform.OS == "ios" ? "500" : "700", letterSpacing: .3, textAlign: 'center', color: "#5CA123" }}>Choose your Delivery Address</Text>
                                 <Text style={{ marginTop: "2%", fontSize: 14, color: "#727272", textAlign: 'center' }}>Let’s first check our service is available at
-                                your location or not? Because We Value your time!</Text>
+                                your location or not? Because We value your time!</Text>
                                 {/* <Text style={{ marginTop: "2%", fontSize: 14, color: "#2B2E30", textAlign: 'center', fontWeight: 'bold' }}>Now Choose your Delivery Address</Text> */}
                                 <Button full style={{ marginTop: "15%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text><Icon name='location-sharp' style={{ color: '#ffffff', fontSize: 20 }} /> Use My Current Location</Text></Button>
                             </View>

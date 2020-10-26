@@ -4,6 +4,7 @@ import dark from './dark'
 import auth from './auth'
 import home from './home'
 import cart from './cart'
+import location from './location'
 import { reducers as IntlReducers } from '../i18n/store';
 
 // Redux: Root Reducer
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
     auth: auth,
     home: home,
     IntlReducers: IntlReducers,
-    cart: cart
+    cart: cart,
+    location: location
 })
 
 // Exports

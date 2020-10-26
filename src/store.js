@@ -14,7 +14,8 @@ const persistConfig = {
     whitelist: [
         'home',
         'cart',
-        'dark'
+        'dark',
+        'location'
     ],
 };
 

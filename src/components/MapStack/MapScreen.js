@@ -12,6 +12,7 @@ import AutoCompleteLocation from './AutoCompleteInput'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { CheckBox } from 'react-native-elements'
 import { addNewCustomerAddress, getAllUserAddress } from '../../actions/map'
+import { addLocation } from '../../actions/location'
 import { connect } from 'react-redux';
 
 const latitudeDelta = 0.005;
@@ -48,13 +49,16 @@ class MyMapView extends React.Component {
         addressLoading: false,
         savedAddressLoading: false,
         modalVisible: true,
-        homeCheck: false,
+        homeCheck: true,
         officeCheck: false,
         othersCheck: false,
         deliverFor: "self",
         mode: "ON_INITIAL",
         pincode: "",
-        savedAddress: []
+        savedAddress: [],
+        mobileNumberErrorText: "",
+        nameErrorText: "",
+        errorMessage: ""
     };
 
 
@@ -68,7 +72,9 @@ class MyMapView extends React.Component {
 
     async componentDidMount() {
         this.getCurrentPosition();
-        await this.setState({ savedAddressLoading: true })
+        await this.setState({ savedAddressLoading: true, })
+        const { fromScreen } = this.props.route?.params;
+        await this.setState({ mode: fromScreen })
         await this.props.getAllUserAddress((response, status) => {
             if (status) {
                 // Alert.alert(JSON.stringify(response, null, "   "))
@@ -107,17 +113,17 @@ class MyMapView extends React.Component {
                 },
                 (error) => {
                     //TODO: better design
-                    switch (error.code) {
-                        case 1:
-                            if (Platform.OS === "ios") {
-                                Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Privacidad - Localización");
-                            } else {
-                                Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Apps - ExampleApp - Localización");
-                            }
-                            break;
-                        default:
-                            Alert.alert("", "Error al detectar tu locación");
-                    }
+                    // switch (error.code) {
+                    //     case 1:
+                    //         if (Platform.OS === "ios") {
+                    //             Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Privacidad - Localización");
+                    //         } else {
+                    //             Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Apps - ExampleApp - Localización");
+                    //         }
+                    //         break;
+                    //     default:
+                    //         Alert.alert("", "Error al detectar tu locación");
+                    // }
                 }
             );
 
@@ -127,7 +133,7 @@ class MyMapView extends React.Component {
     };
 
     getCurrentLocation = async () => {
-        await this.setState({ addressLoading: true })
+        await this.setState({ addressLoading: true, errorMessage: "" })
         fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + this.state.region.latitude + ',' + this.state.region.longitude + '&key=' + MapApiKey)
             .then((response) => {
                 response.json().then(async (json) => {
@@ -150,11 +156,6 @@ class MyMapView extends React.Component {
             longitude: longitude,
             pincode: postal_code
         })
-        await AsyncStorage.setItem("location", JSON.stringify({
-            address: address,
-            latitude: latitude,
-            longitude: longitude
-        }));
     }
 
 
@@ -178,51 +179,75 @@ class MyMapView extends React.Component {
         await this.getCurrentLocation()
     };
 
+    validate = () => {
+        let status = true
+        if (this.state.deliverFor == "self") {
+
+        }
+        if (this.state.deliverFor == "others") {
+            if (this.state.name == undefined || this.state.name.trim() == "") {
+                this.setState({ nameErrorText: "Name is required" })
+                status = false
+            }
+            if (this.state.mobileNumber == undefined || this.state.mobileNumber.trim() == "") {
+                this.setState({ mobileNumberErrorText: "Mobile number is required" })
+                status = false
+            }
+        }
+        return status
+    }
 
     onSubmit = async () => {
-        await this.setState({ loading: true })
-        let userDetails = await AsyncStorage.getItem('userDetails');
-        let parsedUserDetails = await JSON.parse(userDetails);
-        let payload;
-        if (this.state.deliverFor === "self") {
-            payload = {
-                "addressLine1": this.state.houseNumber ? this.state.houseNumber + this.state.address : this.state.address,
-                "pincode": this.state.pincode,
-                "isActive": true,
-                "landmark": this.state.landMark,
-                "lat": this.state.latitude,
-                "lon": this.state.longitude,
-                "recepientMobileNumber": parsedUserDetails?.customerDetails?.userMobileNumber,
-                "recepientName": parsedUserDetails?.customerDetails?.name,
-                "saveAs": this.state.saveAs
-            }
-        }
-        if (this.state.deliverFor === "others") {
-            payload = {
-                "addressLine1": this.state.houseNumber ? this.state.houseNumber + ", " + this.state.address : this.state.address,
-                "pincode": this.state.pincode,
-                "isActive": true,
-                "landmark": this.state.landMark,
-                "lat": this.state.latitude,
-                "lon": this.state.longitude,
-                "recepientMobileNumber": this.state.mobileNumber ? "+91" + this.state.mobileNumber : "",
-                "recepientName": this.state.name,
-                "saveAs": this.state.saveAs
-            }
-        }
-        console.warn(payload)
-        await this.props.addNewCustomerAddress(payload, (response, status) => {
-            if (status) {
-                // Alert.alert(JSON.stringify(response, null, "   "))
-                this.setState({ loading: false })
-                if (this.state.mode === "ON_INITIAL") {
-                    this.props.navigation.navigate('SetAuthContext', { userLocation: payload }) // if you send it as null it wont navigate
+        if (this.validate()) {
+            await this.setState({ loading: true })
+            let userDetails = await AsyncStorage.getItem('userDetails');
+            let parsedUserDetails = await JSON.parse(userDetails);
+            let payload;
+            if (this.state.deliverFor === "self") {
+                payload = {
+                    "addressLine1": this.state.houseNumber ? this.state.houseNumber + this.state.address : this.state.address,
+                    "pincode": this.state.pincode,
+                    "isActive": true,
+                    "landmark": this.state.landMark,
+                    "lat": this.state.latitude,
+                    "lon": this.state.longitude,
+                    "recepientMobileNumber": parsedUserDetails?.customerDetails?.userMobileNumber,
+                    "recepientName": parsedUserDetails?.customerDetails?.name,
+                    "saveAs": this.state.saveAs
                 }
-            } else {
-                Alert.alert(JSON.stringify(response?.data, null, "   "))
-                this.setState({ loading: false })
             }
-        })
+            if (this.state.deliverFor === "others") {
+                payload = {
+                    "addressLine1": this.state.houseNumber ? this.state.houseNumber + ", " + this.state.address : this.state.address,
+                    "pincode": this.state.pincode,
+                    "isActive": true,
+                    "landmark": this.state.landMark,
+                    "lat": this.state.latitude,
+                    "lon": this.state.longitude,
+                    "recepientMobileNumber": this.state.mobileNumber ? "+91" + this.state.mobileNumber : "",
+                    "recepientName": this.state.name,
+                    "saveAs": this.state.saveAs
+                }
+            }
+            // console.warn(payload)
+            await this.props.addNewCustomerAddress(payload, (response, status) => {
+                if (status) {
+                    this.props.addLocation(payload)
+                    // await AsyncStorage.setItem("location", JSON.stringify(payload));
+                    // Alert.alert(JSON.stringify(response, null, "   "))
+                    this.setState({ loading: false })
+                    if (this.state.mode === "ON_INITIAL") {
+                        this.props.navigation.navigate('SetAuthContext', { userLocation: payload }) // if you send it as null it wont navigate
+                    } else {
+                        this.props.navigation.goBack()
+                    }
+                } else {
+                    // Alert.alert(response?.data)
+                    this.setState({ errorMessage: response?.data })
+                    this.setState({ loading: false })
+                }
+            })
+        }
     }
 
     onPressCheckbox = (option) => {
@@ -268,20 +293,28 @@ class MyMapView extends React.Component {
     renderSeparator = () => {
         return (
             <View
-                style={{ height: 0.7, width: "95%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10, marginTop: 5 }}
+                style={{ height: 0.7, width: "95%", alignSelf: 'center', backgroundColor: '#EAEAEC', }}
             />
         );
     };
 
     onPressSavedAddress = async (item) => {
+        // Alert.alert(JSON.stringify(item, null, "      "))
         let payload = {
-            address: item?.addressLine_1,
-            latitude: item?.latitude,
-            longitude: item?.longitude
+            addressLine1: item?.addressLine_1,
+            lat: item?.lat,
+            lon: item?.lon,
+            recepientName: item?.recepientName,
+            recepientMobileNumber: item?.recepientMobileNumber,
+            landMark: item?.landMark,
+            saveAs: item?.saveAs,
+            pincode: item?.pincode
         }
-        await AsyncStorage.setItem("location", JSON.stringify(payload));
+        this.props.addLocation(payload)
         if (this.state.mode === "ON_INITIAL") {
             this.props.navigation.navigate('SetAuthContext', { userLocation: payload }) // if you send it as null it wont navigate
+        } else {
+            this.props.navigation.goBack()
         }
     }
 
@@ -365,6 +398,7 @@ class MyMapView extends React.Component {
                                     <Text>{this.state.address}</Text>
                                 </View>
                             }
+                            <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.errorMessage}</Text>
                             <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
                             <View style={{ flexDirection: 'row', justifyContent: "space-around", marginTop: 10, }}>
                                 <TouchableOpacity onPress={() => this.onPressDeliverFor('self')} style={{ justifyContent: 'center', borderColor: this.state.deliverFor == "self" ? Theme.Colors.primary : "#EFEFEF", borderWidth: 2, borderRadius: 6, justifyContent: 'center', alignItems: 'center', width: "40%", padding: 15 }}>
@@ -385,10 +419,14 @@ class MyMapView extends React.Component {
                                                 name: text
                                             })}
                                             value={this.state.name}
+                                            onTouchStart={() => {
+                                                this.setState({ nameErrorText: "" })
+                                            }}
                                         />
+                                        <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.nameErrorText}</Text>
                                     </View>
                                     <View style={{ marginTop: 10 }}>
-                                        <Text style={{ color: "#727272", fontSize: 14 }}>Phone Number</Text>
+                                        <Text style={{ color: "#727272", fontSize: 14 }}>Mobile Number</Text>
                                         <TextInput
                                             style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                             onChangeText={text => this.setState({
@@ -396,7 +434,11 @@ class MyMapView extends React.Component {
                                             })}
                                             value={this.state.mobileNumber}
                                             keyboardType={"number-pad"}
+                                            onTouchStart={() => {
+                                                this.setState({ mobileNumberErrorText: "" })
+                                            }}
                                         />
+                                        <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.mobileNumberErrorText}</Text>
                                     </View>
                                 </> : undefined}
                             <View style={{ marginTop: 20 }}>
@@ -526,7 +568,7 @@ class MyMapView extends React.Component {
                                             <FlatList
                                                 data={this.state.savedAddress}
                                                 renderItem={({ item }) =>
-                                                    <TouchableOpacity onPress={() => { this.onPressSavedAddress(item) }} style={{ flexDirection: 'row' }}>
+                                                    <TouchableOpacity onPress={() => { this.onPressSavedAddress(item) }} style={{ flexDirection: 'row', paddingBottom: 10, paddingTop: 5 }}>
                                                         {/* <Text style={styles.item}
                                                 //   onPress={this.getListViewItem.bind(this, item)}
                                                 >{JSON.stringify(item, null, "      ")}</Text> */}
@@ -588,10 +630,11 @@ class MyMapView extends React.Component {
 
 const mapStateToProps = (state) => ({
     darkMode: state.dark,
+    userLocation: state.location
 })
 
 
-export default connect(mapStateToProps, { addNewCustomerAddress, getAllUserAddress })(MyMapView)
+export default connect(mapStateToProps, { addNewCustomerAddress, getAllUserAddress, addLocation })(MyMapView)
 
 const styles = StyleSheet.create({
     map: {

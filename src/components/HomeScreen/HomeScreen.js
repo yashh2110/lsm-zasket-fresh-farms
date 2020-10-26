@@ -10,7 +10,7 @@ import CategorySectionListItem from './CategorySectionListItem';
 import Loader from '../common/Loader';
 import DarkModeToggle from '../common/DarkModeToggle';
 
-const HomeScreen = ({ getAllCategories, categories, navigation }) => {
+const HomeScreen = ({ getAllCategories, categories, navigation, userLocation }) => {
     const { signOut } = useContext(AuthContext);
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
@@ -42,10 +42,10 @@ const HomeScreen = ({ getAllCategories, categories, navigation }) => {
                 refreshControl={
                     <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
                 }>
-                <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10 }}>
-                    <TouchableOpacity onPress={() => { }} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
+                    <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: 'HomeScreen' }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                         <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
-                        <Text>Jubilee Hills, Hyderabad</Text>
+                        <Text numberOfLines={1} style={{ maxWidth: '80%' }}>{userLocation?.addressLine1}</Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                     </TouchableOpacity>
 
@@ -131,7 +131,8 @@ const HomeScreen = ({ getAllCategories, categories, navigation }) => {
 }
 
 const mapStateToProps = (state) => ({
-    categories: state.home.categories
+    categories: state.home.categories,
+    userLocation: state.location
 })
 
 

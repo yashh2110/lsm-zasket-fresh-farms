@@ -104,7 +104,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, verifyOtp, route }) => {
 
                                 />
                             </View>
-                            <Text style={{ fontSize: 14, color: "#727272", alignSelf: 'center' }}>00:36</Text>
+                            {/* <Text style={{ fontSize: 14, color: "#727272", alignSelf: 'center' }}>00:36</Text> */}
                             {loading ?
                                 <ActivityIndicator style={{ marginTop: "5%", }} color={Theme.Colors.primary} size="large" />
                                 :

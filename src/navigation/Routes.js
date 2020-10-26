@@ -299,7 +299,7 @@ const Navigate = ({ alerts, darkMode }) => {
             let userLocation;
             let parsedUserLocation;
             try {
-                userLocation = await AsyncStorage.getItem('userLocation');
+                userLocation = await AsyncStorage.getItem('location');
                 parsedUserLocation = await JSON.parse(userLocation);
             } catch (e) {
             }
@@ -313,15 +313,15 @@ const Navigate = ({ alerts, darkMode }) => {
     const authContext = React.useMemo(
         () => ({
             signIn: async data => {
-                AsyncStorage.setItem('userDetails', JSON.stringify(data))
+                await AsyncStorage.setItem('userDetails', JSON.stringify(data))
                 dispatch({ type: 'SIGN_IN', userDetails: data });
             },
             signOut: async () => {
-                AsyncStorage.clear()
+                await AsyncStorage.clear()
                 dispatch({ type: 'SIGN_OUT' })
             },
             saveUserLocation: async data => {
-                AsyncStorage.setItem('userLocation', JSON.stringify(data))
+                await AsyncStorage.setItem('location', JSON.stringify(data))
                 dispatch({ type: 'SAVE_USER_LOCATION', userLocation: data });
             },
         }),
@@ -362,11 +362,8 @@ const Navigate = ({ alerts, darkMode }) => {
                         ) : (
                                         <>
                                             <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
-                                            <Stack.Screen
-                                                name="ProductDetailScreen"
-                                                component={ProductDetailScreen}
-                                                options={{ title: 'Home Page' }}
-                                            />
+                                            <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ title: 'Home Page' }} />
+                                            <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
                                         </>
                                     )}
                     </Stack.Navigator>
