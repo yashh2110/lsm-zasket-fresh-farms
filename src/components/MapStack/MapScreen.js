@@ -151,10 +151,10 @@ class MyMapView extends React.Component {
 
     setLocation = async (address, latitude, longitude, postal_code) => {
         this.setState({
-            address: address,
-            latitude: latitude,
-            longitude: longitude,
-            pincode: postal_code
+            address: address ? address : "",
+            latitude: latitude ? latitude : "",
+            longitude: longitude ? longitude : "",
+            pincode: postal_code ? postal_code : ""
         })
     }
 

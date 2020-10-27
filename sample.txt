@@ -6,3 +6,18 @@ address controller - /customer/{id}/address  [addNewCustomerAddress] ["cityId": 
 /categories  getAllCategories Homescreeen api
 /{category_name}/items getItemsByCategory (to get specific category)
 /items/{item_id} get specific item details
+
+
+/customers/{customer_id}/profile/update    ->profileUpdate
+
+/customers/{cutomer_id}/orders              ->getCustomerOrders and then
+/customers/{customer_id}/orders/{order_id}      getOrderDetails
+
+
+/customer/{customer_id}/address/{address_id}   updateUserAddress
+/customer/{customer_id}/address/{address_id} deleteUserAddress
+
+
+/customers/{customer_id}/orders    addOrder
+discounted price = unit price
+total price = discounted price * quantity

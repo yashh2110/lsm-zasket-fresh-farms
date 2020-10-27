@@ -1,28 +1,33 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, Image } from 'react-native'
 import LottieView from 'lottie-react-native';
 import { Dimensions } from "react-native";
 import { connect } from 'react-redux';
 import Theme from '../../styles/Theme';
 import { MyText2 } from './MyText';
 import Draggable from './Draggable';
+import { SafeAreaView } from 'react-native';
+
 const NoInternetModal = ({ darkMode }: any) => {
     return (
-        <View
+        <SafeAreaView
             style={{
                 flex: 1,
-                justifyContent: "center",
+                // justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                backgroundColor: 'white',
             }}
         >
-            <Draggable>
-                <LottieView source={require('../../assets/json/UnPlug.json')} autoPlay loop style={{ width: 300, height: 200, transform: [{ rotate: '110deg' }] }} resizeMode="cover" />
-                <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
-                    <MyText2 style={{ color: "white", fontSize: 26, letterSpacing: 2 }}>No Internet Connection</MyText2>
-                </View>
-            </Draggable>
-        </View>
+            <Image
+                style={{ width: "100%", height: 300 }}
+                resizeMode="center"
+                source={require('../../assets/png/noInternet.png')}
+            />
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
+                <Text style={{ fontSize: 24 }}>Connection Error</Text>
+                <Text style={{ color: "#727272", alignSelf: 'center', textAlign: 'center', paddingHorizontal: 20 }}>Please try checking your internet connection & try again</Text>
+            </View>
+        </SafeAreaView>
     )
 }
 

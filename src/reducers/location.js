@@ -16,14 +16,14 @@ const location = (state = initialState, action) => {
         case ADD_LOCATION:
             return {
                 // ...state,
-                addressLine1: payload?.addressLine1,
-                lat: payload?.lat,
-                lon: payload?.lon,
-                recepientName: payload?.recepientName,
-                recepientMobileNumber: payload?.recepientMobileNumber,
-                landMark: payload?.landMark,
-                saveAs: payload?.saveAs,
-                pincode: payload?.pincode
+                addressLine1: payload?.addressLine1 ? payload?.addressLine1 : "",
+                lat: payload?.lat ? payload?.lat : "",
+                lon: payload?.lon ? payload?.lon : "",
+                recepientName: payload?.recepientName ? payload?.recepientName : "",
+                recepientMobileNumber: payload?.recepientMobileNumber ? payload?.recepientMobileNumber : "",
+                landMark: payload?.landMark ? payload?.landMark : "",
+                saveAs: payload?.saveAs ? payload?.saveAs : "",
+                pincode: payload?.pincode ? payload?.pincode : ""
             }
         // case DELETE_LOCATION:
         //     return {

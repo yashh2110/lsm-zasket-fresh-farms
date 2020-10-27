@@ -132,17 +132,19 @@ const CartScreen = ({ navigation, cartItems, clearCart, getAllUserAddress, userL
                     <Text>clearCart</Text>
                 </TouchableOpacity> */}
             </ScrollView>
-            <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
-                <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {totalCartValue}</Text>
-                    <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
-                        <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
+            {cartItems.length > 0 ?
+                <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
+                    <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {totalCartValue}</Text>
+                        <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
+                            <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
+                        </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity onPress={() => { navigation.navigate('Checkout') }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                        <Text style={{ color: 'white', fontSize: 17 }}>Checkout <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={() => { }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
-                    <Text style={{ color: 'white', fontSize: 17 }}>Checkout <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
-                </TouchableOpacity>
-            </View>
+                : undefined}
         </View>
     );
 }

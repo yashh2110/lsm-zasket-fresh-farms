@@ -26,6 +26,7 @@ import CustomDrawerContent from "./CustomDrawerContent"
 import Theme from '../styles/Theme';
 import PincodeScreen from '../components/MapStack/PincodeScreen';
 import CartScreen from '../components/cartStack/CartScreen';
+import CheckoutScreen from '../components/cartStack/CheckoutScreen';
 import SearchScreen from '../components/SearchStack/SearchScreen';
 import AsyncStorage from '@react-native-community/async-storage';
 import { ActivityIndicator } from 'react-native';
@@ -200,6 +201,11 @@ const Navigate = ({ alerts, darkMode }) => {
                     name="Cart"
                     component={CartScreen}
                     options={{ title: 'Cart Page' }}
+                />
+                <Stack.Screen
+                    name="Checkout"
+                    component={CheckoutScreen}
+                    options={{ title: 'Checkout Page' }}
                 />
             </Stack.Navigator>
         );
