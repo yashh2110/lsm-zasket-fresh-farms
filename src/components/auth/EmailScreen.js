@@ -68,7 +68,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWith
                 await createNewCustomer(payLoad, (response, status) => {
                     // Alert.alert(JSON.stringify(response, null, "     "))
                     if (status) {
-                        Alert.alert(JSON.stringify(response));
+                        // Alert.alert(JSON.stringify(response));
                         signIn(response?.data)
                         navigation.navigate('PincodeScreen')
                         setLoading(false)
@@ -137,7 +137,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWith
                                 <View style={{ flex: 1 }}>
                                     <TextInput
                                         style={{ height: 40, }}
-                                        onChangeText={text => setEmail(text)}
+                                        onChangeText={text => setEmail(text.toLowerCase())}
                                         value={email}
                                         keyboardType={"email-address"}
                                         placeholder={"Email Address"}
