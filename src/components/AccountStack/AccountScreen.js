@@ -3,15 +3,15 @@ import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, Tex
 import { Icon } from 'native-base'
 import AsyncStorage from "@react-native-community/async-storage";
 import Modal from 'react-native-modal';
-import Theme from "../styles/Theme";
+import Theme from "../../styles/Theme";
 import { ScrollView } from "react-native-gesture-handler";
 import { connect } from 'react-redux';
-import { profileUpdate, verifyEmail } from '../actions/account'
+import { profileUpdate, verifyEmail } from '../../actions/account'
 import { ActivityIndicator } from "react-native";
-import { Validation } from "../utils/validate";
+import { Validation } from "../../utils/validate";
 
 
-const AccountScreen = ({ profileUpdate, verifyEmail }) => {
+const AccountScreen = ({ profileUpdate, verifyEmail, navigation }) => {
     const [loading, setLoading] = useState(false)
     const [userDetails, setUserDetails] = useState({})
     const [isVisible, setIsVisible] = useState(false)
@@ -165,9 +165,7 @@ const AccountScreen = ({ profileUpdate, verifyEmail }) => {
             </View>
 
             <View style={{ backgroundColor: 'white', padding: 15, marginTop: 10 }}>
-                <TouchableOpacity onPress={() => {
-
-                }} style={{ paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
+                <TouchableOpacity onPress={() => { }} style={{ paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 10 }}>My Orders</Text>
                     </View>
@@ -176,7 +174,7 @@ const AccountScreen = ({ profileUpdate, verifyEmail }) => {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => { }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
+                <TouchableOpacity onPress={() => { navigation.navigate('ManageAddressScreen') }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 10 }}>Manage Addresses</Text>
                     </View>
@@ -185,7 +183,7 @@ const AccountScreen = ({ profileUpdate, verifyEmail }) => {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => { }} style={{ paddingTop: 10, paddingBottom: 10, flexDirection: 'row' }}>
+                <TouchableOpacity onPress={() => { navigation.navigate('SupportScreen') }} style={{ paddingTop: 10, paddingBottom: 10, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 10, }}>Help/FAQ's</Text>
                     </View>
@@ -202,6 +200,7 @@ const AccountScreen = ({ profileUpdate, verifyEmail }) => {
                 swipeDirection="down"
                 style={{ margin: 0, justifyContent: 'flex-end' }}
                 onBackButtonPress={() => setIsVisible(false)}
+                onBackdropPress={() => setIsVisible(false)}
             >
                 <SafeAreaView style={{ height: 350, backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
                     <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>

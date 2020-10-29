@@ -71,21 +71,45 @@ class MyMapView extends React.Component {
 
 
     async componentDidMount() {
-        this.getCurrentPosition();
-        await this.setState({ savedAddressLoading: true, })
         const { fromScreen } = this.props.route?.params;
         await this.setState({ mode: fromScreen })
-        await this.props.getAllUserAddress((response, status) => {
-            if (status) {
-                // Alert.alert(JSON.stringify(response, null, "   "))
-                this.setState({ savedAddressLoading: false })
-                this.setState({ savedAddress: response?.data })
+        if (fromScreen == "EDIT_SCREEN") {
+            await this.setState({ modalVisible: false })
+            const { item } = this.props.route?.params;
+            alert(JSON.stringify(this.props.route?.params?.item, null, "        "))
+            const region = {
+                latitude: item?.lat,
+                longitude: item?.lon,
+                latitudeDelta,
+                longitudeDelta,
+            };
+            await this.setRegion(region);
+            await this.setState({
+                saveAs: item?.saveAs,
+                pincode: item?.pincode,
+                landMark: item?.landMark,
+                name: item?.recepientName,
+                mobileNumber: item?.recepientMobileNumber
+            })
+        } else {
+            this.getCurrentPosition();
+            await this.setState({ savedAddressLoading: true, })
+            await this.props.getAllUserAddress(async (response, status) => {
+                if (status) {
+                    let newArray = []
+                    await response?.data?.forEach((el, index) => {
+                        if (el?.isActive) newArray.push(el)
+                    })
+                    // Alert.alert(JSON.stringify(response, null, "   "))
+                    this.setState({ savedAddressLoading: false })
+                    this.setState({ savedAddress: newArray })
 
-            } else {
-                Alert.alert(JSON.stringify(response?.data, null, "   "))
-                this.setState({ savedAddressLoading: false })
-            }
-        })
+                } else {
+                    Alert.alert(JSON.stringify(response?.data, null, "   "))
+                    this.setState({ savedAddressLoading: false })
+                }
+            })
+        }
     }
 
     getCurrentPosition() {

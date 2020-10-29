@@ -7,9 +7,9 @@ import CustomHeader from '../common/CustomHeader';
 import CardCartScreen from './CardCartScreen';
 import { Icon } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage';
-import { getAllUserAddress } from '../../actions/map'
 
-const CartScreen = ({ navigation, cartItems, clearCart, getAllUserAddress, userLocation }) => {
+
+const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, settotalCartValue] = useState(0)
     const [savedValue, setSavedValue] = useState(0)
@@ -156,7 +156,7 @@ const mapStateToProps = (state) => ({
     userLocation: state.location
 })
 
-export default connect(mapStateToProps, { clearCart, getAllUserAddress })(CartScreen)
+export default connect(mapStateToProps, { clearCart })(CartScreen)
 
 const styles = StyleSheet.create({
     button: {

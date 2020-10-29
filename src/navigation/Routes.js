@@ -17,7 +17,9 @@ import ProductDetailScreen from "../components/ProductScreens/ProductDetailScree
 import ProductListScreen from "../components/ProductScreens/ProductListScreen"
 import InfiniteLoading from "../components/InfiniteLoading"
 import MapScreen from "../components/MapStack/MapScreen"
-import AccountScreen from "../components/AccountScreen"
+import AccountScreen from "../components/AccountStack/AccountScreen"
+import SupportScreen from "../components/AccountStack/SupportScreen"
+import ManageAddressScreen from "../components/AccountStack/ManageAddressScreen"
 import Pagination from "../components/Pagination"
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
 import FeatherIcons from "react-native-vector-icons/Feather"
@@ -226,6 +228,11 @@ const Navigate = ({ alerts, darkMode }) => {
                     options={{ title: 'Account Page' }}
                 />
                 <Stack.Screen
+                    name="SupportScreen"
+                    component={SupportScreen}
+                    options={{ title: 'Account Page' }}
+                />
+                <Stack.Screen
                     name="InfiniteLoading"
                     component={InfiniteLoading}
                     options={{ title: 'Infinite Loading' }}
@@ -370,6 +377,7 @@ const Navigate = ({ alerts, darkMode }) => {
                                             <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
                                             <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ title: 'Home Page' }} />
                                             <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
+                                            <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
                                         </>
                                     )}
                     </Stack.Navigator>
