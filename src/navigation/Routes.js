@@ -19,6 +19,7 @@ import InfiniteLoading from "../components/InfiniteLoading"
 import MapScreen from "../components/MapStack/MapScreen"
 import AccountScreen from "../components/AccountStack/AccountScreen"
 import SupportScreen from "../components/AccountStack/SupportScreen"
+import MyOrders from "../components/AccountStack/MyOrders"
 import ManageAddressScreen from "../components/AccountStack/ManageAddressScreen"
 import Pagination from "../components/Pagination"
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
@@ -225,12 +226,14 @@ const Navigate = ({ alerts, darkMode }) => {
                 <Stack.Screen
                     name="Account"
                     component={AccountScreen}
-                    options={{ title: 'Account Page' }}
                 />
                 <Stack.Screen
                     name="SupportScreen"
                     component={SupportScreen}
-                    options={{ title: 'Account Page' }}
+                />
+                <Stack.Screen
+                    name="MyOrders"
+                    component={MyOrders}
                 />
                 <Stack.Screen
                     name="InfiniteLoading"

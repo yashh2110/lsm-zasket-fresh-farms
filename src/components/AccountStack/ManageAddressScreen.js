@@ -21,7 +21,7 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
 
     const initialFunction = async () => {
         getAllUserAddress(async (response, status) => {
-            alert(JSON.stringify(response, null, "   "))
+            // alert(JSON.stringify(response, null, "   "))
             if (status) {
                 let newArray = []
                 await response?.data?.forEach((el, index) => {
@@ -43,13 +43,8 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
         initialFunction()
     }
 
-
-    const onPressSavedAddress = () => {
-
-    }
-
     const onPressAddNewAddress = () => {
-
+        navigation.navigate('MapScreen', { fromScreen: "ManageAddressScreen" })
     }
 
     const onPressEdit = (option) => {

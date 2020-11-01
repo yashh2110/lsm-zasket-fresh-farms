@@ -51,13 +51,15 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
 
     const onCartUpdate = async (option) => {
         setIsUpdate(true)
-        if (option == "INCREASE") {
+        if (option == "DECREASE") {
             if (count > 1) {
                 setCount(count - 1)
             }
         }
-        if (option == "DECREASE") {
-            setCount(count + 1)
+        if (option == "INCREASE") {
+            if (count < 6) {
+                setCount(count + 1)
+            }
         }
     }
 
@@ -94,13 +96,13 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
                         </TouchableOpacity>
                         :
                         <View style={[styles.addButton, {}]}>
-                            <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                            <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
                                 <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
                             </TouchableOpacity>
                             <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
                                 <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count}</Text>
                             </View>
-                            <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                            <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
                                 <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
                             </TouchableOpacity>
                         </View>

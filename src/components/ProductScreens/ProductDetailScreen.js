@@ -88,13 +88,15 @@ const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart
 
     const onCartUpdate = async (option) => {
         setIsUpdate(true)
-        if (option == "INCREASE") {
+        if (option == "DECREASE") {
             if (count > 1) {
                 setCount(count - 1)
             }
         }
-        if (option == "DECREASE") {
-            setCount(count + 1)
+        if (option == "INCREASE") {
+            if (count < 6) {
+                setCount(count + 1)
+            }
         }
     }
 
@@ -132,11 +134,11 @@ const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart
                 </TouchableOpacity>
                 : <View style={{ backgroundColor: Theme.Colors.primary, height: 50, flexDirection: 'row', justifyContent: 'space-evenly' }}>
 
-                    <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ width: 35, height: 35, backgroundColor: "#60B11F", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
+                    <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ width: 35, height: 35, backgroundColor: "#60B11F", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
                         <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: 20 }}>-</Text>
                     </TouchableOpacity>
                     <Text style={{ color: 'white', alignSelf: 'center', fontSize: 18 }}>{count}</Text>
-                    <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ width: 35, height: 35, backgroundColor: "#60B11F", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
+                    <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ width: 35, height: 35, backgroundColor: "#60B11F", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
                         <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: 20 }}>+</Text>
                     </TouchableOpacity>
                 </View>

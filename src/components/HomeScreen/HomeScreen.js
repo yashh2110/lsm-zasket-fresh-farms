@@ -4,13 +4,14 @@ import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
 import Theme from '../../styles/Theme';
-import { getAllCategories } from '../../actions/home'
+import { getAllCategories, getCustomerDetails } from '../../actions/home'
 import { connect } from 'react-redux';
 import CategorySectionListItem from './CategorySectionListItem';
 import Loader from '../common/Loader';
 import DarkModeToggle from '../common/DarkModeToggle';
+import AsyncStorage from '@react-native-community/async-storage';
 
-const HomeScreen = ({ getAllCategories, categories, navigation, userLocation }) => {
+const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigation, userLocation }) => {
     const { signOut } = useContext(AuthContext);
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
@@ -30,6 +31,14 @@ const HomeScreen = ({ getAllCategories, categories, navigation, userLocation }) 
                 setLoading(false)
             }
         })
+        getCustomerDetails(async (res, status) => {
+            if (status) {
+                // alert(JSON.stringify(res?.data, null, "       "))
+                await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
+            } else {
+                setUserDetails({})
+            }
+        })
     }
     const onRefresh = () => {
         setRefresh(true)
@@ -45,7 +54,7 @@ const HomeScreen = ({ getAllCategories, categories, navigation, userLocation }) 
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
                     <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: 'HomeScreen' }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                         <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
-                        <Text numberOfLines={1} style={{ maxWidth: '80%' }}>{userLocation?.addressLine1}</Text>
+                        <Text numberOfLines={1} style={{ maxWidth: '80%' }}>{userLocation?.addressLine_1}</Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                     </TouchableOpacity>
 
@@ -136,7 +145,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { getAllCategories })(HomeScreen)
+export default connect(mapStateToProps, { getAllCategories, getCustomerDetails })(HomeScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

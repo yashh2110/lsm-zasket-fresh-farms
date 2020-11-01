@@ -1,6 +1,6 @@
 import { ADD_LOCATION, DELETE_LOCATION } from '../actions/types'
 const initialState = {
-    addressLine1: "",
+    addressLine_1: "",
     lat: "",
     lon: "",
     recepientName: "",
@@ -16,7 +16,8 @@ const location = (state = initialState, action) => {
         case ADD_LOCATION:
             return {
                 // ...state,
-                addressLine1: payload?.addressLine1 ? payload?.addressLine1 : "",
+                id: payload?.id ? payload?.id : "",
+                addressLine_1: payload?.addressLine_1 ? payload?.addressLine_1 : "",
                 lat: payload?.lat ? payload?.lat : "",
                 lon: payload?.lon ? payload?.lon : "",
                 recepientName: payload?.recepientName ? payload?.recepientName : "",

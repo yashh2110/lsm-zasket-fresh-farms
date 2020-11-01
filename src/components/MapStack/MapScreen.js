@@ -11,7 +11,7 @@ import Theme from '../../styles/Theme';
 import AutoCompleteLocation from './AutoCompleteInput'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { CheckBox } from 'react-native-elements'
-import { addNewCustomerAddress, getAllUserAddress } from '../../actions/map'
+import { addNewCustomerAddress, updateUserAddress, getAllUserAddress } from '../../actions/map'
 import { addLocation } from '../../actions/location'
 import { connect } from 'react-redux';
 
@@ -49,7 +49,7 @@ class MyMapView extends React.Component {
         addressLoading: false,
         savedAddressLoading: false,
         modalVisible: true,
-        homeCheck: true,
+        homeCheck: false,
         officeCheck: false,
         othersCheck: false,
         deliverFor: "self",
@@ -58,7 +58,8 @@ class MyMapView extends React.Component {
         savedAddress: [],
         mobileNumberErrorText: "",
         nameErrorText: "",
-        errorMessage: ""
+        errorMessage: "",
+        addressId: ""
     };
 
 
@@ -76,7 +77,7 @@ class MyMapView extends React.Component {
         if (fromScreen == "EDIT_SCREEN") {
             await this.setState({ modalVisible: false })
             const { item } = this.props.route?.params;
-            alert(JSON.stringify(this.props.route?.params?.item, null, "        "))
+            // alert(JSON.stringify(item, null, "        "))
             const region = {
                 latitude: item?.lat,
                 longitude: item?.lon,
@@ -84,12 +85,17 @@ class MyMapView extends React.Component {
                 longitudeDelta,
             };
             await this.setRegion(region);
+            if (item?.saveAs == "Home") this.setState({ homeCheck: true })
+            if (item?.saveAs == "Office") this.setState({ officeCheck: true })
+            if (item?.saveAs == "Others") this.setState({ othersCheck: true })
             await this.setState({
+                addressId: item?.id,
                 saveAs: item?.saveAs,
                 pincode: item?.pincode,
-                landMark: item?.landMark,
+                landMark: item?.landmark,
                 name: item?.recepientName,
-                mobileNumber: item?.recepientMobileNumber
+                mobileNumber: item?.recepientMobileNumber,
+                houseNumber: item?.houseNo
             })
         } else {
             this.getCurrentPosition();
@@ -229,7 +235,8 @@ class MyMapView extends React.Component {
             let payload;
             if (this.state.deliverFor === "self") {
                 payload = {
-                    "addressLine1": this.state.houseNumber ? this.state.houseNumber + this.state.address : this.state.address,
+                    "addressLine1": this.state.address,
+                    "houseNo": this.state.houseNumber,
                     "pincode": this.state.pincode,
                     "isActive": true,
                     "landmark": this.state.landMark,
@@ -242,7 +249,8 @@ class MyMapView extends React.Component {
             }
             if (this.state.deliverFor === "others") {
                 payload = {
-                    "addressLine1": this.state.houseNumber ? this.state.houseNumber + ", " + this.state.address : this.state.address,
+                    "addressLine1": this.state.address,
+                    "houseNo": this.state.houseNumber,
                     "pincode": this.state.pincode,
                     "isActive": true,
                     "landmark": this.state.landMark,
@@ -254,23 +262,50 @@ class MyMapView extends React.Component {
                 }
             }
             // console.warn(payload)
-            await this.props.addNewCustomerAddress(payload, (response, status) => {
-                if (status) {
-                    this.props.addLocation(payload)
-                    // await AsyncStorage.setItem("location", JSON.stringify(payload));
-                    // Alert.alert(JSON.stringify(response, null, "   "))
-                    this.setState({ loading: false })
-                    if (this.state.mode === "ON_INITIAL") {
-                        this.props.navigation.navigate('SetAuthContext', { userLocation: payload }) // if you send it as null it wont navigate
-                    } else {
+            const { fromScreen } = this.props.route?.params;
+            await this.setState({ mode: fromScreen })
+            if (fromScreen == "EDIT_SCREEN") {
+                await this.props.updateUserAddress(this.state.addressId, payload, async (response, status) => {
+                    if (status) {
                         this.props.navigation.goBack()
+                    } else {
+                        alert(JSON.stringify(response?.response?.data, null, "      "))
                     }
-                } else {
-                    // Alert.alert(response?.data)
-                    this.setState({ errorMessage: response?.data })
-                    this.setState({ loading: false })
-                }
-            })
+                })
+            } else {
+                await this.props.addNewCustomerAddress(payload, async (response, status) => {
+                    if (status) {
+                        this.props.addLocation(payload)
+                        // Alert.alert(JSON.stringify(response, null, "   "))
+
+                        let location = {
+                            "id": response?.data?.id,
+                            "addressLine_1": response?.data?.addressLine_1,
+                            "pincode": response?.data?.pincode,
+                            "isActive": true,
+                            "landmark": response?.data?.landMark,
+                            "lat": response?.data?.lat,
+                            "lon": response?.data?.lon,
+                            "recepientMobileNumber": response?.data?.recepientMobileNumber,
+                            "recepientName": response?.data?.recepientName,
+                            "saveAs": response?.data?.saveAs
+                        }
+
+                        await AsyncStorage.setItem("location", JSON.stringify(location));
+                        this.setState({ loading: false })
+                        if (this.state.mode === "ON_INITIAL") {
+                            this.props.navigation.navigate('SetAuthContext', { userLocation: payload }) // if you send it as null it wont navigate
+                        } else {
+                            this.props.navigation.goBack()
+                        }
+                    } else {
+                        // Alert.alert(response?.data)
+                        this.setState({ errorMessage: response?.data })
+                        this.setState({ loading: false })
+                    }
+                })
+            }
+
         }
     }
 
@@ -325,7 +360,8 @@ class MyMapView extends React.Component {
     onPressSavedAddress = async (item) => {
         // Alert.alert(JSON.stringify(item, null, "      "))
         let payload = {
-            addressLine1: item?.addressLine_1,
+            id: item?.id,
+            addressLine_1: item?.addressLine_1,
             lat: item?.lat,
             lon: item?.lon,
             recepientName: item?.recepientName,
@@ -588,7 +624,9 @@ class MyMapView extends React.Component {
                                     {this.state.savedAddressLoading ?
                                         <ActivityIndicator size={"large"} color={Theme.Colors.primary} /> :
                                         <>
-                                            <Text style={{ fontWeight: 'bold', marginLeft: 10, fontSize: 14, marginBottom: 10 }}>Saved Address</Text>
+                                            {this.state.savedAddress?.length > 0 ?
+                                                <Text style={{ fontWeight: 'bold', marginLeft: 10, fontSize: 14, marginBottom: 10 }}>Saved Address</Text>
+                                                : undefined}
                                             <FlatList
                                                 data={this.state.savedAddress}
                                                 renderItem={({ item }) =>
@@ -658,7 +696,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { addNewCustomerAddress, getAllUserAddress, addLocation })(MyMapView)
+export default connect(mapStateToProps, { addNewCustomerAddress, getAllUserAddress, updateUserAddress, addLocation })(MyMapView)
 
 const styles = StyleSheet.create({
     map: {

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, TextInput } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, TextInput, RefreshControl } from 'react-native';
 import { Icon } from 'native-base'
 import AsyncStorage from "@react-native-community/async-storage";
 import Modal from 'react-native-modal';
@@ -9,24 +9,43 @@ import { connect } from 'react-redux';
 import { profileUpdate, verifyEmail } from '../../actions/account'
 import { ActivityIndicator } from "react-native";
 import { Validation } from "../../utils/validate";
+import { getCustomerDetails } from "../../actions/home";
 
 
-const AccountScreen = ({ profileUpdate, verifyEmail, navigation }) => {
+const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigation }) => {
     const [loading, setLoading] = useState(false)
     const [userDetails, setUserDetails] = useState({})
     const [isVisible, setIsVisible] = useState(false)
     const [emailErrorText, setemailErrorText] = useState("")
     const [nameErrorText, setNameErrorText] = useState("")
+    const [refresh, setRefresh] = useState(false)
 
     useEffect(() => {
-        const initialFunction = async () => {
-            let userDetails = await AsyncStorage.getItem('userDetails');
-            let parsedUserDetails = await JSON.parse(userDetails);
-            setUserDetails(parsedUserDetails)
-        }
-
         initialFunction()
     }, [isVisible])
+
+    const initialFunction = async () => {
+        // let userDetails = await AsyncStorage.getItem('userDetails');
+        // let parsedUserDetails = await JSON.parse(userDetails);
+        // setUserDetails(parsedUserDetails)
+        getCustomerDetails(async (res, status) => {
+            if (status) {
+                // alert(JSON.stringify(res?.data, null, "       "))
+                setUserDetails(res?.data)
+                await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
+                setRefresh(false)
+            } else {
+                setUserDetails({})
+                setRefresh(false)
+            }
+        })
+    }
+
+    const onRefresh = () => {
+        setRefresh(true)
+        initialFunction()
+    }
+
 
     const onPressUpdate = async () => {
         setLoading(true)
@@ -36,9 +55,10 @@ const AccountScreen = ({ profileUpdate, verifyEmail, navigation }) => {
                     "name": userDetails?.customerDetails?.name,
                     "userEmail": userDetails?.customerDetails?.userEmail
                 }
-                await profileUpdate(payload, (response, status) => {
+                await profileUpdate(payload, async (response, status) => {
                     if (status) {
-                        alert(JSON.stringify(response, null, "       "))
+                        await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
+                        setIsVisible(false)
                         setLoading(false)
                     } else {
                         setLoading(false)
@@ -106,8 +126,9 @@ const AccountScreen = ({ profileUpdate, verifyEmail, navigation }) => {
         if (validateEmailOnly()) {
             try {
                 await verifyEmail(userDetails?.customerDetails?.userEmail, (response, status) => {
-                    alert(JSON.stringify(response, null, "       "))
+                    // alert(JSON.stringify(response, null, "       "))
                     if (status) {
+                        alert(`A confirmation link has been sent to ${userDetails?.customerDetails?.userEmail}`)
                         setLoading(false)
                     } else {
                         setLoading(false)
@@ -122,7 +143,9 @@ const AccountScreen = ({ profileUpdate, verifyEmail, navigation }) => {
 
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }}>
+        <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} refreshControl={
+            <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+        }>
             <View style={{ backgroundColor: 'white', padding: 15 }}>
                 <Text style={{ fontWeight: 'bold', fontSize: 22 }}>Account</Text>
                 <Text style={{ color: '#909090' }}>Edit  and manage your account details</Text>
@@ -165,7 +188,7 @@ const AccountScreen = ({ profileUpdate, verifyEmail, navigation }) => {
             </View>
 
             <View style={{ backgroundColor: 'white', padding: 15, marginTop: 10 }}>
-                <TouchableOpacity onPress={() => { }} style={{ paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
+                <TouchableOpacity onPress={() => { navigation.navigate('MyOrders') }} style={{ paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 10 }}>My Orders</Text>
                     </View>
@@ -203,7 +226,7 @@ const AccountScreen = ({ profileUpdate, verifyEmail, navigation }) => {
                 onBackdropPress={() => setIsVisible(false)}
             >
                 <SafeAreaView style={{ height: 350, backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
-                    <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+                    <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="never">
                         <View style={{ flex: 1, padding: 20 }}>
                             <View style={{ alignSelf: 'center', height: 5, width: 50, backgroundColor: '#E2E2E2', borderRadius: 50 }} />
                             <Text style={{ fontSize: 12, color: '#727272', marginTop: 20 }}>Name</Text>
@@ -269,4 +292,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { profileUpdate, verifyEmail })(AccountScreen)
+export default connect(mapStateToProps, { profileUpdate, verifyEmail, getCustomerDetails })(AccountScreen)

@@ -77,7 +77,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
                                 <Text style={{ color: "#73C92D" }}>Change</Text>
                             </TouchableOpacity>
                         </View>
-                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine1}</Text>
+                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1}</Text>
                     </View>
                 </View>
                 {cartItems.length > 0 ?

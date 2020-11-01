@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import axiosinstance from '../axios/service/api';
 import {
@@ -61,3 +62,19 @@ export const searchItems = (searchTerm, callback) => async dispatch => {
         callback(err, false)
     }
 };
+
+
+
+//getCustomerDetails
+export const getCustomerDetails = (callback) => async dispatch => {
+    try {
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customerId = await parsedUserDetails?.customerDetails?.id
+        const res = await axiosinstance.get(`/customers/${customerId}`)
+        callback(res, true)
+    } catch (err) {
+        callback(err, false)
+        // Alert.alert(JSON.stringify(err.response.data, null, "     "))
+    }
+}

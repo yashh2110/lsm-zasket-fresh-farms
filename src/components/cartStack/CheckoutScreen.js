@@ -63,9 +63,10 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                 "unitPrice": el?.discountedPrice
             })
         })
-
+        let userLocation = await AsyncStorage.getItem('location');
+        let parsedUserLocation = await JSON.parse(userLocation);
         let payload = {
-            "billingAddressId": 0,
+            "billingAddressId": parsedUserLocation?.id,
             "deliverySlotId": slot?.id,
             "itemCreateRequests": itemCreateRequests,
             "nextDayBuffer": nextDayBuffer,
@@ -73,14 +74,14 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
             "slotStartHours": slot?.startHours,
             "totalPrice": totalCartValue
         }
-        alert(JSON.stringify(payload, null, "     "))
-        // addOrder(payload, (res, status) => {
-        //     if (status) {
-        //         alert(JSON.stringify(res, null, "        "))
-        //     } else {
-        //         alert(JSON.stringify(res, null, "        "))
-        //     }
-        // })
+        // alert(JSON.stringify(payload, null, "     "))
+        addOrder(payload, (res, status) => {
+            if (status) {
+                alert(JSON.stringify(res?.data?.paymentResponseId, null, "        "))
+            } else {
+                alert(res?.response?.data)
+            }
+        })
     }
 
     return (
@@ -148,7 +149,7 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                                 <Text style={{ color: "#73C92D" }}>Change</Text>
                             </TouchableOpacity>
                         </View>
-                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine1}</Text>
+                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1}</Text>
                     </View>
                 </View>
                 <View style={{ backgroundColor: 'white', marginTop: 10, padding: 16 }}>
