@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, View, Image, AsyncStorage } from 'react-native';
+import { Text, TouchableOpacity, View, Image, } from 'react-native';
 // import CartButton from './cartButton';
 import { Icon } from 'native-base';
 import { connect } from 'react-redux';

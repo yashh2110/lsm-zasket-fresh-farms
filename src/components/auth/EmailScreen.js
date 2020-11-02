@@ -16,6 +16,8 @@ import CodeInput from 'react-native-confirmation-code-input';
 import RF from "react-native-responsive-fontsize";
 import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import { AuthContext } from "../../navigation/Routes"
+
 const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWithProvider, isAuthenticated }) => {
 
     const [name, setName] = useState("")

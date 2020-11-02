@@ -4,14 +4,14 @@ import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
 import Theme from '../../styles/Theme';
-import { getAllCategories, getCustomerDetails } from '../../actions/home'
+import { getAllCategories, getCustomerDetails, onLogout } from '../../actions/home'
 import { connect } from 'react-redux';
 import CategorySectionListItem from './CategorySectionListItem';
 import Loader from '../common/Loader';
 import DarkModeToggle from '../common/DarkModeToggle';
 import AsyncStorage from '@react-native-community/async-storage';
 
-const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigation, userLocation }) => {
+const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigation, userLocation, onLogout }) => {
     const { signOut } = useContext(AuthContext);
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
@@ -45,6 +45,11 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
         initialFunction()
     }
 
+    const onPressLogout = async () => {
+        await onLogout()
+        await signOut()
+    }
+
     return (
         <>
             <ScrollView style={{ flex: 1, backgroundColor: 'white' }} showsVerticalScrollIndicator={false}
@@ -58,7 +63,7 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={signOut} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
+                    <TouchableOpacity onPress={() => onPressLogout()} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
                         <Text>Logout</Text>
                     </TouchableOpacity>
                 </View>
@@ -145,7 +150,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { getAllCategories, getCustomerDetails })(HomeScreen)
+export default connect(mapStateToProps, { getAllCategories, getCustomerDetails, onLogout })(HomeScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

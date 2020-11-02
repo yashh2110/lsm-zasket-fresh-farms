@@ -9,6 +9,7 @@ import { ActivityIndicator } from "react-native";
 import CustomHeader from "../common/CustomHeader";
 import { getCustomerOrders } from '../../actions/cart';
 import CardMyOrders from "./CardMyOrders";
+import Loader from "../common/Loader";
 
 
 const MyOrders = ({ navigation, getCustomerOrders }) => {
@@ -52,6 +53,9 @@ const MyOrders = ({ navigation, getCustomerOrders }) => {
                 // keyExtractor={item => item?.id.toString()}
                 />
             </ScrollView>
+            {loading ?
+                <Loader />
+                : undefined}
         </View>
     );
 }

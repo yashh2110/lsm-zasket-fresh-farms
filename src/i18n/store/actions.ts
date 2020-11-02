@@ -1,7 +1,8 @@
 import { ThunkAction } from "redux-thunk";
-import { AppState, AsyncStorage } from "react-native";
+import { AppState, } from "react-native";
 import { Action } from "redux";
 import { UpdateLanguageActionType, AsyncStorageLanguageActionType } from "./types";
+import AsyncStorage from "@react-native-community/async-storage";
 
 
 export const updateLanguage = (language: string): ThunkAction<void, AppState, null, Action<string>> => async dispatch => {
@@ -10,7 +11,7 @@ export const updateLanguage = (language: string): ThunkAction<void, AppState, nu
             type: UpdateLanguageActionType.UPDATE_LANGUAGE,
             language
         });
-    } catch{
+    } catch {
 
     }
 }
@@ -25,7 +26,7 @@ export const AsyncStorageSelectedLanguagee = (): ThunkAction<void, AppState, nul
                 return values
             }
         );
-    } catch{
+    } catch {
 
     }
 }

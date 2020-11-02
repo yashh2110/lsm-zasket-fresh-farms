@@ -5,6 +5,7 @@ import { addToCart, updateCart, deleteCartItem } from '../../actions/cart'
 import { connect } from 'react-redux';
 import { Icon } from 'native-base';
 import Modal from 'react-native-modal';
+import moment from 'moment'
 
 const CardMyOrders = ({ item, navigation, addToCart, updateCart, cartItems, deleteCartItem }) => {
     const [addButton, setAddButton] = useState(true)
@@ -15,12 +16,11 @@ const CardMyOrders = ({ item, navigation, addToCart, updateCart, cartItems, dele
 
     useEffect(() => {
         setProductItem(item?.items)
-        console.warn(item)
     }, [item])
 
     return (
         <View style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
-            <Text>{JSON.stringify(item, null, "         ")}</Text>
+            {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
                     <Text>Vegetables & Fruits  <Icon name="right" type="AntDesign" style={{ fontSize: 12 }} /></Text>
@@ -34,11 +34,27 @@ const CardMyOrders = ({ item, navigation, addToCart, updateCart, cartItems, dele
             </TouchableOpacity>
             <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
                 <View style={{ flex: 1 }}>
-                    <Text style={{ color: '#909090', fontSize: 13 }}>deliver on 28 Oct ({item?.deliverySlot?.description})</Text>
+                    <Text style={{ color: '#909090', fontSize: 13 }}>{moment(item?.deliverySlot?.slotEndTime).format("DD MMM")} ({item?.deliverySlot?.description})</Text>
                 </View>
                 <View>
-                    <Text style={{ color: Theme.Colors.primary }}>In transit</Text>
-                    <Text style={{}}><Icon name="checkcircle" type="AntDesign" style={{ fontSize: 16, color: Theme.Colors.primary }} /> Delivered</Text>
+                    {item?.orderState == "IN_TRANSIT" &&
+                        <Text style={{ color: Theme.Colors.primary }}>In transit</Text>
+                    }
+                    {item?.orderState == "DELIVERED" &&
+                        <Text style={{}}><Icon name="checkcircle" type="AntDesign" style={{ fontSize: 16, color: Theme.Colors.primary }} /> Delivered</Text>
+                    }
+                    {item?.orderState == "CANCELLED" &&
+                        <Text style={{ color: "red" }}>Cancelled</Text>
+                    }
+                    {item?.orderState == "REFUNDED" &&
+                        <Text style={{}}>Refunded</Text>
+                    }
+                    {item?.orderState == "IN_INVENTORY" &&
+                        <Text style={{ color: Theme.Colors.primary }}>In inventory</Text>
+                    }
+                    {item?.orderState == "ASSIGNED" &&
+                        <Text style={{ color: Theme.Colors.primary }}>Assigned</Text>
+                    }
                 </View>
             </View>
             <Modal

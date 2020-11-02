@@ -46,6 +46,7 @@ export const addOrder = (payload, callback) => async dispatch => {
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
+        // alert(JSON.stringify(userDetails, null, "     "))
         const res = await axiosinstance.post(`/customers/${customerId}/orders`, payload)
         callback(res, true)
     } catch (err) {

@@ -7,7 +7,8 @@ const initialState = {
     recepientMobileNumber: "",
     landMark: "",
     saveAs: "",
-    pincode: ""
+    pincode: "",
+    isActive: ""
 }
 
 const location = (state = initialState, action) => {
@@ -24,7 +25,8 @@ const location = (state = initialState, action) => {
                 recepientMobileNumber: payload?.recepientMobileNumber ? payload?.recepientMobileNumber : "",
                 landMark: payload?.landMark ? payload?.landMark : "",
                 saveAs: payload?.saveAs ? payload?.saveAs : "",
-                pincode: payload?.pincode ? payload?.pincode : ""
+                pincode: payload?.pincode ? payload?.pincode : "",
+                isActive: payload?.isActive ? payload?.isActive : "",
             }
         // case DELETE_LOCATION:
         //     return {

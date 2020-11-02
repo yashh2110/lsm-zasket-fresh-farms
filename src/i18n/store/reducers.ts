@@ -1,5 +1,5 @@
 import { UpdateLanguageAction, UpdateLanguageActionType, LanguageStore, LanguageActions, AsyncStorageLanguageActionType } from "./types";
-import { AsyncStorage } from "react-native";
+
 
 
 //reducers.js

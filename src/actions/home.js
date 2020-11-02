@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import axiosinstance from '../axios/service/api';
 import {
-    GET_CATEGORIES
+    GET_CATEGORIES, USER_LOGGED_OUT
 } from './types';
 
 // getAllCategories
@@ -77,4 +77,10 @@ export const getCustomerDetails = (callback) => async dispatch => {
         callback(err, false)
         // Alert.alert(JSON.stringify(err.response.data, null, "     "))
     }
+}
+
+export const onLogout = () => async dispatch => {
+    dispatch({
+        type: USER_LOGGED_OUT
+    });
 }

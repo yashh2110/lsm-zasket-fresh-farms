@@ -52,7 +52,7 @@ class MyMapView extends React.Component {
         homeCheck: false,
         officeCheck: false,
         othersCheck: false,
-        deliverFor: "self",
+        // deliverFor: "self",
         mode: "ON_INITIAL",
         pincode: "",
         savedAddress: [],
@@ -98,6 +98,13 @@ class MyMapView extends React.Component {
                 houseNumber: item?.houseNo
             })
         } else {
+            this.setState({ homeCheck: true, saveAs: 'Home' })
+            let userDetails = await AsyncStorage.getItem('userDetails');
+            let parsedUserDetails = await JSON.parse(userDetails);
+            await this.setState({
+                name: parsedUserDetails?.customerDetails?.name,
+                mobileNumber: parsedUserDetails?.customerDetails?.userMobileNumber
+            })
             this.getCurrentPosition();
             await this.setState({ savedAddressLoading: true, })
             await this.props.getAllUserAddress(async (response, status) => {
@@ -111,7 +118,7 @@ class MyMapView extends React.Component {
                     this.setState({ savedAddress: newArray })
 
                 } else {
-                    Alert.alert(JSON.stringify(response?.data, null, "   "))
+                    // Alert.alert(JSON.stringify(response?.data, null, "   "))
                     this.setState({ savedAddressLoading: false })
                 }
             })
@@ -211,55 +218,34 @@ class MyMapView extends React.Component {
 
     validate = () => {
         let status = true
-        if (this.state.deliverFor == "self") {
 
+        if (this.state.name == undefined || this.state.name.trim() == "") {
+            this.setState({ nameErrorText: "Name is required" })
+            status = false
         }
-        if (this.state.deliverFor == "others") {
-            if (this.state.name == undefined || this.state.name.trim() == "") {
-                this.setState({ nameErrorText: "Name is required" })
-                status = false
-            }
-            if (this.state.mobileNumber == undefined || this.state.mobileNumber.trim() == "") {
-                this.setState({ mobileNumberErrorText: "Mobile number is required" })
-                status = false
-            }
+        if (this.state.mobileNumber == undefined || this.state.mobileNumber.trim() == "") {
+            this.setState({ mobileNumberErrorText: "Mobile number is required" })
+            status = false
         }
+
         return status
     }
 
     onSubmit = async () => {
         if (this.validate()) {
             await this.setState({ loading: true })
-            let userDetails = await AsyncStorage.getItem('userDetails');
-            let parsedUserDetails = await JSON.parse(userDetails);
             let payload;
-            if (this.state.deliverFor === "self") {
-                payload = {
-                    "addressLine1": this.state.address,
-                    "houseNo": this.state.houseNumber,
-                    "pincode": this.state.pincode,
-                    "isActive": true,
-                    "landmark": this.state.landMark,
-                    "lat": this.state.latitude,
-                    "lon": this.state.longitude,
-                    "recepientMobileNumber": parsedUserDetails?.customerDetails?.userMobileNumber,
-                    "recepientName": parsedUserDetails?.customerDetails?.name,
-                    "saveAs": this.state.saveAs
-                }
-            }
-            if (this.state.deliverFor === "others") {
-                payload = {
-                    "addressLine1": this.state.address,
-                    "houseNo": this.state.houseNumber,
-                    "pincode": this.state.pincode,
-                    "isActive": true,
-                    "landmark": this.state.landMark,
-                    "lat": this.state.latitude,
-                    "lon": this.state.longitude,
-                    "recepientMobileNumber": this.state.mobileNumber ? "+91" + this.state.mobileNumber : "",
-                    "recepientName": this.state.name,
-                    "saveAs": this.state.saveAs
-                }
+            payload = {
+                "addressLine1": this.state.address,
+                "houseNo": this.state.houseNumber,
+                "pincode": this.state.pincode,
+                "isActive": true,
+                "landmark": this.state.landMark,
+                "lat": this.state.latitude,
+                "lon": this.state.longitude,
+                "recepientMobileNumber": this.state.mobileNumber.includes("+91") ? this.state.mobileNumber : "+91" + this.state.mobileNumber,
+                "recepientName": this.state.name,
+                "saveAs": this.state.saveAs
             }
             // console.warn(payload)
             const { fromScreen } = this.props.route?.params;
@@ -275,7 +261,6 @@ class MyMapView extends React.Component {
             } else {
                 await this.props.addNewCustomerAddress(payload, async (response, status) => {
                     if (status) {
-                        this.props.addLocation(payload)
                         // Alert.alert(JSON.stringify(response, null, "   "))
 
                         let location = {
@@ -291,7 +276,8 @@ class MyMapView extends React.Component {
                             "saveAs": response?.data?.saveAs
                         }
 
-                        await AsyncStorage.setItem("location", JSON.stringify(location));
+                        this.props.addLocation(location)
+                        // await AsyncStorage.setItem("location", JSON.stringify(location));
                         this.setState({ loading: false })
                         if (this.state.mode === "ON_INITIAL") {
                             this.props.navigation.navigate('SetAuthContext', { userLocation: payload }) // if you send it as null it wont navigate
@@ -336,18 +322,18 @@ class MyMapView extends React.Component {
         }
     }
 
-    onPressDeliverFor = (option) => {
-        if (option === "self") {
-            this.setState({
-                deliverFor: "self"
-            })
-        }
-        if (option === "others") {
-            this.setState({
-                deliverFor: "others"
-            })
-        }
-    }
+    // onPressDeliverFor = (option) => {
+    //     if (option === "self") {
+    //         this.setState({
+    //             deliverFor: "self"
+    //         })
+    //     }
+    //     if (option === "others") {
+    //         this.setState({
+    //             deliverFor: "others"
+    //         })
+    //     }
+    // }
 
     renderSeparator = () => {
         return (
@@ -459,7 +445,7 @@ class MyMapView extends React.Component {
                                 </View>
                             }
                             <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.errorMessage}</Text>
-                            <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
+                            {/* <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
                             <View style={{ flexDirection: 'row', justifyContent: "space-around", marginTop: 10, }}>
                                 <TouchableOpacity onPress={() => this.onPressDeliverFor('self')} style={{ justifyContent: 'center', borderColor: this.state.deliverFor == "self" ? Theme.Colors.primary : "#EFEFEF", borderWidth: 2, borderRadius: 6, justifyContent: 'center', alignItems: 'center', width: "40%", padding: 15 }}>
                                     <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Self</Text>
@@ -468,39 +454,38 @@ class MyMapView extends React.Component {
                                 <TouchableOpacity onPress={() => this.onPressDeliverFor('others')} style={{ justifyContent: 'center', borderColor: this.state.deliverFor == "others" ? Theme.Colors.primary : "#EFEFEF", borderWidth: 2, borderRadius: 6, justifyContent: 'center', alignItems: 'center', width: "40%", padding: 15 }}>
                                     <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Others</Text>
                                 </TouchableOpacity>
-                            </View>
-                            {this.state.deliverFor === "others" ?
-                                <>
-                                    <View style={{ marginTop: 10 }}>
-                                        <Text style={{ color: "#727272", fontSize: 14 }}>Name</Text>
-                                        <TextInput
-                                            style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
-                                            onChangeText={text => this.setState({
-                                                name: text
-                                            })}
-                                            value={this.state.name}
-                                            onTouchStart={() => {
-                                                this.setState({ nameErrorText: "" })
-                                            }}
-                                        />
-                                        <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.nameErrorText}</Text>
-                                    </View>
-                                    <View style={{ marginTop: 10 }}>
-                                        <Text style={{ color: "#727272", fontSize: 14 }}>Mobile Number</Text>
-                                        <TextInput
-                                            style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
-                                            onChangeText={text => this.setState({
-                                                mobileNumber: text
-                                            })}
-                                            value={this.state.mobileNumber}
-                                            keyboardType={"number-pad"}
-                                            onTouchStart={() => {
-                                                this.setState({ mobileNumberErrorText: "" })
-                                            }}
-                                        />
-                                        <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.mobileNumberErrorText}</Text>
-                                    </View>
-                                </> : undefined}
+                            </View> */}
+                            <>
+                                <View style={{ marginTop: 10 }}>
+                                    <Text style={{ color: "#727272", fontSize: 14 }}>Name</Text>
+                                    <TextInput
+                                        style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
+                                        onChangeText={text => this.setState({
+                                            name: text
+                                        })}
+                                        value={this.state.name}
+                                        onTouchStart={() => {
+                                            this.setState({ nameErrorText: "" })
+                                        }}
+                                    />
+                                    <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.nameErrorText}</Text>
+                                </View>
+                                <View style={{ marginTop: 10 }}>
+                                    <Text style={{ color: "#727272", fontSize: 14 }}>Mobile Number</Text>
+                                    <TextInput
+                                        style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
+                                        onChangeText={text => this.setState({
+                                            mobileNumber: text
+                                        })}
+                                        value={this.state.mobileNumber}
+                                        keyboardType={"number-pad"}
+                                        onTouchStart={() => {
+                                            this.setState({ mobileNumberErrorText: "" })
+                                        }}
+                                    />
+                                    <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.mobileNumberErrorText}</Text>
+                                </View>
+                            </>
                             <View style={{ marginTop: 20 }}>
                                 <Text style={{ color: "#727272", fontSize: 14 }}>House No/ Flat No/Floor/Building</Text>
                                 <TextInput

@@ -10,6 +10,9 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { getDeliverySlots, addOrder } from '../../actions/cart'
 import moment from 'moment'
 import { Radio } from 'native-base';
+import RazorpayCheckout from 'react-native-razorpay';
+import { RazorpayApiKey } from '../../../env';
+
 const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, addOrder, userLocation }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, settotalCartValue] = useState(0)
@@ -75,11 +78,36 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
             "totalPrice": totalCartValue
         }
         // alert(JSON.stringify(payload, null, "     "))
-        addOrder(payload, (res, status) => {
+        addOrder(payload, async (res, status) => {
             if (status) {
-                alert(JSON.stringify(res?.data?.paymentResponseId, null, "        "))
+                // alert(JSON.stringify(res?.data, null, "        "))
+                let userDetails = await AsyncStorage.getItem('userDetails');
+                let parsedUserDetails = await JSON.parse(userDetails);
+
+                var options = {
+                    description: 'Select the payment method',
+                    image: 'https://i.imgur.com/3g7nmJC.png',
+                    currency: 'INR',
+                    key: RazorpayApiKey,
+                    amount: totalCartValue,
+                    name: 'Zasket',
+                    order_id: res?.data?.paymentResponseId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+                    prefill: {
+                        email: parsedUserDetails?.customerDetails?.userEmail,
+                        contact: parsedUserDetails?.customerDetails?.userMobileNumber,
+                        name: parsedUserDetails?.customerDetails?.name
+                    },
+                    theme: { color: Theme.Colors.primary }
+                }
+                RazorpayCheckout.open(options).then((data) => {
+                    // handle success
+                    alert(`Success: ${data.razorpay_payment_id}`);
+                }).catch((error) => {
+                    // handle failure
+                    alert(`Error: ${error.code} | ${error.description}`);
+                })
             } else {
-                alert(res?.response?.data)
+                alert(JSON.stringify(res?.response?.data?.description, null, "        "))
             }
         })
     }

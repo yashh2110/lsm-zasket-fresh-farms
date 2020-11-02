@@ -19,6 +19,14 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
         initialFunction()
     }, [])
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            initialFunction()
+        });
+        return unsubscribe;
+    }, [navigation]);
+
+
     const initialFunction = async () => {
         getAllUserAddress(async (response, status) => {
             // alert(JSON.stringify(response, null, "   "))

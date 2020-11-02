@@ -6,9 +6,10 @@ import home from './home'
 import cart from './cart'
 import location from './location'
 import { reducers as IntlReducers } from '../i18n/store';
-
+import AsyncStorage from '@react-native-community/async-storage'
+import { USER_LOGGED_OUT } from '../actions/types'
 // Redux: Root Reducer
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
     alert: alert,
     dark: dark,
     auth: auth,
@@ -18,5 +19,16 @@ const rootReducer = combineReducers({
     location: location
 })
 
-// Exports
+function rootReducer(state, action) {
+    const { type, payload } = action
+    switch (type) {
+        case USER_LOGGED_OUT:
+            AsyncStorage.removeItem('persist:root')
+            AsyncStorage.clear()
+            state = undefined;
+        default:
+            return appReducer(state, action);
+    }
+}
+
 export default rootReducer;

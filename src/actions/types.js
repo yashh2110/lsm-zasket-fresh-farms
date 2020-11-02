@@ -7,6 +7,7 @@ export const UPDATE_COUNT = 'UPDATE_COUNT'
 export const DELETE_ITEM_CART = 'DELETE_ITEM_CART'
 export const ADD_LOCATION = 'ADD_LOCATION'
 export const DELETE_LOCATION = 'DELETE_LOCATION'
+export const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
 
 
 

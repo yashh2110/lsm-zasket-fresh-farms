@@ -37,6 +37,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, verifyOtp, route }) => {
                     // Alert.alert(JSON.stringify(response, null, "     "))
                     if (status) {
                         setLoading(false)
+                        await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
                         signIn(response?.data)
                     } else {
                         setLoading(false)

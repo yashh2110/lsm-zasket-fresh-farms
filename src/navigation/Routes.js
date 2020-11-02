@@ -35,6 +35,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { ActivityIndicator } from 'react-native';
 import SetAuthContext from '../components/MapStack/setAuthContext';
 import CartButton from './CartButton';
+import { AxiosDefaultsManager } from '../axios/default';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -329,11 +330,12 @@ const Navigate = ({ alerts, darkMode }) => {
     const authContext = React.useMemo(
         () => ({
             signIn: async data => {
+                // alert(JSON.stringify(data?.customerSessionDetails?.sessionId, null, "       "))
+                new AxiosDefaultsManager().setAuthorizationHeader(data?.customerSessionDetails?.sessionId)
                 await AsyncStorage.setItem('userDetails', JSON.stringify(data))
-                dispatch({ type: 'SIGN_IN', userDetails: data });
+                await dispatch({ type: 'SIGN_IN', userDetails: data });
             },
             signOut: async () => {
-                await AsyncStorage.clear()
                 dispatch({ type: 'SIGN_OUT' })
             },
             saveUserLocation: async data => {
