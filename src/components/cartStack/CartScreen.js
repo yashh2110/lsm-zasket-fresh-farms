@@ -55,7 +55,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
                     </View>
                     <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'center' }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                                 {userLocation?.saveAs == "Home" &&
                                     <View style={{ backgroundColor: "#FEF8FC", borderWidth: 1, borderRadius: 4, borderColor: "#FCD8EC", paddingVertical: 3, marginRight: 5 }}>
                                         <Text style={{ color: "#F464AD", fontSize: 12, marginHorizontal: 5 }}>Home</Text>
@@ -71,7 +71,12 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
                                         <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
                                     </View>
                                 }
-                                <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Deliver to {userLocation?.recepientName}</Text>
+                                <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: 'bold', }}>Deliver to {
+                                    ((userLocation?.recepientName).length > 13) ?
+                                        (((userLocation?.recepientName).substring(0, 13 - 3)) + '...') :
+                                        userLocation?.recepientName
+                                }
+                                </Text>
                             </View>
                             <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{}}>
                                 <Text style={{ color: "#73C92D" }}>Change</Text>

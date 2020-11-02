@@ -102,6 +102,8 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                 RazorpayCheckout.open(options).then((data) => {
                     // handle success
                     alert(`Success: ${data.razorpay_payment_id}`);
+                    onClearCart()
+                    navigation.navigate('AccountStack', { screen: 'MyOrders' })
                 }).catch((error) => {
                     // handle failure
                     alert(`Error: ${error.code} | ${error.description}`);
@@ -171,7 +173,11 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                                         <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
                                     </View>
                                 }
-                                <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Deliver to {userLocation?.recepientName}</Text>
+                                <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Deliver to {
+                                    ((userLocation?.recepientName).length > 13) ?
+                                        (((userLocation?.recepientName).substring(0, 13 - 3)) + '...') :
+                                        userLocation?.recepientName
+                                }</Text>
                             </View>
                             <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{}}>
                                 <Text style={{ color: "#73C92D" }}>Change</Text>
@@ -203,17 +209,19 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                         : undefined}
                 </View>
             </ScrollView>
-            <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
-                <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {totalCartValue}</Text>
-                    <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
-                        <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
+            {cartItems?.length > 0 ?
+                <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
+                    <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {totalCartValue}</Text>
+                        <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
+                            <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
+                        </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity onPress={() => { onPressMakePayment() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                        <Text style={{ color: 'white', fontSize: 17 }}>Make a Payment <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={() => { onPressMakePayment() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
-                    <Text style={{ color: 'white', fontSize: 17 }}>Make a Payment <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
-                </TouchableOpacity>
-            </View>
+                : undefined}
         </View>
     );
 }

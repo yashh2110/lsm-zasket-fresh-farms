@@ -287,6 +287,7 @@ class MyMapView extends React.Component {
                     } else {
                         // Alert.alert(response?.data)
                         this.setState({ errorMessage: response?.data })
+                        this.refs._scrollView.scrollTo(0);
                         this.setState({ loading: false })
                     }
                 })
@@ -418,7 +419,9 @@ class MyMapView extends React.Component {
                                 null
                             }
                         </View>
-                        <ScrollView style={{ flex: 1, width: "90%", alignSelf: 'center' }} showsVerticalScrollIndicator={false}>
+                        <ScrollView
+                            ref='_scrollView'
+                            style={{ flex: 1, width: "90%", alignSelf: 'center' }} showsVerticalScrollIndicator={false}>
                             <View style={{ flexDirection: 'row' }}>
                                 <View style={{ flex: 1, justifyContent: 'center' }}>
                                     <Text style={{ color: "#727272", fontSize: 13 }}>Your current location</Text>
@@ -444,7 +447,7 @@ class MyMapView extends React.Component {
                                     <Text>{this.state.address}</Text>
                                 </View>
                             }
-                            <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.errorMessage}</Text>
+                            <Text style={{ color: "red", fontSize: 12, marginTop: 5, fontWeight: 'bold' }}>{this.state.errorMessage}</Text>
                             {/* <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
                             <View style={{ flexDirection: 'row', justifyContent: "space-around", marginTop: 10, }}>
                                 <TouchableOpacity onPress={() => this.onPressDeliverFor('self')} style={{ justifyContent: 'center', borderColor: this.state.deliverFor == "self" ? Theme.Colors.primary : "#EFEFEF", borderWidth: 2, borderRadius: 6, justifyContent: 'center', alignItems: 'center', width: "40%", padding: 15 }}>

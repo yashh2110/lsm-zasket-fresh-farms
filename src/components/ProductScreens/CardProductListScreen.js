@@ -81,7 +81,7 @@ const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartIt
                     // source={{ uri: "https://i.picsum.photos/id/390/500/300.jpg?hmac=MTvu05oUf6PaVif2NTqWv7mLAYEYslPgtVOyjSZe-pk" }}
                     />
                 </View>
-                <View style={[{ padding: 10 }]}>
+                <View style={[{ padding: 10, flex: 1 }]}>
                     <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice}</Text>

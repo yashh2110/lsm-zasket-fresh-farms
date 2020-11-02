@@ -208,7 +208,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
 
                 <TouchableOpacity onPress={() => { navigation.navigate('SupportScreen') }} style={{ paddingTop: 10, paddingBottom: 10, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 10, }}>Help/FAQ's</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 10, }}>Support</Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />

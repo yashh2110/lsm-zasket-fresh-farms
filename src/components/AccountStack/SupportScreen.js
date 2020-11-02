@@ -37,7 +37,7 @@ const SupportScreen = ({ navigation }) => {
                         </View>
                         <View style={{ flex: 1, justifyContent: 'center', paddingLeft: 15 }}>
                             <Text style={{ color: '#727272' }}>Call Us</Text>
-                            <Text style={{ fontWeight: 'bold' }}>1800-599-0009</Text>
+                            <Text style={{ fontWeight: 'bold' }}>6300105949</Text>
                         </View>
                     </View>
 
@@ -51,7 +51,7 @@ const SupportScreen = ({ navigation }) => {
                         </View>
                         <View style={{ flex: 1, justifyContent: 'center', paddingLeft: 15 }}>
                             <Text style={{ color: '#727272' }}>Email Us</Text>
-                            <Text style={{ fontWeight: 'bold' }}>support@zesket.com</Text>
+                            <Text style={{ fontWeight: 'bold' }}>service@zasket.in</Text>
                         </View>
                     </View>
                 </View>

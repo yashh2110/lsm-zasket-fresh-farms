@@ -6,7 +6,7 @@ import ProductCard from './ProductCard';
 const CategorySectionListItem = ({ item, navigation }) => {
     return (
         <>
-            {/* <Text>{JSON.stringify(item, null, "      ")}</Text> */}
+            {/* <Text>{JSON.stringify(item?.items?.slice(1, 3), null, "      ")}</Text> */}
             <View style={{ flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
                     <Text style={{ color: '#2E2E2E', padding: 10, fontWeight: 'bold', fontSize: 16, textTransform: 'capitalize' }}>{item?.categoryName}</Text>
@@ -20,7 +20,7 @@ const CategorySectionListItem = ({ item, navigation }) => {
             </View>
             <View style={styles.scrollChildParent}>
                 <FlatList
-                    data={item?.items}
+                    data={item?.items?.slice(1, 11)}
                     renderItem={({ item }) => (
                         <ProductCard item={item} navigation={navigation} />
                     )}

@@ -17,7 +17,7 @@ const CustomHeader = ({ navigation, title, showSearch = true }) => {
                 </>
             </TouchableOpacity>
             <View style={{ flex: 1, justifyContent: 'center', }}>
-                <Text style={{ fontSize: 18, color: 'black', textTransform: 'capitalize' }}>{title}</Text>
+                <Text style={{ fontSize: 18, color: 'black', textTransform: 'capitalize', fontWeight: 'bold' }}>{title}</Text>
             </View>
             <>
                 {showSearch ?
