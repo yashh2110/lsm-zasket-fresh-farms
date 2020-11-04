@@ -19,6 +19,7 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
     const [nextDayBuffer, setNextDayBuffer] = useState(1)
     const [savedValue, setSavedValue] = useState(0)
     const [slot, setSlot] = useState({})
+    const [disableTomorrowSlot, setDisableTomorrowSlot] = useState(false)
     useEffect(() => {
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
@@ -45,8 +46,22 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                 setSlot({})
             }
         })
+        var today = new Date();
+        var hour = today.getHours();
+        if (hour >= 21) {
+            setDisableTomorrowSlot(true)
+        }
     }, [nextDayBuffer, userLocation])
 
+    useEffect(() => {
+        var today = new Date();
+        var hour = today.getHours();
+        if (hour >= 21) {
+            // alert(hour)
+            setNextDayBuffer(2)
+            setDisableTomorrowSlot(true)
+        }
+    }, [])
 
     const onClearCart = async () => {
         clearCart()
@@ -86,7 +101,7 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
 
                 var options = {
                     description: 'Select the payment method',
-                    image: 'https://i.imgur.com/3g7nmJC.png',
+                    image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
                     currency: 'INR',
                     key: RazorpayApiKey,
                     amount: totalCartValue,
@@ -122,19 +137,26 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                 <View style={{ backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
                     <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Book a slot</Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, height: 60 }}>
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(1) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 1 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 1 ? '#F1FAEA' : "white", justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
-                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(2) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 2 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 2 ? '#F1FAEA' : "white", justifyContent: 'center', alignItems: 'center' }}>
+                        {disableTomorrowSlot ?
+                            <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
+                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
+                            </View>
+                            :
+                            <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(1) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 1 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 1 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
+                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
+                            </TouchableOpacity>
+                        }
+                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(2) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 2 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 2 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(2, 'days').format("ddd")}</Text>
                             <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(2, 'days').format("DD MMM")}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(3) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 3 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 3 ? '#F1FAEA' : "white", justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(3) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 3 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 3 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(3, 'days').format("ddd")}</Text>
                             <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(3, 'days').format("DD MMM")}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(4) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 4 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 4 ? '#F1FAEA' : "white", justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(4) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 4 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 4 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(4, 'days').format("ddd")}</Text>
                             <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(4, 'days').format("DD MMM")}</Text>
                         </TouchableOpacity>
@@ -149,7 +171,7 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                 </View>
 
                 <View style={{ backgroundColor: 'white', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
-                    <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#F1FAEA', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center' }}>
                         <Image
                             style={{ width: 30, height: 30, }}
                             source={require('../../assets/png/locationIcon.png')}
@@ -180,7 +202,7 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                                 }</Text>
                             </View>
                             <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{}}>
-                                <Text style={{ color: "#73C92D" }}>Change</Text>
+                                <Text style={{ color: Theme.Colors.primary }}>Change</Text>
                             </TouchableOpacity>
                         </View>
                         <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1}</Text>
@@ -203,7 +225,7 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                         <Text style={{ fontWeight: 'bold' }}>₹ {totalCartValue}</Text>
                     </View>
                     {savedValue > 0 ?
-                        <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: Theme.Colors.primary, alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center" }}>
+                        <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: Theme.Colors.primary, alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#FDEFEF", alignItems: "center" }}>
                             <Text style={{ color: Theme.Colors.primary }}>😊 You have saved Rs {savedValue} in this purchase</Text>
                         </View>
                         : undefined}

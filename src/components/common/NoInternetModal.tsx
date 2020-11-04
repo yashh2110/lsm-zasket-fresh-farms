@@ -24,7 +24,7 @@ const NoInternetModal = ({ darkMode }: any) => {
                 source={require('../../assets/png/noInternet.png')}
             />
             <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
-                <Text style={{ fontSize: 24 }}>Connection Error</Text>
+                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Connection Error</Text>
                 <Text style={{ color: "#727272", alignSelf: 'center', textAlign: 'center', paddingHorizontal: 20 }}>Please try checking your internet connection & try again</Text>
             </View>
         </SafeAreaView>

@@ -427,7 +427,7 @@ class MyMapView extends React.Component {
                                     <Text style={{ color: "#727272", fontSize: 13 }}>Your current location</Text>
                                 </View>
                                 <TouchableOpacity activeOpacity={0.7} onPress={() => { this.setState({ modalVisible: true }) }} style={{ padding: 5 }}>
-                                    <Text style={{ color: "#73C92D" }}>Change</Text>
+                                    <Text style={{ color: Theme.Colors.primary }}>Change</Text>
                                 </TouchableOpacity>
                             </View>
                             {this.state.addressLoading ?

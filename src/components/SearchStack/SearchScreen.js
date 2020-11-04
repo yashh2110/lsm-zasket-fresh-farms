@@ -60,16 +60,15 @@ const SearchScreen = ({ navigation, searchItems }) => {
                 {loading ?
                     <ActivityIndicator style={{}} size="large" color="grey" />
                     : searchTerm.length > 2 ?
-                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                            <Draggable>
-                                <LottieView
-                                    style={{ width: '70%' }}
-                                    source={require("../../assets/animations/sadSearch.json")}
-                                    autoPlay
-                                    loop
-                                />
-                            </Draggable>
-                            {/* <Text>No items found</Text> */}
+                        <View style={{ alignItems: 'center' }}>
+                            <Image
+                                style={{ width: 250, height: 250 }}
+                                resizeMode="center"
+                                source={require("../../assets/png/sadSearch.png")}
+                            />
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}>Nothing Found!</Text>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', color: '#727272', fontSize: 12 }}>We cannot find what you are looking for.</Text>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', color: '#727272', fontSize: 12 }}>Try search something else.</Text>
                         </View>
                         :
                         <>

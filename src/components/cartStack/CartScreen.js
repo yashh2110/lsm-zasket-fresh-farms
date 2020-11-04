@@ -41,13 +41,14 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
     }
 
 
+
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Cart"} showSearch={false} />
             <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false}>
                 {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")}</Text> */}
                 <View style={{ backgroundColor: 'white', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
-                    <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#F1FAEA', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center' }}>
                         <Image
                             style={{ width: 30, height: 30, }}
                             source={require('../../assets/png/locationIcon.png')}
@@ -79,7 +80,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
                                 </Text>
                             </View>
                             <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{}}>
-                                <Text style={{ color: "#73C92D" }}>Change</Text>
+                                <Text style={{ color: Theme.Colors.primary }}>Change</Text>
                             </TouchableOpacity>
                         </View>
                         <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1}</Text>
@@ -119,13 +120,29 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
                                 <Text style={{ fontWeight: 'bold' }}>₹ {totalCartValue}</Text>
                             </View>
                             {savedValue > 0 ?
-                                <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: Theme.Colors.primary, alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center" }}>
+                                <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: Theme.Colors.primary, alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#FDEFEF", alignItems: "center" }}>
                                     <Text style={{ color: Theme.Colors.primary }}>😊 You have saved Rs {savedValue} in this purchase</Text>
                                 </View>
                                 : undefined}
                         </View>
                     </>
-                    : undefined}
+                    :
+                    <View style={[{ flex: 1, alignSelf: 'center', justifyContent: 'center', }]}>
+                        <Image
+                            style={{ height: 250 }}
+                            resizeMode={"center"}
+                            source={require('../../assets/png/emptyCart.png')}
+                        />
+                        <View style={{ width: "80%", alignSelf: 'center' }}>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}>Your cart is empty!</Text>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', color: '#727272', fontSize: 12 }}>There is always something good for you.</Text>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', color: '#727272', fontSize: 12 }}>Add something from the list.</Text>
+                            <TouchableOpacity onPress={() => { navigation.navigate('Home') }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, borderRadius: 100, justifyContent: 'center', alignItems: "center", padding: 10, marginTop: 15, width: 200, alignSelf: 'center' }}>
+                                <Text style={{ color: 'white', fontSize: 17 }}>Add Now</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                }
                 {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>
                     {JSON.stringify(cartItems, null, "       ")}
                 </Text> */}

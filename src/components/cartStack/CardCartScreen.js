@@ -112,7 +112,10 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
                     <TouchableOpacity onPress={() => onDeleteItem()} style={{ backgroundColor: 'white', position: 'absolute', top: 0, padding: 10 }}>
                         <Icon name="trash-o" type="FontAwesome" style={{ fontSize: 20 }} />
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', }}>₹{item?.actualPrice * item?.count}</Text>
+                    {item?.discountedPrice == item?.actualPrice ?
+                        undefined :
+                        <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice}</Text>
+                    }
                     <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice * item?.count}</Text>
                 </View>
             </TouchableOpacity>

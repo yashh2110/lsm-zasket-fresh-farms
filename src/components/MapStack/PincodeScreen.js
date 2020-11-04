@@ -101,7 +101,7 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProv
 
                         {availablity == "AVAILABLE" ?
                             <View>
-                                <Text style={{ marginTop: "4%", fontSize: 20, fontWeight: Platform.OS == "ios" ? "500" : "700", letterSpacing: .3, textAlign: 'center', color: "#5CA123" }}>Choose your Delivery Address</Text>
+                                <Text style={{ marginTop: "4%", fontSize: 20, fontWeight: Platform.OS == "ios" ? "500" : "700", letterSpacing: .3, textAlign: 'center' }}>Choose your Delivery Address</Text>
                                 <Text style={{ marginTop: "2%", fontSize: 14, color: "#727272", textAlign: 'center' }}>Let’s first check our service is available at
                                 your location or not? Because We value your time!</Text>
                                 {/* <Text style={{ marginTop: "2%", fontSize: 14, color: "#2B2E30", textAlign: 'center', fontWeight: 'bold' }}>Now Choose your Delivery Address</Text> */}

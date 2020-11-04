@@ -28,7 +28,7 @@ const SupportScreen = ({ navigation }) => {
                 <View style={{ backgroundColor: 'white', padding: 15, marginTop: 10 }}>
                     <Text style={{}}>We are Available to assist you from 10AM - 7PM on all days</Text>
                     <View style={{ borderWidth: 1, borderColor: "#EFEFEF", borderRadius: 6, padding: 10, flexDirection: 'row', marginTop: 15 }}>
-                        <View style={{ backgroundColor: '#F1FAEA', borderRadius: 50, width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ backgroundColor: '#FDEFEF', borderRadius: 50, width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
                             <Image
                                 style={{ width: 20, height: 20, }}
                                 resizeMode="contain"
@@ -42,7 +42,7 @@ const SupportScreen = ({ navigation }) => {
                     </View>
 
                     <View style={{ borderWidth: 1, borderColor: "#EFEFEF", borderRadius: 6, padding: 10, flexDirection: 'row', marginTop: 15 }}>
-                        <View style={{ backgroundColor: '#F1FAEA', borderRadius: 50, width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ backgroundColor: '#FDEFEF', borderRadius: 50, width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
                             <Image
                                 style={{ width: 20, height: 20, }}
                                 resizeMode="contain"

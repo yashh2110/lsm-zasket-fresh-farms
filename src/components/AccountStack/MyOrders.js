@@ -50,6 +50,30 @@ const MyOrders = ({ navigation, getCustomerOrders }) => {
                     renderItem={({ item }) =>
                         <CardMyOrders item={item} />
                     }
+                    ListEmptyComponent={() => {
+                        return (
+                            <View style={[{ flex: 1, alignSelf: 'center', justifyContent: 'center', }]}>
+                                {loading ?
+                                    undefined
+                                    :
+                                    <>
+                                        <Image
+                                            style={{ height: 250 }}
+                                            resizeMode={"center"}
+                                            source={require('../../assets/png/emptyCart.png')}
+                                        />
+                                        <View style={{ width: "80%", alignSelf: 'center' }}>
+                                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}>No orders found</Text>
+                                            <Text style={{ alignSelf: 'center', textAlign: 'center', color: '#727272', fontSize: 12 }}>There is always something good for you.</Text>
+                                            <Text style={{ alignSelf: 'center', textAlign: 'center', color: '#727272', fontSize: 12 }}>Add something to cart.</Text>
+                                            <TouchableOpacity onPress={() => { navigation.navigate('Home') }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, borderRadius: 100, justifyContent: 'center', alignItems: "center", padding: 10, marginTop: 15, width: 200, alignSelf: 'center' }}>
+                                                <Text style={{ color: 'white', fontSize: 17 }}>Add Now</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </>}
+                            </View>
+                        )
+                    }}
                 // keyExtractor={item => item?.id.toString()}
                 />
             </ScrollView>
