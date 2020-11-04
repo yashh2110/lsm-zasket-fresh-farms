@@ -66,23 +66,23 @@ const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartIt
 
 
     return (
-        <View style={{ flex: 1, margin: 4, width: "90%", marginBottom: 10, alignSelf: 'center' }}>
+        <View style={{ flex: 1, width: "90%", marginBottom: 5, alignSelf: 'center' }}>
             <TouchableOpacity
                 onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
                 style={styles.productCard}>
                 <View style={{
-                    backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', padding: 10, borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
+                    backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
                 }} onPress={() => { }}>
                     {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
                     <Image
-                        style={{ width: 130, height: 100, borderRadius: 5 }}
+                        style={{ height: 90, borderRadius: 5, aspectRatio: 1.3 }}
                         resizeMode="contain"
-                        source={require('../../assets/png/Rectangle.png')}
+                        source={require('../../assets/png/medium2.png')}
                     // source={{ uri: "https://i.picsum.photos/id/390/500/300.jpg?hmac=MTvu05oUf6PaVif2NTqWv7mLAYEYslPgtVOyjSZe-pk" }}
                     />
                 </View>
                 <View style={[{ padding: 10, flex: 1 }]}>
-                    <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
+                    <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice}</Text>
                         <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice}</Text>
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         position: 'absolute',
         zIndex: 1,
-        right: 10,
-        bottom: 12,
+        right: 7,
+        bottom: 7,
     }
 });

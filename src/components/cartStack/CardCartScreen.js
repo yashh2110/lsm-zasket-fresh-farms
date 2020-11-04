@@ -11,6 +11,7 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
     const [isUpdate, setIsUpdate] = useState(false)
 
     useEffect(() => {
+
         // if (cartItems.length > 0) {
         //     cartItems?.forEach(el => {
         //         if (el?.id == item?.id) {
@@ -68,25 +69,24 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
     }
 
     return (
-        <View style={{ flex: 1, margin: 4, width: "90%", marginBottom: 10, alignSelf: 'center' }}>
+        <View style={{ flex: 1, width: "90%", alignSelf: 'center', marginVertical: 1.5 }}>
             <TouchableOpacity
                 onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
                 style={styles.productCard}>
                 <View style={{
-                    backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', padding: 10, borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
+                    backgroundColor: '#F7F7F7', borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5, height: 90
                 }} onPress={() => { }}>
                     {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
                     <Image
-                        style={{ width: 100, height: 80, borderRadius: 5 }}
+                        style={{ height: 90, borderRadius: 5, aspectRatio: 1.3 }}
                         resizeMode="contain"
-                        source={require('../../assets/png/Rectangle.png')}
+                        source={require('../../assets/png/medium6.png')}
                     // source={{ uri: "https://i.picsum.photos/id/390/500/300.jpg?hmac=MTvu05oUf6PaVif2NTqWv7mLAYEYslPgtVOyjSZe-pk" }}
                     />
                 </View>
-                <View style={[{ padding: 10, flex: 2 }]}>
-                    <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
-
-                    <Text style={{ fontSize: 12, color: '#909090', marginVertical: 10 }}>{item?.itemSubName}</Text>
+                <View style={[{ padding: 5, flex: 2 }]}>
+                    <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
+                    <Text style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.itemSubName}</Text>
                     {addButton ?
                         <TouchableOpacity
                             onPress={() => onAddToCart()}
@@ -116,9 +116,6 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
                     <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice * item?.count}</Text>
                 </View>
             </TouchableOpacity>
-
-
-
         </View>
     )
 }
@@ -152,8 +149,7 @@ const styles = StyleSheet.create({
             height: 1,
         },
         shadowOpacity: 0.18,
-        shadowRadius: 1.00,
-        elevation: 1,
+        shadowRadius: 1.00
     },
     addButton: {
         padding: 5,

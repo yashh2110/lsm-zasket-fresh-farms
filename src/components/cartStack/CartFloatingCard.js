@@ -29,7 +29,7 @@ const CartFloatingCard = ({ color, size, cartItems, navigation }) => {
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-end', padding: 10 }}>
                 <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>₹ {totalCartValue}</Text>
                 {totalCartValue < 200 ?
-                    <Text style={{ color: 'white', fontSize: 14, }}>Add more Rs${200 - totalCartValue} for free delivery</Text>
+                    <Text style={{ color: 'white', fontSize: 14, }}>Add more Rs {200 - totalCartValue} for free delivery</Text>
                     : undefined}
             </View>
         </View>

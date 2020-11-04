@@ -28,13 +28,13 @@ const BannerImages = ({ navigation }) => {
             <View style={[{
                 width: "100%",
                 aspectRatio: 1.33333,
-                backgroundColor: 'red'
+                backgroundColor: '#F7F7F7'
             },]}>
                 {/* todo: Alignment after Implementation */}
                 {/* <Text>{JSON.stringify(image.banner, null, "       ")}</Text> */}
                 <Image
-                    // source={require('../../assets/png/HomeScreenVegetable.png')} 
-                    source={{ uri: "https://i.picsum.photos/id/523/1248/936.jpg?hmac=myimbFBQoAaNy-bwZVM7jJbsgraeFWBTb8BtGlfaTvQ" }}
+                    source={require('../../assets/png/sample2.png')}
+                    // source={{ uri: "https://i.picsum.photos/id/523/1248/936.jpg?hmac=myimbFBQoAaNy-bwZVM7jJbsgraeFWBTb8BtGlfaTvQ" }}
                     style={{ height: "100%", width: "100%" }} resizeMode="contain"
                 />
             </View>
@@ -44,10 +44,10 @@ const BannerImages = ({ navigation }) => {
                         <View style={[{ marginVertical: 8, marginHorizontal: 4, position: "relative", borderRadius: 4 }]} key={index}>
                             <TouchableOpacity onPress={() => setImage({ ...image, banner: item.filename, position: index })}>
                                 <Image
-                                    // source={require('../../assets/png/HomeScreenProduct.png')}
-                                    source={{ uri: "https://i.picsum.photos/id/835/111/81.jpg?hmac=tgyDI03VaG5zd4SFFifH0Muy4cW2e0hIuvU14QRv2Vk" }}
+                                    source={require('../../assets/png/thumbnail6.png')}
+                                    // source={{ uri: "https://i.picsum.photos/id/835/111/81.jpg?hmac=tgyDI03VaG5zd4SFFifH0Muy4cW2e0hIuvU14QRv2Vk" }}
                                     style={[
-                                        { backgroundColor: "#ccc", width: 50, height: 50, borderRadius: 4 }
+                                        { backgroundColor: "#F7F7F7", width: 50, height: 50, borderRadius: 4 }
                                     ]}
                                 />
 

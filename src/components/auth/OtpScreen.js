@@ -89,7 +89,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, verifyOtp, route }) => {
                         <View style={{ flex: 1, marginTop: "15%" }}>
                             <View style={{ height: 100 }}>
                                 <CodeInput
-                                    secureTextEntry
+                                    secureTextEntry={false}
                                     activeColor={Theme.Colors.primary}
                                     inactiveColor={"#D8D8D8"}
                                     autoFocus={false}

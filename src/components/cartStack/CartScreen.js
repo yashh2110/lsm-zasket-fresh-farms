@@ -87,19 +87,19 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
                 </View>
                 {cartItems.length > 0 ?
                     <>
-                        <View style={{ flex: 1, backgroundColor: 'white', marginTop: 10, paddingTop: 5 }}>
+                        <View style={{ flex: 1, backgroundColor: 'white', marginTop: 10, paddingVertical: 5 }}>
                             <FlatList
                                 data={cartItems}
                                 renderItem={({ item }) => (
                                     <CardCartScreen item={item} navigation={navigation} />
                                 )}
                                 keyExtractor={item => item?.id.toString()}
-                                // ListEmptyComponent={emptyComponent}
-                                ItemSeparatorComponent={() => (
-                                    <View
-                                        style={{ height: 0.7, width: "90%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }}
-                                    />
-                                )}
+                            // ListEmptyComponent={emptyComponent}
+                            // ItemSeparatorComponent={() => (
+                            //     <View
+                            //         style={{ height: 0.7, width: "90%", alignSelf: 'center', backgroundColor: '#EAEAEC', }}
+                            //     />
+                            // )}
                             />
                         </View>
                         <View style={{ backgroundColor: 'white', marginTop: 10, padding: 16 }}>

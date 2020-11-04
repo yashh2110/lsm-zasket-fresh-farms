@@ -47,7 +47,7 @@ const ProductListScreen = ({ route, navigation, getItemsByCategory }) => {
                     refreshing={refresh}
                     ItemSeparatorComponent={() => (
                         <View
-                            style={{ height: 0.7, width: "90%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }}
+                            style={{ height: 0.7, width: "90%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 5 }}
                         />
                     )}
                 />

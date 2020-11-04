@@ -280,7 +280,7 @@ class MyMapView extends React.Component {
                         // await AsyncStorage.setItem("location", JSON.stringify(location));
                         this.setState({ loading: false })
                         if (this.state.mode === "ON_INITIAL") {
-                            this.props.navigation.navigate('SetAuthContext', { userLocation: payload }) // if you send it as null it wont navigate
+                            this.props.navigation.navigate('SetAuthContext', { userLocation: location }) // if you send it as null it wont navigate
                         } else {
                             this.props.navigation.goBack()
                         }

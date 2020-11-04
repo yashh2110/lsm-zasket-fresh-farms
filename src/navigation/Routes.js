@@ -346,9 +346,6 @@ const Navigate = ({ alerts, darkMode }) => {
         []
     );
 
-
-
-
     return (
         <>
             <View style={{ flex: 1, position: 'absolute', zIndex: 1, width: '100%' }}>
