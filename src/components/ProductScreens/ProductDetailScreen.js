@@ -64,7 +64,7 @@ const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart
         let filteredItems = cartItems.filter(element => element?.id == route.params.item?.id);
         if (filteredItems.length == 1) {
             setAddButton(false)
-            setCount(filteredItems[0].count)
+            setCount(filteredItems[0]?.count)
         } else {
             setAddButton(true)
             setCount(1)
@@ -118,10 +118,10 @@ const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart
             >
                 <BannerImages navigation={navigation} />
                 {/* <Text>{JSON.stringify(item, null, "       ")}</Text> */}
-                <View style={[{ padding: 10 }]}>
-                    <Text style={{ marginTop: 5, fontSize: 20, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
+                <View style={[{ paddingLeft: 10, paddingRight: 10, paddingBottom: 10 }]}>
+                    <Text style={{ fontSize: 18, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
                     <View style={{ flexDirection: 'row', marginTop: 5, alignItems: 'center' }}>
-                        <Text style={{ fontSize: 18, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice}</Text>
+                        <Text style={{ fontSize: 16, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice}</Text>
                         {item?.discountedPrice == item?.actualPrice ?
                             undefined :
                             <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice}</Text>
@@ -131,8 +131,8 @@ const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart
                             <Text style={{ fontSize: 15, color: Theme.Colors.primary, marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
                         }
                     </View>
-                    <Text style={{ marginTop: 5, color: '#909090', }}>{item?.itemSubName}</Text>
-                    <Text style={{ marginTop: 10, color: '#727272', }}>{item?.itemDescription}</Text>
+                    <Text style={{ color: '#909090', }}>{item?.itemSubName}</Text>
+                    <Text style={{ marginTop: 5, color: '#727272', }}>{item?.itemDescription}</Text>
                 </View>
             </ScrollView>
             {cartItems?.length > 0 ?

@@ -102,18 +102,18 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
                             // )}
                             />
                         </View>
-                        <View style={{ backgroundColor: 'white', marginTop: 10, padding: 16 }}>
+                        <View style={{ backgroundColor: 'white', marginTop: 10, padding: 10, paddingHorizontal: 15 }}>
                             <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
-                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, }}>
+                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                                 <Text style={{ color: '#727272' }}>Item Total</Text>
                                 <Text style={{}}>₹ {totalCartValue}</Text>
                             </View>
-                            <View style={{ marginTop: 5, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
+                            <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ color: '#727272' }}>Delivery Charges</Text>
                                 <Text style={{ color: Theme.Colors.primary }}>Free</Text>
                             </View>
-                            <View style={{ marginTop: 5, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
+                            <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ fontWeight: 'bold' }}>Total Payable Amount</Text>
                                 <Text style={{ fontWeight: 'bold' }}>₹ {totalCartValue}</Text>

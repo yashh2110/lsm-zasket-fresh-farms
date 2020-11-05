@@ -41,7 +41,7 @@ const BannerImages = ({ navigation }) => {
             <ScrollView horizontal={true} contentContainerStyle={{ height: 60 }}>
                 {data?.map((item, index) => {
                     return (
-                        <View style={[{ marginVertical: 8, marginHorizontal: 4, position: "relative", borderRadius: 4 }]} key={index}>
+                        <View style={[{ marginVertical: 4, marginHorizontal: 4, position: "relative", borderRadius: 4 }]} key={index}>
                             <TouchableOpacity onPress={() => setImage({ ...image, banner: item.filename, position: index })}>
                                 <Image
                                     source={require('../../assets/png/thumbnail6.png')}

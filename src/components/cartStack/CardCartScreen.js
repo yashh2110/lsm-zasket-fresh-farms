@@ -87,7 +87,7 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
                 </View>
                 <View style={[{ padding: 5, flex: 2 }]}>
                     <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
-                    <Text style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.itemSubName}</Text>
+                    <Text style={{ fontSize: 12, color: '#909090', marginBottom: 10 }}>{item?.itemSubName}</Text>
                     {addButton ?
                         <TouchableOpacity
                             onPress={() => onAddToCart()}

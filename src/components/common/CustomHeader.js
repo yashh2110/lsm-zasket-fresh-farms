@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 const CustomHeader = ({ navigation, title, showSearch = true }) => {
 
     return (
-        <View style={{ flexDirection: 'row', minHeight: 60 }}>
+        <View style={{ flexDirection: 'row', minHeight: 50 }}>
             <TouchableOpacity
                 onPress={() => { navigation.goBack() }}
                 style={{ width: 60, justifyContent: 'center', alignItems: 'center', }}

@@ -146,12 +146,12 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
         <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} refreshControl={
             <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
         }>
-            <View style={{ backgroundColor: 'white', padding: 15 }}>
+            <View style={{ backgroundColor: 'white', padding: 10 }}>
                 <Text style={{ fontWeight: 'bold', fontSize: 22 }}>Account</Text>
                 <Text style={{ color: '#909090' }}>Edit  and manage your account details</Text>
             </View>
 
-            <View style={{ backgroundColor: 'white', padding: 15, marginTop: 10 }}>
+            <View style={{ backgroundColor: 'white', padding: 10, marginTop: 10 }}>
                 <TouchableOpacity onPress={() => {
                     setIsVisible(true)
                 }} style={{ paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
@@ -164,7 +164,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
+                <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 5, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ color: '#909090', fontSize: 12 }}>Mobile Number</Text>
                         <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5 }}>{userDetails?.customerDetails?.userMobileNumber}</Text>
@@ -174,7 +174,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 10, paddingBottom: 10, flexDirection: 'row' }}>
+                <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 5, paddingBottom: 5, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ color: '#909090', fontSize: 12 }}>Email {userDetails?.customerDetails?.isEmailVerified ? undefined : <Text style={{ color: '#EB6060' }}>  Not Verified</Text>}</Text>
                         <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5, textTransform: 'lowercase' }}>{userDetails?.customerDetails?.userEmail}</Text>
@@ -190,7 +190,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
             <View style={{ backgroundColor: 'white', padding: 15, marginTop: 10 }}>
                 <TouchableOpacity onPress={() => { navigation.navigate('MyOrders') }} style={{ paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 10 }}>My Orders</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>My Orders</Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
@@ -199,7 +199,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
 
                 <TouchableOpacity onPress={() => { navigation.navigate('ManageAddressScreen') }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 10 }}>Manage Addresses</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Manage Addresses</Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
@@ -208,7 +208,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
 
                 <TouchableOpacity onPress={() => { navigation.navigate('SupportScreen') }} style={{ paddingTop: 10, paddingBottom: 10, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 10, }}>Support</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5, }}>Support</Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />

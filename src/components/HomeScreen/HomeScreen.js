@@ -89,7 +89,7 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
                         />
                     </Swiper>
                 </View>*/}
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 10 }}>
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 5 }}>
                     <Image
                         style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center' }}
                         // resizeMode={"stretch"}
@@ -101,16 +101,16 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
                         source={require('../../assets/png/HomeScreenBanner2.png')}
                     />
                 </ScrollView>
-                <View style={{ flexDirection: 'row', backgroundColor: 'white', height: 160 }}>
-                    <TouchableOpacity onPress={() => { navigation.navigate('ProductListScreen', { categoryName: "VEGETABLES" }) }} style={{ flex: 1, margin: 15, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
+                <View style={{ flexDirection: 'row', backgroundColor: 'white', height: 125, justifyContent: 'space-around', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={() => { navigation.navigate('ProductListScreen', { categoryName: "VEGETABLES" }) }} style={{ height: 120, width: 150, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
                         <Text style={{ padding: 15 }}>Vegetables</Text>
                         <Image
-                            style={{ borderRadius: 5, position: 'absolute', bottom: 0, right: 0, width: 130, height: 80 }}
+                            style={{ borderRadius: 5, position: 'absolute', bottom: -3, right: 0, width: 130, height: 80 }}
                             resizeMode={"contain"}
                             source={require('../../assets/png/HomeScreenVegetable.png')}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { navigation.navigate('ProductListScreen', { categoryName: "FRUITS" }) }} style={{ flex: 1, margin: 15, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
+                    <TouchableOpacity onPress={() => { navigation.navigate('ProductListScreen', { categoryName: "FRUITS" }) }} style={{ height: 120, width: 150, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
                         <Text style={{ padding: 15 }}>Fruits</Text>
                         <Image
                             style={{ borderRadius: 5, position: 'absolute', bottom: 0, right: 0, width: 150, height: 100 }}
@@ -121,7 +121,7 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
                 </View>
 
                 <Image
-                    style={{ borderRadius: 5, alignSelf: 'center', borderRadius: 5, shadowColor: "#000", shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.37, shadowRadius: 7.49, backgroundColor: 'white', height: 130, width: "100%" }}
+                    style={{ borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', height: 115, aspectRatio: 3 }}
                     resizeMode={"cover"}
                     source={require('../../assets/png/HomeScreenFreeDelivery.png')}
                 />

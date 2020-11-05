@@ -56,7 +56,7 @@ const SearchScreen = ({ navigation, searchItems }) => {
 
     const emptyComponent = () => {
         return (
-            <View style={[{ marginTop: 10, width: '90%', alignSelf: 'center' }]}>
+            <View style={[{ marginTop: 5, width: '90%', alignSelf: 'center' }]}>
                 {loading ?
                     <ActivityIndicator style={{}} size="large" color="grey" />
                     : searchTerm.length > 2 ?
@@ -73,16 +73,16 @@ const SearchScreen = ({ navigation, searchItems }) => {
                         :
                         <>
                             <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Search by category</Text>
-                            <View style={{ flexDirection: 'row', backgroundColor: 'white', height: 160 }}>
-                                <TouchableOpacity onPress={() => { setSearchTerm("VEGETABLES") }} style={{ flex: 1, margin: 15, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
+                            <View style={{ flexDirection: 'row', backgroundColor: 'white', height: 125, justifyContent: 'space-around', alignItems: 'center', marginTop: 5 }}>
+                                <TouchableOpacity onPress={() => { setSearchTerm("VEGETABLES") }} style={{ height: 120, width: 150, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
                                     <Text style={{ padding: 15 }}>Vegetables</Text>
                                     <Image
-                                        style={{ borderRadius: 5, position: 'absolute', bottom: 0, right: 0, width: 130, height: 80 }}
+                                        style={{ borderRadius: 5, position: 'absolute', bottom: -3, right: 0, width: 130, height: 80 }}
                                         resizeMode={"contain"}
                                         source={require('../../assets/png/HomeScreenVegetable.png')}
                                     />
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => { setSearchTerm("FRUITS") }} style={{ flex: 1, margin: 15, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
+                                <TouchableOpacity onPress={() => { setSearchTerm("FRUITS") }} style={{ height: 120, width: 150, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
                                     <Text style={{ padding: 15 }}>Fruits</Text>
                                     <Image
                                         style={{ borderRadius: 5, position: 'absolute', bottom: 0, right: 0, width: 150, height: 100 }}
@@ -99,7 +99,7 @@ const SearchScreen = ({ navigation, searchItems }) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
-            <View style={{ height: 90, backgroundColor: '#F8F8F8', paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ height: 70, backgroundColor: '#F8F8F8', paddingLeft: 5, paddingRight: 10, flexDirection: 'row', alignItems: 'center' }}>
                 <TouchableOpacity
                     onPress={() => { navigation.goBack() }}
                     style={{ justifyContent: 'center', alignItems: 'center', }}
