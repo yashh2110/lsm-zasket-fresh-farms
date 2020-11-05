@@ -41,53 +41,52 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
     }
 
 
-
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Cart"} showSearch={false} />
             <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false}>
                 {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")}</Text> */}
-                <View style={{ backgroundColor: 'white', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
-                    <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center' }}>
-                        <Image
-                            style={{ width: 30, height: 30, }}
-                            source={require('../../assets/png/locationIcon.png')}
-                        />
-                    </View>
-                    <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'center' }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                                {userLocation?.saveAs == "Home" &&
-                                    <View style={{ backgroundColor: "#FEF8FC", borderWidth: 1, borderRadius: 4, borderColor: "#FCD8EC", paddingVertical: 3, marginRight: 5 }}>
-                                        <Text style={{ color: "#F464AD", fontSize: 12, marginHorizontal: 5 }}>Home</Text>
-                                    </View>
-                                }
-                                {userLocation?.saveAs == "Office" &&
-                                    <View style={{ backgroundColor: "#FCF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#F0D4FA", paddingVertical: 3, marginRight: 5 }}>
-                                        <Text style={{ color: "#CD64F4", fontSize: 12, marginHorizontal: 5 }}>Office</Text>
-                                    </View>
-                                }
-                                {userLocation?.saveAs == "Others" &&
-                                    <View style={{ backgroundColor: "#EDF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#BEDCFF", paddingVertical: 3, marginRight: 5 }}>
-                                        <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
-                                    </View>
-                                }
-                                <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: 'bold', }}>Deliver to {
-                                    ((userLocation?.recepientName).length > 13) ?
-                                        (((userLocation?.recepientName).substring(0, 13 - 3)) + '...') :
-                                        userLocation?.recepientName
-                                }
-                                </Text>
-                            </View>
-                            <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{}}>
-                                <Text style={{ color: Theme.Colors.primary }}>Change</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1}</Text>
-                    </View>
-                </View>
                 {cartItems.length > 0 ?
                     <>
+                        <View style={{ backgroundColor: 'white', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
+                            <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center' }}>
+                                <Image
+                                    style={{ width: 30, height: 30, }}
+                                    source={require('../../assets/png/locationIcon.png')}
+                                />
+                            </View>
+                            <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'center' }}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                                        {userLocation?.saveAs == "Home" &&
+                                            <View style={{ backgroundColor: "#FEF8FC", borderWidth: 1, borderRadius: 4, borderColor: "#FCD8EC", paddingVertical: 3, marginRight: 5 }}>
+                                                <Text style={{ color: "#F464AD", fontSize: 12, marginHorizontal: 5 }}>Home</Text>
+                                            </View>
+                                        }
+                                        {userLocation?.saveAs == "Office" &&
+                                            <View style={{ backgroundColor: "#FCF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#F0D4FA", paddingVertical: 3, marginRight: 5 }}>
+                                                <Text style={{ color: "#CD64F4", fontSize: 12, marginHorizontal: 5 }}>Office</Text>
+                                            </View>
+                                        }
+                                        {userLocation?.saveAs == "Others" &&
+                                            <View style={{ backgroundColor: "#EDF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#BEDCFF", paddingVertical: 3, marginRight: 5 }}>
+                                                <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
+                                            </View>
+                                        }
+                                        <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: 'bold', }}>Deliver to {
+                                            ((userLocation?.recepientName).length > 13) ?
+                                                (((userLocation?.recepientName).substring(0, 13 - 3)) + '...') :
+                                                userLocation?.recepientName
+                                        }
+                                        </Text>
+                                    </View>
+                                    <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{}}>
+                                        <Text style={{ color: Theme.Colors.primary }}>Change</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1}</Text>
+                            </View>
+                        </View>
                         <View style={{ flex: 1, backgroundColor: 'white', marginTop: 10, paddingVertical: 5 }}>
                             <FlatList
                                 data={cartItems}

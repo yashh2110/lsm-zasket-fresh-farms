@@ -1,10 +1,10 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList } from 'react-native';
 import Theme from '../../styles/Theme';
-import { addToCart, updateCart } from '../../actions/cart'
+import { addToCart, updateCart, deleteCartItem } from '../../actions/cart'
 import { connect } from 'react-redux';
 
-const ProductCard = ({ item, navigation, addToCart, updateCart, cartItems }) => {
+const ProductCard = ({ item, navigation, addToCart, updateCart, cartItems, deleteCartItem }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(1)
     const [isUpdate, setIsUpdate] = useState(false)
@@ -32,6 +32,10 @@ const ProductCard = ({ item, navigation, addToCart, updateCart, cartItems }) => 
         if (isUpdate) {
             updateCart(item, count)
         }
+        if (count == 0) {
+            onDeleteItem()
+            setIsUpdate(false)
+        }
     }, [count])
 
     const onAddToCart = async () => {
@@ -45,9 +49,7 @@ const ProductCard = ({ item, navigation, addToCart, updateCart, cartItems }) => 
     const onCartUpdate = async (option) => {
         setIsUpdate(true)
         if (option == "DECREASE") {
-            if (count > 1) {
-                setCount(count - 1)
-            }
+            setCount(count - 1)
         }
         if (option == "INCREASE") {
             if (count < 6) {
@@ -56,7 +58,9 @@ const ProductCard = ({ item, navigation, addToCart, updateCart, cartItems }) => 
         }
     }
 
-
+    const onDeleteItem = async () => {
+        deleteCartItem(item)
+    }
 
     return (
         <View style={{ flex: 1, margin: 4, width: 160, marginBottom: 20 }}>
@@ -118,7 +122,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { addToCart, updateCart })(ProductCard)
+export default connect(mapStateToProps, { addToCart, updateCart, deleteCartItem })(ProductCard)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

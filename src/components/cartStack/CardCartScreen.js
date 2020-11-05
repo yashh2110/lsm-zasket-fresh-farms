@@ -40,6 +40,9 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
         if (isUpdate) {
             updateCart(item, count)
         }
+        if (count == 0) {
+            onDeleteItem()
+        }
     }, [count])
 
     const onAddToCart = async () => {
@@ -53,9 +56,7 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
     const onCartUpdate = async (option) => {
         setIsUpdate(true)
         if (option == "DECREASE") {
-            if (count > 1) {
-                setCount(count - 1)
-            }
+            setCount(count - 1)
         }
         if (option == "INCREASE") {
             if (count < 6) {
@@ -109,12 +110,12 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
                     }
                 </View>
                 <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', padding: 10, }}>
-                    <TouchableOpacity onPress={() => onDeleteItem()} style={{ backgroundColor: 'white', position: 'absolute', top: 0, padding: 10 }}>
+                    {/* <TouchableOpacity onPress={() => onDeleteItem()} style={{ backgroundColor: 'white', position: 'absolute', top: 0, padding: 10 }}>
                         <Icon name="trash-o" type="FontAwesome" style={{ fontSize: 20 }} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     {item?.discountedPrice == item?.actualPrice ?
                         undefined :
-                        <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice}</Text>
+                        <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice * item?.count}</Text>
                     }
                     <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice * item?.count}</Text>
                 </View>

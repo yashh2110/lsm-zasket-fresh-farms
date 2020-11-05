@@ -166,7 +166,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
 
                 <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
-                        <Text style={{ color: '#909090', fontSize: 12 }}>Phone number</Text>
+                        <Text style={{ color: '#909090', fontSize: 12 }}>Mobile Number</Text>
                         <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5 }}>{userDetails?.customerDetails?.userMobileNumber}</Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -244,7 +244,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                                 </>
                                 : undefined}
 
-                            <Text style={{ fontSize: 12, color: '#727272', marginTop: 20 }}>Phone Number</Text>
+                            <Text style={{ fontSize: 12, color: '#727272', marginTop: 20 }}>Mobile Number</Text>
                             <TextInput
                                 style={{ height: 40, color: 'grey', fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#D8D8D8' }}
                                 onChangeText={text => setUserDetails({ ...userDetails, customerDetails: { ...userDetails?.customerDetails, userMobileNumber: text } })}

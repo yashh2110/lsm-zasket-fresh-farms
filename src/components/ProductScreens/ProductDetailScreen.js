@@ -7,10 +7,10 @@ import { connect } from 'react-redux';
 import Loader from '../common/Loader';
 import Theme from '../../styles/Theme';
 import { TouchableOpacity } from 'react-native';
-import { addToCart, updateCart } from '../../actions/cart'
+import { addToCart, updateCart, deleteCartItem } from '../../actions/cart'
 import CartFloatingCard from '../cartStack/CartFloatingCard';
 
-const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart, cartItems }) => {
+const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart, cartItems, deleteCartItem }) => {
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
     const [item, setItem] = useState({})
@@ -76,6 +76,10 @@ const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart
         if (isUpdate) {
             updateCart(item, count)
         }
+        if (count == 0) {
+            onDeleteItem()
+            setIsUpdate(false)
+        }
     }, [count])
 
     const onAddToCart = async () => {
@@ -89,9 +93,7 @@ const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart
     const onCartUpdate = async (option) => {
         setIsUpdate(true)
         if (option == "DECREASE") {
-            if (count > 1) {
-                setCount(count - 1)
-            }
+            setCount(count - 1)
         }
         if (option == "INCREASE") {
             if (count < 6) {
@@ -99,6 +101,11 @@ const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart
             }
         }
     }
+
+    const onDeleteItem = async () => {
+        deleteCartItem(item)
+    }
+
 
     return (
         <View
@@ -159,4 +166,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { getItem, addToCart, updateCart })(ProductDetailScreen)
+export default connect(mapStateToProps, { getItem, addToCart, updateCart, deleteCartItem })(ProductDetailScreen)

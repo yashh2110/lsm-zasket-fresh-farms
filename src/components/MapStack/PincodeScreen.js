@@ -105,7 +105,7 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, loginWithProv
                                 <Text style={{ marginTop: "2%", fontSize: 14, color: "#727272", textAlign: 'center' }}>Let’s first check our service is available at
                                 your location or not? Because We value your time!</Text>
                                 {/* <Text style={{ marginTop: "2%", fontSize: 14, color: "#2B2E30", textAlign: 'center', fontWeight: 'bold' }}>Now Choose your Delivery Address</Text> */}
-                                <Button full style={{ marginTop: "15%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text><Icon name='location-sharp' style={{ color: '#ffffff', fontSize: 20 }} /> Use My Current Location</Text></Button>
+                                <Button full style={{ marginTop: "15%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text><Icon name='location-sharp' style={{ color: '#ffffff', fontSize: 20 }} /> SET DELIVERY LOCATION</Text></Button>
                             </View>
                             : undefined}
 

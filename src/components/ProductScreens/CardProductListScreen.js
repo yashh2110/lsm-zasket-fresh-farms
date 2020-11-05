@@ -1,10 +1,10 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList } from 'react-native';
 import Theme from '../../styles/Theme';
-import { addToCart, updateCart } from '../../actions/cart'
+import { addToCart, updateCart, deleteCartItem } from '../../actions/cart'
 import { connect } from 'react-redux';
 
-const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartItems }) => {
+const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartItems, deleteCartItem }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(1)
     const [isUpdate, setIsUpdate] = useState(false)
@@ -39,6 +39,10 @@ const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartIt
         if (isUpdate) {
             updateCart(item, count)
         }
+        if (count == 0) {
+            onDeleteItem()
+            setIsUpdate(false)
+        }
     }, [count])
 
     const onAddToCart = async () => {
@@ -52,9 +56,7 @@ const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartIt
     const onCartUpdate = async (option) => {
         setIsUpdate(true)
         if (option == "DECREASE") {
-            if (count > 1) {
-                setCount(count - 1)
-            }
+            setCount(count - 1)
         }
         if (option == "INCREASE") {
             if (count < 6) {
@@ -63,7 +65,9 @@ const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartIt
         }
     }
 
-
+    const onDeleteItem = async () => {
+        deleteCartItem(item)
+    }
 
     return (
         <View style={{ flex: 1, width: "90%", marginBottom: 5, alignSelf: 'center' }}>
@@ -127,7 +131,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { addToCart, updateCart })(CardProductListScreen)
+export default connect(mapStateToProps, { addToCart, updateCart, deleteCartItem })(CardProductListScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

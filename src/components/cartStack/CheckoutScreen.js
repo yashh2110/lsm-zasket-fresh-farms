@@ -134,41 +134,6 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
             <CustomHeader navigation={navigation} title={"Checkout"} showSearch={false} />
             <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false}>
                 {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")}</Text> */}
-                <View style={{ backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Book a slot</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, height: 60 }}>
-                        {disableTomorrowSlot ?
-                            <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
-                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
-                            </View>
-                            :
-                            <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(1) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 1 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 1 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
-                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
-                            </TouchableOpacity>
-                        }
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(2) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 2 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 2 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(2, 'days').format("ddd")}</Text>
-                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(2, 'days').format("DD MMM")}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(3) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 3 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 3 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(3, 'days').format("ddd")}</Text>
-                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(3, 'days').format("DD MMM")}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(4) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 4 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 4 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(4, 'days').format("ddd")}</Text>
-                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(4, 'days').format("DD MMM")}</Text>
-                        </TouchableOpacity>
-                    </View>
-                    {/* <Text>{(JSON.stringify(cartItems, null, "        "))}</Text> */}
-                    {slot?.description ?
-                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 20 }}>
-                            <Radio selected={true} disabled selectedColor={Theme.Colors.primary} />
-                            <Text style={{ marginLeft: 10 }}>{slot?.description}</Text>
-                        </View>
-                        : undefined}
-                </View>
 
                 <View style={{ backgroundColor: 'white', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
                     <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center' }}>
@@ -208,6 +173,44 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                         <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1}</Text>
                     </View>
                 </View>
+
+                <View style={{ backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Book a slot</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, height: 60 }}>
+                        {disableTomorrowSlot ?
+                            <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
+                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
+                            </View>
+                            :
+                            <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(1) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 1 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 1 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
+                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
+                            </TouchableOpacity>
+                        }
+                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(2) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 2 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 2 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(2, 'days').format("ddd")}</Text>
+                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(2, 'days').format("DD MMM")}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(3) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 3 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 3 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(3, 'days').format("ddd")}</Text>
+                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(3, 'days').format("DD MMM")}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(4) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 4 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 4 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(4, 'days').format("ddd")}</Text>
+                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(4, 'days').format("DD MMM")}</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {/* <Text>{(JSON.stringify(cartItems, null, "        "))}</Text> */}
+                    {slot?.description ?
+                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 20 }}>
+                            <Radio selected={true} disabled selectedColor={Theme.Colors.primary} />
+                            <Text style={{ marginLeft: 10 }}>{slot?.description}</Text>
+                        </View>
+                        : undefined}
+                </View>
+
+
                 <View style={{ backgroundColor: 'white', marginTop: 10, padding: 16 }}>
                     <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, }}>
@@ -235,9 +238,9 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {totalCartValue}</Text>
-                        <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
+                        {/* <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
                             <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                     <TouchableOpacity onPress={() => { onPressMakePayment() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
                         <Text style={{ color: 'white', fontSize: 17 }}>Make a Payment <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
