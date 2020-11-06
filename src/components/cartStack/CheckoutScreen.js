@@ -9,7 +9,7 @@ import { Icon } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage';
 import { getDeliverySlots, addOrder } from '../../actions/cart'
 import moment from 'moment'
-import { Radio } from 'native-base';
+import { Radio, Toast } from 'native-base';
 import RazorpayCheckout from 'react-native-razorpay';
 import { RazorpayApiKey } from '../../../env';
 
@@ -116,12 +116,19 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                 }
                 RazorpayCheckout.open(options).then((data) => {
                     // handle success
-                    alert(`Success: ${data.razorpay_payment_id}`);
+                    // alert(`Success: ${data.razorpay_payment_id}`);
                     onClearCart()
-                    navigation.navigate('AccountStack', { screen: 'MyOrders' })
+                    navigation.pop()
+                    navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                    // navigation.navigate('AccountStack', { screen: 'MyOrders' })
                 }).catch((error) => {
                     // handle failure
-                    alert(`Error: ${error.code} | ${error.description}`);
+                    // alert(`Error: ${error.code} | ${error.description}`);
+                    Toast.show({
+                        text: "Payment failed",
+                        buttonText: "Okay",
+                        type: "danger"
+                    })
                 })
             } else {
                 alert(JSON.stringify(res?.response?.data?.description, null, "        "))

@@ -14,6 +14,8 @@ import { CheckBox } from 'react-native-elements'
 import { addNewCustomerAddress, updateUserAddress, getAllUserAddress } from '../../actions/map'
 import { addLocation } from '../../actions/location'
 import { connect } from 'react-redux';
+import FeatherIcons from "react-native-vector-icons/Feather"
+import AntDesignIcons from "react-native-vector-icons/AntDesign"
 
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
@@ -59,6 +61,7 @@ class MyMapView extends React.Component {
         mobileNumberErrorText: "",
         nameErrorText: "",
         errorMessage: "",
+        errorMessageBanner: false,
         addressId: ""
     };
 
@@ -287,6 +290,9 @@ class MyMapView extends React.Component {
                     } else {
                         // Alert.alert(response?.data)
                         this.setState({ errorMessage: response?.data })
+                        if (response?.data == "Pincode is not serviceable") {
+                            this.setState({ errorMessageBanner: true })
+                        }
                         this.refs._scrollView.scrollTo(0);
                         this.setState({ loading: false })
                     }
@@ -374,6 +380,18 @@ class MyMapView extends React.Component {
             <>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS == "ios" ? "padding" : null}>
+                        {this.state.errorMessageBanner &&
+                            <View style={{ width: "100%", padding: 10, backgroundColor: "#F65C65", position: 'absolute', top: 0, left: 0, zIndex: 1, flexDirection: 'row' }}>
+                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                    <FeatherIcons name="info" color={'white'} size={18} />
+                                </View>
+                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text style={{ fontSize: 12, color: 'white' }}>We might be not available in all the locations. We are expanding, very soon we will be delivered in all location.</Text>
+                                </View>
+                                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={() => { this.setState({ errorMessageBanner: false }) }}>
+                                    <AntDesignIcons name="close" color={'white'} size={18} />
+                                </TouchableOpacity>
+                            </View>}
                         <View style={styles.map}>
                             <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
                                 <Image
