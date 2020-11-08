@@ -11,12 +11,12 @@ import { getDeliverySlots, addOrder } from '../../actions/cart'
 import moment from 'moment'
 import { Radio, Toast } from 'native-base';
 import RazorpayCheckout from 'react-native-razorpay';
-import { RazorpayApiKey } from '../../../env';
+import { RazorpayLiveApiKey, RazorpayTestApiKey } from '../../../env';
 
 const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, addOrder, userLocation }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, settotalCartValue] = useState(0)
-    const [nextDayBuffer, setNextDayBuffer] = useState(1)
+    const [nextDayBuffer, setNextDayBuffer] = useState(0)
     const [savedValue, setSavedValue] = useState(0)
     const [slot, setSlot] = useState({})
     const [disableTomorrowSlot, setDisableTomorrowSlot] = useState(false)
@@ -58,7 +58,7 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
         var hour = today.getHours();
         if (hour >= 21) {
             // alert(hour)
-            setNextDayBuffer(2)
+            setNextDayBuffer(1)
             setDisableTomorrowSlot(true)
         }
     }, [])
@@ -103,7 +103,7 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                     description: 'Select the payment method',
                     image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
                     currency: 'INR',
-                    key: RazorpayApiKey,
+                    key: RazorpayLiveApiKey,
                     amount: totalCartValue,
                     name: 'Zasket',
                     order_id: res?.data?.paymentResponseId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
@@ -190,20 +190,20 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                                 <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
                             </View>
                             :
-                            <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(1) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 1 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 1 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
+                            <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(0) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 0 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 0 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
                                 <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
                                 <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
                             </TouchableOpacity>
                         }
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(2) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 2 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 2 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(1) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 1 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 1 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(2, 'days').format("ddd")}</Text>
                             <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(2, 'days').format("DD MMM")}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(3) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 3 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 3 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(2) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 2 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 2 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(3, 'days').format("ddd")}</Text>
                             <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(3, 'days').format("DD MMM")}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(4) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 4 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 4 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(3) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 3 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 3 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(4, 'days').format("ddd")}</Text>
                             <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(4, 'days').format("DD MMM")}</Text>
                         </TouchableOpacity>

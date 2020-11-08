@@ -34,7 +34,7 @@ const CardMyOrders = ({ item, navigation, addToCart, updateCart, cartItems, dele
             </TouchableOpacity>
             <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
                 <View style={{ flex: 1 }}>
-                    <Text style={{ color: '#909090', fontSize: 13 }}>{moment(item?.deliverySlot?.slotEndTime).format("DD MMM")} ({item?.deliverySlot?.description})</Text>
+                    <Text style={{ color: '#909090', fontSize: 13 }}>{moment(item?.slotStartTime).format("DD MMM")} ({item?.deliverySlot?.description})</Text>
                 </View>
                 <View>
                     {item?.orderState == "IN_TRANSIT" &&
