@@ -131,7 +131,20 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                     })
                 })
             } else {
-                alert(JSON.stringify(res?.response?.data?.description, null, "        "))
+                // alert(JSON.stringify(res?.response?.data, null, "        "))
+                let errorItems = []
+                if (res?.response?.data?.length > 0) {
+                    if (cartItems.length > 0) {
+                        res?.response?.data?.forEach((resEl, resIndex) => {
+                            cartItems?.forEach((cartEl, cartIndex) => {
+                                if (cartEl?.id == resEl?.id) {
+                                    errorItems.push(cartEl?.itemName)
+                                }
+                            })
+                        })
+                    }
+                    alert(errorItems.toString() + " are requested more than available quantity")
+                }
             }
         })
     }
@@ -174,7 +187,7 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                                 }</Text>
                             </View>
                             <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{}}>
-                                <Text style={{ color: Theme.Colors.primary }}>Change</Text>
+                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Change</Text>
                             </TouchableOpacity>
                         </View>
                         <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1}</Text>
@@ -227,7 +240,7 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                         <Text style={{ color: '#727272' }}>Delivery Charges</Text>
-                        <Text style={{ color: Theme.Colors.primary }}>Free</Text>
+                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Free</Text>
                     </View>
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
@@ -236,7 +249,7 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                     </View>
                     {savedValue > 0 ?
                         <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: Theme.Colors.primary, alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#FDEFEF", alignItems: "center" }}>
-                            <Text style={{ color: Theme.Colors.primary }}>😊 You have saved Rs {savedValue} in this purchase</Text>
+                            <Text style={{ color: Theme.Colors.primary }}>😊 You have saved ₹{savedValue} in this purchase</Text>
                         </View>
                         : undefined}
                 </View>

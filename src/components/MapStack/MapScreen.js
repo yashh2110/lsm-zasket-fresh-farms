@@ -293,7 +293,7 @@ class MyMapView extends React.Component {
                         if (response?.data == "Pincode is not serviceable") {
                             this.setState({ errorMessageBanner: true })
                         }
-                        this.refs._scrollView.scrollTo(0);
+                        // this.refs._scrollView.scrollTo(0);
                         this.setState({ loading: false })
                     }
                 })
@@ -438,36 +438,38 @@ class MyMapView extends React.Component {
                             }
                         </View>
                         <ScrollView
-                            ref='_scrollView'
-                            style={{ flex: 1, width: "90%", alignSelf: 'center' }} showsVerticalScrollIndicator={false}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ flex: 1, justifyContent: 'center' }}>
-                                    <Text style={{ color: "#727272", fontSize: 13 }}>Your current location</Text>
+                            // ref='_scrollView' 
+                            contentContainerStyle={{ zIndex: 1 }}
+                            showsVerticalScrollIndicator={true}>
+                            <View style={{ flex: 1, width: "90%", alignSelf: 'center' }}>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flex: 1, justifyContent: 'center' }}>
+                                        <Text style={{ color: "#727272", fontSize: 12 }}>Your current location</Text>
+                                    </View>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={() => { this.setState({ modalVisible: true }) }} style={{ padding: 5 }}>
+                                        <Text style={{ color: Theme.Colors.primary }}>Change</Text>
+                                    </TouchableOpacity>
                                 </View>
-                                <TouchableOpacity activeOpacity={0.7} onPress={() => { this.setState({ modalVisible: true }) }} style={{ padding: 5 }}>
-                                    <Text style={{ color: Theme.Colors.primary }}>Change</Text>
-                                </TouchableOpacity>
-                            </View>
-                            {this.state.addressLoading ?
-                                <View style={{ flexDirection: "row" }}>
-                                    <Image
-                                        style={{ width: 30, height: 30, marginLeft: -5 }}
-                                        source={require('../../assets/png/locationIcon.png')}
-                                    />
-                                    <Text style={{ fontWeight: "bold" }}>Locating...</Text>
-                                </View>
-                                :
-                                <View style={{ flexDirection: "row" }}>
-                                    <Image
-                                        style={{ width: 30, height: 30, marginLeft: -5 }}
-                                        source={require('../../assets/png/locationIcon.png')}
-                                    />
-                                    <Text>{this.state.address}</Text>
-                                </View>
-                            }
-                            <Text style={{ color: "red", fontSize: 12, marginTop: 5, fontWeight: 'bold' }}>{this.state.errorMessage}</Text>
-                            {/* <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
-                            <View style={{ flexDirection: 'row', justifyContent: "space-around", marginTop: 10, }}>
+                                {this.state.addressLoading ?
+                                    <View style={{ flexDirection: "row" }}>
+                                        <Image
+                                            style={{ width: 30, height: 30, marginLeft: -5 }}
+                                            source={require('../../assets/png/locationIcon.png')}
+                                        />
+                                        <Text style={{ fontWeight: "bold" }}>Locating...</Text>
+                                    </View>
+                                    :
+                                    <View style={{ flexDirection: "row" }}>
+                                        <Image
+                                            style={{ width: 30, height: 30, marginLeft: -5 }}
+                                            source={require('../../assets/png/locationIcon.png')}
+                                        />
+                                        <Text style={{ fontSize: 16 }}>{this.state.address}</Text>
+                                    </View>
+                                }
+                                {/* <Text style={{ color: "red", fontSize: 12, marginTop: 5, fontWeight: 'bold' }}>{this.state.errorMessage}</Text> */}
+                                {/* <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: "space-around", marginTop: 5, }}>
                                 <TouchableOpacity onPress={() => this.onPressDeliverFor('self')} style={{ justifyContent: 'center', borderColor: this.state.deliverFor == "self" ? Theme.Colors.primary : "#EFEFEF", borderWidth: 2, borderRadius: 6, justifyContent: 'center', alignItems: 'center', width: "40%", padding: 15 }}>
                                     <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Self</Text>
                                 </TouchableOpacity>
@@ -476,97 +478,106 @@ class MyMapView extends React.Component {
                                     <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Others</Text>
                                 </TouchableOpacity>
                             </View> */}
-                            <>
+                                <>
+                                    <View style={{ marginTop: 10 }}>
+                                        {/* <Text style={{ color: "#727272", fontSize: 12 }}>Name</Text> */}
+                                        <TextInput
+                                            style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
+                                            onChangeText={text => this.setState({
+                                                name: text
+                                            })}
+                                            placeholder="Name"
+                                            value={this.state.name}
+                                            onTouchStart={() => {
+                                                this.setState({ nameErrorText: "" })
+                                            }}
+                                        />
+                                        {this.state.nameErrorText ?
+                                            <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.nameErrorText}</Text>
+                                            : undefined}
+                                    </View>
+                                    <View style={{ marginTop: 10 }}>
+                                        {/* <Text style={{ color: "#727272", fontSize: 12 }}>Mobile Number</Text> */}
+                                        <TextInput
+                                            style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
+                                            onChangeText={text => this.setState({
+                                                mobileNumber: text
+                                            })}
+                                            placeholder="Mobile Number"
+                                            value={this.state.mobileNumber}
+                                            keyboardType={"number-pad"}
+                                            onTouchStart={() => {
+                                                this.setState({ mobileNumberErrorText: "" })
+                                            }}
+                                        />
+                                        {this.state.mobileNumberErrorText ?
+                                            <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.mobileNumberErrorText}</Text>
+                                            : undefined}
+                                    </View>
+                                </>
                                 <View style={{ marginTop: 10 }}>
-                                    <Text style={{ color: "#727272", fontSize: 14 }}>Name</Text>
+                                    {/* <Text style={{ color: "#727272", fontSize: 12 }}>House No/ Flat No/Floor/Building</Text> */}
                                     <TextInput
                                         style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                         onChangeText={text => this.setState({
-                                            name: text
+                                            houseNumber: text
                                         })}
-                                        value={this.state.name}
-                                        onTouchStart={() => {
-                                            this.setState({ nameErrorText: "" })
-                                        }}
+                                        placeholder="House No/ Flat No/Floor/Building"
+                                        value={this.state.houseNumber}
                                     />
-                                    <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.nameErrorText}</Text>
                                 </View>
                                 <View style={{ marginTop: 10 }}>
-                                    <Text style={{ color: "#727272", fontSize: 14 }}>Mobile Number</Text>
+                                    {/* <Text style={{ color: "#727272", fontSize: 12 }}>Landmark</Text> */}
                                     <TextInput
                                         style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                         onChangeText={text => this.setState({
-                                            mobileNumber: text
+                                            landMark: text
                                         })}
-                                        value={this.state.mobileNumber}
-                                        keyboardType={"number-pad"}
-                                        onTouchStart={() => {
-                                            this.setState({ mobileNumberErrorText: "" })
-                                        }}
+                                        placeholder="Landmark"
+                                        value={this.state.landMark}
                                     />
-                                    <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.mobileNumberErrorText}</Text>
                                 </View>
-                            </>
-                            <View style={{ marginTop: 20 }}>
-                                <Text style={{ color: "#727272", fontSize: 14 }}>House No/ Flat No/Floor/Building</Text>
-                                <TextInput
-                                    style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
-                                    onChangeText={text => this.setState({
-                                        houseNumber: text
-                                    })}
-                                    value={this.state.houseNumber}
-                                />
+                                <View style={{ marginTop: 10 }}>
+                                    <Text style={{ color: "#727272", fontSize: 12 }}>Save as</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <CheckBox
+                                        // center
+                                        containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
+                                        title='Home'
+                                        checkedIcon='dot-circle-o'
+                                        textStyle={{ fontSize: 13 }}
+                                        uncheckedIcon='circle-o'
+                                        checked={this.state.homeCheck}
+                                        onPress={() => this.onPressCheckbox('homeCheck')}
+                                        checkedColor={Theme.Colors.primary}
+                                    />
+                                    <CheckBox
+                                        // center
+                                        containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
+                                        title='Office'
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        textStyle={{ fontSize: 13 }}
+                                        checked={this.state.officeCheck}
+                                        onPress={() => this.onPressCheckbox('officeCheck')}
+                                        checkedColor={Theme.Colors.primary}
+                                    />
+                                    <CheckBox
+                                        // center
+                                        containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
+                                        title='Others'
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        textStyle={{ fontSize: 13 }}
+                                        checked={this.state.othersCheck}
+                                        onPress={() => this.onPressCheckbox('othersCheck')}
+                                        checkedColor={Theme.Colors.primary}
+                                    />
+                                </View>
                             </View>
-                            <View style={{ marginTop: 10 }}>
-                                <Text style={{ color: "#727272", fontSize: 14 }}>Landmark</Text>
-                                <TextInput
-                                    style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
-                                    onChangeText={text => this.setState({
-                                        landMark: text
-                                    })}
-                                    value={this.state.landMark}
-                                />
-                            </View>
-                            <View style={{ marginTop: 10 }}>
-                                <Text style={{ color: "#727272", fontSize: 14 }}>Save as</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <CheckBox
-                                    // center
-                                    containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
-                                    title='Home'
-                                    checkedIcon='dot-circle-o'
-                                    textStyle={{ fontSize: 13 }}
-                                    uncheckedIcon='circle-o'
-                                    checked={this.state.homeCheck}
-                                    onPress={() => this.onPressCheckbox('homeCheck')}
-                                    checkedColor={Theme.Colors.primary}
-                                />
-                                <CheckBox
-                                    // center
-                                    containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
-                                    title='Office'
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    textStyle={{ fontSize: 13 }}
-                                    checked={this.state.officeCheck}
-                                    onPress={() => this.onPressCheckbox('officeCheck')}
-                                    checkedColor={Theme.Colors.primary}
-                                />
-                                <CheckBox
-                                    // center
-                                    containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
-                                    title='Others'
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    textStyle={{ fontSize: 13 }}
-                                    checked={this.state.othersCheck}
-                                    onPress={() => this.onPressCheckbox('othersCheck')}
-                                    checkedColor={Theme.Colors.primary}
-                                />
-                            </View>
-                            <Button full style={{ marginVertical: 20, backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => this.onSubmit()}><Text>Save & continue</Text></Button>
                         </ScrollView>
+                        <Button full style={{ backgroundColor: Theme.Colors.primary, }} onPress={() => this.onSubmit()}><Text>Save & continue</Text></Button>
                     </KeyboardAvoidingView>
                     {/* <SafeAreaView style={styles.footer}>
                         <Text style={styles.region}>{JSON.stringify(region, null, 2)}</Text>
