@@ -1,6 +1,7 @@
 package com.zasket;
-
+import android.os.Bundle; // here
 import com.facebook.react.ReactActivity;
+import org.devio.rn.splashscreen.SplashScreen; // here
 
 public class MainActivity extends ReactActivity {
 
@@ -10,6 +11,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
+      SplashScreen.show(this);  // here
     return "Zasket";
   }
 }

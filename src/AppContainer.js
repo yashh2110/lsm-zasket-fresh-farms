@@ -11,6 +11,7 @@ import NetInfo from "@react-native-community/netinfo";
 import { getConfig } from '../src/actions/home'
 import { androidAppVersion, iosAppVersion } from "../env";
 import UpdateModal from "./components/common/UpdateModal";
+import SplashScreen from 'react-native-splash-screen'
 
 const AppContainer = ({ darkMode, getConfig }) => {
 
@@ -24,7 +25,11 @@ const AppContainer = ({ darkMode, getConfig }) => {
                 setConnection_Status(false)
             }
         });
+
+        SplashScreen.hide()
     }, [])
+
+
 
     useEffect(() => {
         getConfig((res, status) => {
@@ -49,6 +54,7 @@ const AppContainer = ({ darkMode, getConfig }) => {
                     }
                 }
             } else {
+                // alert(JSON.stringify(res.response, null, "      "))
                 alert("Internal server error")
             }
         })
