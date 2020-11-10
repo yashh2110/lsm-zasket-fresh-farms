@@ -4,6 +4,7 @@ import dark from './dark'
 import auth from './auth'
 import home from './home'
 import cart from './cart'
+import config from './config'
 import location from './location'
 import { reducers as IntlReducers } from '../i18n/store';
 import AsyncStorage from '@react-native-community/async-storage'
@@ -16,7 +17,8 @@ const appReducer = combineReducers({
     home: home,
     IntlReducers: IntlReducers,
     cart: cart,
-    location: location
+    location: location,
+    config: config
 })
 
 function rootReducer(state, action) {

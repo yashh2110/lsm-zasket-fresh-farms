@@ -11,7 +11,7 @@ import Loader from '../common/Loader';
 import DarkModeToggle from '../common/DarkModeToggle';
 import AsyncStorage from '@react-native-community/async-storage';
 
-const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigation, userLocation, onLogout }) => {
+const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigation, userLocation, onLogout, config }) => {
     const { signOut } = useContext(AuthContext);
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
@@ -146,6 +146,7 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
 
 const mapStateToProps = (state) => ({
     categories: state.home.categories,
+    config: state.config.config,
     userLocation: state.location
 })
 

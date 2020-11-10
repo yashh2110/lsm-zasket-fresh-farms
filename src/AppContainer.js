@@ -2,16 +2,20 @@ import { connect } from "react-redux"
 import React, { useEffect, useState } from 'react';
 import Navigate from './navigation/Routes';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, StatusBar } from 'react-native';
+import { View, Text, StatusBar, Platform } from 'react-native';
 import Theme from "./styles/Theme";
 import { Modal } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import NoInternetModal from './components/common/NoInternetModal';
 import NetInfo from "@react-native-community/netinfo";
+import { getConfig } from '../src/actions/home'
+import { androidAppVersion, iosAppVersion } from "../env";
+import UpdateModal from "./components/common/UpdateModal";
 
-const AppContainer = ({ darkMode }) => {
+const AppContainer = ({ darkMode, getConfig }) => {
 
     const [connection_Status, setConnection_Status] = useState(false)
+    const [updateModal, setUpdateModal] = useState(false)
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (state.isConnected == false) {
@@ -20,6 +24,34 @@ const AppContainer = ({ darkMode }) => {
                 setConnection_Status(false)
             }
         });
+    }, [])
+
+    useEffect(() => {
+        getConfig((res, status) => {
+            // alert(JSON.stringify(res.data, null, "      "))
+            if (status) {
+                if (res?.data?.androidAppVersion !== androidAppVersion) {
+                    if (Platform.OS == "android") {
+                        if (res?.data?.androidForceUpdate) {
+                            setUpdateModal(true)
+                        } else {
+                            alert("A new version of app is available in Playstore")
+                        }
+                    }
+                }
+                if (res?.data?.androidAppVersion !== iosAppVersion) {
+                    if (Platform.OS == "ios") {
+                        if (res?.data?.androidForceUpdate) {
+                            setUpdateModal(true)
+                        } else {
+                            alert("A new version of app is available in App Store")
+                        }
+                    }
+                }
+            } else {
+                alert("Internal server error")
+            }
+        })
     }, [])
 
     return (
@@ -38,6 +70,9 @@ const AppContainer = ({ darkMode }) => {
                 <Modal visible={connection_Status} animationType={"fade"} transparent={true}>
                     <NoInternetModal />
                 </Modal>
+                <Modal visible={updateModal} animationType={"fade"} transparent={true}>
+                    <UpdateModal />
+                </Modal>
             </SafeAreaView>
         </View>
     )
@@ -47,4 +82,4 @@ const mapStateToProps = (state) => ({
     darkMode: state.dark
 })
 
-export default connect(mapStateToProps, {})(AppContainer)
+export default connect(mapStateToProps, { getConfig })(AppContainer)

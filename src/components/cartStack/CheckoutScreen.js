@@ -11,9 +11,8 @@ import { getDeliverySlots, addOrder } from '../../actions/cart'
 import moment from 'moment'
 import { Radio, Toast } from 'native-base';
 import RazorpayCheckout from 'react-native-razorpay';
-import { RazorpayLiveApiKey, RazorpayTestApiKey } from '../../../env';
 
-const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, addOrder, userLocation }) => {
+const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, addOrder, userLocation, config }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, settotalCartValue] = useState(0)
     const [nextDayBuffer, setNextDayBuffer] = useState(0)
@@ -98,12 +97,11 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                 // alert(JSON.stringify(res?.data, null, "        "))
                 let userDetails = await AsyncStorage.getItem('userDetails');
                 let parsedUserDetails = await JSON.parse(userDetails);
-
                 var options = {
                     description: 'Select the payment method',
                     image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
                     currency: 'INR',
-                    key: RazorpayLiveApiKey,
+                    key: config?.razorpayLiveApiKey,
                     amount: totalCartValue,
                     name: 'Zasket',
                     order_id: res?.data?.paymentResponseId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
@@ -131,7 +129,7 @@ const CheckoutScreen = ({ navigation, cartItems, clearCart, getDeliverySlots, ad
                     })
                 })
             } else {
-                // alert(JSON.stringify(res?.response?.data, null, "        "))
+                // alert(JSON.stringify(res?.response, null, "        "))
                 let errorItems = []
                 if (res?.response?.data?.length > 0) {
                     if (cartItems.length > 0) {
@@ -275,6 +273,7 @@ const mapStateToProps = (state) => ({
     cartItems: state.cart.cartItems,
     darkMode: state.dark,
     categories: state.home.categories,
+    config: state.config.config,
     userLocation: state.location
 })
 

@@ -3,10 +3,9 @@ import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons"
 import { connect } from 'react-redux'
-import { minimumCartValue } from '../../../env';
 import Theme from '../../styles/Theme';
 
-const CartFloatingCard = ({ color, size, cartItems, navigation }) => {
+const CartFloatingCard = ({ color, size, cartItems, navigation, config }) => {
     const [totalCartValue, settotalCartValue] = useState(0)
     useEffect(() => {
         if (cartItems.length > 0) {
@@ -29,8 +28,8 @@ const CartFloatingCard = ({ color, size, cartItems, navigation }) => {
             </View>
             <View style={{ flex: 2, justifyContent: 'center', alignItems: 'flex-end', padding: 10 }}>
                 <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>₹ {totalCartValue}</Text>
-                {totalCartValue < minimumCartValue ?
-                    <Text style={{ color: 'white', fontSize: 12, }}>Add more Rs {minimumCartValue - totalCartValue} for free delivery</Text>
+                {totalCartValue < config?.minimumCartValue ?
+                    <Text style={{ color: 'white', fontSize: 12, }}>Add more Rs {config?.minimumCartValue - totalCartValue} for free delivery</Text>
                     : undefined}
             </View>
         </View>
@@ -38,6 +37,7 @@ const CartFloatingCard = ({ color, size, cartItems, navigation }) => {
 }
 const mapStateToProps = (state) => ({
     cartItems: state.cart.cartItems,
+    config: state.config.config,
 })
 
 const mapDispatchToProps = {

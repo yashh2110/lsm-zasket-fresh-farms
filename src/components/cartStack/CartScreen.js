@@ -7,10 +7,9 @@ import CustomHeader from '../common/CustomHeader';
 import CardCartScreen from './CardCartScreen';
 import { Icon } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage';
-import { minimumCartValue } from '../../../env';
 
 
-const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
+const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, settotalCartValue] = useState(0)
     const [savedValue, setSavedValue] = useState(0)
@@ -140,9 +139,9 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
                                 <Text style={{ fontWeight: 'bold' }}>Total Payable Amount</Text>
                                 <Text style={{ fontWeight: 'bold' }}>₹ {totalCartValue}</Text>
                             </View>
-                            {totalCartValue < minimumCartValue ?
+                            {totalCartValue < config?.minimumCartValue ?
                                 <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: Theme.Colors.primary, alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#FDEFEF", alignItems: "center" }}>
-                                    <Text style={{ color: Theme.Colors.primary }}>Minimum order of ₹{minimumCartValue} is mandatory to proceed </Text>
+                                    <Text style={{ color: Theme.Colors.primary }}>Minimum order of ₹{config?.minimumCartValue} is mandatory to proceed </Text>
                                 </View>
                                 :
                                 savedValue > 0 ?
@@ -189,9 +188,9 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation }) => {
                             <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
                         </TouchableOpacity>
                     </View>
-                    {totalCartValue < minimumCartValue ?
+                    {totalCartValue < config?.minimumCartValue ?
                         <View style={{ flex: 1.2, backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
-                            <Text style={{ color: 'white', fontSize: 14 }}>Add ₹{minimumCartValue - totalCartValue} more to order</Text>
+                            <Text style={{ color: 'white', fontSize: 14 }}>Add ₹{config?.minimumCartValue - totalCartValue} more to order</Text>
                         </View>
                         :
                         <TouchableOpacity onPress={() => { navigation.navigate('Checkout') }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
@@ -208,7 +207,8 @@ const mapStateToProps = (state) => ({
     cartItems: state.cart.cartItems,
     darkMode: state.dark,
     categories: state.home.categories,
-    userLocation: state.location
+    userLocation: state.location,
+    config: state.config.config,
 })
 
 export default connect(mapStateToProps, { clearCart })(CartScreen)

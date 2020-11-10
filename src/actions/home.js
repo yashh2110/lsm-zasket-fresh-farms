@@ -2,8 +2,29 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import axiosinstance from '../axios/service/api';
 import {
-    GET_CATEGORIES, USER_LOGGED_OUT
+    GET_CATEGORIES, USER_LOGGED_OUT, GET_CONFIG
 } from './types';
+
+//get config
+export const getConfig = (callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.get('/config');
+        // alert(JSON.stringify(res.data, null, "      "))
+        dispatch({
+            type: GET_CONFIG,
+            payload: res?.data
+        });
+        callback(res, true)
+    } catch (err) {
+        dispatch({
+            type: GET_CONFIG,
+            payload: {}
+        });
+        callback(err, false)
+    }
+};
+
+
 
 // getAllCategories
 export const getAllCategories = (callback) => async dispatch => {
