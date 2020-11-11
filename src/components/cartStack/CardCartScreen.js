@@ -59,7 +59,7 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
             setCount(count - 1)
         }
         if (option == "INCREASE") {
-            if (count < 6) {
+            if (count < item?.maxAllowedQuantity) {
                 setCount(count + 1)
             }
         }
@@ -81,8 +81,9 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
                     <Image
                         style={{ height: 90, borderRadius: 5, aspectRatio: 1.3 }}
                         resizeMode="contain"
-                        source={require('../../assets/png/medium6.png')}
-                    // source={{ uri: "https://i.picsum.photos/id/390/500/300.jpg?hmac=MTvu05oUf6PaVif2NTqWv7mLAYEYslPgtVOyjSZe-pk" }}
+                        // source={require('../../assets/png/medium6.png')}
+                        source={item?.itemImages[0]?.mediumImagePath ?
+                            { uri: item?.itemImages[0]?.mediumImagePath } : require('../../assets/png/default.png')}
                     />
                 </View>
                 <View style={[{ padding: 5, flex: 2 }]}>

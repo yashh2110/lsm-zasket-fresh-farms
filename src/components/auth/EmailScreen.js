@@ -17,8 +17,9 @@ import RF from "react-native-responsive-fontsize";
 import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
+import { getConfig } from '../../actions/home'
 
-const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWithProvider, isAuthenticated }) => {
+const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWithProvider, isAuthenticated, getConfig }) => {
 
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
@@ -72,7 +73,8 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWith
                     if (status) {
                         // Alert.alert(JSON.stringify(response));
                         signIn(response?.data)
-                        navigation.navigate('PincodeScreen')
+                        // navigation.navigate('PincodeScreen')
+                        getConfig((res, status) => { })
                         setLoading(false)
                     } else {
                         setLoading(false)
@@ -180,7 +182,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, createNewCustomer })(EmailScreen)
+export default connect(mapStateToProps, { setDarkMode, createNewCustomer, getConfig })(EmailScreen)
 
 const styles = StyleSheet.create({
     container: {

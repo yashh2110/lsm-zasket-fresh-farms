@@ -96,7 +96,7 @@ const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart
             setCount(count - 1)
         }
         if (option == "INCREASE") {
-            if (count < 6) {
+            if (count < item?.maxAllowedQuantity) {
                 setCount(count + 1)
             }
         }
@@ -116,7 +116,7 @@ const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart
                     <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
                 }
             >
-                <BannerImages navigation={navigation} />
+                <BannerImages navigation={navigation} item={item} />
                 {/* <Text>{JSON.stringify(item, null, "       ")}</Text> */}
                 <View style={[{ paddingLeft: 10, paddingRight: 10, paddingBottom: 10 }]}>
                     <Text style={{ fontSize: 18, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>

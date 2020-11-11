@@ -30,9 +30,9 @@ export const deleteCartItem = (payload) => dispatch => {
     })
 }
 
-export const getDeliverySlots = (nextDayBuffer, pincode, callback) => async dispatch => {
+export const getV2DeliverySlots = (numOfDays, pincode, callback) => async dispatch => {
     try {
-        const res = await axiosinstance.get('/order/delivery-slots', { params: { nextDayBuffer: nextDayBuffer, pincode: pincode } })
+        const res = await axiosinstance.get('/order/v2/delivery-slots', { params: { numOfDays: numOfDays, pincode: pincode } })
         callback(res, true)
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
@@ -64,6 +64,41 @@ export const getCustomerOrders = (callback) => async dispatch => {
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
         const res = await axiosinstance.get(`/customers/${customerId}/orders`)
+        callback(res, true)
+    } catch (err) {
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+    }
+}
+
+
+//getAllOffers
+export const getAllOffers = (callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.get(`/offers`)
+        callback(res, true)
+    } catch (err) {
+        if (__DEV__) {
+            alert(JSON.stringify(err.response, null, "     "))
+        }
+        callback(err, false)
+    }
+}
+
+
+//applyOffer
+export const applyOffer = (offerId, orderAmount, callback) => async dispatch => {
+    try {
+        // console.warn(JSON.stringify(offerId + "      " + orderAmount, null, "     "))
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customerId = await parsedUserDetails?.customerDetails?.id
+        let payload = {
+            "customerId": customerId,
+            "offerId": offerId,
+            "orderAmount": orderAmount
+        }
+        const res = await axiosinstance.post(`/apply-offer`, payload)
         callback(res, true)
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))

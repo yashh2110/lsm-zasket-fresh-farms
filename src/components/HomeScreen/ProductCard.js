@@ -52,7 +52,7 @@ const ProductCard = ({ item, navigation, addToCart, updateCart, cartItems, delet
             setCount(count - 1)
         }
         if (option == "INCREASE") {
-            if (count < 6) {
+            if (count < item?.maxAllowedQuantity) {
                 setCount(count + 1)
             }
         }
@@ -64,16 +64,16 @@ const ProductCard = ({ item, navigation, addToCart, updateCart, cartItems, delet
 
     return (
         <View style={{ flex: 1, margin: 4, width: 160, marginBottom: 20 }}>
+            {/* <Text>{JSON.stringify(item?.itemImages?.[0]?.mediumImagePath, null, "         ")}</Text> */}
             <TouchableOpacity
                 onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
                 style={[styles.productCard,]}>
                 <View style={{ backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', height: 120, width: 160 }} onPress={() => { }}>
-                    {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
                     <Image
-                        style={{ flex: 1 }}
+                        style={{ height: 120, width: 160 }}
                         resizeMode="contain"
-                        source={require('../../assets/png/medium5.png')}
-                    // source={{ uri: "https://i.picsum.photos/id/722/360/270.jpg?hmac=hZD0DDKD3kEt6aoNWx4ZP29cj87zDOlPlgKaCD6O3lc" }}
+                        source={item?.itemImages[0]?.mediumImagePath ?
+                            { uri: item?.itemImages[0]?.mediumImagePath } : require('../../assets/png/default.png')}
                     />
                 </View>
                 <View style={[{ padding: 10 }]}>

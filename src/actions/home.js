@@ -16,6 +16,7 @@ export const getConfig = (callback) => async dispatch => {
         });
         callback(res, true)
     } catch (err) {
+        console.warn('config api error')
         dispatch({
             type: GET_CONFIG,
             payload: {}

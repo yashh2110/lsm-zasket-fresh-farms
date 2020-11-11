@@ -59,7 +59,7 @@ const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartIt
             setCount(count - 1)
         }
         if (option == "INCREASE") {
-            if (count < 6) {
+            if (count < item?.maxAllowedQuantity) {
                 setCount(count + 1)
             }
         }
@@ -77,12 +77,12 @@ const CardProductListScreen = ({ item, navigation, addToCart, updateCart, cartIt
                 <View style={{
                     backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
                 }} onPress={() => { }}>
-                    {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
+                    {/* <Text>{JSON.stringify(item?.itemImages[0]?.mediumImagePath, null, "         ")}</Text> */}
                     <Image
                         style={{ height: 90, borderRadius: 5, aspectRatio: 1.3 }}
                         resizeMode="contain"
-                        source={require('../../assets/png/medium2.png')}
-                    // source={{ uri: "https://i.picsum.photos/id/390/500/300.jpg?hmac=MTvu05oUf6PaVif2NTqWv7mLAYEYslPgtVOyjSZe-pk" }}
+                        source={item?.itemImages[0]?.mediumImagePath ?
+                            { uri: item?.itemImages[0]?.mediumImagePath } : require('../../assets/png/default.png')}
                     />
                 </View>
                 <View style={[{ padding: 10, flex: 1 }]}>

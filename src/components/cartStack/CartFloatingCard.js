@@ -6,15 +6,15 @@ import { connect } from 'react-redux'
 import Theme from '../../styles/Theme';
 
 const CartFloatingCard = ({ color, size, cartItems, navigation, config }) => {
-    const [totalCartValue, settotalCartValue] = useState(0)
+    const [totalCartValue, setTotalCartValue] = useState(0)
     useEffect(() => {
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
                 return sum + (item.discountedPrice * item.count);
             }, 0);
-            settotalCartValue(total)
+            setTotalCartValue(total)
         } else {
-            settotalCartValue(0)
+            setTotalCartValue(0)
         }
     }, [cartItems])
     return (
@@ -28,8 +28,8 @@ const CartFloatingCard = ({ color, size, cartItems, navigation, config }) => {
             </View>
             <View style={{ flex: 2, justifyContent: 'center', alignItems: 'flex-end', padding: 10 }}>
                 <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>₹ {totalCartValue}</Text>
-                {totalCartValue < config?.minimumCartValue ?
-                    <Text style={{ color: 'white', fontSize: 12, }}>Add more Rs {config?.minimumCartValue - totalCartValue} for free delivery</Text>
+                {totalCartValue < config?.freeDeliveryMinOrder ?
+                    <Text style={{ color: 'white', fontSize: 12, }}>Add more Rs {config?.freeDeliveryMinOrder - totalCartValue} for free delivery</Text>
                     : undefined}
             </View>
         </View>

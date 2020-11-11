@@ -17,8 +17,9 @@ import RF from "react-native-responsive-fontsize";
 import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
+import { getConfig } from '../../actions/home'
 
-const OtpScreen = ({ navigation, darkMode, setDarkMode, verifyOtp, route }) => {
+const OtpScreen = ({ navigation, darkMode, setDarkMode, getConfig, verifyOtp, route }) => {
 
     const [otp, setOtp] = useState("")
     const [loading, setLoading] = useState(false)
@@ -39,6 +40,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, verifyOtp, route }) => {
                         setLoading(false)
                         await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
                         signIn(response?.data)
+                        getConfig((res, status) => { })
                     } else {
                         setLoading(false)
                         if (response?.response?.data?.description == "OTP validation failed") {
@@ -139,7 +141,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, verifyOtp })(OtpScreen)
+export default connect(mapStateToProps, { setDarkMode, verifyOtp, getConfig })(OtpScreen)
 
 const styles = StyleSheet.create({
     container: {

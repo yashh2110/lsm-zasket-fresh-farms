@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements';
 import Theme from '../../styles/Theme';
 import CustomHeader from '../common/CustomHeader';
 
-const BannerImages = ({ navigation }) => {
+const BannerImages = ({ navigation, item }) => {
     const data = [
         {
             "imageable_id": 244,
@@ -19,9 +19,11 @@ const BannerImages = ({ navigation }) => {
             "thumbnail_filename": "product-imgs/thumbnail/5eb2d02036e61_1588776992.png"
         }
     ]
-    const [image, setImage] = useState({ banner: null, position: 0 });
+    const [banner, setBanner] = useState(null)
+    const [position, setPosition] = useState(0)
     useEffect(() => {
-        setImage({ ...image, banner: data?.[0]?.filename, position: 0 });
+        setBanner(item?.itemImages?.[0]?.largeImagePath)
+        setPosition(0)
     }, []);
     return (
         <View style={{ backgroundColor: 'white' }}>
@@ -31,41 +33,48 @@ const BannerImages = ({ navigation }) => {
                 backgroundColor: '#F7F7F7'
             },]}>
                 {/* todo: Alignment after Implementation */}
-                {/* <Text>{JSON.stringify(image.banner, null, "       ")}</Text> */}
+                {/* <Text>{JSON.stringify(item?.itemImages, null, "       ")}</Text> */}
                 <Image
-                    source={require('../../assets/png/sample2.png')}
-                    // source={{ uri: "https://i.picsum.photos/id/523/1248/936.jpg?hmac=myimbFBQoAaNy-bwZVM7jJbsgraeFWBTb8BtGlfaTvQ" }}
+                    // source={require('../../assets/png/sample2.png')}
+                    // source={banner ?
+                    //     { uri: banner } : require('../../assets/png/default.png')}
+                    source={{ uri: banner }}
                     style={{ height: "100%", width: "100%" }} resizeMode="contain"
                 />
             </View>
-            <ScrollView horizontal={true} contentContainerStyle={{ height: 60 }}>
-                {data?.map((item, index) => {
-                    return (
-                        <View style={[{ marginVertical: 4, marginHorizontal: 4, position: "relative", borderRadius: 4 }]} key={index}>
-                            <TouchableOpacity onPress={() => setImage({ ...image, banner: item.filename, position: index })}>
-                                <Image
-                                    source={require('../../assets/png/thumbnail6.png')}
-                                    // source={{ uri: "https://i.picsum.photos/id/835/111/81.jpg?hmac=tgyDI03VaG5zd4SFFifH0Muy4cW2e0hIuvU14QRv2Vk" }}
-                                    style={[
-                                        { backgroundColor: "#F7F7F7", width: 50, height: 50, borderRadius: 4 }
-                                    ]}
-                                />
+            {item?.itemImages?.length > 0 ?
+                <ScrollView horizontal={true} contentContainerStyle={{ height: 60 }}>
+                    {item?.itemImages?.map((element, index) => {
+                        return (
+                            <View style={[{ marginVertical: 4, marginHorizontal: 4, position: "relative", borderRadius: 4 }]} key={index}>
+                                <TouchableOpacity onPress={() => {
+                                    setBanner(element.largeImagePath)
+                                    setPosition(index)
+                                }}>
+                                    <Image
+                                        // source={require('../../assets/png/thumbnail6.png')}
+                                        source={{ uri: element?.smallImagePath }}
+                                        style={[
+                                            { backgroundColor: "#F7F7F7", width: 50, height: 50, borderRadius: 4 }
+                                        ]}
+                                    />
 
-                                {image.position === index ? (
-                                    <View style={styles.eyeOverlayContainer}>
-                                        <View style={[styles.eyeOverlay, { height: "100%", width: "100%", borderRadius: 4 }]}></View>
-                                        <Icon
-                                            iconStyle={[{ color: "white" }, styles.eyeOpacity]}
-                                            name="remove-red-eye"
-                                            type="material"
-                                        ></Icon>
-                                    </View>
-                                ) : null}
-                            </TouchableOpacity>
-                        </View>
-                    );
-                })}
-            </ScrollView>
+                                    {position === index ? (
+                                        <View style={styles.eyeOverlayContainer}>
+                                            <View style={[styles.eyeOverlay, { height: "100%", width: "100%", borderRadius: 4 }]}></View>
+                                            <Icon
+                                                iconStyle={[{ color: "white" }, styles.eyeOpacity]}
+                                                name="remove-red-eye"
+                                                type="material"
+                                            ></Icon>
+                                        </View>
+                                    ) : null}
+                                </TouchableOpacity>
+                            </View>
+                        );
+                    })}
+                </ScrollView>
+                : undefined}
         </View>
     );
 }
