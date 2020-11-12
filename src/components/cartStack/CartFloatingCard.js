@@ -18,13 +18,13 @@ const CartFloatingCard = ({ color, size, cartItems, navigation, config }) => {
         }
     }, [cartItems])
     return (
-        <View style={{ backgroundColor: Theme.Colors.primary, width: "90%", minHeight: 50, alignSelf: 'center', borderRadius: 5, marginVertical: 10, flexDirection: 'row' }}>
+        <TouchableOpacity onPress={() => navigation.navigate("CartStack", { screen: 'Cart' })} style={{ backgroundColor: Theme.Colors.primary, width: "90%", minHeight: 50, alignSelf: 'center', borderRadius: 5, marginVertical: 10, flexDirection: 'row' }}>
             <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'center' }}>
                 <Text style={{ color: 'white', fontSize: 14, fontWeight: 'bold' }}>{cartItems.length} item</Text>
-                <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
                     <SimpleLineIcons name="handbag" color={"white"} size={16} />
                     <Text style={{ color: 'white', fontSize: 14, }}> View cart {">"}</Text>
-                </TouchableOpacity>
+                </View>
             </View>
             <View style={{ flex: 2, justifyContent: 'center', alignItems: 'flex-end', padding: 10 }}>
                 <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>₹ {totalCartValue}</Text>
@@ -32,7 +32,7 @@ const CartFloatingCard = ({ color, size, cartItems, navigation, config }) => {
                     <Text style={{ color: 'white', fontSize: 12, }}>Add more Rs {config?.freeDeliveryMinOrder - totalCartValue} for free delivery</Text>
                     : undefined}
             </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 const mapStateToProps = (state) => ({
