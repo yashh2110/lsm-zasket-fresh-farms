@@ -36,9 +36,8 @@ const BannerImages = ({ navigation, item }) => {
                 {/* <Text>{JSON.stringify(item?.itemImages, null, "       ")}</Text> */}
                 <Image
                     // source={require('../../assets/png/sample2.png')}
-                    // source={banner ?
-                    //     { uri: banner } : require('../../assets/png/default.png')}
-                    source={{ uri: banner }}
+                    source={item?.itemImages?.[0]?.largeImagePath ?
+                        { uri: banner ? banner : item?.itemImages?.[0]?.largeImagePath } : require('../../assets/png/default.png')}
                     style={{ height: "100%", width: "100%" }} resizeMode="contain"
                 />
             </View>

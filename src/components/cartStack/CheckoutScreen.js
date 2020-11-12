@@ -123,7 +123,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
             "offerId": selectedOffer?.length > 0 ? selectedOffer[0]?.id : undefined,
             "offerPrice": offerPrice > 0 ? offerPrice : undefined,
         }
-        alert(JSON.stringify(payload, null, "     "))
+        // alert(JSON.stringify(payload, null, "     "))
         // console.warn(JSON.stringify(payload, null, "     "))
         addOrder(payload, async (res, status) => {
             if (status) {
