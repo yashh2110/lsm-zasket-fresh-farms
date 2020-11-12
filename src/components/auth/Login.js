@@ -107,14 +107,14 @@ const Login = ({ navigation, darkMode, requestOtp }) => {
                         {loading ?
                             <ActivityIndicator style={{ marginTop: "20%", }} color={Theme.Colors.primary} size="large" />
                             :
-                            <Button full style={{ marginTop: "20%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => {
+                            <Button full style={{ marginTop: "15%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => {
                                 setLoading(true)
                                 setTimeout(() => {
                                     onSubmit()
                                 }, 100);
                             }}><Text>Continue</Text></Button>
                         }
-                        <Text style={{ marginTop: "10%", fontSize: 14, color: "#727272", textAlign: 'center' }}>By proceeding to create your account you are agreeing to our <Text onPress={() => handleClick("TERMS")} style={{ fontWeight: 'bold', fontSize: 14 }}>Terms of Service</Text> and <Text onPress={() => handleClick("PRIVACY")} style={{ fontWeight: 'bold', fontSize: 14 }}>Privacy Policy</Text></Text>
+                        <Text style={{ marginTop: 10, zIndex: 1, fontSize: 12, color: "#727272", textAlign: 'center' }}>By proceeding to create your account you are agreeing to our <Text onPress={() => handleClick("TERMS")} style={{ fontWeight: 'bold', fontSize: 13 }}>Terms of Service</Text> and <Text onPress={() => handleClick("PRIVACY")} style={{ fontWeight: 'bold', fontSize: 14 }}>Privacy Policy</Text></Text>
                     </View>
                     <View style={{ justifyContent: 'flex-end', alignItems: 'center' }}>
                         <Image
