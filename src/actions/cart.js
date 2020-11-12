@@ -71,6 +71,19 @@ export const getCustomerOrders = (callback) => async dispatch => {
     }
 }
 
+//getOrderDetails
+export const getOrderDetails = (order_id, callback) => async dispatch => {
+    try {
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customerId = await parsedUserDetails?.customerDetails?.id
+        const res = await axiosinstance.get(`/customers/${customerId}/orders/${order_id}`)
+        callback(res, true)
+    } catch (err) {
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+    }
+}
 
 //getAllOffers
 export const getAllOffers = (callback) => async dispatch => {

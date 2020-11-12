@@ -48,7 +48,7 @@ const MyOrders = ({ navigation, getCustomerOrders }) => {
                 <FlatList
                     data={orderDetails}
                     renderItem={({ item }) =>
-                        <CardMyOrders item={item} />
+                        <CardMyOrders item={item} navigation={navigation} />
                     }
                     ListEmptyComponent={() => {
                         return (

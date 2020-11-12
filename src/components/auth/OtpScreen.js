@@ -102,7 +102,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, getConfig, verifyOtp, ro
                                     size={60}
                                     onFulfill={(otp) => { setOtp(otp) }}
                                     containerStyle={{}}
-                                    codeInputStyle={{ borderWidth: 1, borderRadius: 4 }}
+                                    codeInputStyle={{ borderWidth: 1, borderRadius: 4, color: "black", fontWeight: 'bold' }}
                                     keyboardType={"number-pad"}
 
                                 />

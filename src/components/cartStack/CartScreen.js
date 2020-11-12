@@ -198,7 +198,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                 renderItem={({ item }) => (
                                     <CardCartScreen item={item} navigation={navigation} />
                                 )}
-                                keyExtractor={item => item?.id.toString()}
+                                keyExtractor={item => item?.id?.toString()}
                             // ListEmptyComponent={emptyComponent}
                             // ItemSeparatorComponent={() => (
                             //     <View
@@ -238,6 +238,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                             onChangeText={text => setCoupon(text)}
                                             placeholder="Enter Coupon Code"
                                             value={coupon}
+                                            autoCapitalize="characters"
                                         />
                                         {couponLoading ?
                                             <ActivityIndicator color={Theme.Colors.primary} size="small" />
@@ -258,7 +259,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                             <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                                 <Text style={{ color: '#727272' }}>Item Total</Text>
-                                <Text style={{}}>₹ {totalCartValue}</Text>
+                                <Text style={{}}>₹ {(totalCartValue).toFixed(2)}</Text>
                             </View>
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
@@ -270,14 +271,14 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                         <Text style={{ color: '#35B332' }}>Coupon Discount</Text>
-                                        <Text style={{ color: "#35B332", }}>- ₹{totalCartValue - offerPrice}</Text>
+                                        <Text style={{ color: "#35B332", }}>- ₹{(totalCartValue - offerPrice).toFixed(2)}</Text>
                                     </View>
                                 </>
                                 : undefined}
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ fontWeight: 'bold' }}>Total Payable Amount</Text>
-                                <Text style={{ fontWeight: 'bold' }}>₹ {offerPrice > 0 ? offerPrice : totalCartValue}</Text>
+                                <Text style={{ fontWeight: 'bold' }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)}</Text>
                             </View>
                             {totalCartValue < config?.freeDeliveryMinOrder ?
                                 <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: Theme.Colors.primary, alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#FDEFEF", alignItems: "center" }}>
@@ -286,7 +287,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                 :
                                 savedValue > 0 ?
                                     <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: "#C2E2A9", alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center" }}>
-                                        <Text style={{ color: "#60B11F" }}>😊 You have saved ₹{savedValue + ((offerPrice > 0) ? (totalCartValue - offerPrice) : 0)} in this purchase</Text>
+                                        <Text style={{ color: "#60B11F" }}>😊 You have saved ₹{(savedValue + ((offerPrice > 0) ? (totalCartValue - offerPrice) : 0)).toFixed(2)} in this purchase</Text>
                                     </View>
                                     : undefined
                             }
@@ -323,7 +324,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
             {cartItems.length > 0 ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {offerPrice > 0 ? offerPrice : totalCartValue}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)}</Text>
                         <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
                             <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
                         </TouchableOpacity>

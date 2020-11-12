@@ -55,7 +55,7 @@ const AppContainer = ({ darkMode, getConfig }) => {
                 }
             } else {
                 // alert(JSON.stringify(res.response, null, "      "))
-                alert("Internal server error")
+                // alert("Internal server error")
             }
         })
     }, [])

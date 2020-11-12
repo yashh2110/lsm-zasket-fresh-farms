@@ -2,7 +2,7 @@
 import LottieView from 'lottie-react-native';
 import { Button, Icon, Input, Item, Label, Text } from "native-base";
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, BackHandler, Image, ImageBackground, Keyboard, Platform, ScrollView, StyleSheet, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, BackHandler, Image, ImageBackground, Keyboard, Linking, Platform, ScrollView, StyleSheet, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
@@ -53,6 +53,26 @@ const Login = ({ navigation, darkMode, requestOtp }) => {
         }
     }
 
+    const handleClick = (option) => {
+        if (option == "TERMS") {
+            Linking.canOpenURL("https://www.zasket.in/terms-and-conditions").then(supported => {
+                if (supported) {
+                    Linking.openURL("https://www.zasket.in/terms-and-conditions");
+                } else {
+                    console.warn("Don't know how to open URI");
+                }
+            });
+        } else if (option == "PRIVACY") {
+            Linking.canOpenURL("https://www.zasket.in/privacy-policy").then(supported => {
+                if (supported) {
+                    Linking.openURL("https://www.zasket.in/privacy-policy");
+                } else {
+                    console.warn("Don't know how to open URI");
+                }
+            });
+        }
+    };
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={[styles.container, (darkMode) ? styles.darkBackGroundColor : null]}>
@@ -96,6 +116,7 @@ const Login = ({ navigation, darkMode, requestOtp }) => {
                                 }, 100);
                             }}><Text>Continue</Text></Button>
                         }
+                        <Text style={{ marginTop: "10%", fontSize: 14, color: "#727272", textAlign: 'center' }}>By proceeding to create your account you are agreeing to our <Text onPress={() => handleClick("TERMS")} style={{ fontWeight: 'bold', fontSize: 14 }}>Terms of Service</Text> and <Text onPress={() => handleClick("PRIVACY")} style={{ fontWeight: 'bold', fontSize: 14 }}>Privacy Policy</Text></Text>
                     </View>
                     <View style={{ justifyContent: 'flex-end', alignItems: 'center' }}>
                         <Image

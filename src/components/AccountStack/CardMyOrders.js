@@ -19,7 +19,7 @@ const CardMyOrders = ({ item, navigation, addToCart, updateCart, cartItems, dele
     }, [item])
 
     return (
-        <View style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
+        <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { item: item })} style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
             {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
@@ -29,7 +29,7 @@ const CardMyOrders = ({ item, navigation, addToCart, updateCart, cartItems, dele
                     <Text>₹ {item?.totalPrice}</Text>
                 </View>
             </View>
-            <TouchableOpacity onPress={() => setIsVisible(true)} style={{ marginTop: 10 }}>
+            <TouchableOpacity onPress={() => setIsVisible(true)} style={{ marginTop: 10, width: 100 }}>
                 <Text style={{ color: '#2D87C9' }}>{productItem?.length} items <Icon name="right" type="AntDesign" style={{ fontSize: 12, color: "#2D87C9" }} /></Text>
             </TouchableOpacity>
             <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
@@ -50,7 +50,7 @@ const CardMyOrders = ({ item, navigation, addToCart, updateCart, cartItems, dele
                         <Text style={{}}>Refunded</Text>
                     }
                     {item?.orderState == "IN_INVENTORY" &&
-                        <Text style={{ color: Theme.Colors.primary }}>In inventory</Text>
+                        <Text style={{ color: Theme.Colors.primary }}>Order placed</Text>
                     }
                     {item?.orderState == "ASSIGNED" &&
                         <Text style={{ color: Theme.Colors.primary }}>Assigned</Text>
@@ -83,7 +83,8 @@ const CardMyOrders = ({ item, navigation, addToCart, updateCart, cartItems, dele
                                             <Image
                                                 style={{ width: 100, height: 80, borderRadius: 5 }}
                                                 resizeMode="contain"
-                                                source={require('../../assets/png/Rectangle.png')}
+                                                source={item?.item?.itemImages[0]?.mediumImagePath ?
+                                                    { uri: item?.item?.itemImages[0]?.mediumImagePath } : require('../../assets/png/default.png')}
                                             // source={{ uri: "https://i.picsum.photos/id/390/500/300.jpg?hmac=MTvu05oUf6PaVif2NTqWv7mLAYEYslPgtVOyjSZe-pk" }}
                                             />
                                         </View>
@@ -103,7 +104,7 @@ const CardMyOrders = ({ item, navigation, addToCart, updateCart, cartItems, dele
                     </ScrollView>
                 </SafeAreaView>
             </Modal>
-        </View>
+        </TouchableOpacity>
     )
 }
 const mapStateToProps = (state) => ({
