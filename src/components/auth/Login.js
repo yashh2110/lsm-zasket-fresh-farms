@@ -8,8 +8,6 @@ import Icons from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import { requestOtp } from '../../actions/auth';
 import { setDarkMode } from "../../actions/dark";
-import AnimateLoadingButton from '../../lib/ButtonAnimated';
-import alert from '../../reducers/alert';
 import Theme from "../../styles/Theme";
 import { Validation } from "../../utils/validate";
 import DarkModeToggle from '../common/DarkModeToggle';

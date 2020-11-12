@@ -8,25 +8,21 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Login from "../components/auth/Login"
 import OtpScreen from "../components/auth/OtpScreen"
 import EmailScreen from "../components/auth/EmailScreen"
-import SignUp from "../components/auth/SignUp"
 import OnBoard from "../components/auth/OnBoard"
 import { View, Text } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import HomeScreen from "../components/HomeScreen/HomeScreen"
 import ProductDetailScreen from "../components/ProductScreens/ProductDetailScreen"
 import ProductListScreen from "../components/ProductScreens/ProductListScreen"
-import InfiniteLoading from "../components/InfiniteLoading"
 import MapScreen from "../components/MapStack/MapScreen"
 import AccountScreen from "../components/AccountStack/AccountScreen"
 import SupportScreen from "../components/AccountStack/SupportScreen"
 import MyOrders from "../components/AccountStack/MyOrders"
 import MyOrdersDetailScreen from "../components/AccountStack/MyOrdersDetailScreen"
 import ManageAddressScreen from "../components/AccountStack/ManageAddressScreen"
-import Pagination from "../components/Pagination"
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
 import FeatherIcons from "react-native-vector-icons/Feather"
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons"
-import CustomDrawerContent from "./CustomDrawerContent"
 import Theme from '../styles/Theme';
 import PincodeScreen from '../components/MapStack/PincodeScreen';
 import CartScreen from '../components/cartStack/CartScreen';
@@ -44,7 +40,7 @@ const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 export const AuthContext = React.createContext();
 
-const Navigate = ({ alerts, darkMode }) => {
+const Navigate = ({ darkMode }) => {
 
     const forFade = ({ current, closing }) => ({
         cardStyle: {
@@ -70,7 +66,6 @@ const Navigate = ({ alerts, darkMode }) => {
             }}>
             <Stack.Screen name="OnBoardScreen" component={OnBoard} />
             <Stack.Screen name="Login" component={Login} options={{ cardStyleInterpolator: forFade }} />
-            <Stack.Screen name="SignUp" component={SignUp} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="EmailScreen" component={EmailScreen} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ cardStyleInterpolator: forFade }} />
         </Stack.Navigator>
@@ -168,11 +163,6 @@ const Navigate = ({ alerts, darkMode }) => {
                     component={ProductListScreen}
                     options={{ title: 'Home Page' }}
                 />
-                <Stack.Screen
-                    name="InfiniteLoading"
-                    component={InfiniteLoading}
-                    options={{ title: 'Details Page' }}
-                />
             </Stack.Navigator>
         );
     }
@@ -246,16 +236,6 @@ const Navigate = ({ alerts, darkMode }) => {
                 <Stack.Screen
                     name="MyOrdersDetailScreen"
                     component={MyOrdersDetailScreen}
-                />
-                <Stack.Screen
-                    name="InfiniteLoading"
-                    component={InfiniteLoading}
-                    options={{ title: 'Infinite Loading' }}
-                />
-                <Stack.Screen
-                    name="Pagination"
-                    component={Pagination}
-                    options={{ title: 'Pagination' }}
                 />
                 <Stack.Screen
                     name="MapScreen"
@@ -359,16 +339,6 @@ const Navigate = ({ alerts, darkMode }) => {
 
     return (
         <>
-            <View style={{ flex: 1, position: 'absolute', zIndex: 1, width: '100%' }}>
-                {alerts.map((alert) => {
-                    return (
-                        <Animatable.View animation={"slideInDown"} key={alert.id}
-                            style={{ padding: 15, backgroundColor: 'red', top: 10, width: "80%", alignSelf: 'center', borderRadius: 4, marginVertical: 3 }}>
-                            <Text style={{ color: 'white', fontSize: 14 }}>{alert.msg}</Text>
-                        </Animatable.View>
-                    )
-                })}
-            </View>
             <AuthContext.Provider value={authContext}>
                 <NavigationContainer>
                     <Stack.Navigator
@@ -401,7 +371,6 @@ const Navigate = ({ alerts, darkMode }) => {
 }
 
 const mapStateToProps = (state) => ({
-    alerts: state.alert,
     darkMode: state.dark
 })
 

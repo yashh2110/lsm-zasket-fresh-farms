@@ -4,7 +4,6 @@ import LottieView from 'lottie-react-native';
 import { Dimensions } from "react-native";
 import { connect } from 'react-redux';
 import Theme from '../../styles/Theme';
-import { MyText2 } from './MyText';
 import Draggable from './Draggable';
 import { SafeAreaView } from 'react-native';
 

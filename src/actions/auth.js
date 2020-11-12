@@ -1,11 +1,3 @@
-import axios from 'axios'
-import {
-    REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR,
-    LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, CLEAR_PROFILE
-} from './types'
-import { setAlert } from './alert'
-import setAuthToken from '../utils/setAuthToken'
-import AsyncStorage from '@react-native-community/async-storage';
 import axiosinstance from '../axios/service/api';
 import { Alert } from 'react-native';
 

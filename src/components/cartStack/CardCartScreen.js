@@ -81,7 +81,6 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
                     <Image
                         style={{ height: 90, borderRadius: 5, aspectRatio: 1.3 }}
                         resizeMode="contain"
-                        // source={require('../../assets/png/medium6.png')}
                         source={item?.itemImages?.[0]?.mediumImagePath ?
                             { uri: item?.itemImages?.[0]?.mediumImagePath } : require('../../assets/png/default.png')}
                     />

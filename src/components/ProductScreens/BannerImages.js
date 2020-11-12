@@ -35,7 +35,6 @@ const BannerImages = ({ navigation, item }) => {
                 {/* todo: Alignment after Implementation */}
                 {/* <Text>{JSON.stringify(item?.itemImages, null, "       ")}</Text> */}
                 <Image
-                    // source={require('../../assets/png/sample2.png')}
                     source={item?.itemImages?.[0]?.largeImagePath ?
                         { uri: banner ? banner : item?.itemImages?.[0]?.largeImagePath } : require('../../assets/png/default.png')}
                     style={{ height: "100%", width: "100%" }} resizeMode="contain"
@@ -51,7 +50,6 @@ const BannerImages = ({ navigation, item }) => {
                                     setPosition(index)
                                 }}>
                                     <Image
-                                        // source={require('../../assets/png/thumbnail6.png')}
                                         source={{ uri: element?.smallImagePath }}
                                         style={[
                                             { backgroundColor: "#F7F7F7", width: 50, height: 50, borderRadius: 4 }
