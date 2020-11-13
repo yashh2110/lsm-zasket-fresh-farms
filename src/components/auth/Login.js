@@ -53,17 +53,17 @@ const Login = ({ navigation, darkMode, requestOtp }) => {
 
     const handleClick = (option) => {
         if (option == "TERMS") {
-            Linking.canOpenURL("https://www.zasket.in/terms-and-conditions").then(supported => {
+            Linking.canOpenURL("https://www.zasket.in/project%20-%20T&C/index.html").then(supported => {
                 if (supported) {
-                    Linking.openURL("https://www.zasket.in/terms-and-conditions");
+                    Linking.openURL("https://www.zasket.in/project%20-%20T&C/index.html");
                 } else {
                     console.warn("Don't know how to open URI");
                 }
             });
         } else if (option == "PRIVACY") {
-            Linking.canOpenURL("https://www.zasket.in/privacy-policy").then(supported => {
+            Linking.canOpenURL("https://www.zasket.in/project%20-%20P&P/index.html").then(supported => {
                 if (supported) {
-                    Linking.openURL("https://www.zasket.in/privacy-policy");
+                    Linking.openURL("https://www.zasket.in/project%20-%20P&P/index.html");
                 } else {
                     console.warn("Don't know how to open URI");
                 }

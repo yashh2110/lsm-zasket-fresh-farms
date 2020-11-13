@@ -57,12 +57,20 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
     }, [])
 
     useEffect(() => {
-        slotsArray?.map((el, index) => {
-            if (el?.availableOrdersCount > 0) {
-                setNextDayBuffer(el?.nextDayBuffer)
-                return
+        // alert(JSON.stringify(slotsArray, null, "         "))
+
+        for (var i = 0; i < slotsArray?.length; i++) {
+            if (slotsArray[i]?.availableOrdersCount > 0) {
+                setNextDayBuffer(slotsArray[i]?.nextDayBuffer)
+                break;
             }
-        })
+        }
+        // slotsArray?.map((el, index) => {
+        //     if (el?.availableOrdersCount > 0) {
+        //         setNextDayBuffer(el?.nextDayBuffer)
+        //         return false
+        //     }
+        // })
     }, [slotsArray])
 
     useEffect(() => {
