@@ -17,13 +17,29 @@ const appReducer = combineReducers({
     config: config
 })
 
-function rootReducer(state, action) {
+const rootReducer = (state, action) => {
     const { type, payload } = action
     switch (type) {
         case USER_LOGGED_OUT:
-            AsyncStorage.removeItem('persist:root')
-            AsyncStorage.clear()
-            state = undefined;
+            (async function () {
+                await AsyncStorage.removeItem('persist:root')
+                // AsyncStorage.clear()
+                let keys = []
+                keys = await AsyncStorage.getAllKeys()
+                let KeysToDelete = []
+                keys.forEach((element) => {
+                    if (element !== "onBoardKey") {
+                        KeysToDelete.push(element)
+                    }
+                })
+                try {
+                    AsyncStorage.multiRemove(KeysToDelete)
+                } catch (e) {
+                    // remove error
+                }
+
+                state = undefined;
+            }())
         default:
             return appReducer(state, action);
     }

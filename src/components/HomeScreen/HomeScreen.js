@@ -4,20 +4,24 @@ import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
 import Theme from '../../styles/Theme';
-import { getAllCategories, getCustomerDetails, onLogout } from '../../actions/home'
+import { getAllCategories, isPincodeServiceable, getCustomerDetails, onLogout } from '../../actions/home'
 import { connect } from 'react-redux';
 import CategorySectionListItem from './CategorySectionListItem';
 import Loader from '../common/Loader';
 import DarkModeToggle from '../common/DarkModeToggle';
 import AsyncStorage from '@react-native-community/async-storage';
+import Geolocation from '@react-native-community/geolocation';
+import { MapApiKey } from '../../../env';
 
-const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigation, userLocation, onLogout, config }) => {
+const HomeScreen = ({ getAllCategories, isPincodeServiceable, getCustomerDetails, categories, navigation, userLocation, onLogout, config }) => {
     const { signOut } = useContext(AuthContext);
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
-
+    const [defaultLocation, setDefaultLocation] = useState("")
+    const [pincodeError, setPincodeError] = useState(false)
     useEffect(() => {
         initialFunction()
+        getCurrentPosition()
     }, [])
 
     const initialFunction = () => {
@@ -31,15 +35,52 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
                 setLoading(false)
             }
         })
-        getCustomerDetails(async (res, status) => {
-            if (status) {
-                // alert(JSON.stringify(res?.data, null, "       "))
-                await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
-            } else {
-                setUserDetails({})
-            }
-        })
+        // getCustomerDetails(async (res, status) => {
+        //     if (status) {
+        //         // alert(JSON.stringify(res?.data, null, "       "))
+        //         await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
+        //     } else {
+        //         alert(JSON.stringify(res.response, null, "      "))
+        //     }
+        // })
     }
+
+    useEffect(() => {
+        if (userLocation?.addressLine_1) {
+            setPincodeError(false)
+        }
+    }, [userLocation])
+
+    const getCurrentPosition = async () => {
+        try {
+            Geolocation.getCurrentPosition(
+                async (position) => {
+                    fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
+                        .then((response) => {
+                            response.json().then(async (json) => {
+                                setDefaultLocation(json?.results?.[0]?.formatted_address)
+                                let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                                // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                                isPincodeServiceable(postal_code, (res, status) => {
+                                    if (status) {
+                                    } else {
+                                        setPincodeError(true)
+                                    }
+                                })
+                            });
+                        }).catch((err) => {
+                            console.warn(err)
+                        })
+                },
+                (error) => {
+                }
+            );
+
+        } catch (e) {
+            alert(e.message || "");
+        }
+    };
+
     const onRefresh = () => {
         setRefresh(true)
         initialFunction()
@@ -59,7 +100,7 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
                     <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: 'HomeScreen' }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                         <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
-                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{userLocation?.addressLine_1}</Text>
+                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{userLocation?.addressLine_1 ? userLocation?.addressLine_1 : defaultLocation}</Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                     </TouchableOpacity>
 
@@ -67,6 +108,17 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
                         <Text>Logout</Text>
                     </TouchableOpacity>
                 </View>
+                {pincodeError ?
+                    <View style={{ backgroundColor: '#F65C65', width: "95%", alignSelf: 'center', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 3 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon name="warning" type="AntDesign" style={{ fontSize: 22, color: 'white' }} />
+                            <Text style={{ color: 'white' }}> We are not available at this location!</Text>
+                        </View>
+                        <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "HomeScreen" }) }} style={{ backgroundColor: '#DD4C55', paddingHorizontal: 5, paddingVertical: 4, borderRadius: 5 }}>
+                            <Text style={{ color: 'white' }}>Change</Text>
+                        </TouchableOpacity>
+                    </View>
+                    : undefined}
                 {/* <View style={{ height: 160, justifyContent: 'center', alignItems: 'center', marginTop: 10, }}>
                     <Swiper
                         autoplay={true}
@@ -151,7 +203,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { getAllCategories, getCustomerDetails, onLogout })(HomeScreen)
+export default connect(mapStateToProps, { getAllCategories, isPincodeServiceable, getCustomerDetails, onLogout })(HomeScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

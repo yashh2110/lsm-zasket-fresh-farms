@@ -25,6 +25,16 @@ export const getConfig = (callback) => async dispatch => {
     }
 };
 
+//isPincodeServiceable
+export const isPincodeServiceable = (pincode, callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.get(`/regions/serviceable`, { params: { pincode: pincode } })
+        // alert(JSON.stringify(res.data, null, "      "))
+        callback(res, true)
+    } catch (err) {
+        callback(err, false)
+    }
+};
 
 
 // getAllCategories

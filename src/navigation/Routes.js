@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import * as React from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { connect } from 'react-redux'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Login from "../components/auth/Login"
 import OtpScreen from "../components/auth/OtpScreen"
 import EmailScreen from "../components/auth/EmailScreen"
-import OnBoard from "../components/auth/OnBoard"
+import OnBoardScreen from "../components/auth/OnBoard"
 import { View, Text } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import HomeScreen from "../components/HomeScreen/HomeScreen"
@@ -50,7 +50,19 @@ const Navigate = ({ darkMode }) => {
 
 
 
-    function SplashScreen() {
+    function LoadingScreen(props) {
+        useEffect(() => {
+            const _bootstrapAsync = async () => {
+                const onBoardKey = await AsyncStorage.getItem('onBoardKey');
+                if (!onBoardKey) {
+                    props.navigation.navigate('OnBoardScreen')
+                } else {
+                    props.navigation.navigate('BottomTabRoute')
+                }
+            };
+            _bootstrapAsync()
+        }, [])
+
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>
                 <ActivityIndicator size="large" color={Theme.Colors.primary} />
@@ -64,7 +76,6 @@ const Navigate = ({ darkMode }) => {
             screenOptions={{
                 headerShown: false
             }}>
-            <Stack.Screen name="OnBoardScreen" component={OnBoard} />
             <Stack.Screen name="Login" component={Login} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="EmailScreen" component={EmailScreen} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ cardStyleInterpolator: forFade }} />
@@ -345,8 +356,8 @@ const Navigate = ({ darkMode }) => {
                         screenOptions={{
                             headerShown: false
                         }}>
-                        {state.isLoading ? (
-                            <Stack.Screen name="Splash" component={SplashScreen} />
+                        {/* {state.isLoading ? (
+                            <Stack.Screen name="Splash" component={LoadingScreen} />
                         ) : state.userDetails == null ? (
                             <Stack.Screen
                                 options={{
@@ -362,7 +373,20 @@ const Navigate = ({ darkMode }) => {
                                             <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
                                             <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
                                         </>
-                                    )}
+                                    )} */}
+                        <>
+                            <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
+                            <Stack.Screen name="OnBoardScreen" component={OnBoardScreen} />
+                            <Stack.Screen name="AuthRoute" component={AuthRoute} />
+                            <Stack.Screen name="MapStack" component={MapStack} options={{ cardStyleInterpolator: forFade }} />
+
+                            <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
+                            <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ title: 'Home Page' }} />
+                            <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
+                            <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
+
+
+                        </>
                     </Stack.Navigator>
                 </NavigationContainer>
             </AuthContext.Provider>
