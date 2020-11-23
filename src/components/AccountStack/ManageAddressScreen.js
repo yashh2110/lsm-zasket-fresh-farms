@@ -60,8 +60,6 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
     }
 
     const onPressDelete = (option) => {
-        setLoading(true)
-
         Alert.alert(
             "Alert",
             "Are you sure want to delete the address?",
@@ -73,6 +71,7 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
                 },
                 {
                     text: "OK", onPress: () => {
+                        setLoading(true)
                         deleteAddress(option?.id, (response, status) => {
                             if (status) {
                                 // alert(JSON.stringify(response, null, "   "))

@@ -59,7 +59,7 @@ const MyOrders = ({ navigation, getCustomerOrders }) => {
                                     <>
                                         <Image
                                             style={{ height: 250 }}
-                                            resizeMode={"center"}
+                                            resizeMode={"contain"}
                                             source={require('../../assets/png/emptyCart.png')}
                                         />
                                         <View style={{ width: "80%", alignSelf: 'center' }}>
