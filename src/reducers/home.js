@@ -1,7 +1,8 @@
-import { GET_CATEGORIES } from '../actions/types'
+import { GET_CATEGORIES, SET_BANNER_IMAGES } from '../actions/types'
 import AsyncStorage from '@react-native-community/async-storage';
 const initialState = {
-    categories: []
+    categories: [],
+    bannerImages: []
 }
 
 export default function (state = initialState, action) {
@@ -11,6 +12,13 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 categories: payload,
+            }
+        case SET_BANNER_IMAGES:
+            return {
+                ...state,
+                bannerImages: payload.sort(function (a, b) {
+                    return a.priority - b.priority;
+                }),
             }
         default:
             return {

@@ -1,8 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import axios from 'axios';
 import axiosinstance from '../axios/service/api';
 import {
-    GET_CATEGORIES, USER_LOGGED_OUT, GET_CONFIG
+    GET_CATEGORIES, CLEAR_REDUX_PERSIST, GET_CONFIG, SET_BANNER_IMAGES
 } from './types';
 
 //get config
@@ -50,6 +49,25 @@ export const getAllCategories = (callback) => async dispatch => {
     } catch (err) {
         dispatch({
             type: GET_CATEGORIES,
+            payload: []
+        });
+        callback(err, false)
+    }
+};
+
+// getAllBanners
+export const getAllBanners = (callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.get('/banners');
+        // alert(JSON.stringify(res.data, null, "      "))
+        dispatch({
+            type: SET_BANNER_IMAGES,
+            payload: res?.data
+        });
+        callback(res, true)
+    } catch (err) {
+        dispatch({
+            type: SET_BANNER_IMAGES,
             payload: []
         });
         callback(err, false)
@@ -111,8 +129,3 @@ export const getCustomerDetails = (callback) => async dispatch => {
     }
 }
 
-export const onLogout = () => async dispatch => {
-    dispatch({
-        type: USER_LOGGED_OUT
-    });
-}

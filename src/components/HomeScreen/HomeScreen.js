@@ -1,10 +1,11 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform } from 'react-native';
 import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
 import Theme from '../../styles/Theme';
-import { getAllCategories, isPincodeServiceable, getCustomerDetails, onLogout } from '../../actions/home'
+import { getAllCategories, isPincodeServiceable, getCustomerDetails, getAllBanners } from '../../actions/home'
+import { onLogout } from '../../actions/auth'
 import { connect } from 'react-redux';
 import CategorySectionListItem from './CategorySectionListItem';
 import Loader from '../common/Loader';
@@ -12,16 +13,31 @@ import DarkModeToggle from '../common/DarkModeToggle';
 import AsyncStorage from '@react-native-community/async-storage';
 import Geolocation from '@react-native-community/geolocation';
 import { MapApiKey } from '../../../env';
+import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
+const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, categories, navigation, userLocation, onLogout, config, homeScreenLocation }) => {
 
-const HomeScreen = ({ getAllCategories, isPincodeServiceable, getCustomerDetails, categories, navigation, userLocation, onLogout, config }) => {
-    const { signOut } = useContext(AuthContext);
+    useEffect(() => {
+        const _bootstrapAsync = async () => {
+            const onBoardKey = await AsyncStorage.getItem('onBoardKey');
+            if (!onBoardKey) {
+                navigation.navigate('OnBoardScreen')
+            } else {
+                // navigation.navigate('BottomTabRoute')
+            }
+        };
+        _bootstrapAsync()
+    }, [])
+
+
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
-    const [defaultLocation, setDefaultLocation] = useState("")
     const [pincodeError, setPincodeError] = useState(false)
+
     useEffect(() => {
         initialFunction()
-        getCurrentPosition()
+        if (!homeScreenLocation.addressLine_1) {
+            getCurrentPosition()
+        }
     }, [])
 
     const initialFunction = () => {
@@ -35,14 +51,17 @@ const HomeScreen = ({ getAllCategories, isPincodeServiceable, getCustomerDetails
                 setLoading(false)
             }
         })
-        // getCustomerDetails(async (res, status) => {
-        //     if (status) {
-        //         // alert(JSON.stringify(res?.data, null, "       "))
-        //         await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
-        //     } else {
-        //         alert(JSON.stringify(res.response, null, "      "))
-        //     }
-        // })
+
+        getAllBanners((res, status) => {
+            if (status) {
+                // alert(JSON.stringify(res.data, null, "      "))
+                setLoading(false)
+                setRefresh(false)
+            } else {
+                setRefresh(false)
+                setLoading(false)
+            }
+        })
     }
 
     useEffect(() => {
@@ -51,6 +70,18 @@ const HomeScreen = ({ getAllCategories, isPincodeServiceable, getCustomerDetails
         }
     }, [userLocation])
 
+    useEffect(() => {
+        if (homeScreenLocation?.pincode) {
+            isPincodeServiceable(homeScreenLocation?.pincode, (res, status) => {
+                if (status) {
+                    setPincodeError(false)
+                } else {
+                    setPincodeError(true)
+                }
+            })
+        }
+    }, [homeScreenLocation])
+
     const getCurrentPosition = async () => {
         try {
             Geolocation.getCurrentPosition(
@@ -58,8 +89,13 @@ const HomeScreen = ({ getAllCategories, isPincodeServiceable, getCustomerDetails
                     fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
                         .then((response) => {
                             response.json().then(async (json) => {
-                                setDefaultLocation(json?.results?.[0]?.formatted_address)
                                 let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                                addHomeScreenLocation({
+                                    addressLine_1: json?.results?.[0]?.formatted_address,
+                                    pincode: postal_code?.long_name,
+                                    lat: position.coords.latitude,
+                                    lon: position.coords.longitude
+                                })
                                 // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
                                 isPincodeServiceable(postal_code, (res, status) => {
                                     if (status) {
@@ -87,8 +123,8 @@ const HomeScreen = ({ getAllCategories, isPincodeServiceable, getCustomerDetails
     }
 
     const onPressLogout = async () => {
+        navigation.navigate("OnBoardScreen")
         await onLogout()
-        await signOut()
     }
 
     return (
@@ -98,15 +134,16 @@ const HomeScreen = ({ getAllCategories, isPincodeServiceable, getCustomerDetails
                     <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
                 }>
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
-                    <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: 'HomeScreen' }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
+                    <TouchableOpacity onPress={() => { navigation.navigate('MapScreenGrabPincode', { fromScreen: 'HomeScreen' }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                         <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
-                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{userLocation?.addressLine_1 ? userLocation?.addressLine_1 : defaultLocation}</Text>
+                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1}</Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                     </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => onPressLogout()} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
-                        <Text>Logout</Text>
-                    </TouchableOpacity>
+                    {isAuthenticated ?
+                        <TouchableOpacity onPress={() => onPressLogout()} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
+                            <Text>Logout</Text>
+                        </TouchableOpacity>
+                        : undefined}
                 </View>
                 {pincodeError ?
                     <View style={{ backgroundColor: '#F65C65', width: "95%", alignSelf: 'center', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 3 }}>
@@ -114,7 +151,7 @@ const HomeScreen = ({ getAllCategories, isPincodeServiceable, getCustomerDetails
                             <Icon name="warning" type="AntDesign" style={{ fontSize: 22, color: 'white' }} />
                             <Text style={{ color: 'white' }}> We are not available at this location!</Text>
                         </View>
-                        <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "HomeScreen" }) }} style={{ backgroundColor: '#DD4C55', paddingHorizontal: 5, paddingVertical: 4, borderRadius: 5 }}>
+                        <TouchableOpacity onPress={() => { navigation.navigate('MapScreenGrabPincode', { fromScreen: "HomeScreen" }) }} style={{ backgroundColor: '#DD4C55', paddingHorizontal: 5, paddingVertical: 4, borderRadius: 5 }}>
                             <Text style={{ color: 'white' }}>Change</Text>
                         </TouchableOpacity>
                     </View>
@@ -142,16 +179,17 @@ const HomeScreen = ({ getAllCategories, isPincodeServiceable, getCustomerDetails
                     </Swiper>
                 </View>*/}
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 5 }}>
-                    <Image
-                        style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center' }}
-                        // resizeMode={"stretch"}
-                        source={require('../../assets/png/HomeScreenBanner1.png')}
-                    />
-                    <Image
-                        style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center', marginLeft: 20 }}
-                        // resizeMode={"stretch"}
-                        source={require('../../assets/png/HomeScreenBanner2.png')}
-                    />
+                    {bannerImages?.map((el, index) => {
+                        return (
+                            <>
+                                <Image
+                                    style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center', marginRight: bannerImages.length - 1 == index ? 0 : 15 }}
+                                    // resizeMode={"stretch"}
+                                    source={{ uri: el?.imagePath }}
+                                />
+                            </>
+                        )
+                    })}
                 </ScrollView>
                 <View style={{ flexDirection: 'row', backgroundColor: 'white', height: 125, justifyContent: 'space-around', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => { navigation.navigate('ProductListScreen', { categoryName: "VEGETABLES" }) }} style={{ height: 120, width: 150, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
@@ -198,12 +236,15 @@ const HomeScreen = ({ getAllCategories, isPincodeServiceable, getCustomerDetails
 
 const mapStateToProps = (state) => ({
     categories: state.home.categories,
+    bannerImages: state.home.bannerImages,
     config: state.config.config,
-    userLocation: state.location
+    userLocation: state.location,
+    homeScreenLocation: state.homeScreenLocation,
+    isAuthenticated: state.auth.isAuthenticated
 })
 
 
-export default connect(mapStateToProps, { getAllCategories, isPincodeServiceable, getCustomerDetails, onLogout })(HomeScreen)
+export default connect(mapStateToProps, { getAllCategories, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation })(HomeScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

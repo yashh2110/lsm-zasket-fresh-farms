@@ -40,7 +40,7 @@ const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) 
             />
             <View style={{ flex: 1, alignItems: 'center', marginTop: "10%" }}>
                 <Text style={{ fontSize: 20 }}>Welcome!</Text>
-                <Text style={{ textAlign: 'center', color: "#727272", marginTop: 10 }}>We care about your health,</Text>
+                {/* <Text style={{ textAlign: 'center', color: "#727272", marginTop: 10 }}>We care about your health,</Text> */}
                 <Text style={{ textAlign: 'center', color: "#727272", marginTop: 5 }}>Get fresh fruits and vegetables at wholesale price, free to your home.</Text>
                 <Button full style={{ backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, marginTop: "10%", }} onPress={() => _onDone()}><Text style={{ textTransform: 'capitalize' }}>Login/Signup</Text></Button>
             </View>

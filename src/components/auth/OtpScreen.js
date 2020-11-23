@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, Image, ImageBackground, Keyboard, Platform, ScrollView, StyleSheet, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import { verifyOtp } from '../../actions/auth';
+import { verifyOtp, saveUserDetails, onLogin } from '../../actions/auth';
 import { setDarkMode } from "../../actions/dark";
 import Theme from "../../styles/Theme";
 import { Validation } from "../../utils/validate";
@@ -17,13 +17,12 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
 import { getConfig } from '../../actions/home'
 
-const OtpScreen = ({ navigation, darkMode, setDarkMode, getConfig, verifyOtp, route }) => {
+const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin, getConfig, verifyOtp, route }) => {
 
     const [otp, setOtp] = useState("")
     const [loading, setLoading] = useState(false)
 
     const { mobileNumber } = route.params;
-    const { signIn } = React.useContext(AuthContext);
     const onSubmit = async () => {
         setLoading(true)
         if (otp) {
@@ -37,7 +36,8 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, getConfig, verifyOtp, ro
                     if (status) {
                         setLoading(false)
                         await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
-                        signIn(response?.data)
+                        onLogin(response?.data)
+                        navigation.navigate('HomeStack')
                         getConfig((res, status) => { })
                     } else {
                         setLoading(false)
@@ -139,7 +139,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, verifyOtp, getConfig })(OtpScreen)
+export default connect(mapStateToProps, { setDarkMode, verifyOtp, getConfig, saveUserDetails, onLogin })(OtpScreen)
 
 const styles = StyleSheet.create({
     container: {

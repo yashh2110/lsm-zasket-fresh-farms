@@ -1,11 +1,11 @@
 
 import LottieView from 'lottie-react-native';
-import { Button, Icon, Input, Item, Label, Text } from "native-base";
+import { Button, Icon, Input, Item, Label, Text, Toast } from "native-base";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, Image, ImageBackground, Linking, Keyboard, Platform, ScrollView, StyleSheet, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import { createNewCustomer } from '../../actions/auth';
+import { createNewCustomer, saveUserDetails, onLogin } from '../../actions/auth';
 import { setDarkMode } from "../../actions/dark";
 import Theme from "../../styles/Theme";
 import { Validation } from "../../utils/validate";
@@ -17,7 +17,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
 import { getConfig } from '../../actions/home'
 
-const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWithProvider, isAuthenticated, getConfig }) => {
+const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserDetails, onLogin, loginWithProvider, isAuthenticated, getConfig }) => {
 
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
@@ -25,7 +25,6 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWith
     const [nameErrorText, setNameErrorText] = useState("")
     const [loading, setLoading] = useState(false)
     const { mobileNumber, otp } = route.params;
-    const { signIn } = React.useContext(AuthContext);
 
     const validate = () => {
         let status = true
@@ -67,18 +66,23 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWith
             }
             try {
                 await createNewCustomer(payLoad, (response, status) => {
-                    // Alert.alert(JSON.stringify(response, null, "     "))
+                    // Alert.alert(JSON.stringify(response?.response?.data?.description, null, "     "))
                     if (status) {
                         // Alert.alert(JSON.stringify(response));
-                        signIn(response?.data)
-                        // navigation.navigate('PincodeScreen')
+                        onLogin(response?.data)
+                        navigation.navigate('BottomTabRoute')
                         getConfig((res, status) => { })
                         setLoading(false)
                     } else {
                         setLoading(false)
                         // Alert.alert(response?.response?.data?.description);
-                        if (response?.response?.data?.description == "Customer with details already exist!!. Please sign in") {
+                        if (response?.response?.data?.description == "Customer with details already exist!. Please sign in") {
                             navigation.navigate("Login")
+                            Toast.show({
+                                text: "Customer with email or mobile number already exist!. Please sign in",
+                                buttonText: "Okay",
+                                type: "danger"
+                            })
                         }
                         if (response?.response?.data?.description == "OTP validation failed") {
                             Alert.alert(response?.response?.data?.description);
@@ -200,7 +204,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, createNewCustomer, getConfig })(EmailScreen)
+export default connect(mapStateToProps, { setDarkMode, saveUserDetails, onLogin, createNewCustomer, getConfig })(EmailScreen)
 
 const styles = StyleSheet.create({
     container: {

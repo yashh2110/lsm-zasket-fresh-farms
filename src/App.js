@@ -7,23 +7,12 @@ import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/es/integration/react'
 import AppContainer from './AppContainer';
 import { store, persistor } from "./store";
-import setAuthToken from './utils/setAuthToken';
-
-(async () => {
-  try {
-    const value = await AsyncStorage.getItem('token')
-    if (value !== null) {
-      setAuthToken(value)
-    }
-  } catch (error) {
-    console.warn(error);
-  }
-})();
 
 const App = () => {
   useEffect(() => {
     // store.dispatch(loadUser())
   }, [])
+
   return (
     <Root>
       <PaperProvider>

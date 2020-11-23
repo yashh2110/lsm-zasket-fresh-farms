@@ -5,8 +5,9 @@ import home from './home'
 import cart from './cart'
 import config from './config'
 import location from './location'
+import homeScreenLocation from './homeScreenLocation'
 import AsyncStorage from '@react-native-community/async-storage'
-import { USER_LOGGED_OUT } from '../actions/types'
+import { CLEAR_REDUX_PERSIST } from '../actions/types'
 // Redux: Root Reducer
 const appReducer = combineReducers({
     dark: dark,
@@ -14,32 +15,32 @@ const appReducer = combineReducers({
     home: home,
     cart: cart,
     location: location,
+    homeScreenLocation: homeScreenLocation,
     config: config
 })
 
 const rootReducer = (state, action) => {
     const { type, payload } = action
     switch (type) {
-        case USER_LOGGED_OUT:
-            (async function () {
-                await AsyncStorage.removeItem('persist:root')
-                // AsyncStorage.clear()
-                let keys = []
-                keys = await AsyncStorage.getAllKeys()
-                let KeysToDelete = []
-                keys.forEach((element) => {
-                    if (element !== "onBoardKey") {
-                        KeysToDelete.push(element)
-                    }
-                })
-                try {
-                    AsyncStorage.multiRemove(KeysToDelete)
-                } catch (e) {
-                    // remove error
-                }
+        case CLEAR_REDUX_PERSIST:
+            // let res = await AsyncStorage.getItem('persist:root')
+            // alert(JSON.stringify(JSON.parse(res), null, "    "))
+            AsyncStorage.removeItem('persist:root')
+            // let keys = []
+            // keys = await AsyncStorage.getAllKeys()
+            // let KeysToDelete = []
+            // keys.forEach((element) => {
+            //     if (element !== "onBoardKey") {
+            //         KeysToDelete.push(element)
+            //     }
+            // })
+            // try {
+            //     AsyncStorage.multiRemove(KeysToDelete)
+            // } catch (e) {
+            //     // remove error
+            // }
 
-                state = undefined;
-            }())
+            state = undefined;
         default:
             return appReducer(state, action);
     }
