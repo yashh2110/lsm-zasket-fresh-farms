@@ -53,17 +53,17 @@ const Login = ({ navigation, darkMode, requestOtp }) => {
 
     const handleClick = (option) => {
         if (option == "TERMS") {
-            Linking.canOpenURL("https://www.zasket.in/project%20-%20T&C/index.html").then(supported => {
+            Linking.canOpenURL("https://www.zasket.in/terms-and-conditions.html").then(supported => {
                 if (supported) {
-                    Linking.openURL("https://www.zasket.in/project%20-%20T&C/index.html");
+                    Linking.openURL("https://www.zasket.in/terms-and-conditions.html");
                 } else {
                     console.warn("Don't know how to open URI");
                 }
             });
         } else if (option == "PRIVACY") {
-            Linking.canOpenURL("https://www.zasket.in/project%20-%20P&P/index.html").then(supported => {
+            Linking.canOpenURL("https://www.zasket.in/privacy-policy.html").then(supported => {
                 if (supported) {
-                    Linking.openURL("https://www.zasket.in/project%20-%20P&P/index.html");
+                    Linking.openURL("https://www.zasket.in/privacy-policy.html");
                 } else {
                     console.warn("Don't know how to open URI");
                 }
@@ -107,7 +107,7 @@ const Login = ({ navigation, darkMode, requestOtp }) => {
                         {loading ?
                             <ActivityIndicator style={{ marginTop: "20%", }} color={Theme.Colors.primary} size="large" />
                             :
-                            <Button full style={{ marginTop: "15%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => {
+                            <Button full style={{ marginTop: "10%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => {
                                 setLoading(true)
                                 setTimeout(() => {
                                     onSubmit()

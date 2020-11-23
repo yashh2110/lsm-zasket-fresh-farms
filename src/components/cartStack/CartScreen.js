@@ -297,7 +297,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                     <View style={[{ flex: 1, alignSelf: 'center', justifyContent: 'center', }]}>
                         <Image
                             style={{ height: 250 }}
-                            resizeMode={"center"}
+                            resizeMode={"contain"}
                             source={require('../../assets/png/emptyCart.png')}
                         />
                         <View style={{ width: "80%", alignSelf: 'center' }}>
