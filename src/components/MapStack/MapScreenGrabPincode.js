@@ -229,7 +229,7 @@ class MapScreenGrabPincode extends React.Component {
             saveAs: item?.saveAs,
             pincode: item?.pincode
         }
-        this.props.addLocation, addHomeScreenLocation(payload)
+        this.props.addLocation(payload)
         this.props.addHomeScreenLocation({
             addressLine_1: item?.addressLine_1,
             lat: item?.lat,

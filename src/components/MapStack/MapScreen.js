@@ -16,6 +16,7 @@ import { addLocation } from '../../actions/location'
 import { connect } from 'react-redux';
 import FeatherIcons from "react-native-vector-icons/Feather"
 import AntDesignIcons from "react-native-vector-icons/AntDesign"
+import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
 
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
@@ -280,6 +281,12 @@ class MyMapView extends React.Component {
                         }
 
                         this.props.addLocation(location)
+                        this.props.addHomeScreenLocation({
+                            "addressLine_1": response?.data?.addressLine_1,
+                            "pincode": response?.data?.pincode,
+                            "lat": response?.data?.lat,
+                            "lon": response?.data?.lon,
+                        })
                         // await AsyncStorage.setItem("location", JSON.stringify(location));
                         this.setState({ loading: false })
                         if (this.state.mode === "ON_INITIAL") {
@@ -364,6 +371,12 @@ class MyMapView extends React.Component {
             pincode: item?.pincode
         }
         this.props.addLocation(payload)
+        this.props.addHomeScreenLocation({
+            addressLine_1: item?.addressLine_1,
+            lat: item?.lat,
+            lon: item?.lon,
+            pincode: item?.pincode
+        })
         if (this.state.mode === "ON_INITIAL") {
             this.props.navigation.navigate('SetAuthContext', { userLocation: payload }) // if you send it as null it wont navigate
         } else {
@@ -713,7 +726,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { addNewCustomerAddress, getAllUserAddress, updateUserAddress, addLocation })(MyMapView)
+export default connect(mapStateToProps, { addNewCustomerAddress, getAllUserAddress, updateUserAddress, addLocation, addHomeScreenLocation })(MyMapView)
 
 const styles = StyleSheet.create({
     map: {
