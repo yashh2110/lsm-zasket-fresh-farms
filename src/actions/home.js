@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import axiosinstance from '../axios/service/api';
 import {
-    GET_CATEGORIES, CLEAR_REDUX_PERSIST, GET_CONFIG, SET_BANNER_IMAGES
+    GET_CATEGORIES, GET_CONFIG, SET_BANNER_IMAGES
 } from './types';
 
 //get config

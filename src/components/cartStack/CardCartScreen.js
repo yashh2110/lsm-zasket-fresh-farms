@@ -1,11 +1,11 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList } from 'react-native';
 import Theme from '../../styles/Theme';
-import { addToCart, updateCart, deleteCartItem } from '../../actions/cart'
+import { addToCart, updateCart, deleteCartItem, updateCartItemsApi } from '../../actions/cart'
 import { connect } from 'react-redux';
 import { Icon } from 'native-base';
 
-const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, deleteCartItem }) => {
+const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, deleteCartItem, updateCartItemsApi }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(1)
     const [isUpdate, setIsUpdate] = useState(false)
@@ -69,6 +69,12 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
         deleteCartItem(item)
     }
 
+    useEffect(() => {
+        updateCartItemsApi(item?.id, count, (res, status) => {
+            // alert(JSON.stringify(res, null, "     "))
+        })
+    }, [count])
+
     return (
         <View style={{ flex: 1, width: "90%", alignSelf: 'center', marginVertical: 1.5 }}>
             <TouchableOpacity
@@ -128,7 +134,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { addToCart, updateCart, deleteCartItem })(CardCartScreen)
+export default connect(mapStateToProps, { addToCart, updateCart, deleteCartItem, updateCartItemsApi })(CardCartScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

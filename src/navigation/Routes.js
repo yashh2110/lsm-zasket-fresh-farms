@@ -180,6 +180,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                 }}
                 listeners={(navigation) => ({
                     tabPress: event => {
+                        alert(isAuthenticated)
                         if (isAuthenticated == false) {
                             event.preventDefault();
                             navigation.navigation.navigate("AuthRoute", { screen: 'Login' })

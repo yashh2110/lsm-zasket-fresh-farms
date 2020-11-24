@@ -1,6 +1,55 @@
 import AsyncStorage from '@react-native-community/async-storage'
+import { Alert } from 'react-native';
 import axiosinstance from '../axios/service/api'
-import { ADD_TO_CART, CLEAR_CART, UPDATE_COUNT, DELETE_ITEM_CART } from './types'
+import { ADD_TO_CART, CLEAR_CART, UPDATE_COUNT, DELETE_ITEM_CART, GET_CART_ITEMS } from './types'
+
+export const getCartItemsApi = (callback) => async dispatch => {
+    try {
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customerId = await parsedUserDetails?.customerDetails?.id
+        const res = await axiosinstance.get(`/${customerId}/cart-items`)
+        let newArray = []
+        res?.data?.forEach((el, index) => {
+            newArray.push({
+                ...el.item,
+                count: el.quantity
+            })
+        })
+        dispatch({
+            type: GET_CART_ITEMS,
+            payload: newArray
+        })
+        callback(res, true)
+    } catch (err) {
+        alert(JSON.stringify(err.response, null, "     "))
+        callback(err, false)
+        dispatch({
+            type: GET_CART_ITEMS,
+            payload: []
+        })
+    }
+}
+
+export const updateCartItemsApi = (itemId, quantity, callback) => async dispatch => {
+    try {
+        let payload = {
+            "itemId": itemId,
+            "quantity": quantity
+        }
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customerId = await parsedUserDetails?.customerDetails?.id
+        // alert(JSON.stringify(userDetails, null, "     "))
+        const res = await axiosinstance.post(`/${customerId}/cart-items`, payload)
+        // dispatch(getCartItemsApi((res, status) => { }))
+        callback(res, true)
+    } catch (err) {
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+    }
+}
+
 
 export const addToCart = (item, count) => dispatch => {
     dispatch({

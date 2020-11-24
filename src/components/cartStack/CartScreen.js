@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, FlatList, ScrollView, Image, TextInput, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, FlatList, ScrollView, Image, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { clearCart, getAllOffers, applyOffer } from '../../actions/cart'
 import Theme from '../../styles/Theme';
 import CustomHeader from '../common/CustomHeader';
 import CardCartScreen from './CardCartScreen';
 import { Icon, Toast } from 'native-base'
+import { getCartItemsApi } from '../../actions/cart'
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment'
 
-const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, getAllOffers, applyOffer }) => {
+const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, getAllOffers, applyOffer, getCartItemsApi }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, setTotalCartValue] = useState(0)
     const [savedValue, setSavedValue] = useState(0)
@@ -18,6 +19,8 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
     const [offersList, setOffersList] = useState([])
     const [offerPrice, setOfferPrice] = useState(0)
     const [selectedOffer, setSelectedOffer] = useState([])
+    const [refresh, setRefresh] = useState(false)
+
     useEffect(() => {
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
@@ -35,7 +38,18 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
         }
     }, [cartItems])
 
+    const initialFunction = () => {
+        getCartItemsApi((res, status) => {
+            if (status) {
+                setRefresh(false)
+            } else {
+                setRefresh(false)
+            }
+        })
+    }
+
     useEffect(() => {
+        initialFunction()
         getAllOffers((res, status) => {
             if (status) {
                 // alert(JSON.stringify(res.data, null, "     "))
@@ -145,11 +159,16 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
         setCoupon("")
         setSelectedOffer([])
     }
-
+    const onRefresh = () => {
+        setRefresh(true)
+        initialFunction()
+    }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Cart"} showSearch={false} />
-            <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false}>
+            <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false} refreshControl={
+                <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+            }>
                 {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")}</Text> */}
                 {cartItems.length > 0 ?
                     <>
@@ -361,7 +380,7 @@ const mapStateToProps = (state) => ({
     config: state.config.config,
 })
 
-export default connect(mapStateToProps, { clearCart, getAllOffers, applyOffer })(CartScreen)
+export default connect(mapStateToProps, { clearCart, getAllOffers, applyOffer, getCartItemsApi })(CartScreen)
 
 const styles = StyleSheet.create({
     button: {

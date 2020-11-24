@@ -1,4 +1,4 @@
-import { ADD_TO_CART, CLEAR_CART, UPDATE_COUNT, DELETE_ITEM_CART } from '../actions/types'
+import { ADD_TO_CART, CLEAR_CART, UPDATE_COUNT, DELETE_ITEM_CART, GET_CART_ITEMS } from '../actions/types'
 const initialState = {
     cartItems: []
 }
@@ -6,6 +6,11 @@ const initialState = {
 const cart = (state = initialState, action) => {
     const { type, payload } = action
     switch (type) {
+        case GET_CART_ITEMS:
+            return {
+                ...state,
+                cartItems: payload
+            }
         case ADD_TO_CART:
             return {
                 ...state,
