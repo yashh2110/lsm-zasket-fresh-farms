@@ -8,7 +8,6 @@ import moment from 'moment'
 
 const CardMyOrders = ({ item, navigation, cartItems, }) => {
     const [addButton, setAddButton] = useState(true)
-    const [count, setCount] = useState(1)
     const [isUpdate, setIsUpdate] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
     const [productItem, setProductItem] = useState([])

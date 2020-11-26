@@ -9,6 +9,7 @@ import { Icon, Toast } from 'native-base'
 import { getCartItemsApi } from '../../actions/cart'
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment'
+import { getConfig } from '../../actions/home';
 
 const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, getAllOffers, applyOffer, getCartItemsApi }) => {
     const scrollViewRef = useRef();
@@ -46,6 +47,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                 setRefresh(false)
             }
         })
+        getConfig((res, status) => { })
     }
 
     useEffect(() => {

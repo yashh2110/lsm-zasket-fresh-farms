@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage'
 import { Alert } from 'react-native';
 import axiosinstance from '../axios/service/api'
-import { ADD_TO_CART, CLEAR_CART, UPDATE_COUNT, DELETE_ITEM_CART, GET_CART_ITEMS } from './types'
+import { CLEAR_CART, GET_CART_ITEMS } from './types'
 
 export const getCartItemsApi = (callback) => async dispatch => {
     try {
@@ -42,7 +42,7 @@ export const updateCartItemsApi = (itemId, quantity, callback) => async dispatch
         let customerId = await parsedUserDetails?.customerDetails?.id
         // alert(JSON.stringify(userDetails, null, "     "))
         const res = await axiosinstance.post(`/${customerId}/cart-items`, payload)
-        // dispatch(getCartItemsApi((res, status) => { }))
+        dispatch(getCartItemsApi((res, status) => { }))
         callback(res, true)
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
@@ -51,30 +51,10 @@ export const updateCartItemsApi = (itemId, quantity, callback) => async dispatch
 }
 
 
-export const addToCart = (item, count) => dispatch => {
-    dispatch({
-        type: ADD_TO_CART,
-        payload: item
-    })
-}
-
-export const updateCart = (item, count) => dispatch => {
-    dispatch({
-        type: UPDATE_COUNT,
-        payload: { item, count }
-    })
-}
 
 export const clearCart = (payload) => dispatch => {
     dispatch({
         type: CLEAR_CART,
-        payload: payload
-    })
-}
-
-export const deleteCartItem = (payload) => dispatch => {
-    dispatch({
-        type: DELETE_ITEM_CART,
         payload: payload
     })
 }

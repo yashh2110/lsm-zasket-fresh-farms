@@ -1,79 +1,54 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList } from 'react-native';
 import Theme from '../../styles/Theme';
-import { addToCart, updateCart, deleteCartItem, updateCartItemsApi } from '../../actions/cart'
+import { updateCartItemsApi } from '../../actions/cart'
 import { connect } from 'react-redux';
 import { Icon } from 'native-base';
 
-const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, deleteCartItem, updateCartItemsApi }) => {
+const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi }) => {
     const [addButton, setAddButton] = useState(true)
-    const [count, setCount] = useState(1)
-    const [isUpdate, setIsUpdate] = useState(false)
+    const [count, setCount] = useState(0)
 
     useEffect(() => {
-
-        // if (cartItems.length > 0) {
-        //     cartItems?.forEach(el => {
-        //         if (el?.id == item?.id) {
-        //             setAddButton(false)
-        //             setCount(el.count)
-        //         }
-        //     })
-        // } else {
-        //     setAddButton(true)
-        //     setCount(1)
-        //     setIsUpdate(false)
-        // }
-
         let filteredItems = cartItems.filter(element => element?.id == item?.id);
         if (filteredItems.length == 1) {
             setAddButton(false)
             setCount(filteredItems[0].count)
         } else {
             setAddButton(true)
-            setCount(1)
-            setIsUpdate(false)
+            setCount(0)
         }
+
     }, [cartItems])
 
-    useEffect(() => {
-        if (isUpdate) {
-            updateCart(item, count)
-        }
-        if (count == 0) {
-            onDeleteItem()
-        }
-    }, [count])
-
     const onAddToCart = async () => {
-        setAddButton(!addButton)
-        let obj = item
-        obj.count = count
-        addToCart(obj)
-        setIsUpdate(true)
+        updateCartItemsApi(item?.id, 1, (res, status) => {
+            setAddButton(!addButton)
+            setCount(1)
+        })
     }
 
     const onCartUpdate = async (option) => {
-        setIsUpdate(true)
         if (option == "DECREASE") {
-            setCount(count - 1)
+            if (count >= 0) {
+                onUpdateCartItemApi(count - 1)
+                // setCount(count - 1)
+            }
+            // setCount(count - 1)
         }
         if (option == "INCREASE") {
             if (count < item?.maxAllowedQuantity) {
-                setCount(count + 1)
+                onUpdateCartItemApi(count + 1)
+                // setCount(count + 1)
             }
         }
     }
 
-    const onDeleteItem = async () => {
-        deleteCartItem(item)
-    }
-
-    useEffect(() => {
-        updateCartItemsApi(item?.id, count, (res, status) => {
+    const onUpdateCartItemApi = (quantity) => {
+        updateCartItemsApi(item?.id, quantity, (res, status) => {
             // alert(JSON.stringify(res, null, "     "))
         })
-    }, [count])
+    }
 
     return (
         <View style={{ flex: 1, width: "90%", alignSelf: 'center', marginVertical: 1.5 }}>
@@ -134,7 +109,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { addToCart, updateCart, deleteCartItem, updateCartItemsApi })(CardCartScreen)
+export default connect(mapStateToProps, { updateCartItemsApi })(CardCartScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

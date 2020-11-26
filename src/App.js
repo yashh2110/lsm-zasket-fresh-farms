@@ -5,12 +5,21 @@ import 'react-native-gesture-handler'; //do not remove this line else app will g
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/es/integration/react'
+import { onLogin } from './actions/auth';
 import AppContainer from './AppContainer';
 import { store, persistor } from "./store";
 
 const App = () => {
   useEffect(() => {
     // store.dispatch(loadUser())
+    const initialFunction = async () => {
+      let userDetails = await AsyncStorage.getItem('userDetails');
+      let parsedUserDetails = await JSON.parse(userDetails);
+      if (parsedUserDetails !== null) {
+        store.dispatch(onLogin(parsedUserDetails))
+      }
+    }
+    initialFunction()
   }, [])
 
   return (

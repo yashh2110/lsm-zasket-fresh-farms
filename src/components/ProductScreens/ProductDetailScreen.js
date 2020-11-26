@@ -7,10 +7,10 @@ import { connect } from 'react-redux';
 import Loader from '../common/Loader';
 import Theme from '../../styles/Theme';
 import { TouchableOpacity } from 'react-native';
-import { addToCart, updateCart, deleteCartItem } from '../../actions/cart'
+import { updateCartItemsApi } from '../../actions/cart'
 import CartFloatingCard from '../cartStack/CartFloatingCard';
 
-const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart, cartItems, deleteCartItem }) => {
+const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCartItemsApi }) => {
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
     const [item, setItem] = useState({})
@@ -43,69 +43,47 @@ const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart
 
     //CART FUNCTIONALITY
     const [addButton, setAddButton] = useState(true)
-    const [count, setCount] = useState(1)
-    const [isUpdate, setIsUpdate] = useState(false)
-
+    const [count, setCount] = useState(0)
 
     useEffect(() => {
-        // if (cartItems.length > 0) {
-        //     cartItems?.forEach(el => {
-        //         if (el?.id == route.params.item?.id) {
-        //             setAddButton(false)
-        //             setCount(el.count)
-        //         }
-        //     })
-        // } else {
-        //     setAddButton(true)
-        //     setCount(1)
-        //     setIsUpdate(false)
-        // }
-
-        let filteredItems = cartItems.filter(element => element?.id == route.params.item?.id);
+        let filteredItems = cartItems.filter(element => element?.id == route?.params?.item?.id);
         if (filteredItems.length == 1) {
             setAddButton(false)
-            setCount(filteredItems[0]?.count)
+            setCount(filteredItems[0].count)
         } else {
             setAddButton(true)
-            setCount(1)
-            setIsUpdate(false)
+            setCount(0)
         }
     }, [cartItems])
 
-    useEffect(() => {
-        if (isUpdate) {
-            updateCart(item, count)
-        }
-        if (count == 0) {
-            onDeleteItem()
-            setIsUpdate(false)
-        }
-    }, [count])
-
     const onAddToCart = async () => {
-        setAddButton(!addButton)
-        let obj = item
-        obj.count = count
-        addToCart(obj)
-        setIsUpdate(true)
+        updateCartItemsApi(item?.id, 1, (res, status) => {
+            setAddButton(!addButton)
+            setCount(1)
+        })
     }
 
     const onCartUpdate = async (option) => {
-        setIsUpdate(true)
         if (option == "DECREASE") {
-            setCount(count - 1)
+            if (count >= 0) {
+                onUpdateCartItemApi(count - 1)
+                // setCount(count - 1)
+            }
+            // setCount(count - 1)
         }
         if (option == "INCREASE") {
             if (count < item?.maxAllowedQuantity) {
-                setCount(count + 1)
+                onUpdateCartItemApi(count + 1)
+                // setCount(count + 1)
             }
         }
     }
 
-    const onDeleteItem = async () => {
-        deleteCartItem(item)
+    const onUpdateCartItemApi = (quantity) => {
+        updateCartItemsApi(item?.id, quantity, (res, status) => {
+            // alert(JSON.stringify(res, null, "     "))
+        })
     }
-
 
     return (
         <View
@@ -145,7 +123,8 @@ const ProductDetailScreen = ({ navigation, route, getItem, addToCart, updateCart
                 <TouchableOpacity onPress={() => onAddToCart()} style={{ backgroundColor: Theme.Colors.primary, height: 50, justifyContent: "center" }}>
                     <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold' }}>+  Add</Text>
                 </TouchableOpacity>
-                : <View style={{ backgroundColor: Theme.Colors.primary, height: 50, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                :
+                <View style={{ backgroundColor: Theme.Colors.primary, height: 50, flexDirection: 'row', justifyContent: 'space-evenly' }}>
                     <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ width: 35, height: 35, backgroundColor: "#B90E14", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
                         <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: 20 }}>-</Text>
                     </TouchableOpacity>
@@ -166,4 +145,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { getItem, addToCart, updateCart, deleteCartItem })(ProductDetailScreen)
+export default connect(mapStateToProps, { getItem, updateCartItemsApi })(ProductDetailScreen)
