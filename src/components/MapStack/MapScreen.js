@@ -259,7 +259,12 @@ class MyMapView extends React.Component {
                     if (status) {
                         this.props.navigation.goBack()
                     } else {
-                        alert(JSON.stringify(response?.data, null, "      "))
+                        // alert(JSON.stringify(response?.data, null, "      "))
+                        this.setState({ errorMessage: response?.data })
+                        if (response?.data == "Cannot update address to not serviceable Pincode") {
+                            this.setState({ errorMessageBanner: true })
+                            await this.setState({ loading: false })
+                        }
                     }
                 })
             } else {
@@ -553,12 +558,13 @@ class MyMapView extends React.Component {
                                 <View style={{ marginTop: 10 }}>
                                     {/* <Text style={{ color: "#727272", fontSize: 12 }}>Landmark</Text> */}
                                     <TextInput
-                                        style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
+                                        style={{ height: 40, borderColor: this.state.errorMessageBanner ? 'red' : '#D8D8D8', borderBottomWidth: 1 }}
                                         onChangeText={text => this.setState({
                                             pincode: text
                                         })}
                                         placeholder="Pincode"
                                         value={this.state.pincode}
+                                        onTouchStart={() => this.setState({ errorMessageBanner: false })}
                                     />
                                 </View>
                                 <View style={{ marginTop: 10 }}>
