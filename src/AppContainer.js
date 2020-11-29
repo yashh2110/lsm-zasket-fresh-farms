@@ -46,7 +46,7 @@ const AppContainer = ({ darkMode, getConfig }) => {
                 }
                 if (res?.data?.androidAppVersion !== iosAppVersion) {
                     if (Platform.OS == "ios") {
-                        if (res?.data?.androidForceUpdate) {
+                        if (res?.data?.iosForceUpdate) {
                             setUpdateModal(true)
                         } else {
                             alert("A new version of app is available in App Store")
