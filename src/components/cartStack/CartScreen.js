@@ -19,7 +19,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
     const [couponLoading, setCouponLoading] = useState(false)
     const [offersList, setOffersList] = useState([])
     const [offerPrice, setOfferPrice] = useState(0)
-    const [selectedOffer, setSelectedOffer] = useState([])
+    const [selectedOffer, setSelectedOffer] = useState({})
     const [refresh, setRefresh] = useState(false)
 
     useEffect(() => {
@@ -52,14 +52,14 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
 
     useEffect(() => {
         initialFunction()
-        getAllOffers((res, status) => {
-            if (status) {
-                // alert(JSON.stringify(res.data, null, "     "))
-                setOffersList(res?.data)
-            } else {
+        // getAllOffers((res, status) => {
+        //     if (status) {
+        //         // alert(JSON.stringify(res.data, null, "     "))
+        //         setOffersList(res?.data)
+        //     } else {
 
-            }
-        })
+        //     }
+        // })
     }, [])
 
     const onClearCart = async () => {
@@ -68,11 +68,12 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
 
     useEffect(() => {
         if (totalCartValue > config?.freeDeliveryMinOrder) {
-            if (offerPrice > 0) {
-                onPressApplyCoupon()
-            } else {
-                removeOffer()
-            }
+            // if (offerPrice > 0) {
+            //     onPressApplyCoupon()
+            // } else {
+            //     removeOffer()
+            // }
+            removeOffer()
         } else {
             removeOffer()
         }
@@ -80,80 +81,40 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
 
     const onPressApplyCoupon = async () => {
         setCouponLoading(true)
-        if (offersList?.length > 0) {
-            let filteredOffer = offersList?.filter(function (el) {
-                return el?.offerCode == coupon;
-            });
-            if (filteredOffer?.length > 0) {
-                if (moment(filteredOffer[0].expireTime) > moment(new Date())) {
-                    if (filteredOffer[0].isActive) {
-                        applyOffer(filteredOffer[0].id, totalCartValue, (res, status) => {
-                            if (status) {
-                                // alert(JSON.stringify(res?.data, null, "     "))
-                                if (res?.data?.isEligible) {
-                                    setOfferPrice(res?.data?.offerPrice)
-                                    setSelectedOffer(filteredOffer)
-                                    // Toast.show({
-                                    //     text: "Offer applied",
-                                    //     buttonText: "Okay",
-                                    //     type: "success"
-                                    // })
-                                    setCouponLoading(false)
-                                } else {
-                                    setCouponLoading(false)
-                                    removeOffer()
-                                    Toast.show({
-                                        text: "You are not eligible for this coupon",
-                                        buttonText: "Okay",
-                                        type: "danger"
-                                    })
-                                }
-                            } else {
-                                setCouponLoading(false)
-                                removeOffer()
-                                Toast.show({
-                                    text: "Coupon not applied",
-                                    buttonText: "Okay",
-                                    type: "danger"
-                                })
-                            }
-                        })
-                    } else {
-                        setCouponLoading(false)
-                        removeOffer()
-                        Toast.show({
-                            text: "Invalid coupon",
-                            buttonText: "Okay",
-                            type: "danger"
-                        })
-                    }
-                } else {
-                    setCouponLoading(false)
-                    removeOffer()
+        // console.warn(coupon + "         " + totalCartValue)
+        applyOffer(coupon, totalCartValue, (res, status) => {
+            if (status) {
+                setCouponLoading(false)
+                // alert(JSON.stringify(res?.data?.isEligible, null, "     "))
+                if (res?.data?.isEligible) {
+                    setOfferPrice(res?.data?.offerPrice)
+                    setSelectedOffer(res?.data)
                     Toast.show({
-                        text: "Coupon expired",
+                        text: res?.data?.comments,
+                        buttonText: "Okay",
+                        type: "success"
+                    })
+                    setCouponLoading(false)
+                } else {
+                    Toast.show({
+                        text: res?.data?.comments,
                         buttonText: "Okay",
                         type: "danger"
                     })
                 }
             } else {
+                if (__DEV__) {
+                    alert(JSON.stringify(res.response, null, "     "))
+                }
                 setCouponLoading(false)
                 removeOffer()
-                Toast.show({
-                    text: "Invalid coupon",
-                    buttonText: "Okay",
-                    type: "danger"
-                })
+                // Toast.show({
+                //     text: res?.response?.comments,
+                //     buttonText: "Okay",
+                //     type: "danger"
+                // })
             }
-        } else {
-            setCouponLoading(false)
-            removeOffer()
-            Toast.show({
-                text: "No offers available",
-                buttonText: "Okay",
-                type: "danger"
-            })
-        }
+        })
     }
 
     const removeOffer = () => {
@@ -232,7 +193,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                             />
                         </View>
                         {totalCartValue > config?.freeDeliveryMinOrder ?
-                            selectedOffer?.length > 0 ?
+                            selectedOffer?.offer?.displayName ?
                                 <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, justifyContent: 'center' }}>
                                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                                         <Image
@@ -241,7 +202,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                             source={require('../../assets/png/coupon.png')}
                                         />
                                         <View style={{ flex: 1 }}>
-                                            <Text style={{ fontSize: 14, color: '#39BE50' }}>{selectedOffer[0]?.displayName}</Text>
+                                            <Text style={{ fontSize: 14, color: '#39BE50' }}>{selectedOffer?.offer?.displayName}</Text>
                                             <Text style={{ fontSize: 12, color: '#727272' }}>Coupon applied on the bill</Text>
                                         </View>
                                         <TouchableOpacity onPress={() => { removeOffer() }} style={{ justifyContent: 'center', alignItems: 'center', height: 50, width: 50 }}>

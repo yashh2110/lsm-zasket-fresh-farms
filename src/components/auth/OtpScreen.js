@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, Image, ImageBackground, Keyboard, Platform, ScrollView, StyleSheet, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import { verifyOtp, saveUserDetails, onLogin } from '../../actions/auth';
+import { verifyOtp, requestOtp, saveUserDetails, onLogin } from '../../actions/auth';
 import { setDarkMode } from "../../actions/dark";
 import Theme from "../../styles/Theme";
 import { Validation } from "../../utils/validate";
@@ -16,11 +16,15 @@ import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
 import { getConfig } from '../../actions/home'
+import CountDown from 'react-native-countdown-component';
 
-const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin, getConfig, verifyOtp, route }) => {
+const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin, getConfig, verifyOtp, requestOtp, route }) => {
 
     const [otp, setOtp] = useState("")
     const [loading, setLoading] = useState(false)
+    const [counter, SetCounter] = useState(45); // Set here your own timer configurable
+    const [random, setRandom] = useState(1);
+    const [disabled, setDisabled] = useState(true)
 
     const { mobileNumber } = route.params;
     const onSubmit = async () => {
@@ -69,6 +73,19 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin
         }
     }, [otp])
 
+    const handleResend = async () => {
+        setRandom(random + 1)
+        setDisabled(true)
+        await requestOtp(mobileNumber, (response, status) => {
+            if (status) {
+                setLoading(false)
+            } else {
+                setLoading(false)
+                Alert.alert('Internal server error')  //only if api fails
+            }
+        })
+    }
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={[styles.container, (darkMode) ? styles.darkBackGroundColor : null]}>
@@ -105,11 +122,31 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin
 
                                 />
                             </View>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                                <Text style={{ alignSelf: 'center', color: '#727272' }}>Didn't receive otp? </Text>
+                            </View>
+                            {disabled ?
+                                <CountDown
+                                    key={random}
+                                    until={counter}
+                                    size={15}
+                                    onFinish={() => setDisabled(() => false)}
+                                    separatorStyle={{ color: 'black' }}
+                                    digitStyle={{ backgroundColor: '#FFF' }}
+                                    digitTxtStyle={{ color: '#727272', fontWeight: undefined }}
+                                    timeToShow={['M', 'S']}
+                                    showSeparator
+                                    timeLabels={{ m: '', s: '' }}
+                                /> :
+                                <TouchableOpacity onPress={handleResend} style={{ marginVertical: 11 }}>
+                                    <Text style={{ alignSelf: 'center', color: '#c00000', }}>Resend otp</Text>
+                                </TouchableOpacity>
+                            }
                             {/* <Text style={{ fontSize: 14, color: "#727272", alignSelf: 'center' }}>00:36</Text> */}
                             {loading ?
                                 <ActivityIndicator style={{ marginTop: "5%", }} color={Theme.Colors.primary} size="large" />
                                 :
-                                <Button full style={{ marginTop: "5%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text>Confirm</Text></Button>
+                                <Button full style={{ marginTop: "5%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text style={{ textTransform: 'capitalize' }}>Confirm</Text></Button>
                             }
 
 
@@ -139,7 +176,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, verifyOtp, getConfig, saveUserDetails, onLogin })(OtpScreen)
+export default connect(mapStateToProps, { setDarkMode, verifyOtp, getConfig, saveUserDetails, onLogin, requestOtp })(OtpScreen)
 
 const styles = StyleSheet.create({
     container: {

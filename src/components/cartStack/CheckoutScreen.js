@@ -74,7 +74,6 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
     }, [slotsArray])
 
     useEffect(() => {
-        // alert(JSON.stringify(userLocation?.pincode, null, "        "))
         if (slotsArray?.length > 0) {
             slotsArray?.forEach((el, index) => {
                 if (el?.nextDayBuffer == nextDayBuffer) {
@@ -84,18 +83,34 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
         }
         var today = new Date();
         var hour = today.getHours();
-        if (hour >= 21) {
+
+        if (hour >= config?.nextDayDeliveryCutOff) {
             setDisableTomorrowSlot(true)
+
+            let newArray = slotsArray.slice(1)
+            for (var i = 0; i < newArray?.length; i++) {
+                if (newArray[i]?.availableOrdersCount > 0) {
+                    setNextDayBuffer(newArray[i]?.nextDayBuffer)
+                    break;
+                }
+            }
         }
     }, [nextDayBuffer, userLocation, slotsArray])
 
     useEffect(() => {
         var today = new Date();
         var hour = today.getHours();
-        if (hour >= 21) {
+        if (hour >= config?.nextDayDeliveryCutOff) {
             // alert(hour)
-            setNextDayBuffer(1)
             setDisableTomorrowSlot(true)
+
+            let newArray = slotsArray.slice(1)
+            for (var i = 0; i < newArray?.length; i++) {
+                if (newArray[i]?.availableOrdersCount > 0) {
+                    setNextDayBuffer(newArray[i]?.nextDayBuffer)
+                    break;
+                }
+            }
         }
     }, [])
 
@@ -128,7 +143,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
             "slotStartHours": slot?.startHours,
             "totalPrice": totalCartValue,
             "marketPrice": marketPrice,
-            "offerId": selectedOffer?.length > 0 ? selectedOffer[0]?.id : undefined,
+            "offerId": selectedOffer?.offer?.id > 0 ? selectedOffer?.offer?.id : undefined,
             "offerPrice": offerPrice > 0 ? offerPrice : undefined,
         }
         // alert(JSON.stringify(payload, null, "     "))
@@ -142,7 +157,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                     description: 'Select the payment method',
                     image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
                     currency: 'INR',
-                    key: config?.razorpayLiveApiKey,
+                    key: config?.razorpayApiKey,
                     amount: totalCartValue,
                     name: 'Zasket',
                     order_id: res?.data?.paymentResponseId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
@@ -170,7 +185,9 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                     })
                 })
             } else {
-                // alert(JSON.stringify(res?.response, null, "        "))
+                if (__DEV__) {
+                    alert(JSON.stringify(res?.response, null, "        "))
+                }
                 let errorItems = []
                 if (res?.response?.data?.length > 0) {
                     if (cartItems.length > 0) {

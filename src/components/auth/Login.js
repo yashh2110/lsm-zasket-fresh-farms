@@ -37,15 +37,16 @@ const Login = ({ navigation, darkMode, requestOtp }) => {
         if (validate) {
             try {
                 let number = "+91" + mobileNumber
+                navigation.navigate('OtpScreen', { mobileNumber: number })
                 await requestOtp(number, (response, status) => {
                     if (status) {
-                        navigation.navigate('OtpScreen', { mobileNumber: number })
                         setLoading(false)
                     } else {
                         setLoading(false)
+                        Alert.alert('Internal server error')  //only if api fails
                     }
                 })
-            } catch {
+            } catch (err) {
                 setLoading(false)
             }
         }
@@ -112,7 +113,7 @@ const Login = ({ navigation, darkMode, requestOtp }) => {
                                 setTimeout(() => {
                                     onSubmit()
                                 }, 100);
-                            }}><Text>Continue</Text></Button>
+                            }}><Text style={{ textTransform: 'capitalize' }}>Continue</Text></Button>
                         }
                         <Text style={{ marginTop: 10, zIndex: 1, fontSize: 12, color: "#727272", textAlign: 'center' }}>By proceeding to create your account you are agreeing to our <Text onPress={() => handleClick("TERMS")} style={{ fontWeight: 'bold', fontSize: 13 }}>Terms of Service</Text> and <Text onPress={() => handleClick("PRIVACY")} style={{ fontWeight: 'bold', fontSize: 14 }}>Privacy Policy</Text></Text>
                     </View>

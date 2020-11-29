@@ -148,7 +148,7 @@ class MapScreenGrabPincode extends React.Component {
                 response.json().then(async (json) => {
                     // console.warn(json)
                     let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                    // alert(JSON.stringify(postal_code, null, "  "))
+                    // alert(JSON.stringify(json?.results?.[1]?.address_components?.find(el => el.types.find(o => o == "political")), null, "  "))
                     await this.setLocation(json?.results?.[0]?.formatted_address, this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
                     await this.setState({ addressLoading: false })
                 });

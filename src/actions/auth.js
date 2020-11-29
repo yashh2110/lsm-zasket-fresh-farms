@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 
 //get otp request
-export const requestOtp = async (mobileNumber, callback) => {
+export const requestOtp = (mobileNumber, callback) => async dispatch => {
     let payLoad = {
         "mobileNumber": mobileNumber
     }
@@ -15,29 +15,38 @@ export const requestOtp = async (mobileNumber, callback) => {
         callback(res, true)
     } catch (err) {
         callback(err, false)
-        Alert.alert(JSON.stringify(err.response.data, null, "     "))
+        // Alert.alert(JSON.stringify(err.response.data, null, "     "))
+        if (__DEV__) {
+            alert(JSON.stringify(err.response, null, "     "))
+        }
     }
 }
 
 //verify otp
-export const verifyOtp = async (payLoad, callback) => {
+export const verifyOtp = (payLoad, callback) => async dispatch => {
     try {
         const res = await axiosinstance.post('/customers/sign-in', payLoad)
         callback(res, true)
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
+        if (__DEV__) {
+            alert(JSON.stringify(err.response, null, "     "))
+        }
     }
 }
 
 //create New Customer
-export const createNewCustomer = async (payLoad, callback) => {
+export const createNewCustomer = (payLoad, callback) => async dispatch => {
     try {
         const res = await axiosinstance.post('/customers/add', payLoad)
         callback(res, true)
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
+        // if (__DEV__) {
+        //     alert(JSON.stringify(err.response, null, "     "))
+        // }
     }
 }
 
@@ -60,7 +69,7 @@ export const onLogout = () => async dispatch => {
     });
 }
 
-export const saveUserDetails = (payload) => dispatch => {
+export const saveUserDetails = (payload) => async dispatch => {
     dispatch({
         type: SAVE_USER_DETAILS,
         payload: payload

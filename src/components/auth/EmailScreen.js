@@ -61,7 +61,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
             let payLoad = {
                 "name": name,
                 "otp": otp,
-                "userEmail": email,
+                "userEmail": email.toLowerCase(),
                 "userMobileNumber": mobileNumber
             }
             try {
@@ -76,7 +76,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
                     } else {
                         setLoading(false)
                         // Alert.alert(response?.response?.data?.description);
-                        if (response?.response?.data?.description == "Customer with details already exist!. Please sign in") {
+                        if (response?.response?.data?.description == "Customer with details already exist!!. Please sign in") {
                             navigation.navigate("Login")
                             Toast.show({
                                 text: "Customer with email or mobile number already exist!. Please sign in",
@@ -163,7 +163,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
                                 <View style={{ flex: 1 }}>
                                     <TextInput
                                         style={{ height: 40, }}
-                                        onChangeText={text => setEmail(text.toLowerCase())}
+                                        onChangeText={text => setEmail(text)}
                                         value={email}
                                         keyboardType={"email-address"}
                                         placeholder={"Email Address"}
@@ -186,7 +186,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
                             {loading ?
                                 <ActivityIndicator style={{ marginTop: "10%", }} color={Theme.Colors.primary} size="large" />
                                 :
-                                <Button full style={{ marginTop: "10%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text>Sign Up</Text></Button>}
+                                <Button full style={{ marginTop: "10%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text style={{ textTransform: 'capitalize' }}>Sign Up</Text></Button>}
                             <Text style={{ marginTop: "10%", fontSize: 12, color: "#727272", textAlign: 'center' }}>By proceeding to create your account you are agreeing to our <Text onPress={() => handleClick("TERMS")} style={{ fontWeight: 'bold', fontSize: 13 }}>Terms of Service</Text> and <Text onPress={() => handleClick("PRIVACY")} style={{ fontWeight: 'bold', fontSize: 13 }}>Privacy Policy</Text></Text>
                         </View>
 

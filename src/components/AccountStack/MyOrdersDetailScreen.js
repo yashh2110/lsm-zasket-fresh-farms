@@ -113,13 +113,15 @@ const MyOrdersDetailScreen = ({ route, navigation, }) => {
                         <Text style={{ color: '#727272' }}>Delivery Charges</Text>
                         <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Free</Text>
                     </View>
-                    <>
-                        <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
-                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
-                            <Text style={{ color: '#35B332' }}>Coupon Discount</Text>
-                            <Text style={{ color: "#35B332", }}>- ₹{(item?.totalPrice - item?.offerPrice).toFixed(2)}</Text>
-                        </View>
-                    </>
+                    {(item?.totalPrice - item?.offerPrice > 0) ?
+                        <>
+                            <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
+                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
+                                <Text style={{ color: '#35B332' }}>Coupon Discount ({item?.applied_offer?.offerCode})</Text>
+                                <Text style={{ color: "#35B332", }}>- ₹{(item?.totalPrice - item?.offerPrice).toFixed(2)}</Text>
+                            </View>
+                        </>
+                        : undefined}
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                         <Text style={{ fontWeight: 'bold' }}>Total Payable Amount</Text>

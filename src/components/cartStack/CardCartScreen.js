@@ -5,7 +5,7 @@ import { updateCartItemsApi } from '../../actions/cart'
 import { connect } from 'react-redux';
 import { Icon } from 'native-base';
 
-const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi }) => {
+const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAuthenticated }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(0)
 
@@ -22,10 +22,14 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi }) => 
     }, [cartItems])
 
     const onAddToCart = async () => {
-        updateCartItemsApi(item?.id, 1, (res, status) => {
-            setAddButton(!addButton)
-            setCount(1)
-        })
+        if (isAuthenticated) {
+            updateCartItemsApi(item?.id, 1, (res, status) => {
+                setAddButton(!addButton)
+                setCount(1)
+            })
+        } else {
+            navigation.navigate("AuthRoute", { screen: 'Login' })
+        }
     }
 
     const onCartUpdate = async (option) => {
@@ -49,6 +53,20 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi }) => 
             // alert(JSON.stringify(res, null, "     "))
         })
     }
+
+    example_api = () => {
+        if ('not in db') {
+            if ('quantity >= 1') {
+                //add the quantity
+            }
+        } else if ('it is already in db') {
+            if ('quanitity >= 0') {
+                // update the quantity if the quantity is zero u can remove it in db
+            }
+        }
+    }
+
+
 
     return (
         <View style={{ flex: 1, width: "90%", alignSelf: 'center', marginVertical: 1.5 }}>
@@ -106,6 +124,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi }) => 
 }
 const mapStateToProps = (state) => ({
     cartItems: state.cart.cartItems,
+    isAuthenticated: state.auth.isAuthenticated
 })
 
 

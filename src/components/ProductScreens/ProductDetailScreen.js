@@ -10,7 +10,7 @@ import { TouchableOpacity } from 'react-native';
 import { updateCartItemsApi } from '../../actions/cart'
 import CartFloatingCard from '../cartStack/CartFloatingCard';
 
-const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCartItemsApi }) => {
+const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCartItemsApi, isAuthenticated }) => {
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
     const [item, setItem] = useState({})
@@ -57,10 +57,14 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
     }, [cartItems])
 
     const onAddToCart = async () => {
-        updateCartItemsApi(item?.id, 1, (res, status) => {
-            setAddButton(!addButton)
-            setCount(1)
-        })
+        if (isAuthenticated) {
+            updateCartItemsApi(item?.id, 1, (res, status) => {
+                setAddButton(!addButton)
+                setCount(1)
+            })
+        } else {
+            navigation.navigate("AuthRoute", { screen: 'Login' })
+        }
     }
 
     const onCartUpdate = async (option) => {
@@ -142,6 +146,7 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
 }
 const mapStateToProps = (state) => ({
     cartItems: state.cart.cartItems,
+    isAuthenticated: state.auth.isAuthenticated
 })
 
 

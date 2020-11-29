@@ -148,14 +148,14 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                         <CartButton color={color} size={size} />
                     ),
                 }}
-                listeners={(navigation) => ({
-                    tabPress: event => {
-                        if (isAuthenticated == false) {
-                            event.preventDefault();
-                            navigation.navigation.navigate("AuthRoute", { screen: 'Login' })
-                        }
-                    }
-                })}
+            // listeners={(navigation) => ({
+            //     tabPress: event => {
+            //         if (isAuthenticated == false) {
+            //             event.preventDefault();
+            //             navigation.navigation.navigate("AuthRoute", { screen: 'Login' })
+            //         }
+            //     }
+            // })}
             />
             <Tab.Screen
                 name="AccountStack"

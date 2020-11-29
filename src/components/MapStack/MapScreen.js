@@ -259,7 +259,7 @@ class MyMapView extends React.Component {
                     if (status) {
                         this.props.navigation.goBack()
                     } else {
-                        alert(JSON.stringify(response?.response?.data, null, "      "))
+                        alert(JSON.stringify(response?.data, null, "      "))
                     }
                 })
             } else {
@@ -548,6 +548,17 @@ class MyMapView extends React.Component {
                                         })}
                                         placeholder="Landmark"
                                         value={this.state.landMark}
+                                    />
+                                </View>
+                                <View style={{ marginTop: 10 }}>
+                                    {/* <Text style={{ color: "#727272", fontSize: 12 }}>Landmark</Text> */}
+                                    <TextInput
+                                        style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
+                                        onChangeText={text => this.setState({
+                                            pincode: text
+                                        })}
+                                        placeholder="Pincode"
+                                        value={this.state.pincode}
                                     />
                                 </View>
                                 <View style={{ marginTop: 10 }}>

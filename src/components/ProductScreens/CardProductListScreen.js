@@ -4,7 +4,7 @@ import Theme from '../../styles/Theme';
 import { updateCartItemsApi } from '../../actions/cart'
 import { connect } from 'react-redux';
 
-const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi }) => {
+const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAuthenticated }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(0)
 
@@ -21,10 +21,14 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
     }, [cartItems])
 
     const onAddToCart = async () => {
-        updateCartItemsApi(item?.id, 1, (res, status) => {
-            setAddButton(!addButton)
-            setCount(1)
-        })
+        if (isAuthenticated) {
+            updateCartItemsApi(item?.id, 1, (res, status) => {
+                setAddButton(!addButton)
+                setCount(1)
+            })
+        } else {
+            navigation.navigate("AuthRoute", { screen: 'Login' })
+        }
     }
 
     const onCartUpdate = async (option) => {
@@ -108,6 +112,7 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
 }
 const mapStateToProps = (state) => ({
     cartItems: state.cart.cartItems,
+    isAuthenticated: state.auth.isAuthenticated
 })
 
 

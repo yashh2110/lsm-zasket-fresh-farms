@@ -22,7 +22,9 @@ export const getCartItemsApi = (callback) => async dispatch => {
         })
         callback(res, true)
     } catch (err) {
-        alert(JSON.stringify(err.response, null, "     "))
+        if (__DEV__) {
+            alert(JSON.stringify(err.response, null, "     "))
+        }
         callback(err, false)
         dispatch({
             type: GET_CART_ITEMS,
@@ -81,6 +83,9 @@ export const addOrder = (payload, callback) => async dispatch => {
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
+        if (__DEV__) {
+            alert(JSON.stringify(err.response, null, "     "))
+        }
     }
 }
 
@@ -128,22 +133,26 @@ export const getAllOffers = (callback) => async dispatch => {
 }
 
 
-//applyOffer
-export const applyOffer = (offerId, orderAmount, callback) => async dispatch => {
+//v2ApplyOffer
+export const applyOffer = (offerCode, orderAmount, callback) => async dispatch => {
     try {
-        // console.warn(JSON.stringify(offerId + "      " + orderAmount, null, "     "))
+        // console.warn(JSON.stringify(offerCode + "      " + orderAmount, null, "     "))
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
         let payload = {
             "customerId": customerId,
-            "offerId": offerId,
+            "offerCode": offerCode,
             "orderAmount": orderAmount
         }
-        const res = await axiosinstance.post(`/apply-offer`, payload)
+        const res = await axiosinstance.post(`/v2/apply-offer`, payload)
+        // alert(JSON.stringify(res, null, "     "))
         callback(res, true)
     } catch (err) {
-        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+
+        // if (__DEV__) {
+        //     alert(JSON.stringify(err.response, null, "     "))
+        // }
         callback(err, false)
     }
 }

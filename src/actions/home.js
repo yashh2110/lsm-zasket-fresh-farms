@@ -4,10 +4,10 @@ import {
     GET_CATEGORIES, GET_CONFIG, SET_BANNER_IMAGES
 } from './types';
 
-//get config
+//getV2Config
 export const getConfig = (callback) => async dispatch => {
     try {
-        const res = await axiosinstance.get('/config');
+        const res = await axiosinstance.get('/v2/config');
         // alert(JSON.stringify(res.data, null, "      "))
         dispatch({
             type: GET_CONFIG,

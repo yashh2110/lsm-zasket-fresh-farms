@@ -14,7 +14,9 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Geolocation from '@react-native-community/geolocation';
 import { MapApiKey } from '../../../env';
 import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
-const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, categories, navigation, userLocation, onLogout, config, homeScreenLocation }) => {
+import { getCartItemsApi } from '../../actions/cart'
+
+const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
 
     useEffect(() => {
         const _bootstrapAsync = async () => {
@@ -39,6 +41,19 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
             getCurrentPosition()
         }
     }, [])
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            setRefresh(true)
+            getCartItemsApi((res, status) => {
+                if (status) {
+                    setRefresh(false)
+                } else {
+                    setRefresh(false)
+                }
+            })
+        }
+    }, [isAuthenticated])
 
     const initialFunction = () => {
         getAllCategories((res, status) => {
@@ -139,10 +154,12 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                         <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1}</Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                     </TouchableOpacity>
-                    {isAuthenticated ?
-                        <TouchableOpacity onPress={() => onPressLogout()} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
-                            <Text>Logout</Text>
-                        </TouchableOpacity>
+                    {__DEV__ ?
+                        isAuthenticated ?
+                            <TouchableOpacity onPress={() => onPressLogout()} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
+                                <Text>Logout</Text>
+                            </TouchableOpacity>
+                            : undefined
                         : undefined}
                 </View>
                 {pincodeError ?
@@ -244,7 +261,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { getAllCategories, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation })(HomeScreen)
+export default connect(mapStateToProps, { getAllCategories, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation, getCartItemsApi })(HomeScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {
