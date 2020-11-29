@@ -123,7 +123,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin
                                 />
                             </View>
                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                                <Text style={{ alignSelf: 'center', color: '#727272' }}>Didn't receive otp? </Text>
+                                <Text style={{ alignSelf: 'center', color: '#727272' }}>Didn't receive OTP? </Text>
                             </View>
                             {disabled ?
                                 <CountDown

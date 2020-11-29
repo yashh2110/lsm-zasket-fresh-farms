@@ -23,7 +23,7 @@ const PaymentSuccessScreen = ({ navigation, route }) => {
                     navigation.pop()
                 }} style={{ color: Theme.Colors.primary }}>My orders</Text>.</Text>
             <Text style={{ fontSize: 14, color: "#727272", marginTop: 20 }}>Your oder will arrive on </Text>
-            <Text style={{ fontSize: 14, fontWeight: 'bold' }}>{moment().add(date, 'days').format("DD MMM")}</Text>
+            <Text style={{ fontSize: 14, fontWeight: 'bold' }}>{moment().add(date + 1, 'days').format("DD MMM")}</Text>
             <Button full style={{ marginVertical: 20, backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => {
                 navigation.navigate('Home')
                 navigation.pop()

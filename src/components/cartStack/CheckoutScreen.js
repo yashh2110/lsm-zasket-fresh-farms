@@ -83,10 +83,8 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
         }
         var today = new Date();
         var hour = today.getHours();
-
         if (hour >= config?.nextDayDeliveryCutOff) {
             setDisableTomorrowSlot(true)
-
             let newArray = slotsArray.slice(1)
             for (var i = 0; i < newArray?.length; i++) {
                 if (newArray[i]?.availableOrdersCount > 0) {
@@ -95,7 +93,17 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                 }
             }
         }
-    }, [nextDayBuffer, userLocation, slotsArray])
+    }, [userLocation, slotsArray])
+
+    useEffect(() => {
+        if (slotsArray?.length > 0) {
+            slotsArray?.forEach((el, index) => {
+                if (el?.nextDayBuffer == nextDayBuffer) {
+                    setSlot(el)
+                }
+            })
+        }
+    }, [nextDayBuffer])
 
     useEffect(() => {
         var today = new Date();
@@ -147,7 +155,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
             "offerPrice": offerPrice > 0 ? offerPrice : undefined,
         }
         // alert(JSON.stringify(payload, null, "     "))
-        // console.warn(JSON.stringify(payload, null, "     "))
+        console.warn(JSON.stringify(payload, null, "     "))
         addOrder(payload, async (res, status) => {
             if (status) {
                 // alert(JSON.stringify(res?.data, null, "        "))
