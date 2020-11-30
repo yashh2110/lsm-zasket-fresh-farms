@@ -158,7 +158,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
         console.warn(JSON.stringify(payload, null, "     "))
         addOrder(payload, async (res, status) => {
             if (status) {
-                // alert(JSON.stringify(res?.data, null, "        "))
+                console.warn(JSON.stringify(res?.data, null, "        "))
                 let userDetails = await AsyncStorage.getItem('userDetails');
                 let parsedUserDetails = await JSON.parse(userDetails);
                 var options = {
@@ -181,7 +181,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                     // alert(`Success: ${data.razorpay_payment_id}`);
                     onClearCart()
                     navigation.pop()
-                    navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                    navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, orderId: res?.data?.order_id })
                     // navigation.navigate('AccountStack', { screen: 'MyOrders' })
                 }).catch((error) => {
                     // handle failure

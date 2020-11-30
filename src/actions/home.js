@@ -1,14 +1,18 @@
 import AsyncStorage from '@react-native-community/async-storage';
+import { Platform } from 'react-native';
+import { androidAppVersion, iosAppVersion } from '../../env';
 import axiosinstance from '../axios/service/api';
 import {
     GET_CATEGORIES, GET_CONFIG, SET_BANNER_IMAGES
 } from './types';
 
 //getV2Config
-export const getConfig = (callback) => async dispatch => {
+export const getV2Config = (callback) => async dispatch => {
+    let appOS = Platform.OS == "ios" ? "ios" : "android"
+    let currentVersion = Platform.OS == "ios" ? iosAppVersion : androidAppVersion
     try {
-        const res = await axiosinstance.get('/v2/config');
-        // alert(JSON.stringify(res.data, null, "      "))
+        const res = await axiosinstance.get('/v2/config', { params: { appOS: appOS, currentVersion: currentVersion } })
+        // alert(JSON.stringify(appOS, null, "      "))
         dispatch({
             type: GET_CONFIG,
             payload: res?.data

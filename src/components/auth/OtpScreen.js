@@ -15,10 +15,10 @@ import RF from "react-native-responsive-fontsize";
 import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
-import { getConfig } from '../../actions/home'
+import { getV2Config } from '../../actions/home'
 import CountDown from 'react-native-countdown-component';
 
-const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin, getConfig, verifyOtp, requestOtp, route }) => {
+const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin, getV2Config, verifyOtp, requestOtp, route }) => {
 
     const [otp, setOtp] = useState("")
     const [loading, setLoading] = useState(false)
@@ -42,7 +42,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin
                         await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
                         onLogin(response?.data)
                         navigation.navigate('HomeStack')
-                        getConfig((res, status) => { })
+                        getV2Config((res, status) => { })
                     } else {
                         setLoading(false)
                         if (response?.response?.data?.description == "OTP validation failed") {
@@ -176,7 +176,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, verifyOtp, getConfig, saveUserDetails, onLogin, requestOtp })(OtpScreen)
+export default connect(mapStateToProps, { setDarkMode, verifyOtp, getV2Config, saveUserDetails, onLogin, requestOtp })(OtpScreen)
 
 const styles = StyleSheet.create({
     container: {

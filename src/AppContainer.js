@@ -8,12 +8,12 @@ import { Modal } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import NoInternetModal from './components/common/NoInternetModal';
 import NetInfo from "@react-native-community/netinfo";
-import { getConfig } from '../src/actions/home'
+import { getV2Config } from '../src/actions/home'
 import { androidAppVersion, iosAppVersion } from "../env";
 import UpdateModal from "./components/common/UpdateModal";
 import SplashScreen from 'react-native-splash-screen'
 
-const AppContainer = ({ darkMode, getConfig }) => {
+const AppContainer = ({ darkMode, getV2Config }) => {
 
     const [connection_Status, setConnection_Status] = useState(false)
     const [updateModal, setUpdateModal] = useState(false)
@@ -32,11 +32,11 @@ const AppContainer = ({ darkMode, getConfig }) => {
 
 
     useEffect(() => {
-        getConfig((res, status) => {
+        getV2Config((res, status) => {
             // alert(JSON.stringify(res.data, null, "      "))
             if (status) {
-                if (res?.data?.androidAppVersion !== androidAppVersion) {
-                    if (Platform.OS == "android") {
+                if (Platform.OS == "android") {
+                    if (res?.data?.androidAppVersion !== androidAppVersion) {
                         if (res?.data?.androidForceUpdate) {
                             setUpdateModal(true)
                         } else {
@@ -44,8 +44,8 @@ const AppContainer = ({ darkMode, getConfig }) => {
                         }
                     }
                 }
-                if (res?.data?.androidAppVersion !== iosAppVersion) {
-                    if (Platform.OS == "ios") {
+                if (Platform.OS == "ios") {
+                    if (res?.data?.iosAppVersion !== iosAppVersion) {
                         if (res?.data?.iosForceUpdate) {
                             setUpdateModal(true)
                         } else {
@@ -88,4 +88,4 @@ const mapStateToProps = (state) => ({
     darkMode: state.dark
 })
 
-export default connect(mapStateToProps, { getConfig })(AppContainer)
+export default connect(mapStateToProps, { getV2Config })(AppContainer)

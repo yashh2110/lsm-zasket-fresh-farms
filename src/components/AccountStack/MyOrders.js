@@ -12,14 +12,32 @@ import CardMyOrders from "./CardMyOrders";
 import Loader from "../common/Loader";
 
 
-const MyOrders = ({ navigation, getCustomerOrders }) => {
+const MyOrders = ({ route, navigation, getCustomerOrders }) => {
     const [orderDetails, setOrderDetails] = useState([])
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
 
     useEffect(() => {
-        initialFunction()
-    }, [])
+        if (route?.params?.orderId) {
+            if (__DEV__) {
+                alert(route?.params?.orderId)
+            }
+            const isOrderPresent = (el) => el?.id == route?.params?.orderId;
+            if (orderDetails.some(isOrderPresent)) {
+                return
+            } else {
+                initialFunction()
+            }
+        }
+    }, [orderDetails])
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            initialFunction()
+        });
+        return unsubscribe;
+    }, [navigation]);
+
 
     const initialFunction = async () => {
         getCustomerOrders((res, status) => {
@@ -44,7 +62,7 @@ const MyOrders = ({ navigation, getCustomerOrders }) => {
             <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false} refreshControl={
                 <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
             }>
-                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")}</Text> */}
+                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(orderDetails, null, "       ")}</Text> */}
                 <FlatList
                     data={orderDetails}
                     renderItem={({ item }) =>

@@ -260,6 +260,14 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                     component={PaymentSuccessScreen}
                     options={{ title: 'PaymentSuccess Screen' }}
                 />
+                <Stack.Screen
+                    name="MyOrders"
+                    component={MyOrders}
+                />
+                <Stack.Screen
+                    name="MyOrdersDetailScreen"
+                    component={MyOrdersDetailScreen}
+                />
             </Stack.Navigator>
         );
     }

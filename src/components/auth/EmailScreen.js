@@ -15,9 +15,9 @@ import RF from "react-native-responsive-fontsize";
 import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
-import { getConfig } from '../../actions/home'
+import { getV2Config } from '../../actions/home'
 
-const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserDetails, onLogin, loginWithProvider, isAuthenticated, getConfig }) => {
+const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserDetails, onLogin, loginWithProvider, isAuthenticated, getV2Config }) => {
 
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
@@ -71,7 +71,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
                         // Alert.alert(JSON.stringify(response));
                         onLogin(response?.data)
                         navigation.navigate('BottomTabRoute')
-                        getConfig((res, status) => { })
+                        getV2Config((res, status) => { })
                         setLoading(false)
                     } else {
                         setLoading(false)
@@ -204,7 +204,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, saveUserDetails, onLogin, createNewCustomer, getConfig })(EmailScreen)
+export default connect(mapStateToProps, { setDarkMode, saveUserDetails, onLogin, createNewCustomer, getV2Config })(EmailScreen)
 
 const styles = StyleSheet.create({
     container: {
