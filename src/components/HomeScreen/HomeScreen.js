@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter } from 'react-native';
 import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
@@ -15,11 +15,21 @@ import Geolocation from '@react-native-community/geolocation';
 import { MapApiKey } from '../../../env';
 import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
 import { getCartItemsApi } from '../../actions/cart'
-
+import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
 
     useEffect(() => {
         const _bootstrapAsync = async () => {
+            if (Platform.OS === 'ios') {
+                Geolocation.requestAuthorization();
+                alert('work')
+            } else {
+                enableGpsLocation()
+                DeviceEventEmitter.addListener('locationProviderStatusChange', function (status) { // only trigger when "providerListener" is enabled
+                    enableGpsLocation()
+                    console.warn(status); //  status => {enabled: false, status: "disabled"} or {enabled: true, status: "enabled"}
+                });
+            }
             const onBoardKey = await AsyncStorage.getItem('onBoardKey');
             if (!onBoardKey) {
                 navigation.navigate('OnBoardScreen')
@@ -29,8 +39,53 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
         };
         _bootstrapAsync()
     }, [])
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            checkForLocationAccess();
+        });
+        return unsubscribe;
+    }, [navigation]);
+    const enableGpsLocation = () => {
+        LocationServicesDialogBox.checkLocationServicesIsEnabled({
+            message: "<h2 style='color: #0af13e'>Use Location ?</h2>Zasket wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location",
+            ok: "YES",
+            cancel: "No",
+            enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
+            showDialog: true, // false => Opens the Location access page directly
+            openLocationServices: true, // false => Directly catch method is called if location services are turned off
+            preventOutSideTouch: true, // true => To prevent the location services window from closing when it is clicked outside
+            preventBackClick: true, // true => To prevent the location services popup from closing when it is clicked back button
+            providerListener: true // true ==> Trigger locationProviderStatusChange listener when the location state changes
+        }).then(async (success) => {
+            checkForLocationAccess()
+            console.warn(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
+        }).catch((error) => {
+            console.warn(error.message); // error.message => "disabled"
+            BackHandler.exitApp()
+        });
+    }
 
-
+    const checkForLocationAccess = async () => {
+        if (Platform.OS === 'android') {
+            // Calling the permission function
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    title: 'Zasket App Location Permission',
+                    message: 'Zasket App needs access to your location',
+                    buttonPositive: "Ok"
+                },
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                // Permission Granted
+                getCurrentPosition();
+            } else {
+                // Permission Denied
+                // alert('Permission Denied');
+                navigation.navigate('PincodeScreen')
+            }
+        }
+    }
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
     const [pincodeError, setPincodeError] = useState(false)
@@ -124,6 +179,10 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                         })
                 },
                 (error) => {
+                    if (error?.message == "Location permission was not granted.") {
+                        navigation.navigate('PincodeScreen')
+                    }
+                    console.warn(error)
                 }
             );
 
