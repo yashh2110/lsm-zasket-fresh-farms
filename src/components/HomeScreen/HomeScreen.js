@@ -22,7 +22,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
         const _bootstrapAsync = async () => {
             if (Platform.OS === 'ios') {
                 Geolocation.requestAuthorization();
-                alert('work')
+                // alert('work')
             } else {
                 enableGpsLocation()
                 DeviceEventEmitter.addListener('locationProviderStatusChange', function (status) { // only trigger when "providerListener" is enabled

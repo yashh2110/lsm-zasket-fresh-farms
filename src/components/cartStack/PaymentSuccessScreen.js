@@ -7,7 +7,7 @@ import Theme from '../../styles/Theme';
 import moment from 'moment'
 
 const PaymentSuccessScreen = ({ navigation, route }) => {
-    const { date, orderId } = route.params;
+    const { date } = route.params;
     return (
         <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
             <LottieView
@@ -19,7 +19,7 @@ const PaymentSuccessScreen = ({ navigation, route }) => {
             <Text style={{ color: Theme.Colors.primary, fontSize: 18, fontWeight: 'bold' }}>Thank you for your order</Text>
             <Text style={{ color: "#727272", fontSize: 14, textAlign: 'center', width: '80%' }}>We are currently processing your order.
                 You can find updates to your order under <Text onPress={() => {
-                    navigation.navigate('CartStack', { screen: 'MyOrders', orderId: orderId },)
+                    navigation.navigate('CartStack', { screen: 'MyOrders' },)
                     navigation.pop()
                 }} style={{ color: Theme.Colors.primary }}>My orders</Text>.</Text>
             <Text style={{ fontSize: 14, color: "#727272", marginTop: 20 }}>Your oder will arrive on </Text>

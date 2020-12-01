@@ -181,7 +181,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                     // alert(`Success: ${data.razorpay_payment_id}`);
                     onClearCart()
                     navigation.pop()
-                    navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, orderId: res?.data?.order_id })
+                    navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
                     // navigation.navigate('AccountStack', { screen: 'MyOrders' })
                 }).catch((error) => {
                     // handle failure

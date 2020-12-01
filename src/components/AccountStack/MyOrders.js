@@ -18,20 +18,6 @@ const MyOrders = ({ route, navigation, getCustomerOrders }) => {
     const [refresh, setRefresh] = useState(false)
 
     useEffect(() => {
-        if (route?.params?.orderId) {
-            if (__DEV__) {
-                alert(route?.params?.orderId)
-            }
-            const isOrderPresent = (el) => el?.id == route?.params?.orderId;
-            if (orderDetails.some(isOrderPresent)) {
-                return
-            } else {
-                initialFunction()
-            }
-        }
-    }, [orderDetails])
-
-    useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             initialFunction()
         });
