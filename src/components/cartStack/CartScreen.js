@@ -194,7 +194,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                             // )}
                             />
                         </View>
-                        {totalCartValue > config?.freeDeliveryMinOrder ?
+                        {totalCartValue >= config?.freeDeliveryMinOrder ?
                             selectedOffer?.offer?.displayName ?
                                 <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, justifyContent: 'center' }}>
                                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
