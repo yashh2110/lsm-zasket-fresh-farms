@@ -92,14 +92,16 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                     Toast.show({
                         text: res?.data?.comments,
                         buttonText: "Okay",
-                        type: "success"
+                        type: "success",
+                        duration: 3000
                     })
                     setCouponLoading(false)
                 } else {
                     Toast.show({
                         text: res?.data?.comments,
                         buttonText: "Okay",
-                        type: "danger"
+                        type: "danger",
+                        duration: 3000
                     })
                 }
             } else {

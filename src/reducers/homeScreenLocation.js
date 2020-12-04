@@ -11,6 +11,7 @@ const homeScreenLocation = (state = initialState, action) => {
     switch (type) {
         case ADD_HOMESCREEN_LOCATION:
             return {
+                ...state,
                 addressLine_1: payload?.addressLine_1 ? payload?.addressLine_1 : "",
                 lat: payload?.lat ? payload?.lat : "",
                 lon: payload?.lon ? payload?.lon : "",

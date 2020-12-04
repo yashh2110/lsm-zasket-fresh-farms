@@ -108,7 +108,7 @@ const Login = ({ navigation, darkMode, requestOtp }) => {
                         {loading ?
                             <ActivityIndicator style={{ marginTop: "20%", }} color={Theme.Colors.primary} size="large" />
                             :
-                            <Button full style={{ marginTop: "10%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => {
+                            <Button full style={{ marginTop: "10%", zIndex: 1, backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => {
                                 setLoading(true)
                                 setTimeout(() => {
                                     onSubmit()
@@ -119,7 +119,7 @@ const Login = ({ navigation, darkMode, requestOtp }) => {
                     </View>
                     <View style={{ justifyContent: 'flex-end', alignItems: 'center' }}>
                         <Image
-                            style={{ height: 300, width: 400, }}
+                            style={{ height: 300, width: 400, zIndex: 0, }}
                             resizeMode="contain"
                             source={require('../../assets/jpg/loginImage.jpg')}
                         />

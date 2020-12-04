@@ -191,13 +191,13 @@ class MapScreenGrabPincode extends React.Component {
 
 
     onSubmit = async () => {
-        this.props.addHomeScreenLocation({
+        await this.props.addHomeScreenLocation({
             "addressLine_1": this.state.address,
             "pincode": this.state.pincode,
             "lat": this.state.latitude,
             "lon": this.state.longitude,
         })
-        this.props.isPincodeServiceable(this.state.pincode, (res, status) => {
+        await this.props.isPincodeServiceable(this.state.pincode, (res, status) => {
             if (status) {
                 this.props.navigation.goBack()
             } else {

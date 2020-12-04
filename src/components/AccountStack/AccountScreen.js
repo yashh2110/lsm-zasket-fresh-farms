@@ -53,7 +53,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
             try {
                 let payload = {
                     "name": userDetails?.customerDetails?.name,
-                    "userEmail": userDetails?.customerDetails?.userEmail
+                    "userEmail": userDetails?.customerDetails?.userEmail.toLowerCase()
                 }
                 await profileUpdate(payload, async (response, status) => {
                     if (status) {
@@ -256,8 +256,8 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                             <Text style={{ color: '#727272', fontSize: 12, marginTop: 20 }}>Email</Text>
                             <View style={{ flexDirection: 'row' }}>
                                 <TextInput
-                                    style={{ height: 40, flex: 1, fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#D8D8D8', textTransform: 'lowercase' }}
-                                    onChangeText={text => setUserDetails({ ...userDetails, customerDetails: { ...userDetails?.customerDetails, userEmail: text.toLowerCase() } })}
+                                    style={{ height: 40, flex: 1, fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#D8D8D8' }}
+                                    onChangeText={text => setUserDetails({ ...userDetails, customerDetails: { ...userDetails?.customerDetails, userEmail: text } })}
                                     value={userDetails?.customerDetails?.userEmail}
                                     onTouchStart={() => {
                                         setemailErrorText("")

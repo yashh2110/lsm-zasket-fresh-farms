@@ -139,7 +139,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin
                                     timeLabels={{ m: '', s: '' }}
                                 /> :
                                 <TouchableOpacity onPress={handleResend} style={{ marginVertical: 11 }}>
-                                    <Text style={{ alignSelf: 'center', color: '#c00000', }}>Resend otp</Text>
+                                    <Text style={{ alignSelf: 'center', color: '#c00000', }}>Resend OTP</Text>
                                 </TouchableOpacity>
                             }
                             {/* <Text style={{ fontSize: 14, color: "#727272", alignSelf: 'center' }}>00:36</Text> */}

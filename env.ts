@@ -7,7 +7,7 @@ export const RazorpayTestApiKey = 'rzp_test_C64YcthVL1POFJ' //not used inside co
 export const RazorpayLiveApiKey = 'rzp_live_U8JU5T86HWykhV' //not used inside code
 export const androidAppVersion = "1.0.1"    //update the version of app at each time u upload to playstore
 export const iosAppVersion = "1.0.1"        //update the version of app at each time u upload to appstore
-
+export const OneSignalAppId = "339a3ed7-ed7c-4f98-84bf-9fa326a1c6d8"
 //LocalStorage Mentions
 // userDetails
 // userLocation

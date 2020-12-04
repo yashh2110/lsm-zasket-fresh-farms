@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useLayoutEffect } from 'react';
 import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter } from 'react-native';
 import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
@@ -39,12 +39,17 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
         };
         _bootstrapAsync()
     }, [])
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            checkForLocationAccess();
-        });
-        return unsubscribe;
-    }, [navigation]);
+    // useEffect(() => {
+    //     const unsubscribe = navigation.addListener('focus', () => {
+    //         // alert(JSON.stringify(homeScreenLocation))
+    //         if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+    //             setTimeout(() => {
+    //                 checkForLocationAccess();
+    //             }, 1000);
+    //         }
+    //     });
+    //     return unsubscribe;
+    // }, [navigation]);
     const enableGpsLocation = () => {
         LocationServicesDialogBox.checkLocationServicesIsEnabled({
             message: "<h2 style='color: #0af13e'>Use Location ?</h2>Zasket wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location",
@@ -92,7 +97,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
 
     useEffect(() => {
         initialFunction()
-        if (!homeScreenLocation.addressLine_1) {
+        if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
             getCurrentPosition()
         }
     }, [])
@@ -154,38 +159,39 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
 
     const getCurrentPosition = async () => {
         try {
-            Geolocation.getCurrentPosition(
-                async (position) => {
-                    fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
-                        .then((response) => {
-                            response.json().then(async (json) => {
-                                let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                                addHomeScreenLocation({
-                                    addressLine_1: json?.results?.[0]?.formatted_address,
-                                    pincode: postal_code?.long_name,
-                                    lat: position.coords.latitude,
-                                    lon: position.coords.longitude
-                                })
-                                // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
-                                isPincodeServiceable(postal_code, (res, status) => {
-                                    if (status) {
-                                    } else {
-                                        setPincodeError(true)
-                                    }
-                                })
-                            });
-                        }).catch((err) => {
-                            console.warn(err)
-                        })
-                },
-                (error) => {
-                    if (error?.message == "Location permission was not granted.") {
-                        navigation.navigate('PincodeScreen')
+            if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+                Geolocation.getCurrentPosition(
+                    async (position) => {
+                        fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
+                            .then((response) => {
+                                response.json().then(async (json) => {
+                                    let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                                    addHomeScreenLocation({
+                                        addressLine_1: json?.results?.[0]?.formatted_address,
+                                        pincode: postal_code?.long_name,
+                                        lat: position.coords.latitude,
+                                        lon: position.coords.longitude
+                                    })
+                                    // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                                    isPincodeServiceable(postal_code, (res, status) => {
+                                        if (status) {
+                                        } else {
+                                            setPincodeError(true)
+                                        }
+                                    })
+                                });
+                            }).catch((err) => {
+                                console.warn(err)
+                            })
+                    },
+                    (error) => {
+                        if (error?.message == "Location permission was not granted.") {
+                            navigation.navigate('PincodeScreen')
+                        }
+                        console.warn(error)
                     }
-                    console.warn(error)
-                }
-            );
-
+                );
+            }
         } catch (e) {
             alert(e.message || "");
         }
