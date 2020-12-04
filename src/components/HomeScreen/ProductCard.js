@@ -99,9 +99,14 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
                     <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
                         <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count}</Text>
                     </View>
-                    <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
-                    </TouchableOpacity>
+                    {count < item?.maxAllowedQuantity ?
+                        <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
+                        </TouchableOpacity>
+                        : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                            <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
+                        </View>
+                    }
                 </View>
             }
 

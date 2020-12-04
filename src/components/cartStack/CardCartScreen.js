@@ -54,20 +54,6 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
         })
     }
 
-    example_api = () => {
-        if ('not in db') {
-            if ('quantity >= 1') {
-                //add the quantity
-            }
-        } else if ('it is already in db') {
-            if ('quanitity >= 0') {
-                // update the quantity if the quantity is zero u can remove it in db
-            }
-        }
-    }
-
-
-
     return (
         <View style={{ flex: 1, width: "90%", alignSelf: 'center', marginVertical: 1.5 }}>
             <TouchableOpacity
@@ -102,9 +88,14 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                             <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
                                 <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count}</Text>
                             </View>
-                            <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
-                            </TouchableOpacity>
+                            {count < item?.maxAllowedQuantity ?
+                                <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
+                                </TouchableOpacity>
+                                : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                                    <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
+                                </View>
+                            }
                         </View>
                     }
                 </View>

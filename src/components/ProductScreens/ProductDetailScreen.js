@@ -133,9 +133,15 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
                         <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: 20 }}>-</Text>
                     </TouchableOpacity>
                     <Text style={{ color: 'white', alignSelf: 'center', fontSize: 18 }}>{count}</Text>
-                    <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ width: 35, height: 35, backgroundColor: "#B90E14", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
-                        <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: 20 }}>+</Text>
-                    </TouchableOpacity>
+                    {count < item?.maxAllowedQuantity ?
+                        <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ width: 35, height: 35, backgroundColor: "#B90E14", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
+                            <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: 20 }}>+</Text>
+                        </TouchableOpacity>
+                        :
+                        <View style={{ width: 35, height: 35, backgroundColor: "#B90E14", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
+                            <Text style={{ alignSelf: 'center', color: '#979197', fontWeight: 'bold', fontSize: 20 }}>+</Text>
+                        </View>
+                    }
                 </View>
             }
             {loading ?
