@@ -927,7 +927,7 @@
 				CODE_SIGN_ENTITLEMENTS = Zasket/Zasket.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development: Mani Deva (TZ36K99SX9)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 82P963U5A9;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Zasket/Info.plist;
@@ -958,7 +958,7 @@
 				CODE_SIGN_ENTITLEMENTS = Zasket/Zasket.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 82P963U5A9;
 				INFOPLIST_FILE = Zasket/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1215,7 +1215,7 @@
 				CODE_SIGN_ENTITLEMENTS = OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development: Mani Deva (TZ36K99SX9)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 82P963U5A9;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1250,7 +1250,7 @@
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 82P963U5A9;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
