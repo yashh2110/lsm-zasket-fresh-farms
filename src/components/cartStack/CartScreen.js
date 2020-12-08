@@ -179,21 +179,6 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                             </View>
                             : undefined
                         }
-                        <View style={{ flex: 1, backgroundColor: 'white', marginTop: 10, paddingVertical: 5 }}>
-                            <FlatList
-                                data={cartItems}
-                                renderItem={({ item }) => (
-                                    <CardCartScreen item={item} navigation={navigation} />
-                                )}
-                                keyExtractor={item => item?.id?.toString()}
-                            // ListEmptyComponent={emptyComponent}
-                            // ItemSeparatorComponent={() => (
-                            //     <View
-                            //         style={{ height: 0.7, width: "90%", alignSelf: 'center', backgroundColor: '#EAEAEC', }}
-                            //     />
-                            // )}
-                            />
-                        </View>
                         {totalCartValue >= config?.freeDeliveryMinOrder ?
                             selectedOffer?.offer?.displayName ?
                                 <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, justifyContent: 'center' }}>
@@ -242,6 +227,21 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                     </View>
                                 </View>
                             : undefined}
+                        <View style={{ flex: 1, backgroundColor: 'white', marginTop: 10, paddingVertical: 5 }}>
+                            <FlatList
+                                data={cartItems}
+                                renderItem={({ item }) => (
+                                    <CardCartScreen item={item} navigation={navigation} />
+                                )}
+                                keyExtractor={item => item?.id?.toString()}
+                            // ListEmptyComponent={emptyComponent}
+                            // ItemSeparatorComponent={() => (
+                            //     <View
+                            //         style={{ height: 0.7, width: "90%", alignSelf: 'center', backgroundColor: '#EAEAEC', }}
+                            //     />
+                            // )}
+                            />
+                        </View>
                         <View style={{ backgroundColor: 'white', marginTop: 10, padding: 10, paddingHorizontal: 15 }}>
                             <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>

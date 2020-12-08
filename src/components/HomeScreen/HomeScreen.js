@@ -219,13 +219,13 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                         <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1}</Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                     </TouchableOpacity>
-                    {__DEV__ ?
+                    {/* {__DEV__ ?
                         isAuthenticated ?
                             <TouchableOpacity onPress={() => onPressLogout()} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
                                 <Text>Logout</Text>
                             </TouchableOpacity>
                             : undefined
-                        : undefined}
+                        : undefined} */}
                 </View>
                 {pincodeError ?
                     <View style={{ backgroundColor: '#F65C65', width: "95%", alignSelf: 'center', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 3 }}>

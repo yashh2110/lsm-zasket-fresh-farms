@@ -10,9 +10,10 @@ import { profileUpdate, verifyEmail } from '../../actions/account'
 import { ActivityIndicator } from "react-native";
 import { Validation } from "../../utils/validate";
 import { getCustomerDetails } from "../../actions/home";
+import { onLogout } from '../../actions/auth'
 
 
-const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigation }) => {
+const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigation, onLogout }) => {
     const [loading, setLoading] = useState(false)
     const [userDetails, setUserDetails] = useState({})
     const [isVisible, setIsVisible] = useState(false)
@@ -140,7 +141,11 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
     //     }
     // }
 
-
+    const onPressLogout = async () => {
+        navigation.navigate("HomeStack")
+        navigation.navigate("OnBoardScreen")
+        await onLogout()
+    }
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} refreshControl={
@@ -206,14 +211,24 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => { navigation.navigate('SupportScreen') }} style={{ paddingTop: 10, paddingBottom: 10, flexDirection: 'row' }}>
+                <TouchableOpacity onPress={() => { navigation.navigate('SupportScreen') }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5, }}>Support</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Support</Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
                     </View>
                 </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => onPressLogout()} style={{ paddingTop: 10, paddingBottom: 0, flexDirection: 'row' }}>
+                    <View style={{ flex: 1, }}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5, }}>Logout</Text>
+                    </View>
+                    {/* <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
+                    </View> */}
+                </TouchableOpacity>
+
 
             </View>
 
@@ -289,4 +304,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { profileUpdate, verifyEmail, getCustomerDetails })(AccountScreen)
+export default connect(mapStateToProps, { profileUpdate, verifyEmail, getCustomerDetails, onLogout })(AccountScreen)

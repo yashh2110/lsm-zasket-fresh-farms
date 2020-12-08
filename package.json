@@ -53,6 +53,7 @@
     "react-native-motion": "^1.0.5",
     "react-native-onesignal": "^3.9.2",
     "react-native-paper": "^4.2.0",
+    "react-native-phone-call": "^1.0.9",
     "react-native-razorpay": "^2.2.1",
     "react-native-reanimated": "^1.13.1",
     "react-native-rename": "^2.4.1",

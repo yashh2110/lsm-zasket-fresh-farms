@@ -1,16 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, FlatList, ScrollView, Image } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, FlatList, ScrollView, Image, SafeAreaView } from 'react-native';
 import { connect } from 'react-redux';
 import { clearCart } from '../../actions/cart'
 import Theme from '../../styles/Theme';
 import CustomHeader from '../common/CustomHeader';
 import CardCartScreen from './CardCartScreen';
-import { Icon } from 'native-base'
+import { Button, Icon } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage';
 import { getV2DeliverySlots, addOrder } from '../../actions/cart'
 import moment from 'moment'
 import { Radio, Toast } from 'native-base';
 import RazorpayCheckout from 'react-native-razorpay';
+import Modal from 'react-native-modal';
 
 const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2DeliverySlots, addOrder, userLocation, config }) => {
     const scrollViewRef = useRef();
@@ -21,6 +22,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
     const [slotsArray, setSlotsArray] = useState([])
     const [slot, setSlot] = useState({})
     const [disableTomorrowSlot, setDisableTomorrowSlot] = useState(false)
+    const [paymentSelectionActionScreen, setPaymentSelectionActionScreen] = useState(false)
     const { offerPrice, selectedOffer } = route.params;
     useEffect(() => {
         if (cartItems.length > 0) {
@@ -131,86 +133,94 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
     }
 
     const onPressMakePayment = async () => {
-        let itemCreateRequests = []
-        await cartItems?.forEach((el, index) => {
-            itemCreateRequests.push({
-                "itemId": el?.id,
-                "quantity": el?.count,
-                "totalPrice": el?.discountedPrice * el?.count,
-                "unitPrice": el?.discountedPrice
-            })
-        })
-        let userLocation = await AsyncStorage.getItem('location');
-        let parsedUserLocation = await JSON.parse(userLocation);
-        let payload = {
-            "billingAddressId": parsedUserLocation?.id,
-            "deliverySlotId": slot?.id,
-            "itemCreateRequests": itemCreateRequests,
-            "nextDayBuffer": nextDayBuffer,
-            "slotEndHours": slot?.endHours,
-            "slotStartHours": slot?.startHours,
-            "totalPrice": totalCartValue,
-            "marketPrice": marketPrice,
-            "offerId": selectedOffer?.offer?.id > 0 ? selectedOffer?.offer?.id : undefined,
-            "offerPrice": offerPrice > 0 ? offerPrice : undefined,
-        }
-        // alert(JSON.stringify(payload, null, "     "))
-        console.warn(JSON.stringify(payload, null, "     "))
-        addOrder(payload, async (res, status) => {
-            if (status) {
-                console.warn(JSON.stringify(res?.data, null, "        "))
-                let userDetails = await AsyncStorage.getItem('userDetails');
-                let parsedUserDetails = await JSON.parse(userDetails);
-                var options = {
-                    description: 'Select the payment method',
-                    image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
-                    currency: 'INR',
-                    key: config?.razorpayApiKey,
-                    amount: totalCartValue,
-                    name: 'Zasket',
-                    order_id: res?.data?.paymentResponseId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
-                    prefill: {
-                        email: parsedUserDetails?.customerDetails?.userEmail,
-                        contact: parsedUserDetails?.customerDetails?.userMobileNumber,
-                        name: parsedUserDetails?.customerDetails?.name
-                    },
-                    theme: { color: Theme.Colors.primary }
-                }
-                RazorpayCheckout.open(options).then((data) => {
-                    // handle success
-                    // alert(`Success: ${data.razorpay_payment_id}`);
-                    onClearCart()
-                    navigation.pop()
-                    navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
-                    // navigation.navigate('AccountStack', { screen: 'MyOrders' })
-                }).catch((error) => {
-                    // handle failure
-                    // alert(`Error: ${error.code} | ${error.description}`);
-                    Toast.show({
-                        text: "Payment failed",
-                        buttonText: "Okay",
-                        type: "danger"
-                    })
+        if (true) {
+            setPaymentSelectionActionScreen(true)
+        } else {
+            let itemCreateRequests = []
+            await cartItems?.forEach((el, index) => {
+                itemCreateRequests.push({
+                    "itemId": el?.id,
+                    "quantity": el?.count,
+                    "totalPrice": el?.discountedPrice * el?.count,
+                    "unitPrice": el?.discountedPrice
                 })
-            } else {
-                if (__DEV__) {
-                    alert(JSON.stringify(res?.response, null, "        "))
-                }
-                let errorItems = []
-                if (res?.response?.data?.length > 0) {
-                    if (cartItems.length > 0) {
-                        res?.response?.data?.forEach((resEl, resIndex) => {
-                            cartItems?.forEach((cartEl, cartIndex) => {
-                                if (cartEl?.id == resEl?.id) {
-                                    errorItems.push(cartEl?.itemName)
-                                }
-                            })
-                        })
-                    }
-                    alert(errorItems.toString() + " are requested more than available quantity")
-                }
+            })
+            let userLocation = await AsyncStorage.getItem('location');
+            let parsedUserLocation = await JSON.parse(userLocation);
+            let payload = {
+                "billingAddressId": parsedUserLocation?.id,
+                "deliverySlotId": slot?.id,
+                "itemCreateRequests": itemCreateRequests,
+                "nextDayBuffer": nextDayBuffer,
+                "slotEndHours": slot?.endHours,
+                "slotStartHours": slot?.startHours,
+                "totalPrice": totalCartValue,
+                "marketPrice": marketPrice,
+                "offerId": selectedOffer?.offer?.id > 0 ? selectedOffer?.offer?.id : undefined,
+                "offerPrice": offerPrice > 0 ? offerPrice : undefined,
             }
-        })
+            // alert(JSON.stringify(payload, null, "     "))
+            console.warn(JSON.stringify(payload, null, "     "))
+            addOrder(payload, async (res, status) => {
+                if (status) {
+                    console.warn(JSON.stringify(res?.data, null, "        "))
+                    let userDetails = await AsyncStorage.getItem('userDetails');
+                    let parsedUserDetails = await JSON.parse(userDetails);
+                    var options = {
+                        description: 'Select the payment method',
+                        image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
+                        currency: 'INR',
+                        key: config?.razorpayApiKey,
+                        amount: totalCartValue,
+                        name: 'Zasket',
+                        order_id: res?.data?.paymentResponseId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+                        prefill: {
+                            email: parsedUserDetails?.customerDetails?.userEmail,
+                            contact: parsedUserDetails?.customerDetails?.userMobileNumber,
+                            name: parsedUserDetails?.customerDetails?.name
+                        },
+                        theme: { color: Theme.Colors.primary }
+                    }
+                    RazorpayCheckout.open(options).then((data) => {
+                        // handle success
+                        // alert(`Success: ${data.razorpay_payment_id}`);
+                        onClearCart()
+                        navigation.pop()
+                        navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                        // navigation.navigate('AccountStack', { screen: 'MyOrders' })
+                    }).catch((error) => {
+                        // handle failure
+                        // alert(`Error: ${error.code} | ${error.description}`);
+                        Toast.show({
+                            text: "Payment failed",
+                            buttonText: "Okay",
+                            type: "danger"
+                        })
+                    })
+                } else {
+                    if (__DEV__) {
+                        alert(JSON.stringify(res?.response, null, "        "))
+                    }
+                    let errorItems = []
+                    if (res?.response?.data?.length > 0) {
+                        if (cartItems.length > 0) {
+                            res?.response?.data?.forEach((resEl, resIndex) => {
+                                cartItems?.forEach((cartEl, cartIndex) => {
+                                    if (cartEl?.id == resEl?.id) {
+                                        errorItems.push(cartEl?.itemName)
+                                    }
+                                })
+                            })
+                        }
+                        alert(errorItems.toString() + " are requested more than available quantity")
+                    }
+                }
+            })
+        }
+    }
+
+    const onPressCashOnDelivery = async () => {
+
     }
 
     return (
@@ -374,6 +384,31 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                     }
                 </View>
                 : undefined}
+            <Modal
+                isVisible={paymentSelectionActionScreen}
+                onSwipeComplete={() => setPaymentSelectionActionScreen(false)}
+                swipeDirection="down"
+                style={{ margin: 0, justifyContent: 'flex-end' }}
+                onBackButtonPress={() => setPaymentSelectionActionScreen(false)}
+                onBackdropPress={() => setPaymentSelectionActionScreen(false)}
+            >
+                <SafeAreaView style={{ height: "40%", backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
+                    <View style={{ alignSelf: 'center', height: 5, width: 50, backgroundColor: '#E2E2E2', borderRadius: 50, marginVertical: 15 }} />
+                    <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+                        <View style={{ flex: 1, margin: 4, width: "90%", marginBottom: 10, alignSelf: 'center', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Select payment method</Text>
+                            <Text style={{ color: '#727272', marginTop: 10 }}>Two easy ways to make payment</Text>
+                        </View>
+                        <Button full style={{ marginTop: "5%", backgroundColor: Theme.Colors.primary, borderRadius: 5, marginHorizontal: 20, }} onPress={() => { }}><Text style={{ textTransform: 'capitalize', color: 'white', fontSize: 16 }}>Make Online Payment </Text></Button>
+                        <Image
+                            style={{ alignSelf: 'flex-end', width: 100, height: 30, marginRight: 20 }}
+                            resizeMode="contain"
+                            source={require('../../assets/png/paymentImages.png')}
+                        />
+                        <Button full style={{ marginTop: "5%", backgroundColor: "white", borderRadius: 5, marginHorizontal: 20, borderWidth: 1, borderColor: Theme.Colors.primary }} onPress={() => { onPressCashOnDelivery() }}><Text style={{ textTransform: 'capitalize', color: Theme.Colors.primary, fontSize: 16 }}>Cash on delivery </Text></Button>
+                    </ScrollView>
+                </SafeAreaView>
+            </Modal>
         </View>
     );
 }
