@@ -1,31 +1,62 @@
 import AsyncStorage from '@react-native-community/async-storage'
+import { Alert } from 'react-native';
 import axiosinstance from '../axios/service/api'
-import { ADD_TO_CART, CLEAR_CART, UPDATE_COUNT, DELETE_ITEM_CART } from './types'
+import { CLEAR_CART, GET_CART_ITEMS } from './types'
 
-export const addToCart = (item, count) => dispatch => {
-    dispatch({
-        type: ADD_TO_CART,
-        payload: item
-    })
+export const getCartItemsApi = (callback) => async dispatch => {
+    try {
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customerId = await parsedUserDetails?.customerDetails?.id
+        const res = await axiosinstance.get(`/${customerId}/cart-items`)
+        let newArray = []
+        res?.data?.forEach((el, index) => {
+            newArray.push({
+                ...el.item,
+                count: el.quantity
+            })
+        })
+        dispatch({
+            type: GET_CART_ITEMS,
+            payload: newArray
+        })
+        callback(res, true)
+    } catch (err) {
+        if (__DEV__) {
+            alert(JSON.stringify(err.response, null, "     "))
+        }
+        callback(err, false)
+        dispatch({
+            type: GET_CART_ITEMS,
+            payload: []
+        })
+    }
 }
 
-export const updateCart = (item, count) => dispatch => {
-    dispatch({
-        type: UPDATE_COUNT,
-        payload: { item, count }
-    })
+export const updateCartItemsApi = (itemId, quantity, callback) => async dispatch => {
+    try {
+        let payload = {
+            "itemId": itemId,
+            "quantity": quantity
+        }
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customerId = await parsedUserDetails?.customerDetails?.id
+        // alert(JSON.stringify(userDetails, null, "     "))
+        const res = await axiosinstance.post(`/${customerId}/cart-items`, payload)
+        dispatch(getCartItemsApi((res, status) => { }))
+        callback(res, true)
+    } catch (err) {
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+    }
 }
+
+
 
 export const clearCart = (payload) => dispatch => {
     dispatch({
         type: CLEAR_CART,
-        payload: payload
-    })
-}
-
-export const deleteCartItem = (payload) => dispatch => {
-    dispatch({
-        type: DELETE_ITEM_CART,
         payload: payload
     })
 }
@@ -52,6 +83,9 @@ export const addOrder = (payload, callback) => async dispatch => {
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
+        if (__DEV__) {
+            alert(JSON.stringify(err.response, null, "     "))
+        }
     }
 }
 
@@ -99,22 +133,26 @@ export const getAllOffers = (callback) => async dispatch => {
 }
 
 
-//applyOffer
-export const applyOffer = (offerId, orderAmount, callback) => async dispatch => {
+//v2ApplyOffer
+export const applyOffer = (offerCode, orderAmount, callback) => async dispatch => {
     try {
-        // console.warn(JSON.stringify(offerId + "      " + orderAmount, null, "     "))
+        // console.warn(JSON.stringify(offerCode + "      " + orderAmount, null, "     "))
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
         let payload = {
             "customerId": customerId,
-            "offerId": offerId,
+            "offerCode": offerCode,
             "orderAmount": orderAmount
         }
-        const res = await axiosinstance.post(`/apply-offer`, payload)
+        const res = await axiosinstance.post(`/v2/apply-offer`, payload)
+        // alert(JSON.stringify(res, null, "     "))
         callback(res, true)
     } catch (err) {
-        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+
+        // if (__DEV__) {
+        //     alert(JSON.stringify(err.response, null, "     "))
+        // }
         callback(err, false)
     }
 }

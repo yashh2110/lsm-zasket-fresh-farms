@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, Image, ImageBackground, Keyboard, Platform, ScrollView, StyleSheet, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import { verifyOtp } from '../../actions/auth';
+import { verifyOtp, requestOtp, saveUserDetails, onLogin } from '../../actions/auth';
 import { setDarkMode } from "../../actions/dark";
 import Theme from "../../styles/Theme";
 import { Validation } from "../../utils/validate";
@@ -15,15 +15,18 @@ import RF from "react-native-responsive-fontsize";
 import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
-import { getConfig } from '../../actions/home'
+import { getV2Config } from '../../actions/home'
+import CountDown from 'react-native-countdown-component';
 
-const OtpScreen = ({ navigation, darkMode, setDarkMode, getConfig, verifyOtp, route }) => {
+const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin, getV2Config, verifyOtp, requestOtp, route }) => {
 
     const [otp, setOtp] = useState("")
     const [loading, setLoading] = useState(false)
+    const [counter, SetCounter] = useState(45); // Set here your own timer configurable
+    const [random, setRandom] = useState(1);
+    const [disabled, setDisabled] = useState(true)
 
     const { mobileNumber } = route.params;
-    const { signIn } = React.useContext(AuthContext);
     const onSubmit = async () => {
         setLoading(true)
         if (otp) {
@@ -37,8 +40,9 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, getConfig, verifyOtp, ro
                     if (status) {
                         setLoading(false)
                         await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
-                        signIn(response?.data)
-                        getConfig((res, status) => { })
+                        onLogin(response?.data)
+                        navigation.navigate('HomeStack')
+                        getV2Config((res, status) => { })
                     } else {
                         setLoading(false)
                         if (response?.response?.data?.description == "OTP validation failed") {
@@ -68,6 +72,19 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, getConfig, verifyOtp, ro
             onSubmit()
         }
     }, [otp])
+
+    const handleResend = async () => {
+        setRandom(random + 1)
+        setDisabled(true)
+        await requestOtp(mobileNumber, (response, status) => {
+            if (status) {
+                setLoading(false)
+            } else {
+                setLoading(false)
+                Alert.alert('Internal server error')  //only if api fails
+            }
+        })
+    }
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -105,11 +122,31 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, getConfig, verifyOtp, ro
 
                                 />
                             </View>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                                <Text style={{ alignSelf: 'center', color: '#727272' }}>Didn't receive OTP? </Text>
+                            </View>
+                            {disabled ?
+                                <CountDown
+                                    key={random}
+                                    until={counter}
+                                    size={15}
+                                    onFinish={() => setDisabled(() => false)}
+                                    separatorStyle={{ color: 'black' }}
+                                    digitStyle={{ backgroundColor: '#FFF' }}
+                                    digitTxtStyle={{ color: '#727272', fontWeight: undefined }}
+                                    timeToShow={['M', 'S']}
+                                    showSeparator
+                                    timeLabels={{ m: '', s: '' }}
+                                /> :
+                                <TouchableOpacity onPress={handleResend} style={{ marginVertical: 11 }}>
+                                    <Text style={{ alignSelf: 'center', color: '#c00000', }}>Resend OTP</Text>
+                                </TouchableOpacity>
+                            }
                             {/* <Text style={{ fontSize: 14, color: "#727272", alignSelf: 'center' }}>00:36</Text> */}
                             {loading ?
                                 <ActivityIndicator style={{ marginTop: "5%", }} color={Theme.Colors.primary} size="large" />
                                 :
-                                <Button full style={{ marginTop: "5%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text>Confirm</Text></Button>
+                                <Button full style={{ marginTop: "5%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text style={{ textTransform: 'capitalize' }}>Confirm</Text></Button>
                             }
 
 
@@ -139,7 +176,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, verifyOtp, getConfig })(OtpScreen)
+export default connect(mapStateToProps, { setDarkMode, verifyOtp, getV2Config, saveUserDetails, onLogin, requestOtp })(OtpScreen)
 
 const styles = StyleSheet.create({
     container: {

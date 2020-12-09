@@ -53,7 +53,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
             try {
                 let payload = {
                     "name": userDetails?.customerDetails?.name,
-                    "userEmail": userDetails?.customerDetails?.userEmail
+                    "userEmail": userDetails?.customerDetails?.userEmail.toLowerCase()
                 }
                 await profileUpdate(payload, async (response, status) => {
                     if (status) {
@@ -121,24 +121,24 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
         return status
     }
 
-    const onVerifyEmail = async () => {
-        setLoading(true)
-        if (validateEmailOnly()) {
-            try {
-                await verifyEmail(userDetails?.customerDetails?.userEmail, (response, status) => {
-                    // alert(JSON.stringify(response, null, "       "))
-                    if (status) {
-                        alert(`A confirmation link has been sent to ${userDetails?.customerDetails?.userEmail}`)
-                        setLoading(false)
-                    } else {
-                        setLoading(false)
-                    }
-                })
-            } catch {
-                setLoading(false)
-            }
-        }
-    }
+    // const onVerifyEmail = async () => {
+    //     setLoading(true)
+    //     if (validateEmailOnly()) {
+    //         try {
+    //             await verifyEmail(userDetails?.customerDetails?.userEmail, (response, status) => {
+    //                 // alert(JSON.stringify(response, null, "       "))
+    //                 if (status) {
+    //                     alert(`A confirmation link has been sent to ${userDetails?.customerDetails?.userEmail}`)
+    //                     setLoading(false)
+    //                 } else {
+    //                     setLoading(false)
+    //                 }
+    //             })
+    //         } catch {
+    //             setLoading(false)
+    //         }
+    //     }
+    // }
 
 
 
@@ -176,7 +176,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
 
                 <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 5, paddingBottom: 5, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
-                        <Text style={{ color: '#909090', fontSize: 12 }}>Email {userDetails?.customerDetails?.isEmailVerified ? undefined : <Text style={{ color: '#EB6060' }}>  Not Verified</Text>}</Text>
+                        <Text style={{ color: '#909090', fontSize: 12 }}>Email</Text>
                         <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5, textTransform: 'lowercase' }}>{userDetails?.customerDetails?.userEmail}</Text>
                         {/* <Text>{JSON.stringify(userDetails, null, "       ")}</Text> */}
                     </View>
@@ -253,19 +253,16 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                                 editable={false}
                             />
 
-                            <Text style={{ color: '#727272', fontSize: 12, marginTop: 20 }}>Email {userDetails?.customerDetails?.isEmailVerified ? undefined : <Text style={{ color: '#EB6060' }}>  Not Verified</Text>}</Text>
+                            <Text style={{ color: '#727272', fontSize: 12, marginTop: 20 }}>Email</Text>
                             <View style={{ flexDirection: 'row' }}>
                                 <TextInput
-                                    style={{ height: 40, flex: 1, fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#D8D8D8', textTransform: 'lowercase' }}
-                                    onChangeText={text => setUserDetails({ ...userDetails, customerDetails: { ...userDetails?.customerDetails, userEmail: text.toLowerCase() } })}
+                                    style={{ height: 40, flex: 1, fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#D8D8D8' }}
+                                    onChangeText={text => setUserDetails({ ...userDetails, customerDetails: { ...userDetails?.customerDetails, userEmail: text } })}
                                     value={userDetails?.customerDetails?.userEmail}
                                     onTouchStart={() => {
                                         setemailErrorText("")
                                     }}
                                 />
-                                <TouchableOpacity onPress={() => { onVerifyEmail() }} activeOpacity={0.7} style={{ borderBottomWidth: 1, borderBottomColor: '#D8D8D8', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: Theme.Colors.primary }}>Verify Now</Text>
-                                </TouchableOpacity>
                             </View>
                             {emailErrorText ?
                                 <>

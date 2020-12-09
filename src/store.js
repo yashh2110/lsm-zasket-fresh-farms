@@ -14,8 +14,9 @@ const persistConfig = {
     whitelist: [
         'home',
         'cart',
-        'dark',
-        'location'
+        'location',
+        'homeScreenLocation',
+        'auth'
     ],
 };
 

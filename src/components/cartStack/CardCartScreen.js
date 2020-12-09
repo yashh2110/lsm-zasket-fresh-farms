@@ -1,72 +1,57 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList } from 'react-native';
 import Theme from '../../styles/Theme';
-import { addToCart, updateCart, deleteCartItem } from '../../actions/cart'
+import { updateCartItemsApi } from '../../actions/cart'
 import { connect } from 'react-redux';
 import { Icon } from 'native-base';
 
-const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, deleteCartItem }) => {
+const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAuthenticated }) => {
     const [addButton, setAddButton] = useState(true)
-    const [count, setCount] = useState(1)
-    const [isUpdate, setIsUpdate] = useState(false)
+    const [count, setCount] = useState(0)
 
     useEffect(() => {
-
-        // if (cartItems.length > 0) {
-        //     cartItems?.forEach(el => {
-        //         if (el?.id == item?.id) {
-        //             setAddButton(false)
-        //             setCount(el.count)
-        //         }
-        //     })
-        // } else {
-        //     setAddButton(true)
-        //     setCount(1)
-        //     setIsUpdate(false)
-        // }
-
         let filteredItems = cartItems.filter(element => element?.id == item?.id);
         if (filteredItems.length == 1) {
             setAddButton(false)
             setCount(filteredItems[0].count)
         } else {
             setAddButton(true)
-            setCount(1)
-            setIsUpdate(false)
+            setCount(0)
         }
+
     }, [cartItems])
 
-    useEffect(() => {
-        if (isUpdate) {
-            updateCart(item, count)
-        }
-        if (count == 0) {
-            onDeleteItem()
-        }
-    }, [count])
-
     const onAddToCart = async () => {
-        setAddButton(!addButton)
-        let obj = item
-        obj.count = count
-        addToCart(obj)
-        setIsUpdate(true)
+        if (isAuthenticated) {
+            updateCartItemsApi(item?.id, 1, (res, status) => {
+                setAddButton(!addButton)
+                setCount(1)
+            })
+        } else {
+            navigation.navigate("AuthRoute", { screen: 'Login' })
+        }
     }
 
     const onCartUpdate = async (option) => {
-        setIsUpdate(true)
         if (option == "DECREASE") {
-            setCount(count - 1)
+            if (count >= 0) {
+                onUpdateCartItemApi(count - 1)
+                // setCount(count - 1)
+            }
+            // setCount(count - 1)
         }
         if (option == "INCREASE") {
             if (count < item?.maxAllowedQuantity) {
-                setCount(count + 1)
+                onUpdateCartItemApi(count + 1)
+                // setCount(count + 1)
             }
         }
     }
 
-    const onDeleteItem = async () => {
-        deleteCartItem(item)
+    const onUpdateCartItemApi = (quantity) => {
+        updateCartItemsApi(item?.id, quantity, (res, status) => {
+            // alert(JSON.stringify(res, null, "     "))
+        })
     }
 
     return (
@@ -103,9 +88,14 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
                             <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
                                 <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count}</Text>
                             </View>
-                            <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
-                            </TouchableOpacity>
+                            {count < item?.maxAllowedQuantity ?
+                                <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
+                                </TouchableOpacity>
+                                : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                                    <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
+                                </View>
+                            }
                         </View>
                     }
                 </View>
@@ -125,10 +115,11 @@ const CardCartScreen = ({ item, navigation, addToCart, updateCart, cartItems, de
 }
 const mapStateToProps = (state) => ({
     cartItems: state.cart.cartItems,
+    isAuthenticated: state.auth.isAuthenticated
 })
 
 
-export default connect(mapStateToProps, { addToCart, updateCart, deleteCartItem })(CardCartScreen)
+export default connect(mapStateToProps, { updateCartItemsApi })(CardCartScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

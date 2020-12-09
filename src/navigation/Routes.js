@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import * as React from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { connect } from 'react-redux'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,13 +8,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Login from "../components/auth/Login"
 import OtpScreen from "../components/auth/OtpScreen"
 import EmailScreen from "../components/auth/EmailScreen"
-import OnBoard from "../components/auth/OnBoard"
-import { View, Text } from 'react-native';
+import OnBoardScreen from "../components/auth/OnBoard"
+import { View, Text, Image } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import HomeScreen from "../components/HomeScreen/HomeScreen"
 import ProductDetailScreen from "../components/ProductScreens/ProductDetailScreen"
 import ProductListScreen from "../components/ProductScreens/ProductListScreen"
 import MapScreen from "../components/MapStack/MapScreen"
+import MapScreenGrabPincode from "../components/MapStack/MapScreenGrabPincode"
 import AccountScreen from "../components/AccountStack/AccountScreen"
 import SupportScreen from "../components/AccountStack/SupportScreen"
 import MyOrders from "../components/AccountStack/MyOrders"
@@ -40,8 +41,7 @@ const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 export const AuthContext = React.createContext();
 
-const Navigate = ({ darkMode }) => {
-
+const Navigate = ({ darkMode, isAuthenticated }) => {
     const forFade = ({ current, closing }) => ({
         cardStyle: {
             opacity: current.progress,
@@ -50,7 +50,19 @@ const Navigate = ({ darkMode }) => {
 
 
 
-    function SplashScreen() {
+    function LoadingScreen(props) {
+        useEffect(() => {
+            const _bootstrapAsync = async () => {
+                const onBoardKey = await AsyncStorage.getItem('onBoardKey');
+                if (!onBoardKey) {
+                    props.navigation.navigate('OnBoardScreen')
+                } else {
+                    props.navigation.navigate('BottomTabRoute')
+                }
+            };
+            _bootstrapAsync()
+        }, [])
+
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>
                 <ActivityIndicator size="large" color={Theme.Colors.primary} />
@@ -64,7 +76,6 @@ const Navigate = ({ darkMode }) => {
             screenOptions={{
                 headerShown: false
             }}>
-            <Stack.Screen name="OnBoardScreen" component={OnBoard} />
             <Stack.Screen name="Login" component={Login} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="EmailScreen" component={EmailScreen} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ cardStyleInterpolator: forFade }} />
@@ -81,6 +92,7 @@ const Navigate = ({ darkMode }) => {
             }}>
             <Stack.Screen name="PincodeScreen" component={PincodeScreen} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
+            <Stack.Screen name="MapScreenGrabPincode" component={MapScreenGrabPincode} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="SetAuthContext" component={SetAuthContext} options={{ cardStyleInterpolator: forFade }} />
         </Stack.Navigator>
     );
@@ -91,9 +103,9 @@ const Navigate = ({ darkMode }) => {
         <Tab.Navigator
             initialRouteName="HomeScreen"
             tabBarOptions={{
-                activeTintColor: darkMode ? "#42f44b" : Theme.Colors.primary,
-                activeBackgroundColor: darkMode ? Theme.Dark.backgroundColor : "#fff",
-                inactiveBackgroundColor: darkMode ? Theme.Dark.backgroundColor : "#fff",
+                activeTintColor: Theme.Colors.primary,
+                activeBackgroundColor: "#fff",
+                inactiveBackgroundColor: "#fff",
             }}>
             <Tab.Screen
                 name="HomeStack"
@@ -101,7 +113,19 @@ const Navigate = ({ darkMode }) => {
                 options={{
                     tabBarLabel: 'Home',
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="home" color={color} size={size} />
+                        // <MaterialCommunityIcons name="home" color={color} size={size} />
+                        Theme.Colors.primary == color ?
+                            <Image
+                                style={{ width: 25, height: 25 }}
+                                resizeMode={"contain"}
+                                source={require('../assets/png/HomeIconActive.png')}
+                            />
+                            :
+                            <Image
+                                style={{ width: 25, height: 25 }}
+                                resizeMode={"contain"}
+                                source={require('../assets/png/HomeIconInactive.png')}
+                            />
                     ),
                 }}
             />
@@ -124,6 +148,14 @@ const Navigate = ({ darkMode }) => {
                         <CartButton color={color} size={size} />
                     ),
                 }}
+            // listeners={(navigation) => ({
+            //     tabPress: event => {
+            //         if (isAuthenticated == false) {
+            //             event.preventDefault();
+            //             navigation.navigation.navigate("AuthRoute", { screen: 'Login' })
+            //         }
+            //     }
+            // })}
             />
             <Tab.Screen
                 name="AccountStack"
@@ -131,9 +163,29 @@ const Navigate = ({ darkMode }) => {
                 options={{
                     tabBarLabel: 'Account',
                     tabBarIcon: ({ color, size }) => (
-                        <FeatherIcons name="user" color={color} size={size} />
+                        // <FeatherIcons name="user" color={color} size={size} />
+                        Theme.Colors.primary == color ?
+                            <Image
+                                style={{ width: 25, height: 25 }}
+                                resizeMode={"contain"}
+                                source={require('../assets/png/AccountIconActive.png')}
+                            />
+                            :
+                            <Image
+                                style={{ width: 25, height: 25 }}
+                                resizeMode={"contain"}
+                                source={require('../assets/png/AccountIconInactive.png')}
+                            />
                     ),
                 }}
+                listeners={(navigation) => ({
+                    tabPress: event => {
+                        if (isAuthenticated == false) {
+                            event.preventDefault();
+                            navigation.navigation.navigate("AuthRoute", { screen: 'Login' })
+                        }
+                    }
+                })}
             />
         </Tab.Navigator>
     )
@@ -208,6 +260,14 @@ const Navigate = ({ darkMode }) => {
                     component={PaymentSuccessScreen}
                     options={{ title: 'PaymentSuccess Screen' }}
                 />
+                <Stack.Screen
+                    name="MyOrders"
+                    component={MyOrders}
+                />
+                <Stack.Screen
+                    name="MyOrdersDetailScreen"
+                    component={MyOrdersDetailScreen}
+                />
             </Stack.Navigator>
         );
     }
@@ -242,80 +302,14 @@ const Navigate = ({ darkMode }) => {
                     component={MapScreen}
                     options={{ title: 'MapScreen' }}
                 />
+                <Stack.Screen
+                    name="MapScreenGrabPincode"
+                    component={MapScreenGrabPincode}
+                    options={{ title: 'MapScreenGrabPincode' }}
+                />
             </Stack.Navigator>
         );
     }
-
-
-
-
-
-
-
-
-
-
-    const [state, dispatch] = React.useReducer(
-        (prevState, action) => {
-            switch (action.type) {
-                case 'RESTORE_USER_DETAIL':
-                    return {
-                        ...prevState,
-                        userDetails: action.userDetails,
-                        isLoading: false,
-                    };
-                case 'SIGN_IN':
-                    return {
-                        ...prevState,
-                        isSignout: false,
-                        userDetails: action.userDetails,
-                    };
-                case 'SIGN_OUT':
-                    return {
-                        ...prevState,
-                        isSignout: true,
-                        userDetails: null,
-                        userLocation: null,
-                    };
-                case 'SAVE_USER_LOCATION':
-                    return {
-                        ...prevState,
-                        isLoading: false,
-                        userLocation: action.userLocation,
-                    };
-            }
-        },
-        {
-            isLoading: true,
-            isSignout: false,
-            userDetails: null,
-            userLocation: null,
-        }
-    );
-    React.useEffect(() => {
-        const bootstrapAsync = async () => {
-            let userDetails;
-            let parsedUserDetails;
-            try {
-                userDetails = await AsyncStorage.getItem('userDetails');
-                parsedUserDetails = await JSON.parse(userDetails);
-            } catch (e) {
-            }
-            dispatch({ type: 'RESTORE_USER_DETAIL', userDetails: parsedUserDetails });
-
-
-            let userLocation;
-            let parsedUserLocation;
-            try {
-                userLocation = await AsyncStorage.getItem('location');
-                parsedUserLocation = await JSON.parse(userLocation);
-            } catch (e) {
-            }
-            dispatch({ type: 'SAVE_USER_LOCATION', userLocation: parsedUserLocation });
-        };
-
-        bootstrapAsync();
-    }, []);
 
 
     const authContext = React.useMemo(
@@ -324,14 +318,12 @@ const Navigate = ({ darkMode }) => {
                 // alert(JSON.stringify(data?.customerSessionDetails?.sessionId, null, "       "))
                 new AxiosDefaultsManager().setAuthorizationHeader(data?.customerSessionDetails?.sessionId)
                 await AsyncStorage.setItem('userDetails', JSON.stringify(data))
-                await dispatch({ type: 'SIGN_IN', userDetails: data });
             },
             signOut: async () => {
-                dispatch({ type: 'SIGN_OUT' })
+
             },
             saveUserLocation: async data => {
                 await AsyncStorage.setItem('location', JSON.stringify(data))
-                dispatch({ type: 'SAVE_USER_LOCATION', userLocation: data });
             },
         }),
         []
@@ -342,11 +334,12 @@ const Navigate = ({ darkMode }) => {
             <AuthContext.Provider value={authContext}>
                 <NavigationContainer>
                     <Stack.Navigator
+                        initialRouteName="BottomTabRoute"
                         screenOptions={{
                             headerShown: false
                         }}>
-                        {state.isLoading ? (
-                            <Stack.Screen name="Splash" component={SplashScreen} />
+                        {/* {state.isLoading ? (
+                            <Stack.Screen name="Splash" component={LoadingScreen} />
                         ) : state.userDetails == null ? (
                             <Stack.Screen
                                 options={{
@@ -362,7 +355,21 @@ const Navigate = ({ darkMode }) => {
                                             <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
                                             <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
                                         </>
-                                    )}
+                                    )} */}
+                        <>
+                            {/* <Stack.Screen name="LoadingScreen" component={LoadingScreen} /> */}
+                            <Stack.Screen name="OnBoardScreen" component={OnBoardScreen} />
+                            <Stack.Screen name="AuthRoute" component={AuthRoute} />
+                            <Stack.Screen name="MapStack" component={MapStack} options={{ cardStyleInterpolator: forFade }} />
+
+                            <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
+                            <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ title: 'Home Page' }} />
+                            <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
+                            <Stack.Screen name="MapScreenGrabPincode" component={MapScreenGrabPincode} options={{ cardStyleInterpolator: forFade }} />
+                            <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
+                            <Stack.Screen name="PincodeScreen" component={PincodeScreen} options={{ cardStyleInterpolator: forFade }} />
+
+                        </>
                     </Stack.Navigator>
                 </NavigationContainer>
             </AuthContext.Provider>
@@ -371,7 +378,8 @@ const Navigate = ({ darkMode }) => {
 }
 
 const mapStateToProps = (state) => ({
-    darkMode: state.dark
+    darkMode: state.dark,
+    isAuthenticated: state.auth.isAuthenticated,
 })
 
 const mapDispatchToProps = {

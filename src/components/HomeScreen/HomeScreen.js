@@ -1,24 +1,119 @@
-import React, { useEffect, useContext, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl } from 'react-native';
+import React, { useEffect, useContext, useState, useLayoutEffect } from 'react';
+import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter } from 'react-native';
 import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
 import Theme from '../../styles/Theme';
-import { getAllCategories, getCustomerDetails, onLogout } from '../../actions/home'
+import { getAllCategories, isPincodeServiceable, getCustomerDetails, getAllBanners } from '../../actions/home'
+import { onLogout } from '../../actions/auth'
 import { connect } from 'react-redux';
 import CategorySectionListItem from './CategorySectionListItem';
 import Loader from '../common/Loader';
 import DarkModeToggle from '../common/DarkModeToggle';
 import AsyncStorage from '@react-native-community/async-storage';
+import Geolocation from '@react-native-community/geolocation';
+import { MapApiKey } from '../../../env';
+import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
+import { getCartItemsApi } from '../../actions/cart'
+import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
+const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
 
-const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigation, userLocation, onLogout, config }) => {
-    const { signOut } = useContext(AuthContext);
+    useEffect(() => {
+        const _bootstrapAsync = async () => {
+            if (Platform.OS === 'ios') {
+                Geolocation.requestAuthorization();
+                // alert('work')
+            } else {
+                enableGpsLocation()
+                DeviceEventEmitter.addListener('locationProviderStatusChange', function (status) { // only trigger when "providerListener" is enabled
+                    enableGpsLocation()
+                    console.warn(status); //  status => {enabled: false, status: "disabled"} or {enabled: true, status: "enabled"}
+                });
+            }
+            const onBoardKey = await AsyncStorage.getItem('onBoardKey');
+            if (!onBoardKey) {
+                navigation.navigate('OnBoardScreen')
+            } else {
+                // navigation.navigate('BottomTabRoute')
+            }
+        };
+        _bootstrapAsync()
+    }, [])
+    // useEffect(() => {
+    //     const unsubscribe = navigation.addListener('focus', () => {
+    //         // alert(JSON.stringify(homeScreenLocation))
+    //         if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+    //             setTimeout(() => {
+    //                 checkForLocationAccess();
+    //             }, 1000);
+    //         }
+    //     });
+    //     return unsubscribe;
+    // }, [navigation]);
+    const enableGpsLocation = () => {
+        LocationServicesDialogBox.checkLocationServicesIsEnabled({
+            message: "<h2 style='color: #0af13e'>Use Location ?</h2>Zasket wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location",
+            ok: "YES",
+            cancel: "No",
+            enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
+            showDialog: true, // false => Opens the Location access page directly
+            openLocationServices: true, // false => Directly catch method is called if location services are turned off
+            preventOutSideTouch: true, // true => To prevent the location services window from closing when it is clicked outside
+            preventBackClick: true, // true => To prevent the location services popup from closing when it is clicked back button
+            providerListener: true // true ==> Trigger locationProviderStatusChange listener when the location state changes
+        }).then(async (success) => {
+            checkForLocationAccess()
+            console.warn(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
+        }).catch((error) => {
+            console.warn(error.message); // error.message => "disabled"
+            BackHandler.exitApp()
+        });
+    }
+
+    const checkForLocationAccess = async () => {
+        if (Platform.OS === 'android') {
+            // Calling the permission function
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    title: 'Zasket App Location Permission',
+                    message: 'Zasket App needs access to your location',
+                    buttonPositive: "Ok"
+                },
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                // Permission Granted
+                getCurrentPosition();
+            } else {
+                // Permission Denied
+                // alert('Permission Denied');
+                navigation.navigate('PincodeScreen')
+            }
+        }
+    }
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
+    const [pincodeError, setPincodeError] = useState(false)
 
     useEffect(() => {
         initialFunction()
+        if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+            getCurrentPosition()
+        }
     }, [])
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            setRefresh(true)
+            getCartItemsApi((res, status) => {
+                if (status) {
+                    setRefresh(false)
+                } else {
+                    setRefresh(false)
+                }
+            })
+        }
+    }, [isAuthenticated])
 
     const initialFunction = () => {
         getAllCategories((res, status) => {
@@ -31,23 +126,85 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
                 setLoading(false)
             }
         })
-        getCustomerDetails(async (res, status) => {
+
+        getAllBanners((res, status) => {
             if (status) {
-                // alert(JSON.stringify(res?.data, null, "       "))
-                await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
+                // alert(JSON.stringify(res.data, null, "      "))
+                setLoading(false)
+                setRefresh(false)
             } else {
-                setUserDetails({})
+                setRefresh(false)
+                setLoading(false)
             }
         })
     }
+
+    useEffect(() => {
+        if (userLocation?.addressLine_1) {
+            setPincodeError(false)
+        }
+    }, [userLocation])
+
+    useEffect(() => {
+        if (homeScreenLocation?.pincode) {
+            isPincodeServiceable(homeScreenLocation?.pincode, (res, status) => {
+                if (status) {
+                    setPincodeError(false)
+                } else {
+                    setPincodeError(true)
+                }
+            })
+        }
+    }, [homeScreenLocation])
+
+    const getCurrentPosition = async () => {
+        try {
+            if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+                Geolocation.getCurrentPosition(
+                    async (position) => {
+                        fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
+                            .then((response) => {
+                                response.json().then(async (json) => {
+                                    let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                                    addHomeScreenLocation({
+                                        addressLine_1: json?.results?.[0]?.formatted_address,
+                                        pincode: postal_code?.long_name,
+                                        lat: position.coords.latitude,
+                                        lon: position.coords.longitude
+                                    })
+                                    // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                                    isPincodeServiceable(postal_code?.long_name, (res, status) => {
+                                        if (status) {
+                                        } else {
+                                            setPincodeError(true)
+                                        }
+                                    })
+                                });
+                            }).catch((err) => {
+                                console.warn(err)
+                            })
+                    },
+                    (error) => {
+                        if (error?.message == "Location permission was not granted.") {
+                            navigation.navigate('PincodeScreen')
+                        }
+                        console.warn(error)
+                    }
+                );
+            }
+        } catch (e) {
+            alert(e.message || "");
+        }
+    };
+
     const onRefresh = () => {
         setRefresh(true)
         initialFunction()
     }
 
     const onPressLogout = async () => {
+        navigation.navigate("OnBoardScreen")
         await onLogout()
-        await signOut()
     }
 
     return (
@@ -57,16 +214,30 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
                     <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
                 }>
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
-                    <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: 'HomeScreen' }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
+                    <TouchableOpacity onPress={() => { navigation.navigate('MapScreenGrabPincode', { fromScreen: 'HomeScreen' }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                         <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
-                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{userLocation?.addressLine_1}</Text>
+                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1}</Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                     </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => onPressLogout()} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
-                        <Text>Logout</Text>
-                    </TouchableOpacity>
+                    {__DEV__ ?
+                        isAuthenticated ?
+                            <TouchableOpacity onPress={() => onPressLogout()} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
+                                <Text>Logout</Text>
+                            </TouchableOpacity>
+                            : undefined
+                        : undefined}
                 </View>
+                {pincodeError ?
+                    <View style={{ backgroundColor: '#F65C65', width: "95%", alignSelf: 'center', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 3 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon name="warning" type="AntDesign" style={{ fontSize: 22, color: 'white' }} />
+                            <Text style={{ color: 'white' }}> We are not available at this location!</Text>
+                        </View>
+                        <TouchableOpacity onPress={() => { navigation.navigate('MapScreenGrabPincode', { fromScreen: "HomeScreen" }) }} style={{ backgroundColor: '#DD4C55', paddingHorizontal: 5, paddingVertical: 4, borderRadius: 5 }}>
+                            <Text style={{ color: 'white' }}>Change</Text>
+                        </TouchableOpacity>
+                    </View>
+                    : undefined}
                 {/* <View style={{ height: 160, justifyContent: 'center', alignItems: 'center', marginTop: 10, }}>
                     <Swiper
                         autoplay={true}
@@ -90,16 +261,17 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
                     </Swiper>
                 </View>*/}
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 5 }}>
-                    <Image
-                        style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center' }}
-                        // resizeMode={"stretch"}
-                        source={require('../../assets/png/HomeScreenBanner1.png')}
-                    />
-                    <Image
-                        style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center', marginLeft: 20 }}
-                        // resizeMode={"stretch"}
-                        source={require('../../assets/png/HomeScreenBanner2.png')}
-                    />
+                    {bannerImages?.map((el, index) => {
+                        return (
+                            <>
+                                <Image
+                                    style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center', marginRight: bannerImages.length - 1 == index ? 0 : 15 }}
+                                    // resizeMode={"stretch"}
+                                    source={{ uri: el?.imagePath }}
+                                />
+                            </>
+                        )
+                    })}
                 </ScrollView>
                 <View style={{ flexDirection: 'row', backgroundColor: 'white', height: 125, justifyContent: 'space-around', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => { navigation.navigate('ProductListScreen', { categoryName: "VEGETABLES" }) }} style={{ height: 120, width: 150, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
@@ -146,12 +318,15 @@ const HomeScreen = ({ getAllCategories, getCustomerDetails, categories, navigati
 
 const mapStateToProps = (state) => ({
     categories: state.home.categories,
+    bannerImages: state.home.bannerImages,
     config: state.config.config,
-    userLocation: state.location
+    userLocation: state.location,
+    homeScreenLocation: state.homeScreenLocation,
+    isAuthenticated: state.auth.isAuthenticated
 })
 
 
-export default connect(mapStateToProps, { getAllCategories, getCustomerDetails, onLogout })(HomeScreen)
+export default connect(mapStateToProps, { getAllCategories, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation, getCartItemsApi })(HomeScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

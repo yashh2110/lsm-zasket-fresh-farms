@@ -1,15 +1,18 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import axios from 'axios';
+import { Platform } from 'react-native';
+import { androidAppVersion, iosAppVersion } from '../../env';
 import axiosinstance from '../axios/service/api';
 import {
-    GET_CATEGORIES, USER_LOGGED_OUT, GET_CONFIG
+    GET_CATEGORIES, GET_CONFIG, SET_BANNER_IMAGES
 } from './types';
 
-//get config
-export const getConfig = (callback) => async dispatch => {
+//getV2Config
+export const getV2Config = (callback) => async dispatch => {
+    let appOS = Platform.OS == "ios" ? "ios" : "android"
+    let currentVersion = Platform.OS == "ios" ? iosAppVersion : androidAppVersion
     try {
-        const res = await axiosinstance.get('/config');
-        // alert(JSON.stringify(res.data, null, "      "))
+        const res = await axiosinstance.get('/v2/config', { params: { appOS: appOS, currentVersion: currentVersion } })
+        // alert(JSON.stringify(appOS, null, "      "))
         dispatch({
             type: GET_CONFIG,
             payload: res?.data
@@ -25,6 +28,16 @@ export const getConfig = (callback) => async dispatch => {
     }
 };
 
+//isPincodeServiceable
+export const isPincodeServiceable = (pincode, callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.get(`/regions/serviceable`, { params: { pincode: pincode } })
+        // alert(JSON.stringify(res.data, null, "      "))
+        callback(res, true)
+    } catch (err) {
+        callback(err, false)
+    }
+};
 
 
 // getAllCategories
@@ -40,6 +53,25 @@ export const getAllCategories = (callback) => async dispatch => {
     } catch (err) {
         dispatch({
             type: GET_CATEGORIES,
+            payload: []
+        });
+        callback(err, false)
+    }
+};
+
+// getAllBanners
+export const getAllBanners = (callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.get('/banners');
+        // alert(JSON.stringify(res.data, null, "      "))
+        dispatch({
+            type: SET_BANNER_IMAGES,
+            payload: res?.data
+        });
+        callback(res, true)
+    } catch (err) {
+        dispatch({
+            type: SET_BANNER_IMAGES,
             payload: []
         });
         callback(err, false)
@@ -101,8 +133,3 @@ export const getCustomerDetails = (callback) => async dispatch => {
     }
 }
 
-export const onLogout = () => async dispatch => {
-    dispatch({
-        type: USER_LOGGED_OUT
-    });
-}

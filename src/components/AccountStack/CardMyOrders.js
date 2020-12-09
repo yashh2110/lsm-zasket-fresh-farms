@@ -1,15 +1,13 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, SafeAreaView, FlatList } from 'react-native';
 import Theme from '../../styles/Theme';
-import { addToCart, updateCart, deleteCartItem } from '../../actions/cart'
 import { connect } from 'react-redux';
 import { Icon } from 'native-base';
 import Modal from 'react-native-modal';
 import moment from 'moment'
 
-const CardMyOrders = ({ item, navigation, addToCart, updateCart, cartItems, deleteCartItem }) => {
+const CardMyOrders = ({ item, navigation, cartItems, }) => {
     const [addButton, setAddButton] = useState(true)
-    const [count, setCount] = useState(1)
     const [isUpdate, setIsUpdate] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
     const [productItem, setProductItem] = useState([])
@@ -112,7 +110,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { addToCart, updateCart, deleteCartItem })(CardMyOrders)
+export default connect(mapStateToProps, {})(CardMyOrders)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

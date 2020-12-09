@@ -1,6 +1,6 @@
-import { } from './types'
 import axiosinstance from '../axios/service/api';
 import AsyncStorage from '@react-native-community/async-storage';
+import { Alert } from 'react-native';
 
 export const profileUpdate = async (payLoad, callback) => {
     try {
@@ -11,6 +11,9 @@ export const profileUpdate = async (payLoad, callback) => {
         callback(res, true)
     } catch (err) {
         callback(err, false)
+        if (__DEV__) {
+            Alert.alert(JSON.stringify(err.response, null, "     "))
+        }
         // Alert.alert(JSON.stringify(err.response.data, null, "     "))
     }
 }

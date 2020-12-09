@@ -12,14 +12,18 @@ import CardMyOrders from "./CardMyOrders";
 import Loader from "../common/Loader";
 
 
-const MyOrders = ({ navigation, getCustomerOrders }) => {
+const MyOrders = ({ route, navigation, getCustomerOrders }) => {
     const [orderDetails, setOrderDetails] = useState([])
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
 
     useEffect(() => {
-        initialFunction()
-    }, [])
+        const unsubscribe = navigation.addListener('focus', () => {
+            initialFunction()
+        });
+        return unsubscribe;
+    }, [navigation]);
+
 
     const initialFunction = async () => {
         getCustomerOrders((res, status) => {
@@ -41,14 +45,19 @@ const MyOrders = ({ navigation, getCustomerOrders }) => {
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"My Orders"} showSearch={false} />
-            <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false} refreshControl={
-                <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
-            }>
-                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")}</Text> */}
+            <View style={{ flex: 1, backgroundColor: '#F8F8F8' }} >
+                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(orderDetails, null, "       ")}</Text> */}
                 <FlatList
                     data={orderDetails}
                     renderItem={({ item }) =>
                         <CardMyOrders item={item} navigation={navigation} />
+                    }
+                    onRefresh={() => onRefresh()}
+                    refreshing={refresh}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refresh} onRefresh={onRefresh}
+                        />
                     }
                     ListEmptyComponent={() => {
                         return (
@@ -76,7 +85,7 @@ const MyOrders = ({ navigation, getCustomerOrders }) => {
                     }}
                 // keyExtractor={item => item?.id.toString()}
                 />
-            </ScrollView>
+            </View>
             {loading ?
                 <Loader />
                 : undefined}

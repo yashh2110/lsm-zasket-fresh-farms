@@ -1,11 +1,11 @@
 
 import LottieView from 'lottie-react-native';
-import { Button, Icon, Input, Item, Label, Text } from "native-base";
+import { Button, Icon, Input, Item, Label, Text, Toast } from "native-base";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, Image, ImageBackground, Linking, Keyboard, Platform, ScrollView, StyleSheet, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import { createNewCustomer } from '../../actions/auth';
+import { createNewCustomer, saveUserDetails, onLogin } from '../../actions/auth';
 import { setDarkMode } from "../../actions/dark";
 import Theme from "../../styles/Theme";
 import { Validation } from "../../utils/validate";
@@ -15,9 +15,9 @@ import RF from "react-native-responsive-fontsize";
 import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
-import { getConfig } from '../../actions/home'
+import { getV2Config } from '../../actions/home'
 
-const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWithProvider, isAuthenticated, getConfig }) => {
+const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserDetails, onLogin, loginWithProvider, isAuthenticated, getV2Config }) => {
 
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
@@ -25,7 +25,6 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWith
     const [nameErrorText, setNameErrorText] = useState("")
     const [loading, setLoading] = useState(false)
     const { mobileNumber, otp } = route.params;
-    const { signIn } = React.useContext(AuthContext);
 
     const validate = () => {
         let status = true
@@ -62,23 +61,28 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWith
             let payLoad = {
                 "name": name,
                 "otp": otp,
-                "userEmail": email,
+                "userEmail": email.toLowerCase(),
                 "userMobileNumber": mobileNumber
             }
             try {
                 await createNewCustomer(payLoad, (response, status) => {
-                    // Alert.alert(JSON.stringify(response, null, "     "))
+                    // Alert.alert(JSON.stringify(response?.response?.data?.description, null, "     "))
                     if (status) {
                         // Alert.alert(JSON.stringify(response));
-                        signIn(response?.data)
-                        // navigation.navigate('PincodeScreen')
-                        getConfig((res, status) => { })
+                        onLogin(response?.data)
+                        navigation.navigate('BottomTabRoute')
+                        getV2Config((res, status) => { })
                         setLoading(false)
                     } else {
                         setLoading(false)
                         // Alert.alert(response?.response?.data?.description);
                         if (response?.response?.data?.description == "Customer with details already exist!!. Please sign in") {
                             navigation.navigate("Login")
+                            Toast.show({
+                                text: "Customer with email or mobile number already exist!. Please sign in",
+                                buttonText: "Okay",
+                                type: "danger"
+                            })
                         }
                         if (response?.response?.data?.description == "OTP validation failed") {
                             Alert.alert(response?.response?.data?.description);
@@ -159,7 +163,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWith
                                 <View style={{ flex: 1 }}>
                                     <TextInput
                                         style={{ height: 40, }}
-                                        onChangeText={text => setEmail(text.toLowerCase())}
+                                        onChangeText={text => setEmail(text)}
                                         value={email}
                                         keyboardType={"email-address"}
                                         placeholder={"Email Address"}
@@ -182,7 +186,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, loginWith
                             {loading ?
                                 <ActivityIndicator style={{ marginTop: "10%", }} color={Theme.Colors.primary} size="large" />
                                 :
-                                <Button full style={{ marginTop: "10%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text>Sign Up</Text></Button>}
+                                <Button full style={{ marginTop: "10%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onSubmit()}><Text style={{ textTransform: 'capitalize' }}>Sign Up</Text></Button>}
                             <Text style={{ marginTop: "10%", fontSize: 12, color: "#727272", textAlign: 'center' }}>By proceeding to create your account you are agreeing to our <Text onPress={() => handleClick("TERMS")} style={{ fontWeight: 'bold', fontSize: 13 }}>Terms of Service</Text> and <Text onPress={() => handleClick("PRIVACY")} style={{ fontWeight: 'bold', fontSize: 13 }}>Privacy Policy</Text></Text>
                         </View>
 
@@ -200,7 +204,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, createNewCustomer, getConfig })(EmailScreen)
+export default connect(mapStateToProps, { setDarkMode, saveUserDetails, onLogin, createNewCustomer, getV2Config })(EmailScreen)
 
 const styles = StyleSheet.create({
     container: {

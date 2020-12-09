@@ -13,10 +13,12 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { CheckBox } from 'react-native-elements'
 import { addNewCustomerAddress, updateUserAddress, getAllUserAddress } from '../../actions/map'
 import { addLocation } from '../../actions/location'
+import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
+
 import { connect } from 'react-redux';
 import FeatherIcons from "react-native-vector-icons/Feather"
 import AntDesignIcons from "react-native-vector-icons/AntDesign"
-import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
+import { isPincodeServiceable, } from '../../actions/home'
 
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
@@ -28,7 +30,7 @@ const initialRegion = {
     longitudeDelta,
 }
 
-class MyMapView extends React.Component {
+class MapScreenGrabPincode extends React.Component {
 
     map = null;
 
@@ -76,57 +78,23 @@ class MyMapView extends React.Component {
 
 
     async componentDidMount() {
-        const { fromScreen } = this.props.route?.params;
-        await this.setState({ mode: fromScreen })
-        if (fromScreen == "EDIT_SCREEN") {
-            await this.setState({ modalVisible: false })
-            const { item } = this.props.route?.params;
-            // alert(JSON.stringify(item, null, "        "))
-            const region = {
-                latitude: item?.lat,
-                longitude: item?.lon,
-                latitudeDelta,
-                longitudeDelta,
-            };
-            await this.setRegion(region);
-            if (item?.saveAs == "Home") this.setState({ homeCheck: true })
-            if (item?.saveAs == "Office") this.setState({ officeCheck: true })
-            if (item?.saveAs == "Others") this.setState({ othersCheck: true })
-            await this.setState({
-                addressId: item?.id,
-                saveAs: item?.saveAs,
-                pincode: item?.pincode,
-                landMark: item?.landmark,
-                name: item?.recepientName,
-                mobileNumber: item?.recepientMobileNumber,
-                houseNumber: item?.houseNo
-            })
-        } else {
-            this.setState({ homeCheck: true, saveAs: 'Home' })
-            let userDetails = await AsyncStorage.getItem('userDetails');
-            let parsedUserDetails = await JSON.parse(userDetails);
-            await this.setState({
-                name: parsedUserDetails?.customerDetails?.name,
-                mobileNumber: parsedUserDetails?.customerDetails?.userMobileNumber
-            })
-            this.getCurrentPosition();
-            await this.setState({ savedAddressLoading: true, })
-            await this.props.getAllUserAddress(async (response, status) => {
-                if (status) {
-                    let newArray = []
-                    await response?.data?.forEach((el, index) => {
-                        if (el?.isActive) newArray.push(el)
-                    })
-                    // Alert.alert(JSON.stringify(response, null, "   "))
-                    this.setState({ savedAddressLoading: false })
-                    this.setState({ savedAddress: newArray })
+        this.getCurrentPosition();
+        await this.setState({ savedAddressLoading: true, })
+        await this.props.getAllUserAddress(async (response, status) => {
+            this.setState({ savedAddressLoading: false })
+            if (status) {
+                let newArray = []
+                await response?.data?.forEach((el, index) => {
+                    if (el?.isActive) newArray.push(el)
+                })
+                // Alert.alert(JSON.stringify(response, null, "   "))
+                this.setState({ savedAddress: newArray })
 
-                } else {
-                    // Alert.alert(JSON.stringify(response?.data, null, "   "))
-                    this.setState({ savedAddressLoading: false })
-                }
-            })
-        }
+            } else {
+                // Alert.alert(JSON.stringify(response?.data, null, "   "))
+                this.setState({ savedAddressLoading: false })
+            }
+        })
     }
 
     getCurrentPosition() {
@@ -180,7 +148,7 @@ class MyMapView extends React.Component {
                 response.json().then(async (json) => {
                     // console.warn(json)
                     let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                    // alert(JSON.stringify(postal_code, null, "  "))
+                    // alert(JSON.stringify(json?.results?.[1]?.address_components?.find(el => el.types.find(o => o == "political")), null, "  "))
                     await this.setLocation(json?.results?.[0]?.formatted_address, this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
                     await this.setState({ addressLoading: false })
                 });
@@ -214,145 +182,31 @@ class MyMapView extends React.Component {
     };
 
     onRegionChangeComplete = async (region) => {
+        this.setState({ errorMessageBanner: false })
         await this.setState({
             region: region
         })
         await this.getCurrentLocation()
     };
 
-    validate = () => {
-        let status = true
-
-        if (this.state.name == undefined || this.state.name.trim() == "") {
-            this.setState({ nameErrorText: "Name is required" })
-            status = false
-        }
-        if (this.state.mobileNumber == undefined || this.state.mobileNumber.trim() == "") {
-            this.setState({ mobileNumberErrorText: "Mobile number is required" })
-            status = false
-        }
-
-        return status
-    }
 
     onSubmit = async () => {
-        if (this.validate()) {
-            await this.setState({ loading: true })
-            let payload;
-            payload = {
-                "addressLine1": this.state.address,
-                "houseNo": this.state.houseNumber,
-                "pincode": this.state.pincode,
-                "isActive": true,
-                "landmark": this.state.landMark,
-                "lat": this.state.latitude,
-                "lon": this.state.longitude,
-                "recepientMobileNumber": this.state.mobileNumber.includes("+91") ? this.state.mobileNumber : "+91" + this.state.mobileNumber,
-                "recepientName": this.state.name,
-                "saveAs": this.state.saveAs
-            }
-            // console.warn(payload)
-            const { fromScreen } = this.props.route?.params;
-            await this.setState({ mode: fromScreen })
-            if (fromScreen == "EDIT_SCREEN") {
-                await this.props.updateUserAddress(this.state.addressId, payload, async (response, status) => {
-                    if (status) {
-                        this.props.navigation.goBack()
-                    } else {
-                        // alert(JSON.stringify(response?.data, null, "      "))
-                        this.setState({ errorMessage: response?.data })
-                        if (response?.data == "Cannot update address to not serviceable Pincode") {
-                            this.setState({ errorMessageBanner: true })
-                            await this.setState({ loading: false })
-                        }
-                    }
-                })
+        await this.props.addHomeScreenLocation({
+            "addressLine_1": this.state.address,
+            "pincode": this.state.pincode,
+            "lat": this.state.latitude,
+            "lon": this.state.longitude,
+        })
+        await this.props.isPincodeServiceable(this.state.pincode, (res, status) => {
+            if (status) {
+                this.props.navigation.goBack()
             } else {
-                await this.props.addNewCustomerAddress(payload, async (response, status) => {
-                    if (status) {
-                        // Alert.alert(JSON.stringify(response, null, "   "))
-
-                        let location = {
-                            "id": response?.data?.id,
-                            "addressLine_1": response?.data?.addressLine_1,
-                            "pincode": response?.data?.pincode,
-                            "isActive": true,
-                            "landmark": response?.data?.landMark,
-                            "lat": response?.data?.lat,
-                            "lon": response?.data?.lon,
-                            "recepientMobileNumber": response?.data?.recepientMobileNumber,
-                            "recepientName": response?.data?.recepientName,
-                            "saveAs": response?.data?.saveAs
-                        }
-
-                        this.props.addLocation(location)
-                        this.props.addHomeScreenLocation({
-                            "addressLine_1": response?.data?.addressLine_1,
-                            "pincode": response?.data?.pincode,
-                            "lat": response?.data?.lat,
-                            "lon": response?.data?.lon,
-                        })
-                        // await AsyncStorage.setItem("location", JSON.stringify(location));
-                        this.setState({ loading: false })
-                        if (this.state.mode === "ON_INITIAL") {
-                            this.props.navigation.navigate('SetAuthContext', { userLocation: location }) // if you send it as null it wont navigate
-                        } else {
-                            this.props.navigation.goBack()
-                        }
-                    } else {
-                        // Alert.alert(response?.data)
-                        this.setState({ errorMessage: response?.data })
-                        if (response?.data == "Pincode is not serviceable") {
-                            this.setState({ errorMessageBanner: true })
-                        }
-                        // this.refs._scrollView.scrollTo(0);
-                        this.setState({ loading: false })
-                    }
-                })
+                this.setState({ errorMessageBanner: true })
             }
-
-        }
+        })
     }
 
-    onPressCheckbox = (option) => {
-        if (option === "homeCheck") {
-            this.setState({
-                homeCheck: true,
-                officeCheck: false,
-                othersCheck: false,
-                saveAs: "Home"
-            })
-        }
-        if (option === "officeCheck") {
-            this.setState({
-                homeCheck: false,
-                officeCheck: true,
-                othersCheck: false,
-                saveAs: "Office"
-            })
-        }
-        if (option === "othersCheck") {
-            this.setState({
-                homeCheck: false,
-                officeCheck: false,
-                othersCheck: true,
-                saveAs: "Others"
-            })
-        }
-    }
 
-    // onPressDeliverFor = (option) => {
-    //     if (option === "self") {
-    //         this.setState({
-    //             deliverFor: "self"
-    //         })
-    //     }
-    //     if (option === "others") {
-    //         this.setState({
-    //             deliverFor: "others"
-    //         })
-    //     }
-    // }
 
     renderSeparator = () => {
         return (
@@ -382,11 +236,7 @@ class MyMapView extends React.Component {
             lon: item?.lon,
             pincode: item?.pincode
         })
-        if (this.state.mode === "ON_INITIAL") {
-            this.props.navigation.navigate('SetAuthContext', { userLocation: payload }) // if you send it as null it wont navigate
-        } else {
-            this.props.navigation.goBack()
-        }
+        this.props.navigation.goBack()
     }
 
     render() {
@@ -485,129 +335,9 @@ class MyMapView extends React.Component {
                                         <Text style={{ fontSize: 16 }}>{this.state.address}</Text>
                                     </View>
                                 }
-                                {/* <Text style={{ color: "red", fontSize: 12, marginTop: 5, fontWeight: 'bold' }}>{this.state.errorMessage}</Text> */}
-                                {/* <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
-                            <View style={{ flexDirection: 'row', justifyContent: "space-around", marginTop: 5, }}>
-                                <TouchableOpacity onPress={() => this.onPressDeliverFor('self')} style={{ justifyContent: 'center', borderColor: this.state.deliverFor == "self" ? Theme.Colors.primary : "#EFEFEF", borderWidth: 2, borderRadius: 6, justifyContent: 'center', alignItems: 'center', width: "40%", padding: 15 }}>
-                                    <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Self</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity onPress={() => this.onPressDeliverFor('others')} style={{ justifyContent: 'center', borderColor: this.state.deliverFor == "others" ? Theme.Colors.primary : "#EFEFEF", borderWidth: 2, borderRadius: 6, justifyContent: 'center', alignItems: 'center', width: "40%", padding: 15 }}>
-                                    <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Others</Text>
-                                </TouchableOpacity>
-                            </View> */}
-                                <>
-                                    <View style={{ marginTop: 10 }}>
-                                        {/* <Text style={{ color: "#727272", fontSize: 12 }}>Name</Text> */}
-                                        <TextInput
-                                            style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
-                                            onChangeText={text => this.setState({
-                                                name: text
-                                            })}
-                                            placeholder="Name"
-                                            value={this.state.name}
-                                            onTouchStart={() => {
-                                                this.setState({ nameErrorText: "" })
-                                            }}
-                                        />
-                                        {this.state.nameErrorText ?
-                                            <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.nameErrorText}</Text>
-                                            : undefined}
-                                    </View>
-                                    <View style={{ marginTop: 10 }}>
-                                        {/* <Text style={{ color: "#727272", fontSize: 12 }}>Mobile Number</Text> */}
-                                        <TextInput
-                                            style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
-                                            onChangeText={text => this.setState({
-                                                mobileNumber: text
-                                            })}
-                                            placeholder="Mobile Number"
-                                            value={this.state.mobileNumber}
-                                            keyboardType={"number-pad"}
-                                            onTouchStart={() => {
-                                                this.setState({ mobileNumberErrorText: "" })
-                                            }}
-                                        />
-                                        {this.state.mobileNumberErrorText ?
-                                            <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.mobileNumberErrorText}</Text>
-                                            : undefined}
-                                    </View>
-                                </>
-                                <View style={{ marginTop: 10 }}>
-                                    {/* <Text style={{ color: "#727272", fontSize: 12 }}>House No/ Flat No/Floor/Building</Text> */}
-                                    <TextInput
-                                        style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
-                                        onChangeText={text => this.setState({
-                                            houseNumber: text
-                                        })}
-                                        placeholder="House No/ Flat No/Floor/Building"
-                                        value={this.state.houseNumber}
-                                    />
-                                </View>
-                                <View style={{ marginTop: 10 }}>
-                                    {/* <Text style={{ color: "#727272", fontSize: 12 }}>Landmark</Text> */}
-                                    <TextInput
-                                        style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
-                                        onChangeText={text => this.setState({
-                                            landMark: text
-                                        })}
-                                        placeholder="Landmark"
-                                        value={this.state.landMark}
-                                    />
-                                </View>
-                                <View style={{ marginTop: 10 }}>
-                                    {/* <Text style={{ color: "#727272", fontSize: 12 }}>Landmark</Text> */}
-                                    <TextInput
-                                        style={{ height: 40, borderColor: this.state.errorMessageBanner ? 'red' : '#D8D8D8', borderBottomWidth: 1 }}
-                                        onChangeText={text => this.setState({
-                                            pincode: text
-                                        })}
-                                        placeholder="Pincode"
-                                        value={this.state.pincode}
-                                        onTouchStart={() => this.setState({ errorMessageBanner: false })}
-                                    />
-                                </View>
-                                <View style={{ marginTop: 10 }}>
-                                    <Text style={{ color: "#727272", fontSize: 12 }}>Save as</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <CheckBox
-                                        // center
-                                        containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
-                                        title='Home'
-                                        checkedIcon='dot-circle-o'
-                                        textStyle={{ fontSize: 13 }}
-                                        uncheckedIcon='circle-o'
-                                        checked={this.state.homeCheck}
-                                        onPress={() => this.onPressCheckbox('homeCheck')}
-                                        checkedColor={Theme.Colors.primary}
-                                    />
-                                    <CheckBox
-                                        // center
-                                        containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
-                                        title='Office'
-                                        checkedIcon='dot-circle-o'
-                                        uncheckedIcon='circle-o'
-                                        textStyle={{ fontSize: 13 }}
-                                        checked={this.state.officeCheck}
-                                        onPress={() => this.onPressCheckbox('officeCheck')}
-                                        checkedColor={Theme.Colors.primary}
-                                    />
-                                    <CheckBox
-                                        // center
-                                        containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
-                                        title='Others'
-                                        checkedIcon='dot-circle-o'
-                                        uncheckedIcon='circle-o'
-                                        textStyle={{ fontSize: 13 }}
-                                        checked={this.state.othersCheck}
-                                        onPress={() => this.onPressCheckbox('othersCheck')}
-                                        checkedColor={Theme.Colors.primary}
-                                    />
-                                </View>
                             </View>
                         </ScrollView>
-                        <Button full style={{ backgroundColor: Theme.Colors.primary, }} onPress={() => this.onSubmit()}><Text>Save & continue</Text></Button>
+                        <Button full style={{ backgroundColor: Theme.Colors.primary, }} onPress={() => this.onSubmit()}><Text style={{ textTransform: 'capitalize' }}>Confirm Location</Text></Button>
                     </KeyboardAvoidingView>
                     {/* <SafeAreaView style={styles.footer}>
                         <Text style={styles.region}>{JSON.stringify(region, null, 2)}</Text>
@@ -743,11 +473,11 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { addNewCustomerAddress, getAllUserAddress, updateUserAddress, addLocation, addHomeScreenLocation })(MyMapView)
+export default connect(mapStateToProps, { isPincodeServiceable, addHomeScreenLocation, addNewCustomerAddress, getAllUserAddress, updateUserAddress, addLocation, addHomeScreenLocation })(MapScreenGrabPincode)
 
 const styles = StyleSheet.create({
     map: {
-        height: "40%"
+        height: "70%"
     },
     // markerFixed: {
     //     left: '50%',
