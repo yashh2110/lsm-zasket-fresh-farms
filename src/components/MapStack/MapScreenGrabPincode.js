@@ -335,6 +335,18 @@ class MapScreenGrabPincode extends React.Component {
                                         <Text style={{ fontSize: 16 }}>{this.state.address}</Text>
                                     </View>
                                 }
+                                <View style={{ marginTop: 10 }}>
+                                    <Text style={{ color: "#727272", fontSize: 12 }}>Pincode</Text>
+                                    <TextInput
+                                        style={{ height: 40, borderColor: this.state.errorMessageBanner ? 'red' : '#D8D8D8', borderBottomWidth: 1 }}
+                                        onChangeText={text => this.setState({
+                                            pincode: text
+                                        })}
+                                        placeholder="Pincode"
+                                        value={this.state.pincode}
+                                        onTouchStart={() => this.setState({ errorMessageBanner: false })}
+                                    />
+                                </View>
                             </View>
                         </ScrollView>
                         <Button full style={{ backgroundColor: Theme.Colors.primary, }} onPress={() => this.onSubmit()}><Text style={{ textTransform: 'capitalize' }}>Confirm Location</Text></Button>
@@ -469,7 +481,8 @@ class MapScreenGrabPincode extends React.Component {
 
 const mapStateToProps = (state) => ({
     darkMode: state.dark,
-    userLocation: state.location
+    userLocation: state.location,
+    homeScreenLocation: state.homeScreenLocation,
 })
 
 

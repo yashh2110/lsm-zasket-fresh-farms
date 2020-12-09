@@ -40,7 +40,7 @@ const AppContainer = ({ darkMode, getV2Config }) => {
                         if (res?.data?.androidForceUpdate) {
                             setUpdateModal(true)
                         } else {
-                            alert("A new version of app is available in Playstore")
+                            // alert("A new version of app is available in Playstore")
                         }
                     }
                 }
@@ -49,7 +49,7 @@ const AppContainer = ({ darkMode, getV2Config }) => {
                         if (res?.data?.iosForceUpdate) {
                             setUpdateModal(true)
                         } else {
-                            alert("A new version of app is available in App Store")
+                            // alert("A new version of app is available in App Store")
                         }
                     }
                 }

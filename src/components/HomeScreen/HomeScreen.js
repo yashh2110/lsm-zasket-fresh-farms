@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState, useLayoutEffect } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter, Linking } from 'react-native';
 import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
@@ -12,11 +12,25 @@ import Loader from '../common/Loader';
 import DarkModeToggle from '../common/DarkModeToggle';
 import AsyncStorage from '@react-native-community/async-storage';
 import Geolocation from '@react-native-community/geolocation';
-import { MapApiKey } from '../../../env';
+import { androidAppVersion, iosAppVersion, MapApiKey } from '../../../env';
 import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
 import { getCartItemsApi } from '../../actions/cart'
+import FeatherIcons from "react-native-vector-icons/Feather"
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
+    const [showAppUpdate, setShowAppUpdate] = useState(false)
+    useEffect(() => {
+        if (Platform.OS == "android") {
+            if (config?.androidAppVersion !== androidAppVersion) {
+                setShowAppUpdate(true)
+            }
+        }
+        if (Platform.OS == "ios") {
+            if (config?.iosAppVersion !== iosAppVersion) {
+                setShowAppUpdate(true)
+            }
+        }
+    }, [config])
 
     useEffect(() => {
         const _bootstrapAsync = async () => {
@@ -206,7 +220,27 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
         navigation.navigate("OnBoardScreen")
         await onLogout()
     }
-
+    const onPressUpdate = () => {
+        if (Platform.OS == "ios") {
+            Linking.canOpenURL("itms-apps://itunes.apple.com/us/app/apple-store/id1541056118?mt=8").then(supported => {
+                if (supported) {
+                    Linking.openURL("itms-apps://itunes.apple.com/us/app/apple-store/id1541056118?mt=8");
+                } else {
+                    Linking.openURL("https://apps.apple.com/in/app/zasket/id1541056118");
+                    console.warn("Don't know how to open URI");
+                }
+            });
+        }
+        if (Platform.OS == "android") {
+            Linking.canOpenURL("market://details?id=com.zasket").then(supported => {
+                if (supported) {
+                    Linking.openURL("market://details?id=com.zasket");
+                } else {
+                    console.warn("Don't know how to open URI");
+                }
+            });
+        }
+    }
     return (
         <>
             <ScrollView style={{ flex: 1, backgroundColor: 'white' }} showsVerticalScrollIndicator={false}
@@ -308,6 +342,23 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
 
                 {/* <Text>{JSON.stringify(sectionlistData, null, "      ")}</Text> */}
             </ScrollView>
+            {showAppUpdate ?
+                <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
+                    <View style={{ flex: 1, paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>
+                        <FeatherIcons name="info" color={'#C8C8C8'} size={18} />
+                        <Text style={{}}>  App update available</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => { setShowAppUpdate(false) }} style={{
+                        backgroundColor: '#F5F5F5', width: 25, height: 25, borderRadius: 50, position: 'absolute', right: 10, top: -10, zIndex: 1, elevation: 5, justifyContent: 'center', alignItems: 'center', shadowColor: "#000", shadowOffset: { width: 0, height: 1, }, shadowOpacity: 0.22, shadowRadius: 2.22,
+                    }}>
+                        <Icon name="close" style={{ color: '#AAAAAA', fontSize: 20 }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => { onPressUpdate() }} style={{ margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center", }}>
+                        <Text style={{ fontSize: 14, color: Theme.Colors.primary, fontWeight: 'bold', marginRight: 10 }}>UPDATE NOW</Text>
+                    </TouchableOpacity>
+                </View>
+                : undefined
+            }
             {loading ?
                 <Loader />
                 : undefined
