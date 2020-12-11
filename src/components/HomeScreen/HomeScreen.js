@@ -21,13 +21,18 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
     const [showAppUpdate, setShowAppUpdate] = useState(false)
     useEffect(() => {
         if (Platform.OS == "android") {
-            if (config?.androidAppVersion !== androidAppVersion) {
-                setShowAppUpdate(true)
+            if (config?.androidAppVersion !== undefined) {
+                if (config?.androidAppVersion !== androidAppVersion) {
+                    setShowAppUpdate(true)
+                }
             }
         }
         if (Platform.OS == "ios") {
-            if (config?.iosAppVersion !== iosAppVersion) {
-                setShowAppUpdate(true)
+            // alert(config?.iosAppVersion + "     " + iosAppVersion)
+            if (config?.iosAppVersion !== undefined) {
+                if (config?.iosAppVersion !== iosAppVersion) {
+                    setShowAppUpdate(true)
+                }
             }
         }
     }, [config])

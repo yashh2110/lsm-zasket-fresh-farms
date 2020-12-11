@@ -56,7 +56,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                 setSlotsArray([])
             }
         })
-    }, [])
+    }, [userLocation])
 
     useEffect(() => {
         // alert(JSON.stringify(slotsArray, null, "         "))
