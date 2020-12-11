@@ -133,35 +133,57 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
     }
 
     const onPressMakePayment = async () => {
-        if (true) {
+        if (config?.enableCOD) {
             setPaymentSelectionActionScreen(true)
         } else {
-            let itemCreateRequests = []
-            await cartItems?.forEach((el, index) => {
-                itemCreateRequests.push({
-                    "itemId": el?.id,
-                    "quantity": el?.count,
-                    "totalPrice": el?.discountedPrice * el?.count,
-                    "unitPrice": el?.discountedPrice
-                })
+            onSelectPaymentMethod("PREPAID")
+        }
+    }
+
+    const onSelectPaymentMethod = async (option) => {
+        let itemCreateRequests = []
+        await cartItems?.forEach((el, index) => {
+            itemCreateRequests.push({
+                "itemId": el?.id,
+                "quantity": el?.count,
+                "totalPrice": el?.discountedPrice * el?.count,
+                "unitPrice": el?.discountedPrice
             })
-            let userLocation = await AsyncStorage.getItem('location');
-            let parsedUserLocation = await JSON.parse(userLocation);
-            let payload = {
-                "billingAddressId": parsedUserLocation?.id,
-                "deliverySlotId": slot?.id,
-                "itemCreateRequests": itemCreateRequests,
-                "nextDayBuffer": nextDayBuffer,
-                "slotEndHours": slot?.endHours,
-                "slotStartHours": slot?.startHours,
-                "totalPrice": totalCartValue,
-                "marketPrice": marketPrice,
-                "offerId": selectedOffer?.offer?.id > 0 ? selectedOffer?.offer?.id : undefined,
-                "offerPrice": offerPrice > 0 ? offerPrice : undefined,
+        })
+        let userLocation = await AsyncStorage.getItem('location');
+        let parsedUserLocation = await JSON.parse(userLocation);
+        let payload = {
+            "billingAddressId": parsedUserLocation?.id,
+            "deliverySlotId": slot?.id,
+            "itemCreateRequests": itemCreateRequests,
+            "nextDayBuffer": nextDayBuffer,
+            "slotEndHours": slot?.endHours,
+            "slotStartHours": slot?.startHours,
+            "totalPrice": totalCartValue,
+            "marketPrice": marketPrice,
+            "offerId": selectedOffer?.offer?.id > 0 ? selectedOffer?.offer?.id : undefined,
+            "offerPrice": offerPrice > 0 ? offerPrice : undefined,
+        }
+        if (option === "COD") {
+            let codPayload = {
+                ...payload,
+                "paymentMethod": "COD"
             }
+            addOrder(codPayload, async (res, status) => {
+                if (status) {
+                    onClearCart()
+                    navigation.pop()
+                    navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                }
+            })
+        } else if (option == "PREPAID") {
             // alert(JSON.stringify(payload, null, "     "))
+            let prepaidPayload = {
+                ...payload,
+                "paymentMethod": "PREPAID"
+            }
             console.warn(JSON.stringify(payload, null, "     "))
-            addOrder(payload, async (res, status) => {
+            addOrder(prepaidPayload, async (res, status) => {
                 if (status) {
                     console.warn(JSON.stringify(res?.data, null, "        "))
                     let userDetails = await AsyncStorage.getItem('userDetails');
@@ -217,10 +239,6 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                 }
             })
         }
-    }
-
-    const onPressCashOnDelivery = async () => {
-
     }
 
     return (
@@ -399,13 +417,16 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                             <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Select payment method</Text>
                             <Text style={{ color: '#727272', marginTop: 10 }}>Two easy ways to make payment</Text>
                         </View>
-                        <Button full style={{ marginTop: "5%", backgroundColor: Theme.Colors.primary, borderRadius: 5, marginHorizontal: 20, }} onPress={() => { }}><Text style={{ textTransform: 'capitalize', color: 'white', fontSize: 16 }}>Make Online Payment </Text></Button>
+                        <Button full style={{ marginTop: "5%", backgroundColor: Theme.Colors.primary, borderRadius: 5, marginHorizontal: 20, }} onPress={() => {
+                            setPaymentSelectionActionScreen(false)
+                            onSelectPaymentMethod("PREPAID")
+                        }}><Text style={{ textTransform: 'capitalize', color: 'white', fontSize: 16 }}>Make Online Payment </Text></Button>
                         <Image
                             style={{ alignSelf: 'flex-end', width: 100, height: 30, marginRight: 20 }}
                             resizeMode="contain"
                             source={require('../../assets/png/paymentImages.png')}
                         />
-                        <Button full style={{ marginTop: "5%", backgroundColor: "white", borderRadius: 5, marginHorizontal: 20, borderWidth: 1, borderColor: Theme.Colors.primary }} onPress={() => { onPressCashOnDelivery() }}><Text style={{ textTransform: 'capitalize', color: Theme.Colors.primary, fontSize: 16 }}>Cash on delivery </Text></Button>
+                        <Button full style={{ marginTop: "5%", backgroundColor: "white", borderRadius: 5, marginHorizontal: 20, borderWidth: 1, borderColor: Theme.Colors.primary }} onPress={() => { onSelectPaymentMethod("COD") }}><Text style={{ textTransform: 'capitalize', color: Theme.Colors.primary, fontSize: 16 }}>Cash on delivery </Text></Button>
                     </ScrollView>
                 </SafeAreaView>
             </Modal>
