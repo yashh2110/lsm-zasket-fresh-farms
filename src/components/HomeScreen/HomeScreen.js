@@ -12,7 +12,7 @@ import Loader from '../common/Loader';
 import DarkModeToggle from '../common/DarkModeToggle';
 import AsyncStorage from '@react-native-community/async-storage';
 import Geolocation from '@react-native-community/geolocation';
-import { androidAppVersion, iosAppVersion, MapApiKey } from '../../../env';
+import { appVersion, MapApiKey } from '../../../env';
 import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
 import { getCartItemsApi } from '../../actions/cart'
 import FeatherIcons from "react-native-vector-icons/Feather"
@@ -20,19 +20,9 @@ import LocationServicesDialogBox from "react-native-android-location-services-di
 const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
     const [showAppUpdate, setShowAppUpdate] = useState(false)
     useEffect(() => {
-        if (Platform.OS == "android") {
-            if (config?.androidAppVersion !== undefined) {
-                if (config?.androidAppVersion !== androidAppVersion) {
-                    setShowAppUpdate(true)
-                }
-            }
-        }
-        if (Platform.OS == "ios") {
-            // alert(config?.iosAppVersion + "     " + iosAppVersion)
-            if (config?.iosAppVersion !== undefined) {
-                if (config?.iosAppVersion !== iosAppVersion) {
-                    setShowAppUpdate(true)
-                }
+        if (config?.appVersion !== undefined) {
+            if (config?.appVersion !== appVersion) {
+                setShowAppUpdate(true)
             }
         }
     }, [config])

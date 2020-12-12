@@ -9,7 +9,7 @@ import Collapsible from 'react-native-collapsible';
 import NoInternetModal from './components/common/NoInternetModal';
 import NetInfo from "@react-native-community/netinfo";
 import { getV2Config } from '../src/actions/home'
-import { androidAppVersion, iosAppVersion } from "../env";
+import { appVersion } from "../env";
 import UpdateModal from "./components/common/UpdateModal";
 import SplashScreen from 'react-native-splash-screen'
 
@@ -35,22 +35,11 @@ const AppContainer = ({ darkMode, getV2Config }) => {
         getV2Config((res, status) => {
             // alert(JSON.stringify(res.data, null, "      "))
             if (status) {
-                if (Platform.OS == "android") {
-                    if (res?.data?.androidAppVersion !== androidAppVersion) {
-                        if (res?.data?.androidForceUpdate) {
-                            setUpdateModal(true)
-                        } else {
-                            // alert("A new version of app is available in Playstore")
-                        }
-                    }
-                }
-                if (Platform.OS == "ios") {
-                    if (res?.data?.iosAppVersion !== iosAppVersion) {
-                        if (res?.data?.iosForceUpdate) {
-                            setUpdateModal(true)
-                        } else {
-                            // alert("A new version of app is available in App Store")
-                        }
+                if (res?.data?.appVersion !== appVersion) {
+                    if (res?.data?.appForceUpdate) {
+                        setUpdateModal(true)
+                    } else {
+                        // alert("A new version of app is available in Playstore")
                     }
                 }
             } else {
