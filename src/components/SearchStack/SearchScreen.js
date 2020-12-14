@@ -118,7 +118,7 @@ const SearchScreen = ({ navigation, searchItems }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            {/* <Text>{JSON.stringify(result, null, "       ")}</Text> */}
+            {/* <Text>{JSON.stringify(result, null, "       ")} </Text> */}
             <FlatList
                 data={result}
                 renderItem={({ item }) => (

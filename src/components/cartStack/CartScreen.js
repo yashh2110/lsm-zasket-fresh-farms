@@ -134,7 +134,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
             <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false} refreshControl={
                 <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
             }>
-                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")}</Text> */}
+                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")} </Text> */}
                 {cartItems.length > 0 ?
                     <>
                         {userLocation?.addressLine_1 ?
@@ -174,7 +174,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                             <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Change</Text>
                                         </TouchableOpacity>
                                     </View>
-                                    <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1}</Text>
+                                    <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1} </Text>
                                 </View>
                             </View>
                             : undefined
@@ -189,7 +189,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                             source={require('../../assets/png/coupon.png')}
                                         />
                                         <View style={{ flex: 1 }}>
-                                            <Text style={{ fontSize: 14, color: '#39BE50' }}>{selectedOffer?.offer?.displayName}</Text>
+                                            <Text style={{ fontSize: 14, color: '#39BE50' }}>{selectedOffer?.offer?.displayName} </Text>
                                             <Text style={{ fontSize: 12, color: '#727272' }}>Coupon applied on the bill</Text>
                                         </View>
                                         <TouchableOpacity onPress={() => { removeOffer() }} style={{ justifyContent: 'center', alignItems: 'center', height: 50, width: 50 }}>
@@ -246,7 +246,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                             <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                                 <Text style={{ color: '#727272' }}>Item Total</Text>
-                                <Text style={{}}>₹ {(totalCartValue).toFixed(2)}</Text>
+                                <Text style={{}}>₹ {(totalCartValue).toFixed(2)} </Text>
                             </View>
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
@@ -258,7 +258,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                         <Text style={{ color: '#35B332' }}>Coupon Discount</Text>
-                                        <Text style={{ color: "#35B332", }}>- ₹{(totalCartValue - offerPrice).toFixed(2)}</Text>
+                                        <Text style={{ color: "#35B332", }}>- ₹{(totalCartValue - offerPrice).toFixed(2)} </Text>
                                     </View>
                                 </>
                                 : undefined}
@@ -311,7 +311,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
             {cartItems.length > 0 ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
                         <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
                             <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
                         </TouchableOpacity>

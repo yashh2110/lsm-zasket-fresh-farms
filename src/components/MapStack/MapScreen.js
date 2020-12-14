@@ -482,10 +482,10 @@ class MyMapView extends React.Component {
                                             style={{ width: 30, height: 30, marginLeft: -5 }}
                                             source={require('../../assets/png/locationIcon.png')}
                                         />
-                                        <Text style={{ fontSize: 16 }}>{this.state.address}</Text>
+                                        <Text style={{ fontSize: 16 }}>{this.state.address} </Text>
                                     </View>
                                 }
-                                {/* <Text style={{ color: "red", fontSize: 12, marginTop: 5, fontWeight: 'bold' }}>{this.state.errorMessage}</Text> */}
+                                {/* <Text style={{ color: "red", fontSize: 12, marginTop: 5, fontWeight: 'bold' }}>{this.state.errorMessage} </Text> */}
                                 {/* <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
                             <View style={{ flexDirection: 'row', justifyContent: "space-around", marginTop: 5, }}>
                                 <TouchableOpacity onPress={() => this.onPressDeliverFor('self')} style={{ justifyContent: 'center', borderColor: this.state.deliverFor == "self" ? Theme.Colors.primary : "#EFEFEF", borderWidth: 2, borderRadius: 6, justifyContent: 'center', alignItems: 'center', width: "40%", padding: 15 }}>
@@ -511,7 +511,7 @@ class MyMapView extends React.Component {
                                             }}
                                         />
                                         {this.state.nameErrorText ?
-                                            <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.nameErrorText}</Text>
+                                            <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.nameErrorText} </Text>
                                             : undefined}
                                     </View>
                                     <View style={{ marginTop: 10 }}>
@@ -529,7 +529,7 @@ class MyMapView extends React.Component {
                                             }}
                                         />
                                         {this.state.mobileNumberErrorText ?
-                                            <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.mobileNumberErrorText}</Text>
+                                            <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.mobileNumberErrorText} </Text>
                                             : undefined}
                                     </View>
                                 </>
@@ -610,7 +610,7 @@ class MyMapView extends React.Component {
                         <Button full style={{ backgroundColor: Theme.Colors.primary, }} onPress={() => this.onSubmit()}><Text>Save & continue</Text></Button>
                     </KeyboardAvoidingView>
                     {/* <SafeAreaView style={styles.footer}>
-                        <Text style={styles.region}>{JSON.stringify(region, null, 2)}</Text>
+                        <Text style={styles.region}>{JSON.stringify(region, null, 2)} </Text>
                     </SafeAreaView> */}
                 </TouchableWithoutFeedback>
                 <Modal
@@ -680,7 +680,7 @@ class MyMapView extends React.Component {
                                                     <TouchableOpacity onPress={() => { this.onPressSavedAddress(item) }} style={{ flexDirection: 'row', paddingBottom: 10, paddingTop: 5 }}>
                                                         {/* <Text style={styles.item}
                                                 //   onPress={this.getListViewItem.bind(this, item)}
-                                                >{JSON.stringify(item, null, "      ")}</Text> */}
+                                                >{JSON.stringify(item, null, "      ")} </Text> */}
                                                         {item?.saveAs == "Home" &&
                                                             <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
                                                                 <Icon name="home" type="AntDesign" style={{ fontSize: 24, color: '#232323' }} />
@@ -713,9 +713,9 @@ class MyMapView extends React.Component {
                                                                         <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
                                                                     </View>
                                                                 }
-                                                                <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName}</Text>
+                                                                <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName} </Text>
                                                             </View>
-                                                            <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1}</Text>
+                                                            <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
                                                         </View>
                                                     </TouchableOpacity>
                                                 }
@@ -728,7 +728,7 @@ class MyMapView extends React.Component {
 
 
                         {/* <ScrollView contentContainerStyle={{ backgroundColor: 'red', marginTop: 50, flex: 1 }}>
-                                <Text>{JSON.stringify(this.state.savedAddress, null, "   ")}</Text>
+                                <Text>{JSON.stringify(this.state.savedAddress, null, "   ")} </Text>
                             </ScrollView> */}
                     </SafeAreaView>
                 </Modal>

@@ -162,7 +162,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                 }} style={{ paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ color: '#909090', fontSize: 12 }}>Name</Text>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5 }}>{userDetails?.customerDetails?.name}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5 }}>{userDetails?.customerDetails?.name} </Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
@@ -172,7 +172,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                 <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 5, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ color: '#909090', fontSize: 12 }}>Mobile Number</Text>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5 }}>{userDetails?.customerDetails?.userMobileNumber}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5 }}>{userDetails?.customerDetails?.userMobileNumber} </Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
@@ -182,8 +182,8 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                 <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 5, paddingBottom: 5, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ color: '#909090', fontSize: 12 }}>Email</Text>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5, textTransform: 'lowercase' }}>{userDetails?.customerDetails?.userEmail}</Text>
-                        {/* <Text>{JSON.stringify(userDetails, null, "       ")}</Text> */}
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5, textTransform: 'lowercase' }}>{userDetails?.customerDetails?.userEmail} </Text>
+                        {/* <Text>{JSON.stringify(userDetails, null, "       ")} </Text> */}
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
@@ -255,7 +255,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                             />
                             {nameErrorText ?
                                 <>
-                                    <Text style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{nameErrorText}</Text>
+                                    <Text style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{nameErrorText} </Text>
                                 </>
                                 : undefined}
 
@@ -281,13 +281,13 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                             </View>
                             {emailErrorText ?
                                 <>
-                                    <Text style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{emailErrorText}</Text>
+                                    <Text style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{emailErrorText} </Text>
                                 </>
                                 : undefined}
                         </View>
                     </ScrollView>
                     <TouchableOpacity onPress={() => { onPressUpdate() }} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ color: 'white', fontSize: 18 }}>{loading ? <ActivityIndicator /> : "Update"}</Text>
+                        <Text style={{ color: 'white', fontSize: 18 }}>{loading ? <ActivityIndicator /> : "Update"} </Text>
                     </TouchableOpacity>
                 </SafeAreaView>
             </Modal>

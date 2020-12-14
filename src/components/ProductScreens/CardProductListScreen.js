@@ -61,7 +61,7 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                 <View style={{
                     backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
                 }} onPress={() => { }}>
-                    {/* <Text>{JSON.stringify(item?.itemImages[0]?.mediumImagePath, null, "         ")}</Text> */}
+                    {/* <Text>{JSON.stringify(item?.itemImages[0]?.mediumImagePath, null, "         ")} </Text> */}
                     <Image
                         style={{ height: 90, borderRadius: 5, aspectRatio: 1.3 }}
                         resizeMode="contain"
@@ -70,19 +70,19 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                     />
                 </View>
                 <View style={[{ padding: 10, flex: 1 }]}>
-                    <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
+                    <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice} </Text>
                         {item?.discountedPrice == item?.actualPrice ?
                             undefined :
-                            <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice}</Text>
+                            <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice} </Text>
                         }
                         {(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0) == 0 ?
                             undefined :
                             <Text style={{ fontSize: 15, color: Theme.Colors.primary, marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
                         }
                     </View>
-                    <Text style={{ fontSize: 12, color: '#909090', }}>{item?.itemSubName}</Text>
+                    <Text style={{ fontSize: 12, color: '#909090', }}>{item?.itemSubName} </Text>
                 </View>
             </TouchableOpacity>
 
@@ -99,7 +99,7 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                         <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
                     </TouchableOpacity>
                     <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count}</Text>
+                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
                     </View>
 
                     {count < item?.maxAllowedQuantity ?

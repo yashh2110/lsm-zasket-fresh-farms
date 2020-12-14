@@ -276,13 +276,13 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                                     ((userLocation?.recepientName).length > 13) ?
                                         (((userLocation?.recepientName).substring(0, 13 - 3)) + '...') :
                                         userLocation?.recepientName
-                                }</Text>
+                                } </Text>
                             </View>
                             <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{}}>
                                 <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Change</Text>
                             </TouchableOpacity>
                         </View>
-                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1}</Text>
+                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1} </Text>
                     </View>
                 </View>
 
@@ -346,7 +346,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                     {slot?.description ?
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
                             <Radio selected={true} disabled selectedColor={Theme.Colors.primary} />
-                            <Text style={{ marginLeft: 10 }}>{slot?.description}</Text>
+                            <Text style={{ marginLeft: 10 }}>{slot?.description} </Text>
                         </View>
                         : undefined}
                 </View>

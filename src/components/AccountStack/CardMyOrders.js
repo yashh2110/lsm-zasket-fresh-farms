@@ -18,13 +18,13 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
 
     return (
         <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { item: item })} style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
-            {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
+            {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
                     <Text>Vegetables & Fruits  <Icon name="right" type="AntDesign" style={{ fontSize: 12 }} /></Text>
                 </View>
                 <View>
-                    <Text>₹ {item?.totalPrice}</Text>
+                    <Text>₹ {item?.totalPrice} </Text>
                 </View>
             </View>
             <TouchableOpacity onPress={() => setIsVisible(true)} style={{ marginTop: 10, width: 100 }}>
@@ -77,7 +77,7 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
                                         <View style={{
                                             backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', padding: 10, borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
                                         }} onPress={() => { }}>
-                                            {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
+                                            {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
                                             <Image
                                                 style={{ width: 100, height: 80, borderRadius: 5 }}
                                                 resizeMode="contain"
@@ -87,11 +87,11 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
                                             />
                                         </View>
                                         <View style={[{ padding: 10, flex: 1 }]}>
-                                            <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.item?.itemName}</Text>
-                                            <Text style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.item?.itemSubName}</Text>
+                                            <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.item?.itemName} </Text>
+                                            <Text style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.item?.itemSubName} </Text>
                                             <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'flex-end', flexDirection: 'row', }}>
-                                                <Text style={{ fontSize: 14, color: '#909090', }}>Quantity: {item?.quantity}</Text>
-                                                <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.totalPrice}</Text>
+                                                <Text style={{ fontSize: 14, color: '#909090', }}>Quantity: {item?.quantity} </Text>
+                                                <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.totalPrice} </Text>
                                             </View>
                                         </View>
                                     </TouchableOpacity>

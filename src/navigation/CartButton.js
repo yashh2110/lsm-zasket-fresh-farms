@@ -22,7 +22,7 @@ const CartButton = ({ color, size, cartItems }) => {
                 />}
             {cartItems.length > 0 ?
                 <View style={{ backgroundColor: Theme.Colors.primary, borderRadius: 50, minHeight: 22, minWidth: 22, padding: 5, justifyContent: 'center', alignItems: 'center', position: 'absolute', right: -10, top: -4 }}>
-                    <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>{cartItems.length}</Text>
+                    <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>{cartItems.length} </Text>
                 </View>
                 : undefined}
         </View>

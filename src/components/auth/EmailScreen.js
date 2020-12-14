@@ -155,7 +155,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
                             </View>
                             {nameErrorText ?
                                 <>
-                                    <Text style={{ color: 'red', fontSize: 14 }}>{nameErrorText}</Text>
+                                    <Text style={{ color: 'red', fontSize: 14 }}>{nameErrorText} </Text>
                                 </>
                                 : undefined}
 
@@ -180,7 +180,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
                             </View>
                             {emailErrorText ?
                                 <>
-                                    <Text style={{ color: 'red', fontSize: 14 }}>{emailErrorText}</Text>
+                                    <Text style={{ color: 'red', fontSize: 14 }}>{emailErrorText} </Text>
                                 </>
                                 : undefined}
                             {loading ?

@@ -245,7 +245,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
                     <TouchableOpacity onPress={() => { navigation.navigate('MapScreenGrabPincode', { fromScreen: 'HomeScreen' }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                         <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
-                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1}</Text>
+                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1} </Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                     </TouchableOpacity>
                     {/* {__DEV__ ?
@@ -335,7 +335,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                     keyExtractor={item => item?.id.toString()}
                 />
 
-                {/* <Text>{JSON.stringify(sectionlistData, null, "      ")}</Text> */}
+                {/* <Text>{JSON.stringify(sectionlistData, null, "      ")} </Text> */}
             </ScrollView>
             {showAppUpdate ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>

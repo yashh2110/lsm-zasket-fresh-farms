@@ -55,7 +55,7 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
 
     return (
         <View style={{ flex: 1, margin: 4, width: 160, marginBottom: 20 }}>
-            {/* <Text>{JSON.stringify(item?.itemImages?.[0]?.mediumImagePath, null, "         ")}</Text> */}
+            {/* <Text>{JSON.stringify(item?.itemImages?.[0]?.mediumImagePath, null, "         ")} </Text> */}
             <TouchableOpacity
                 onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
                 style={[styles.productCard,]}>
@@ -68,19 +68,19 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
                     />
                 </View>
                 <View style={[{ padding: 10 }]}>
-                    <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
+                    <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
                     <View style={{ flexDirection: 'row', marginTop: 5 }}>
                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice} </Text>
                         {item?.discountedPrice == item?.actualPrice ?
                             undefined :
-                            <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice}</Text>
+                            <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice} </Text>
                         }
                         {(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0) == 0 ?
                             undefined :
                             <Text style={{ fontSize: 14, color: Theme.Colors.primary, marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
                         }
                     </View>
-                    <Text numberOfLines={1} style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.itemSubName}</Text>
+                    <Text numberOfLines={1} style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.itemSubName} </Text>
                 </View>
             </TouchableOpacity>
 
@@ -97,7 +97,7 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
                         <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
                     </TouchableOpacity>
                     <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count}</Text>
+                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
                     </View>
                     {count < item?.maxAllowedQuantity ?
                         <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>

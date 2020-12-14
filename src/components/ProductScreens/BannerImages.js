@@ -33,7 +33,7 @@ const BannerImages = ({ navigation, item }) => {
                 backgroundColor: '#F7F7F7'
             },]}>
                 {/* todo: Alignment after Implementation */}
-                {/* <Text>{JSON.stringify(item?.itemImages, null, "       ")}</Text> */}
+                {/* <Text>{JSON.stringify(item?.itemImages, null, "       ")} </Text> */}
                 <Image
                     source={item?.itemImages?.[0]?.largeImagePath ?
                         { uri: banner ? banner : item?.itemImages?.[0]?.largeImagePath } : require('../../assets/png/default.png')}
