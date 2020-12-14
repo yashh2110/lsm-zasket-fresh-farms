@@ -72,7 +72,7 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                 <View style={[{ padding: 10, flex: 1 }]}>
                     <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice}</Text>
+                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice} </Text>
                         {item?.discountedPrice == item?.actualPrice ?
                             undefined :
                             <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice}</Text>
@@ -91,7 +91,7 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                     onPress={() => onAddToCart()}
                     style={[styles.addButton, {}]}
                 >
-                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+ Add</Text>
+                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+ Add </Text>
                 </TouchableOpacity>
                 :
                 <View style={[styles.addButton, {}]}>

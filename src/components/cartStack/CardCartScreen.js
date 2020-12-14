@@ -78,7 +78,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                             onPress={() => onAddToCart()}
                             style={[styles.addButton, {}]}
                         >
-                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+ Add</Text>
+                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+ Add </Text>
                         </TouchableOpacity>
                         :
                         <View style={[styles.addButton, {}]}>
@@ -105,9 +105,9 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                     </TouchableOpacity> */}
                     {item?.discountedPrice == item?.actualPrice ?
                         undefined :
-                        <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice * item?.count}</Text>
+                        <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice * item?.count} </Text>
                     }
-                    <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice * item?.count}</Text>
+                    <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice * item?.count} </Text>
                 </View>
             </TouchableOpacity>
         </View>

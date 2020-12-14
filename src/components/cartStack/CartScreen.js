@@ -251,7 +251,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ color: '#727272' }}>Delivery Charges</Text>
-                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Free</Text>
+                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Free </Text>
                             </View>
                             {offerPrice > 0 ?
                                 <>
@@ -265,7 +265,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ fontWeight: 'bold' }}>Total Payable Amount</Text>
-                                <Text style={{ fontWeight: 'bold' }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)}</Text>
+                                <Text style={{ fontWeight: 'bold' }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
                             </View>
                             {totalCartValue < config?.freeDeliveryMinOrder ?
                                 <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: Theme.Colors.primary, alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#FDEFEF", alignItems: "center" }}>

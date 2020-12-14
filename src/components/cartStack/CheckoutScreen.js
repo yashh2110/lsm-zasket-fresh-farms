@@ -245,7 +245,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Checkout"} showSearch={false} />
             <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false}>
-                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")}</Text> */}
+                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")} </Text> */}
 
                 <View style={{ backgroundColor: 'white', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
                     <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center' }}>
@@ -292,55 +292,55 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                         {disableTomorrowSlot ?
                             <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
                                 <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
-                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")} </Text>
                             </View>
                             :
                             slotsArray[0]?.availableOrdersCount > 0 ?
                                 <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(0) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 0 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 0 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
-                                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
+                                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")} </Text>
                                 </TouchableOpacity>
                                 :
                                 <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
-                                    <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
+                                    <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")} </Text>
                                 </View>
                         }
                         {slotsArray[1]?.availableOrdersCount > 0 ?
                             <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(1) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 1 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 1 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(2, 'days').format("ddd")}</Text>
-                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(2, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(2, 'days').format("ddd")} </Text>
+                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(2, 'days').format("DD MMM")} </Text>
                             </TouchableOpacity>
                             :
                             <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(2, 'days').format("ddd")}</Text>
-                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(2, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(2, 'days').format("ddd")} </Text>
+                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(2, 'days').format("DD MMM")} </Text>
                             </View>
                         }
                         {slotsArray[2]?.availableOrdersCount > 0 ?
                             <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(2) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 2 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 2 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(3, 'days').format("ddd")}</Text>
-                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(3, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(3, 'days').format("ddd")} </Text>
+                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(3, 'days').format("DD MMM")} </Text>
                             </TouchableOpacity>
                             :
                             <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(3, 'days').format("ddd")}</Text>
-                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(3, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(3, 'days').format("ddd")} </Text>
+                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(3, 'days').format("DD MMM")} </Text>
                             </View>
                         }
                         {slotsArray[3]?.availableOrdersCount > 0 ?
                             <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(3) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 3 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 3 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(4, 'days').format("ddd")}</Text>
-                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(4, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(4, 'days').format("ddd")} </Text>
+                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(4, 'days').format("DD MMM")} </Text>
                             </TouchableOpacity>
                             :
                             <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(4, 'days').format("ddd")}</Text>
-                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(4, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(4, 'days').format("ddd")} </Text>
+                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(4, 'days').format("DD MMM")} </Text>
                             </View>
                         }
                     </View>
-                    {/* <Text>{(JSON.stringify(cartItems, null, "        "))}</Text> */}
+                    {/* <Text>{(JSON.stringify(cartItems, null, "        "))} </Text> */}
                     {nextDayBuffer == undefined || nextDayBuffer == null ?
                         <Text style={{ marginTop: 10, color: 'red' }}>No slots available</Text> : undefined}
                     {slot?.description ?
@@ -355,26 +355,26 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                     <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                         <Text style={{ color: '#727272' }}>Item Total</Text>
-                        <Text style={{}}>₹ {(totalCartValue).toFixed(2)}</Text>
+                        <Text style={{}}>₹ {(totalCartValue).toFixed(2)} </Text>
                     </View>
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                         <Text style={{ color: '#727272' }}>Delivery Charges</Text>
-                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Free</Text>
+                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Free </Text>
                     </View>
                     {offerPrice > 0 ?
                         <>
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ color: '#35B332' }}>Coupon Discount</Text>
-                                <Text style={{ color: "#35B332", }}>- ₹{(totalCartValue - offerPrice).toFixed(2)}</Text>
+                                <Text style={{ color: "#35B332", }}>- ₹{(totalCartValue - offerPrice).toFixed(2)} </Text>
                             </View>
                         </>
                         : undefined}
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                         <Text style={{ fontWeight: 'bold' }}>Total Payable Amount</Text>
-                        <Text style={{ fontWeight: 'bold' }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)}</Text>
+                        <Text style={{ fontWeight: 'bold' }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
                     </View>
                     {savedValue > 0 ?
                         <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: "#C2E2A9", alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center" }}>
@@ -386,7 +386,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
             {cartItems?.length > 0 ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
                         {/* <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
                             <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
                         </TouchableOpacity> */}

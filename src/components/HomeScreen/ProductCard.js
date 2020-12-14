@@ -70,14 +70,14 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
                 <View style={[{ padding: 10 }]}>
                     <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
                     <View style={{ flexDirection: 'row', marginTop: 5 }}>
-                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice}</Text>
+                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice} </Text>
                         {item?.discountedPrice == item?.actualPrice ?
                             undefined :
                             <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice}</Text>
                         }
                         {(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0) == 0 ?
                             undefined :
-                            <Text style={{ fontSize: 15, color: Theme.Colors.primary, marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
+                            <Text style={{ fontSize: 14, color: Theme.Colors.primary, marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
                         }
                     </View>
                     <Text numberOfLines={1} style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.itemSubName}</Text>
@@ -89,7 +89,7 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
                     onPress={() => onAddToCart()}
                     style={[styles.addButton, {}]}
                 >
-                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+ Add</Text>
+                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', }}>+ Add </Text>
                 </TouchableOpacity>
                 :
                 <View style={[styles.addButton, {}]}>
