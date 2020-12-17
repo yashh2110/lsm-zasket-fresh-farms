@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, TextInput, RefreshControl } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, TextInput, RefreshControl, Platform, Share } from 'react-native';
 import { Icon } from 'native-base'
 import AsyncStorage from "@react-native-community/async-storage";
 import Modal from 'react-native-modal';
@@ -146,7 +146,31 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
         navigation.navigate("OnBoardScreen")
         await onLogout()
     }
-
+    const onShare = async () => {
+        let appUrl
+        if (Platform.OS == "ios") {
+            appUrl = "https://apps.apple.com/in/app/zasket/id1541056118"
+        }
+        if (Platform.OS == "android") {
+            appUrl = "https://play.google.com/store/apps/details?id=com.zasket"
+        }
+        try {
+            const result = await Share.share({
+                message: appUrl,
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            // alert(error.message);
+        }
+    };
     return (
         <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} refreshControl={
             <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
@@ -214,6 +238,16 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                 <TouchableOpacity onPress={() => { navigation.navigate('SupportScreen') }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Support</Text>
+                    </View>
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
+                    </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => { onShare() }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
+                    <View style={{ flex: 1, }}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Share app </Text>
+                        <Text style={{ color: '#909090', fontSize: 12 }}>with your Family & Friends Now! </Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />

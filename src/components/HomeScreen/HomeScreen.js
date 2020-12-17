@@ -267,17 +267,35 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                         </TouchableOpacity>
                     </View>
                     : undefined}
-                {/* <View style={{ height: 160, justifyContent: 'center', alignItems: 'center', marginTop: 10, }}>
-                    <Swiper
-                        autoplay={true}
-                        showsHorizontalScrollIndicator={false}
-                        showsVerticalScrollIndicator={false}
-                        autoplayTimeout={5}
-                        activeDotColor={"#505E68"}
-                        dotStyle={{ bottom: -26, height: 6, width: 6 }}
-                        activeDotStyle={{ bottom: -26, height: 6, width: 6 }}
-                    >
-                        <Image
+                <View style={{ height: 160, justifyContent: 'center', alignItems: 'center', marginTop: 5, marginBottom: 5 }}>
+                    {bannerImages?.length > 0 ?
+                        <Swiper
+                            autoplay={true}
+                            showsHorizontalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
+                            autoplayTimeout={5}
+                            removeClippedSubviews={false}
+                            activeDotColor={"#ffffff"}
+                            dotStyle={{ bottom: -10, height: 6, width: 6 }}
+                            activeDotStyle={{ bottom: -10, height: 6, width: 8 }}
+                        >
+                            {bannerImages?.map((el, index) => {
+                                return (
+                                    <>
+                                        <Image
+                                            style={{
+                                                height: "100%", width: "100%",
+                                                // alignSelf: 'center',
+                                                // borderRadius: 5, 
+                                                // marginRight: bannerImages.length - 1 == index ? 0 : 15 
+                                            }}
+                                            // resizeMode={"stretch"}
+                                            source={{ uri: el?.imagePath }}
+                                        />
+                                    </>
+                                )
+                            })}
+                            {/* <Image
                             style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center' }}
                             // resizeMode={"stretch"}
                             source={require('../../assets/png/HomeScreenBanner1.png')}
@@ -286,10 +304,11 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                             style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center' }}
                             // resizeMode={"stretch"}
                             source={require('../../assets/png/HomeScreenBanner2.png')}
-                        />
-                    </Swiper>
-                </View>*/}
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 5 }}>
+                        /> */}
+                        </Swiper>
+                        : undefined}
+                </View>
+                {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 5 }}>
                     {bannerImages?.map((el, index) => {
                         return (
                             <>
@@ -301,7 +320,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                             </>
                         )
                     })}
-                </ScrollView>
+                </ScrollView> */}
                 <View style={{ flexDirection: 'row', backgroundColor: 'white', height: 125, justifyContent: 'space-around', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => { navigation.navigate('ProductListScreen', { categoryName: "VEGETABLES" }) }} style={{ height: 120, width: 150, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
                         <Text style={{ padding: 15 }}>Vegetables</Text>

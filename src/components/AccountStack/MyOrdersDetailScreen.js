@@ -91,14 +91,18 @@ const MyOrdersDetailScreen = ({ route, navigation, }) => {
                     <Text style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.associatedAddress?.addressLine_1} </Text>
                 </View>
                 <View style={{ backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
-                    <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Payment Details</Text>
+                    <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Payment Details </Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
-                        <Text style={{ color: '#909090' }}>Order ID:</Text>
+                        <Text style={{ color: '#909090' }}>Order ID: </Text>
                         <Text style={{}}>{item?.id} </Text>
                     </View>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
-                        <Text style={{ color: '#909090', }}>Order Items</Text>
-                        <Text style={{ color: "#2D87C9" }}>{item?.items?.length} items</Text>
+                        <Text style={{ color: '#909090', }}>Order Items </Text>
+                        <Text style={{ color: "#2D87C9" }}>{item?.items?.length} items </Text>
+                    </View>
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
+                        <Text style={{ color: '#909090', }}>Payment method </Text>
+                        <Text style={{}}>{item?.paymentMethod == "PREPAID" ? "Online Payment" : "Cash on delivery"} </Text>
                     </View>
                 </View>
 

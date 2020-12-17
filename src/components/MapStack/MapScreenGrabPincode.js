@@ -19,7 +19,6 @@ import { connect } from 'react-redux';
 import FeatherIcons from "react-native-vector-icons/Feather"
 import AntDesignIcons from "react-native-vector-icons/AntDesign"
 import { isPincodeServiceable, } from '../../actions/home'
-
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
 
@@ -65,7 +64,8 @@ class MapScreenGrabPincode extends React.Component {
         nameErrorText: "",
         errorMessage: "",
         errorMessageBanner: false,
-        addressId: ""
+        addressId: "",
+        pincodeAvailable: false
     };
 
 
@@ -78,7 +78,30 @@ class MapScreenGrabPincode extends React.Component {
 
 
     async componentDidMount() {
-        this.getCurrentPosition();
+        if (this.props.homeScreenLocation?.pincode == undefined || this.props.homeScreenLocation?.pincode == "") {
+            this.getCurrentPosition();
+            this.setState({ pincodeAvailable: false })
+        } else {
+            const region = {
+                latitude: this.props.homeScreenLocation?.lat,
+                longitude: this.props.homeScreenLocation?.lon,
+                latitudeDelta,
+                longitudeDelta,
+            };
+            await this.setRegion(region);
+            await this.setState({
+                modalVisible: false,
+                address: this.props.homeScreenLocation.addressLine_1,
+                latitude: this.props.homeScreenLocation.lat,
+                longitude: this.props.homeScreenLocation.lon,
+                pincode: this.props.homeScreenLocation.pincode,
+                pincodeAvailable: true
+            })
+            // alert(JSON.stringify(this.state.pincode))
+            await this.forceUpdate()
+        }
+
+
         await this.setState({ savedAddressLoading: true, })
         await this.props.getAllUserAddress(async (response, status) => {
             this.setState({ savedAddressLoading: false })

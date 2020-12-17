@@ -24,6 +24,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
     const [disableTomorrowSlot, setDisableTomorrowSlot] = useState(false)
     const [paymentSelectionActionScreen, setPaymentSelectionActionScreen] = useState(false)
     const { offerPrice, selectedOffer } = route.params;
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("PREPAID")
     useEffect(() => {
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
@@ -241,6 +242,16 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
         }
     }
 
+
+    const onPressContinue = () => {
+        if (selectedPaymentMethod == "PREPAID") {
+            setPaymentSelectionActionScreen(false)
+            onSelectPaymentMethod("PREPAID")
+        } else if (selectedPaymentMethod == "COD") {
+            onSelectPaymentMethod("COD")
+        }
+    }
+
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Checkout"} showSearch={false} />
@@ -410,27 +421,53 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                 onBackButtonPress={() => setPaymentSelectionActionScreen(false)}
                 onBackdropPress={() => setPaymentSelectionActionScreen(false)}
             >
-                <SafeAreaView style={{ height: "40%", backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
+                <SafeAreaView style={{ height: "50%", backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
                     <View style={{ alignSelf: 'center', height: 5, width: 50, backgroundColor: '#E2E2E2', borderRadius: 50, marginVertical: 15 }} />
                     <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
                         <View style={{ flex: 1, margin: 4, width: "90%", marginBottom: 10, alignSelf: 'center', justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Select payment method</Text>
                             <Text style={{ color: '#727272', marginTop: 10 }}>Two easy ways to make payment</Text>
                         </View>
-                        <Button full style={{ marginTop: "5%", backgroundColor: Theme.Colors.primary, borderRadius: 5, marginHorizontal: 20, }} onPress={() => {
-                            setPaymentSelectionActionScreen(false)
-                            onSelectPaymentMethod("PREPAID")
-                        }}><Text style={{ textTransform: 'capitalize', color: 'white', fontSize: 16 }}>Make Online Payment </Text></Button>
-                        <Image
-                            style={{ alignSelf: 'flex-end', width: 100, height: 30, marginRight: 20 }}
-                            resizeMode="contain"
-                            source={require('../../assets/png/paymentImages.png')}
-                        />
-                        <Button full style={{ marginTop: "5%", backgroundColor: "white", borderRadius: 5, marginHorizontal: 20, borderWidth: 1, borderColor: Theme.Colors.primary }} onPress={() => { onSelectPaymentMethod("COD") }}><Text style={{ textTransform: 'capitalize', color: Theme.Colors.primary, fontSize: 16 }}>Cash on delivery </Text></Button>
+                        <TouchableOpacity activeOpacity={0.8} style={{
+                            flexDirection: 'row', marginTop: "5%", backgroundColor: "white", borderRadius: 5, marginHorizontal: 20, padding: 10, shadowColor: "#000", shadowOffset: { width: 0, height: 1, }, shadowOpacity: 0.22, shadowRadius: 2.22, elevation: 3, alignItems: "center"
+                        }} onPress={() => {
+                            setSelectedPaymentMethod("PREPAID")
+                        }}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Radio selected={selectedPaymentMethod == "PREPAID" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} />
+                            </View>
+                            <View style={{ marginLeft: 10, flexDirection: 'row', flex: 1 }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ textTransform: 'capitalize', color: 'black', fontSize: 14 }}>Make Online Payment </Text>
+                                    <Text style={{ color: '#727272', fontSize: 12, }}>Preferred payment due to covid </Text>
+                                </View>
+                                <View style={{}}>
+                                    <Image
+                                        style={{ alignSelf: 'flex-end', width: 80, height: 30, }}
+                                        resizeMode="contain"
+                                        source={require('../../assets/png/paymentImages.png')}
+                                    />
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity activeOpacity={0.8} style={{
+                            flexDirection: 'row', marginTop: "5%", marginBottom: 10, backgroundColor: "white", borderRadius: 5, marginHorizontal: 20, padding: 10, shadowColor: "#000", shadowOffset: { width: 0, height: 1, }, shadowOpacity: 0.22, shadowRadius: 2.22, elevation: 3, minHeight: 50, alignItems: "center"
+                        }} onPress={() => { setSelectedPaymentMethod("COD") }}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Radio selected={selectedPaymentMethod == "COD" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} />
+                            </View>
+                            <View style={{ marginLeft: 10 }}>
+                                <Text style={{ textTransform: 'capitalize', color: 'black', fontSize: 16 }}>Cash on delivery </Text>
+                            </View>
+                        </TouchableOpacity>
                     </ScrollView>
+                    <TouchableOpacity onPress={onPressContinue} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Continue </Text>
+                    </TouchableOpacity>
                 </SafeAreaView>
             </Modal>
-        </View>
+        </View >
     );
 }
 
