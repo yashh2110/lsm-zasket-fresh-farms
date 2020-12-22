@@ -19,6 +19,7 @@ export const getV2Config = (callback) => async dispatch => {
         callback(res, true)
     } catch (err) {
         console.warn('config api error')
+        // alert(JSON.stringify(err?.response, null, "      "))
         dispatch({
             type: GET_CONFIG,
             payload: {}

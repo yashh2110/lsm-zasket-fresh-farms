@@ -198,7 +198,10 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                     </View>
                                 </View>
                                 :
-                                <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, justifyContent: 'center' }}>
+                                <View style={{
+                                    backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, justifyContent: 'center',
+                                    // borderTopWidth: 1, borderBottomWidth: 1, borderColor: Theme.Colors.primary,
+                                }}>
                                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                                         <Image
                                             style={{ height: 18, width: 40, }}
@@ -206,10 +209,11 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                             source={require('../../assets/png/coupon.png')}
                                         />
                                         <TextInput
-                                            style={{ height: 40, flex: 1, marginLeft: 2 }}
+                                            style={{ height: 40, flex: 1, marginLeft: 2, }}
                                             onChangeText={text => setCoupon(text)}
                                             placeholder="Enter Coupon Code"
                                             value={coupon}
+                                            placeholderTextColor="black"
                                             autoCapitalize="characters"
                                         />
                                         {couponLoading ?
