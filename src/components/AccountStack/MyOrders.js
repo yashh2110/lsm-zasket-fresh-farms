@@ -46,7 +46,7 @@ const MyOrders = ({ route, navigation, getCustomerOrders }) => {
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"My Orders"} showSearch={false} />
             <View style={{ flex: 1, backgroundColor: '#F8F8F8' }} >
-                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(orderDetails, null, "       ")}</Text> */}
+                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(orderDetails, null, "       ")} </Text> */}
                 <FlatList
                     data={orderDetails}
                     renderItem={({ item }) =>

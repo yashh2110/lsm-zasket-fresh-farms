@@ -99,22 +99,22 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
                 }
             >
                 <BannerImages navigation={navigation} item={item} />
-                {/* <Text>{JSON.stringify(item, null, "       ")}</Text> */}
+                {/* <Text>{JSON.stringify(item, null, "       ")} </Text> */}
                 <View style={[{ paddingLeft: 10, paddingRight: 10, paddingBottom: 10 }]}>
-                    <Text style={{ fontSize: 18, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
+                    <Text style={{ fontSize: 18, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
                     <View style={{ flexDirection: 'row', marginTop: 5, alignItems: 'center' }}>
-                        <Text style={{ fontSize: 16, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice}</Text>
+                        <Text style={{ fontSize: 16, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice} </Text>
                         {item?.discountedPrice == item?.actualPrice ?
                             undefined :
-                            <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice}</Text>
+                            <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice} </Text>
                         }
                         {(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0) == 0 ?
                             undefined :
                             <Text style={{ fontSize: 15, color: Theme.Colors.primary, marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
                         }
                     </View>
-                    <Text style={{ color: '#909090', }}>{item?.itemSubName}</Text>
-                    <Text style={{ marginTop: 5, color: '#727272', }}>{item?.itemDescription}</Text>
+                    <Text style={{ color: '#909090', }}>{item?.itemSubName} </Text>
+                    <Text style={{ marginTop: 5, color: '#727272', }}>{item?.itemDescription} </Text>
                 </View>
             </ScrollView>
             {cartItems?.length > 0 ?
@@ -125,14 +125,14 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
             }
             {addButton ?
                 <TouchableOpacity onPress={() => onAddToCart()} style={{ backgroundColor: Theme.Colors.primary, height: 50, justifyContent: "center" }}>
-                    <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold' }}>+  Add</Text>
+                    <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold' }}>+  Add </Text>
                 </TouchableOpacity>
                 :
                 <View style={{ backgroundColor: Theme.Colors.primary, height: 50, flexDirection: 'row', justifyContent: 'space-evenly' }}>
                     <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ width: 35, height: 35, backgroundColor: "#B90E14", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
                         <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: 20 }}>-</Text>
                     </TouchableOpacity>
-                    <Text style={{ color: 'white', alignSelf: 'center', fontSize: 18 }}>{count}</Text>
+                    <Text style={{ color: 'white', alignSelf: 'center', fontSize: 18 }}>{count} </Text>
                     {count < item?.maxAllowedQuantity ?
                         <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ width: 35, height: 35, backgroundColor: "#B90E14", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
                             <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: 20 }}>+</Text>

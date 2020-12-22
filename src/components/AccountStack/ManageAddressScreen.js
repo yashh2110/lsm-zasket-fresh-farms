@@ -96,7 +96,7 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
             <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false} refreshControl={
                 <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
             }>
-                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")}</Text> */}
+                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")} </Text> */}
                 <FlatList
                     data={savedAddress}
                     renderItem={({ item }) =>
@@ -105,7 +105,7 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
                                 <View style={{ flexDirection: 'row' }}>
                                     {/* <Text style={styles.item}
                                      //   onPress={getListViewItem.bind(this, item)}
-                                     >{JSON.stringify(item, null, "      ")}</Text> */}
+                                     >{JSON.stringify(item, null, "      ")} </Text> */}
                                     {item?.saveAs == "Home" &&
                                         <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
                                             <Icon name="home" type="AntDesign" style={{ fontSize: 24, color: '#232323' }} />
@@ -138,18 +138,18 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
                                                     <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
                                                 </View>
                                             }
-                                            <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName}</Text>
+                                            <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName}  </Text>
                                         </View>
-                                        <Text style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1}</Text>
+                                        <Text style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: "#EAEAEC", marginTop: 5, paddingTop: 10 }}>
                                     <TouchableOpacity onPress={() => { onPressEdit(item) }} style={{ flex: 1, padding: 5, justifyContent: 'center', alignItems: 'center' }}>
-                                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Edit</Text>
+                                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Edit </Text>
                                     </TouchableOpacity>
                                     <View style={{ width: 1, backgroundColor: '#EAEAEC', }} />
                                     <TouchableOpacity onPress={() => { onPressDelete(item) }} style={{ flex: 1, padding: 5, justifyContent: 'center', alignItems: 'center' }}>
-                                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Delete</Text>
+                                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Delete  </Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

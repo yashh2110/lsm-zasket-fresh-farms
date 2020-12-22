@@ -102,7 +102,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin
                             />
                         </TouchableOpacity>
                         <Text style={{ marginTop: "4%", fontSize: 20, fontWeight: Platform.OS == "ios" ? "500" : "700", letterSpacing: .5 }}>Enter OTP</Text>
-                        <Text style={{ marginTop: "2%", fontSize: 14, color: "#727272" }}>We sent an SMS with OTP to {mobileNumber}</Text>
+                        <Text style={{ marginTop: "2%", fontSize: 14, color: "#727272" }}>We sent an SMS with OTP to {mobileNumber} </Text>
                         <View style={{ flex: 1, marginTop: "15%" }}>
                             <View style={{ height: 100 }}>
                                 <CodeInput

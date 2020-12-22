@@ -62,7 +62,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                 <View style={{
                     backgroundColor: '#F7F7F7', borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5, height: 90
                 }} onPress={() => { }}>
-                    {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
+                    {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
                     <Image
                         style={{ height: 90, borderRadius: 5, aspectRatio: 1.3 }}
                         resizeMode="contain"
@@ -71,14 +71,14 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                     />
                 </View>
                 <View style={[{ padding: 5, flex: 2 }]}>
-                    <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName}</Text>
-                    <Text style={{ fontSize: 12, color: '#909090', marginBottom: 10 }}>{item?.itemSubName}</Text>
+                    <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
+                    <Text style={{ fontSize: 12, color: '#909090', marginBottom: 10 }}>{item?.itemSubName} </Text>
                     {addButton ?
                         <TouchableOpacity
                             onPress={() => onAddToCart()}
                             style={[styles.addButton, {}]}
                         >
-                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+ Add</Text>
+                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+ Add </Text>
                         </TouchableOpacity>
                         :
                         <View style={[styles.addButton, {}]}>
@@ -86,7 +86,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                                 <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
                             </TouchableOpacity>
                             <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count}</Text>
+                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
                             </View>
                             {count < item?.maxAllowedQuantity ?
                                 <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
@@ -105,9 +105,9 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                     </TouchableOpacity> */}
                     {item?.discountedPrice == item?.actualPrice ?
                         undefined :
-                        <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice * item?.count}</Text>
+                        <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice * item?.count} </Text>
                     }
-                    <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice * item?.count}</Text>
+                    <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice * item?.count} </Text>
                 </View>
             </TouchableOpacity>
         </View>

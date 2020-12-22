@@ -20,7 +20,7 @@ const MyOrdersDetailScreen = ({ route, navigation, }) => {
             <CustomHeader navigation={navigation} title={"Orders Details"} showSearch={false} />
             <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={true}>
                 <View style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
-                    {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
+                    {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
                     <View style={{ flex: 1, flexDirection: 'row' }}>
                         <View style={{ flex: 1 }}>
                             <Text style={{ fontWeight: 'bold' }}>Vegetables & Fruits</Text>
@@ -85,20 +85,24 @@ const MyOrdersDetailScreen = ({ route, navigation, }) => {
                                 }
                                 </Text>
                             </View>
-                            <Text style={{ color: '#727272' }}>{item?.associatedAddress?.recepientMobileNumber}</Text>
+                            <Text style={{ color: '#727272' }}>{item?.associatedAddress?.recepientMobileNumber} </Text>
                         </View>
                     </View>
-                    <Text style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.associatedAddress?.addressLine_1}</Text>
+                    <Text style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.associatedAddress?.addressLine_1} </Text>
                 </View>
                 <View style={{ backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
-                    <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Payment Details</Text>
+                    <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Payment Details </Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
-                        <Text style={{ color: '#909090' }}>Order ID:</Text>
-                        <Text style={{}}>{item?.id}</Text>
+                        <Text style={{ color: '#909090' }}>Order ID: </Text>
+                        <Text style={{}}>{item?.id} </Text>
                     </View>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
-                        <Text style={{ color: '#909090', }}>Order Items</Text>
-                        <Text style={{ color: "#2D87C9" }}>{item?.items?.length} items</Text>
+                        <Text style={{ color: '#909090', }}>Order Items </Text>
+                        <Text style={{ color: "#2D87C9" }}>{item?.items?.length} items </Text>
+                    </View>
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
+                        <Text style={{ color: '#909090', }}>Payment method </Text>
+                        <Text style={{}}>{item?.paymentMethod == "PREPAID" ? "Online Payment" : "Cash on delivery"} </Text>
                     </View>
                 </View>
 
@@ -106,7 +110,7 @@ const MyOrdersDetailScreen = ({ route, navigation, }) => {
                     <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({item?.items?.length} item)</Text></Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                         <Text style={{ color: '#727272' }}>Item Total</Text>
-                        <Text style={{}}>₹ {(item?.totalPrice).toFixed(2)}</Text>
+                        <Text style={{}}>₹ {(item?.totalPrice).toFixed(2)} </Text>
                     </View>
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
@@ -118,14 +122,14 @@ const MyOrdersDetailScreen = ({ route, navigation, }) => {
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ color: '#35B332' }}>Coupon Discount ({item?.applied_offer?.offerCode})</Text>
-                                <Text style={{ color: "#35B332", }}>- ₹{(item?.totalPrice - item?.offerPrice).toFixed(2)}</Text>
+                                <Text style={{ color: "#35B332", }}>- ₹{(item?.totalPrice - item?.offerPrice).toFixed(2)} </Text>
                             </View>
                         </>
                         : undefined}
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                         <Text style={{ fontWeight: 'bold' }}>Total Payable Amount</Text>
-                        <Text style={{ fontWeight: 'bold' }}>₹ {(item?.offerPrice > 0 ? item?.offerPrice : item?.totalPrice).toFixed(2)}</Text>
+                        <Text style={{ fontWeight: 'bold' }}>₹ {(item?.offerPrice > 0 ? item?.offerPrice : item?.totalPrice).toFixed(2)} </Text>
                     </View>
                 </View>
                 <View style={{ marginTop: 10, paddingVertical: 5, backgroundColor: 'white' }}>
@@ -139,7 +143,7 @@ const MyOrdersDetailScreen = ({ route, navigation, }) => {
                                 <View style={{
                                     backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', padding: 10, borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
                                 }} onPress={() => { }}>
-                                    {/* <Text>{JSON.stringify(item, null, "         ")}</Text> */}
+                                    {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
                                     <Image
                                         style={{ width: 100, height: 80, borderRadius: 5 }}
                                         resizeMode="contain"
@@ -148,11 +152,11 @@ const MyOrdersDetailScreen = ({ route, navigation, }) => {
                                     />
                                 </View>
                                 <View style={[{ padding: 10, flex: 1 }]}>
-                                    <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.item?.itemName}</Text>
-                                    <Text style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.item?.itemSubName}</Text>
+                                    <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.item?.itemName} </Text>
+                                    <Text style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.item?.itemSubName} </Text>
                                     <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'flex-end', flexDirection: 'row', }}>
-                                        <Text style={{ fontSize: 14, color: '#909090', }}>Quantity: {item?.quantity}</Text>
-                                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.totalPrice}</Text>
+                                        <Text style={{ fontSize: 14, color: '#909090', }}>Quantity: {item?.quantity} </Text>
+                                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.totalPrice} </Text>
                                     </View>
                                 </View>
                             </View>
@@ -165,7 +169,7 @@ const MyOrdersDetailScreen = ({ route, navigation, }) => {
                         keyExtractor={item => item?.id.toString()}
                     />
                 </View>
-                {/* <Text Text style={{ marginBottom: 16 }}> {JSON.stringify(item, null, "       ")}</Text> */}
+                {/* <Text Text style={{ marginBottom: 16 }}> {JSON.stringify(item, null, "       ")} </Text> */}
             </ScrollView >
         </View >
     );

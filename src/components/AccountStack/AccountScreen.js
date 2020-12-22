@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, TextInput, RefreshControl } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, TextInput, RefreshControl, Platform, Share } from 'react-native';
 import { Icon } from 'native-base'
 import AsyncStorage from "@react-native-community/async-storage";
 import Modal from 'react-native-modal';
@@ -10,9 +10,10 @@ import { profileUpdate, verifyEmail } from '../../actions/account'
 import { ActivityIndicator } from "react-native";
 import { Validation } from "../../utils/validate";
 import { getCustomerDetails } from "../../actions/home";
+import { onLogout } from '../../actions/auth'
 
 
-const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigation }) => {
+const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigation, onLogout }) => {
     const [loading, setLoading] = useState(false)
     const [userDetails, setUserDetails] = useState({})
     const [isVisible, setIsVisible] = useState(false)
@@ -140,8 +141,36 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
     //     }
     // }
 
-
-
+    const onPressLogout = async () => {
+        navigation.navigate("HomeStack")
+        navigation.navigate("OnBoardScreen")
+        await onLogout()
+    }
+    const onShare = async () => {
+        let appUrl
+        if (Platform.OS == "ios") {
+            appUrl = "https://apps.apple.com/in/app/zasket/id1541056118"
+        }
+        if (Platform.OS == "android") {
+            appUrl = "https://play.google.com/store/apps/details?id=com.zasket"
+        }
+        try {
+            const result = await Share.share({
+                message: appUrl,
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            // alert(error.message);
+        }
+    };
     return (
         <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} refreshControl={
             <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
@@ -157,7 +186,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                 }} style={{ paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ color: '#909090', fontSize: 12 }}>Name</Text>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5 }}>{userDetails?.customerDetails?.name}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5 }}>{userDetails?.customerDetails?.name} </Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
@@ -167,7 +196,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                 <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 5, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ color: '#909090', fontSize: 12 }}>Mobile Number</Text>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5 }}>{userDetails?.customerDetails?.userMobileNumber}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5 }}>{userDetails?.customerDetails?.userMobileNumber} </Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
@@ -177,8 +206,8 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                 <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 5, paddingBottom: 5, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ color: '#909090', fontSize: 12 }}>Email</Text>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5, textTransform: 'lowercase' }}>{userDetails?.customerDetails?.userEmail}</Text>
-                        {/* <Text>{JSON.stringify(userDetails, null, "       ")}</Text> */}
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5, textTransform: 'lowercase' }}>{userDetails?.customerDetails?.userEmail} </Text>
+                        {/* <Text>{JSON.stringify(userDetails, null, "       ")} </Text> */}
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
@@ -206,14 +235,34 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => { navigation.navigate('SupportScreen') }} style={{ paddingTop: 10, paddingBottom: 10, flexDirection: 'row' }}>
+                <TouchableOpacity onPress={() => { navigation.navigate('SupportScreen') }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5, }}>Support</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Support</Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
                     </View>
                 </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => { onShare() }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
+                    <View style={{ flex: 1, }}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Share app </Text>
+                        <Text style={{ color: '#909090', fontSize: 12 }}>with your Family & Friends Now! </Text>
+                    </View>
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
+                    </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => onPressLogout()} style={{ paddingTop: 10, paddingBottom: 0, flexDirection: 'row' }}>
+                    <View style={{ flex: 1, }}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5, }}>Logout</Text>
+                    </View>
+                    {/* <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
+                    </View> */}
+                </TouchableOpacity>
+
 
             </View>
 
@@ -240,7 +289,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                             />
                             {nameErrorText ?
                                 <>
-                                    <Text style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{nameErrorText}</Text>
+                                    <Text style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{nameErrorText} </Text>
                                 </>
                                 : undefined}
 
@@ -266,13 +315,13 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                             </View>
                             {emailErrorText ?
                                 <>
-                                    <Text style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{emailErrorText}</Text>
+                                    <Text style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{emailErrorText} </Text>
                                 </>
                                 : undefined}
                         </View>
                     </ScrollView>
                     <TouchableOpacity onPress={() => { onPressUpdate() }} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ color: 'white', fontSize: 18 }}>{loading ? <ActivityIndicator /> : "Update"}</Text>
+                        <Text style={{ color: 'white', fontSize: 18 }}>{loading ? <ActivityIndicator /> : "Update"} </Text>
                     </TouchableOpacity>
                 </SafeAreaView>
             </Modal>
@@ -289,4 +338,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { profileUpdate, verifyEmail, getCustomerDetails })(AccountScreen)
+export default connect(mapStateToProps, { profileUpdate, verifyEmail, getCustomerDetails, onLogout })(AccountScreen)

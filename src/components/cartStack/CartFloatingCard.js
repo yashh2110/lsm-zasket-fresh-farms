@@ -23,11 +23,11 @@ const CartFloatingCard = ({ color, size, cartItems, navigation, config }) => {
                 <Text style={{ color: 'white', fontSize: 14, fontWeight: 'bold' }}>{cartItems.length} item</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
                     <SimpleLineIcons name="handbag" color={"white"} size={16} />
-                    <Text style={{ color: 'white', fontSize: 14, }}> View cart {">"}</Text>
+                    <Text style={{ color: 'white', fontSize: 14, }}> View cart {">"} </Text>
                 </View>
             </View>
             <View style={{ flex: 2, justifyContent: 'center', alignItems: 'flex-end', padding: 10 }}>
-                <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>₹ {totalCartValue}</Text>
+                <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>₹ {totalCartValue} </Text>
                 {totalCartValue < config?.freeDeliveryMinOrder ?
                     <Text style={{ color: 'white', fontSize: 12, }}>Add more Rs {config?.freeDeliveryMinOrder - totalCartValue} for free delivery</Text>
                     : undefined}

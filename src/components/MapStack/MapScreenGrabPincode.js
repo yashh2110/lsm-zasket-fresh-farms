@@ -19,7 +19,6 @@ import { connect } from 'react-redux';
 import FeatherIcons from "react-native-vector-icons/Feather"
 import AntDesignIcons from "react-native-vector-icons/AntDesign"
 import { isPincodeServiceable, } from '../../actions/home'
-
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
 
@@ -65,7 +64,8 @@ class MapScreenGrabPincode extends React.Component {
         nameErrorText: "",
         errorMessage: "",
         errorMessageBanner: false,
-        addressId: ""
+        addressId: "",
+        pincodeAvailable: false
     };
 
 
@@ -78,7 +78,30 @@ class MapScreenGrabPincode extends React.Component {
 
 
     async componentDidMount() {
-        this.getCurrentPosition();
+        if (this.props.homeScreenLocation?.pincode == undefined || this.props.homeScreenLocation?.pincode == "") {
+            this.getCurrentPosition();
+            this.setState({ pincodeAvailable: false })
+        } else {
+            const region = {
+                latitude: this.props.homeScreenLocation?.lat,
+                longitude: this.props.homeScreenLocation?.lon,
+                latitudeDelta,
+                longitudeDelta,
+            };
+            await this.setRegion(region);
+            await this.setState({
+                modalVisible: false,
+                address: this.props.homeScreenLocation.addressLine_1,
+                latitude: this.props.homeScreenLocation.lat,
+                longitude: this.props.homeScreenLocation.lon,
+                pincode: this.props.homeScreenLocation.pincode,
+                pincodeAvailable: true
+            })
+            // alert(JSON.stringify(this.state.pincode))
+            await this.forceUpdate()
+        }
+
+
         await this.setState({ savedAddressLoading: true, })
         await this.props.getAllUserAddress(async (response, status) => {
             this.setState({ savedAddressLoading: false })
@@ -332,15 +355,27 @@ class MapScreenGrabPincode extends React.Component {
                                             style={{ width: 30, height: 30, marginLeft: -5 }}
                                             source={require('../../assets/png/locationIcon.png')}
                                         />
-                                        <Text style={{ fontSize: 16 }}>{this.state.address}</Text>
+                                        <Text style={{ fontSize: 16 }}>{this.state.address} </Text>
                                     </View>
                                 }
+                                <View style={{ marginTop: 10 }}>
+                                    <Text style={{ color: "#727272", fontSize: 12 }}>Pincode</Text>
+                                    <TextInput
+                                        style={{ height: 40, borderColor: this.state.errorMessageBanner ? 'red' : '#D8D8D8', borderBottomWidth: 1 }}
+                                        onChangeText={text => this.setState({
+                                            pincode: text
+                                        })}
+                                        placeholder="Pincode"
+                                        value={this.state.pincode}
+                                        onTouchStart={() => this.setState({ errorMessageBanner: false })}
+                                    />
+                                </View>
                             </View>
                         </ScrollView>
                         <Button full style={{ backgroundColor: Theme.Colors.primary, }} onPress={() => this.onSubmit()}><Text style={{ textTransform: 'capitalize' }}>Confirm Location</Text></Button>
                     </KeyboardAvoidingView>
                     {/* <SafeAreaView style={styles.footer}>
-                        <Text style={styles.region}>{JSON.stringify(region, null, 2)}</Text>
+                        <Text style={styles.region}>{JSON.stringify(region, null, 2)} </Text>
                     </SafeAreaView> */}
                 </TouchableWithoutFeedback>
                 <Modal
@@ -410,7 +445,7 @@ class MapScreenGrabPincode extends React.Component {
                                                     <TouchableOpacity onPress={() => { this.onPressSavedAddress(item) }} style={{ flexDirection: 'row', paddingBottom: 10, paddingTop: 5 }}>
                                                         {/* <Text style={styles.item}
                                                 //   onPress={this.getListViewItem.bind(this, item)}
-                                                >{JSON.stringify(item, null, "      ")}</Text> */}
+                                                >{JSON.stringify(item, null, "      ")} </Text> */}
                                                         {item?.saveAs == "Home" &&
                                                             <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
                                                                 <Icon name="home" type="AntDesign" style={{ fontSize: 24, color: '#232323' }} />
@@ -443,9 +478,9 @@ class MapScreenGrabPincode extends React.Component {
                                                                         <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
                                                                     </View>
                                                                 }
-                                                                <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName}</Text>
+                                                                <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName} </Text>
                                                             </View>
-                                                            <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1}</Text>
+                                                            <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
                                                         </View>
                                                     </TouchableOpacity>
                                                 }
@@ -458,7 +493,7 @@ class MapScreenGrabPincode extends React.Component {
 
 
                         {/* <ScrollView contentContainerStyle={{ backgroundColor: 'red', marginTop: 50, flex: 1 }}>
-                                <Text>{JSON.stringify(this.state.savedAddress, null, "   ")}</Text>
+                                <Text>{JSON.stringify(this.state.savedAddress, null, "   ")} </Text>
                             </ScrollView> */}
                     </SafeAreaView>
                 </Modal>
@@ -469,7 +504,8 @@ class MapScreenGrabPincode extends React.Component {
 
 const mapStateToProps = (state) => ({
     darkMode: state.dark,
-    userLocation: state.location
+    userLocation: state.location,
+    homeScreenLocation: state.homeScreenLocation,
 })
 
 

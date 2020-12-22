@@ -34,21 +34,27 @@ const UpdateModal = ({ darkMode }) => {
         <SafeAreaView
             style={{
                 flex: 1,
-                justifyContent: "center",
+                // justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: 'white',
             }}
         >
-            <Image
-                style={{ width: "100%", }}
-                resizeMode="center"
-                source={require('../../assets/png/logo.png')}
-            />
-            <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Zasket needs an update</Text>
-                <Text style={{ color: "#727272", alignSelf: 'center', textAlign: 'center', paddingHorizontal: 20 }}>Please update to the newer version available in {Platform.OS == "android" && "Play store"}{Platform.OS == "ios" && "App store"} to continue</Text>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: -100 }}>
+                <Image
+                    style={{ height: 90, width: 90 }}
+                    resizeMode="center"
+                    source={require('../../assets/png/updateScreenImage.png')}
+                />
+                <Image
+                    style={{ height: 80 }}
+                    resizeMode="center"
+                    source={require('../../assets/png/logo.png')}
+                />
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: Theme.Colors.primary, }}>Update alert!!</Text>
+                <Text style={{ color: "#727272", alignSelf: 'center', textAlign: 'center', paddingHorizontal: 20, marginTop: 20 }}>Zasket recommend that you update to the latest version.</Text>
                 <Button full style={{ marginTop: "10%", backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => onPressUpdate()}><Text style={{ textTransform: 'capitalize' }}>Update</Text></Button>
             </View>
+
         </SafeAreaView>
     )
 }

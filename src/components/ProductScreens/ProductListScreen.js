@@ -52,7 +52,7 @@ const ProductListScreen = ({ route, navigation, getItemsByCategory }) => {
                     )}
                 />
             </View>
-            {/* <Text>{JSON.stringify(products, null, "       ")}</Text> */}
+            {/* <Text>{JSON.stringify(products, null, "       ")} </Text> */}
             {loading ?
                 <Loader />
                 : undefined}

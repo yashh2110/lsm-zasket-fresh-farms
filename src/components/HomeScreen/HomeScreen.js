@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState, useLayoutEffect } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter, Linking } from 'react-native';
 import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
@@ -12,11 +12,20 @@ import Loader from '../common/Loader';
 import DarkModeToggle from '../common/DarkModeToggle';
 import AsyncStorage from '@react-native-community/async-storage';
 import Geolocation from '@react-native-community/geolocation';
-import { MapApiKey } from '../../../env';
+import { appVersion, MapApiKey } from '../../../env';
 import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
 import { getCartItemsApi } from '../../actions/cart'
+import FeatherIcons from "react-native-vector-icons/Feather"
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
+    const [showAppUpdate, setShowAppUpdate] = useState(false)
+    useEffect(() => {
+        if (config?.appVersion !== undefined) {
+            if (config?.appVersion !== appVersion) {
+                setShowAppUpdate(true)
+            }
+        }
+    }, [config])
 
     useEffect(() => {
         const _bootstrapAsync = async () => {
@@ -206,7 +215,27 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
         navigation.navigate("OnBoardScreen")
         await onLogout()
     }
-
+    const onPressUpdate = () => {
+        if (Platform.OS == "ios") {
+            Linking.canOpenURL("itms-apps://itunes.apple.com/us/app/apple-store/id1541056118?mt=8").then(supported => {
+                if (supported) {
+                    Linking.openURL("itms-apps://itunes.apple.com/us/app/apple-store/id1541056118?mt=8");
+                } else {
+                    Linking.openURL("https://apps.apple.com/in/app/zasket/id1541056118");
+                    console.warn("Don't know how to open URI");
+                }
+            });
+        }
+        if (Platform.OS == "android") {
+            Linking.canOpenURL("market://details?id=com.zasket").then(supported => {
+                if (supported) {
+                    Linking.openURL("market://details?id=com.zasket");
+                } else {
+                    console.warn("Don't know how to open URI");
+                }
+            });
+        }
+    }
     return (
         <>
             <ScrollView style={{ flex: 1, backgroundColor: 'white' }} showsVerticalScrollIndicator={false}
@@ -216,16 +245,16 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
                     <TouchableOpacity onPress={() => { navigation.navigate('MapScreenGrabPincode', { fromScreen: 'HomeScreen' }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                         <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
-                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1}</Text>
+                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1} </Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                     </TouchableOpacity>
-                    {__DEV__ ?
+                    {/* {__DEV__ ?
                         isAuthenticated ?
                             <TouchableOpacity onPress={() => onPressLogout()} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
                                 <Text>Logout</Text>
                             </TouchableOpacity>
                             : undefined
-                        : undefined}
+                        : undefined} */}
                 </View>
                 {pincodeError ?
                     <View style={{ backgroundColor: '#F65C65', width: "95%", alignSelf: 'center', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 3 }}>
@@ -238,17 +267,35 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                         </TouchableOpacity>
                     </View>
                     : undefined}
-                {/* <View style={{ height: 160, justifyContent: 'center', alignItems: 'center', marginTop: 10, }}>
-                    <Swiper
-                        autoplay={true}
-                        showsHorizontalScrollIndicator={false}
-                        showsVerticalScrollIndicator={false}
-                        autoplayTimeout={5}
-                        activeDotColor={"#505E68"}
-                        dotStyle={{ bottom: -26, height: 6, width: 6 }}
-                        activeDotStyle={{ bottom: -26, height: 6, width: 6 }}
-                    >
-                        <Image
+                <View style={{ height: 160, justifyContent: 'center', alignItems: 'center', marginTop: 5, marginBottom: 5 }}>
+                    {bannerImages?.length > 0 ?
+                        <Swiper
+                            autoplay={true}
+                            showsHorizontalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
+                            autoplayTimeout={5}
+                            removeClippedSubviews={false}
+                            activeDotColor={"#ffffff"}
+                            dotStyle={{ bottom: -10, height: 6, width: 6 }}
+                            activeDotStyle={{ bottom: -10, height: 6, width: 8 }}
+                        >
+                            {bannerImages?.map((el, index) => {
+                                return (
+                                    <>
+                                        <Image
+                                            style={{
+                                                height: "100%", width: "100%",
+                                                // alignSelf: 'center',
+                                                // borderRadius: 5, 
+                                                // marginRight: bannerImages.length - 1 == index ? 0 : 15 
+                                            }}
+                                            // resizeMode={"stretch"}
+                                            source={{ uri: el?.imagePath }}
+                                        />
+                                    </>
+                                )
+                            })}
+                            {/* <Image
                             style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center' }}
                             // resizeMode={"stretch"}
                             source={require('../../assets/png/HomeScreenBanner1.png')}
@@ -257,10 +304,11 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                             style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center' }}
                             // resizeMode={"stretch"}
                             source={require('../../assets/png/HomeScreenBanner2.png')}
-                        />
-                    </Swiper>
-                </View>*/}
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 5 }}>
+                        /> */}
+                        </Swiper>
+                        : undefined}
+                </View>
+                {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 5 }}>
                     {bannerImages?.map((el, index) => {
                         return (
                             <>
@@ -272,7 +320,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                             </>
                         )
                     })}
-                </ScrollView>
+                </ScrollView> */}
                 <View style={{ flexDirection: 'row', backgroundColor: 'white', height: 125, justifyContent: 'space-around', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => { navigation.navigate('ProductListScreen', { categoryName: "VEGETABLES" }) }} style={{ height: 120, width: 150, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
                         <Text style={{ padding: 15 }}>Vegetables</Text>
@@ -306,8 +354,25 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                     keyExtractor={item => item?.id.toString()}
                 />
 
-                {/* <Text>{JSON.stringify(sectionlistData, null, "      ")}</Text> */}
+                {/* <Text>{JSON.stringify(sectionlistData, null, "      ")} </Text> */}
             </ScrollView>
+            {showAppUpdate ?
+                <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
+                    <View style={{ flex: 1, paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>
+                        <FeatherIcons name="info" color={'#C8C8C8'} size={18} />
+                        <Text style={{}}>  App update available</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => { setShowAppUpdate(false) }} style={{
+                        backgroundColor: '#F5F5F5', width: 25, height: 25, borderRadius: 50, position: 'absolute', right: 10, top: -10, zIndex: 1, elevation: 5, justifyContent: 'center', alignItems: 'center', shadowColor: "#000", shadowOffset: { width: 0, height: 1, }, shadowOpacity: 0.22, shadowRadius: 2.22,
+                    }}>
+                        <Icon name="close" style={{ color: '#AAAAAA', fontSize: 20 }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => { onPressUpdate() }} style={{ margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center", }}>
+                        <Text style={{ fontSize: 14, color: Theme.Colors.primary, fontWeight: 'bold', marginRight: 10 }}>UPDATE NOW</Text>
+                    </TouchableOpacity>
+                </View>
+                : undefined
+            }
             {loading ?
                 <Loader />
                 : undefined

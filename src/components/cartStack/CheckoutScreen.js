@@ -1,16 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, FlatList, ScrollView, Image } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, FlatList, ScrollView, Image, SafeAreaView } from 'react-native';
 import { connect } from 'react-redux';
 import { clearCart } from '../../actions/cart'
 import Theme from '../../styles/Theme';
 import CustomHeader from '../common/CustomHeader';
 import CardCartScreen from './CardCartScreen';
-import { Icon } from 'native-base'
+import { Button, Icon } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage';
 import { getV2DeliverySlots, addOrder } from '../../actions/cart'
 import moment from 'moment'
 import { Radio, Toast } from 'native-base';
 import RazorpayCheckout from 'react-native-razorpay';
+import Modal from 'react-native-modal';
 
 const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2DeliverySlots, addOrder, userLocation, config }) => {
     const scrollViewRef = useRef();
@@ -21,7 +22,9 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
     const [slotsArray, setSlotsArray] = useState([])
     const [slot, setSlot] = useState({})
     const [disableTomorrowSlot, setDisableTomorrowSlot] = useState(false)
+    const [paymentSelectionActionScreen, setPaymentSelectionActionScreen] = useState(false)
     const { offerPrice, selectedOffer } = route.params;
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("PREPAID")
     useEffect(() => {
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
@@ -54,7 +57,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                 setSlotsArray([])
             }
         })
-    }, [])
+    }, [userLocation])
 
     useEffect(() => {
         // alert(JSON.stringify(slotsArray, null, "         "))
@@ -131,6 +134,14 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
     }
 
     const onPressMakePayment = async () => {
+        if (config?.enableCOD) {
+            setPaymentSelectionActionScreen(true)
+        } else {
+            onSelectPaymentMethod("PREPAID")
+        }
+    }
+
+    const onSelectPaymentMethod = async (option) => {
         let itemCreateRequests = []
         await cartItems?.forEach((el, index) => {
             itemCreateRequests.push({
@@ -154,70 +165,98 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
             "offerId": selectedOffer?.offer?.id > 0 ? selectedOffer?.offer?.id : undefined,
             "offerPrice": offerPrice > 0 ? offerPrice : undefined,
         }
-        // alert(JSON.stringify(payload, null, "     "))
-        console.warn(JSON.stringify(payload, null, "     "))
-        addOrder(payload, async (res, status) => {
-            if (status) {
-                console.warn(JSON.stringify(res?.data, null, "        "))
-                let userDetails = await AsyncStorage.getItem('userDetails');
-                let parsedUserDetails = await JSON.parse(userDetails);
-                var options = {
-                    description: 'Select the payment method',
-                    image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
-                    currency: 'INR',
-                    key: config?.razorpayApiKey,
-                    amount: totalCartValue,
-                    name: 'Zasket',
-                    order_id: res?.data?.paymentResponseId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
-                    prefill: {
-                        email: parsedUserDetails?.customerDetails?.userEmail,
-                        contact: parsedUserDetails?.customerDetails?.userMobileNumber,
-                        name: parsedUserDetails?.customerDetails?.name
-                    },
-                    theme: { color: Theme.Colors.primary }
-                }
-                RazorpayCheckout.open(options).then((data) => {
-                    // handle success
-                    // alert(`Success: ${data.razorpay_payment_id}`);
+        if (option === "COD") {
+            let codPayload = {
+                ...payload,
+                "paymentMethod": "COD"
+            }
+            addOrder(codPayload, async (res, status) => {
+                if (status) {
                     onClearCart()
                     navigation.pop()
                     navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
-                    // navigation.navigate('AccountStack', { screen: 'MyOrders' })
-                }).catch((error) => {
-                    // handle failure
-                    // alert(`Error: ${error.code} | ${error.description}`);
-                    Toast.show({
-                        text: "Payment failed",
-                        buttonText: "Okay",
-                        type: "danger"
-                    })
-                })
-            } else {
-                if (__DEV__) {
-                    alert(JSON.stringify(res?.response, null, "        "))
                 }
-                let errorItems = []
-                if (res?.response?.data?.length > 0) {
-                    if (cartItems.length > 0) {
-                        res?.response?.data?.forEach((resEl, resIndex) => {
-                            cartItems?.forEach((cartEl, cartIndex) => {
-                                if (cartEl?.id == resEl?.id) {
-                                    errorItems.push(cartEl?.itemName)
-                                }
-                            })
-                        })
-                    }
-                    alert(errorItems.toString() + " are requested more than available quantity")
-                }
+            })
+        } else if (option == "PREPAID") {
+            // alert(JSON.stringify(payload, null, "     "))
+            let prepaidPayload = {
+                ...payload,
+                "paymentMethod": "PREPAID"
             }
-        })
+            console.warn(JSON.stringify(payload, null, "     "))
+            addOrder(prepaidPayload, async (res, status) => {
+                if (status) {
+                    console.warn(JSON.stringify(res?.data, null, "        "))
+                    let userDetails = await AsyncStorage.getItem('userDetails');
+                    let parsedUserDetails = await JSON.parse(userDetails);
+                    var options = {
+                        description: 'Select the payment method',
+                        image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
+                        currency: 'INR',
+                        key: config?.razorpayApiKey,
+                        amount: totalCartValue,
+                        name: 'Zasket',
+                        order_id: res?.data?.paymentResponseId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+                        prefill: {
+                            email: parsedUserDetails?.customerDetails?.userEmail,
+                            contact: parsedUserDetails?.customerDetails?.userMobileNumber,
+                            name: parsedUserDetails?.customerDetails?.name
+                        },
+                        theme: { color: Theme.Colors.primary }
+                    }
+                    RazorpayCheckout.open(options).then((data) => {
+                        // handle success
+                        // alert(`Success: ${data.razorpay_payment_id}`);
+                        onClearCart()
+                        navigation.pop()
+                        navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                        // navigation.navigate('AccountStack', { screen: 'MyOrders' })
+                    }).catch((error) => {
+                        // handle failure
+                        // alert(`Error: ${error.code} | ${error.description}`);
+                        Toast.show({
+                            text: "Payment failed",
+                            buttonText: "Okay",
+                            type: "danger"
+                        })
+                    })
+                } else {
+                    if (__DEV__) {
+                        alert(JSON.stringify(res?.response, null, "        "))
+                    }
+                    let errorItems = []
+                    if (res?.response?.data?.length > 0) {
+                        if (cartItems.length > 0) {
+                            res?.response?.data?.forEach((resEl, resIndex) => {
+                                cartItems?.forEach((cartEl, cartIndex) => {
+                                    if (cartEl?.id == resEl?.id) {
+                                        errorItems.push(cartEl?.itemName)
+                                    }
+                                })
+                            })
+                        }
+                        alert(errorItems.toString() + " are requested more than available quantity")
+                    }
+                }
+            })
+        }
+    }
+
+
+    const onPressContinue = () => {
+        if (selectedPaymentMethod == "PREPAID") {
+            setPaymentSelectionActionScreen(false)
+            onSelectPaymentMethod("PREPAID")
+        } else if (selectedPaymentMethod == "COD") {
+            onSelectPaymentMethod("COD")
+        }
     }
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Checkout"} showSearch={false} />
             <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false}>
-                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")}</Text> */}
+                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")} </Text> */}
 
                 <View style={{ backgroundColor: 'white', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
                     <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center' }}>
@@ -248,13 +287,13 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                                     ((userLocation?.recepientName).length > 13) ?
                                         (((userLocation?.recepientName).substring(0, 13 - 3)) + '...') :
                                         userLocation?.recepientName
-                                }</Text>
+                                } </Text>
                             </View>
                             <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{}}>
                                 <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Change</Text>
                             </TouchableOpacity>
                         </View>
-                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1}</Text>
+                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1} </Text>
                     </View>
                 </View>
 
@@ -264,61 +303,61 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                         {disableTomorrowSlot ?
                             <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
                                 <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
-                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")} </Text>
                             </View>
                             :
                             slotsArray[0]?.availableOrdersCount > 0 ?
                                 <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(0) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 0 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 0 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
-                                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
+                                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")} </Text>
                                 </TouchableOpacity>
                                 :
                                 <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ color: '#727272', fontSize: 12 }}>Tomorrow</Text>
-                                    <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")}</Text>
+                                    <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(1, 'days').format("DD MMM")} </Text>
                                 </View>
                         }
                         {slotsArray[1]?.availableOrdersCount > 0 ?
                             <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(1) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 1 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 1 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(2, 'days').format("ddd")}</Text>
-                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(2, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(2, 'days').format("ddd")} </Text>
+                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(2, 'days').format("DD MMM")} </Text>
                             </TouchableOpacity>
                             :
                             <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(2, 'days').format("ddd")}</Text>
-                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(2, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(2, 'days').format("ddd")} </Text>
+                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(2, 'days').format("DD MMM")} </Text>
                             </View>
                         }
                         {slotsArray[2]?.availableOrdersCount > 0 ?
                             <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(2) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 2 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 2 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(3, 'days').format("ddd")}</Text>
-                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(3, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(3, 'days').format("ddd")} </Text>
+                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(3, 'days').format("DD MMM")} </Text>
                             </TouchableOpacity>
                             :
                             <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(3, 'days').format("ddd")}</Text>
-                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(3, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(3, 'days').format("ddd")} </Text>
+                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(3, 'days').format("DD MMM")} </Text>
                             </View>
                         }
                         {slotsArray[3]?.availableOrdersCount > 0 ?
                             <TouchableOpacity activeOpacity={0.7} onPress={() => { onPressSlot(3) }} style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: nextDayBuffer == 3 ? Theme.Colors.primary : "#EFEFEF", backgroundColor: nextDayBuffer == 3 ? '#FDEFEF' : "white", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(4, 'days').format("ddd")}</Text>
-                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(4, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(4, 'days').format("ddd")} </Text>
+                                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{moment().add(4, 'days').format("DD MMM")} </Text>
                             </TouchableOpacity>
                             :
                             <View style={{ padding: 10, minWidth: 70, borderWidth: 1, borderRadius: 5, borderColor: "#EFEFEF", backgroundColor: "#F1F1F1", justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(4, 'days').format("ddd")}</Text>
-                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(4, 'days').format("DD MMM")}</Text>
+                                <Text style={{ color: '#727272', fontSize: 12 }}>{moment().add(4, 'days').format("ddd")} </Text>
+                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: 'bold' }}>{moment().add(4, 'days').format("DD MMM")} </Text>
                             </View>
                         }
                     </View>
-                    {/* <Text>{(JSON.stringify(cartItems, null, "        "))}</Text> */}
+                    {/* <Text>{(JSON.stringify(cartItems, null, "        "))} </Text> */}
                     {nextDayBuffer == undefined || nextDayBuffer == null ?
                         <Text style={{ marginTop: 10, color: 'red' }}>No slots available</Text> : undefined}
                     {slot?.description ?
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
                             <Radio selected={true} disabled selectedColor={Theme.Colors.primary} />
-                            <Text style={{ marginLeft: 10 }}>{slot?.description}</Text>
+                            <Text style={{ marginLeft: 10 }}>{slot?.description} </Text>
                         </View>
                         : undefined}
                 </View>
@@ -327,26 +366,26 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                     <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                         <Text style={{ color: '#727272' }}>Item Total</Text>
-                        <Text style={{}}>₹ {(totalCartValue).toFixed(2)}</Text>
+                        <Text style={{}}>₹ {(totalCartValue).toFixed(2)} </Text>
                     </View>
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                         <Text style={{ color: '#727272' }}>Delivery Charges</Text>
-                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Free</Text>
+                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Free </Text>
                     </View>
                     {offerPrice > 0 ?
                         <>
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ color: '#35B332' }}>Coupon Discount</Text>
-                                <Text style={{ color: "#35B332", }}>- ₹{(totalCartValue - offerPrice).toFixed(2)}</Text>
+                                <Text style={{ color: "#35B332", }}>- ₹{(totalCartValue - offerPrice).toFixed(2)} </Text>
                             </View>
                         </>
                         : undefined}
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                         <Text style={{ fontWeight: 'bold' }}>Total Payable Amount</Text>
-                        <Text style={{ fontWeight: 'bold' }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)}</Text>
+                        <Text style={{ fontWeight: 'bold' }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
                     </View>
                     {savedValue > 0 ?
                         <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: "#C2E2A9", alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center" }}>
@@ -358,7 +397,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
             {cartItems?.length > 0 ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
                         {/* <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
                             <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
                         </TouchableOpacity> */}
@@ -374,7 +413,61 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                     }
                 </View>
                 : undefined}
-        </View>
+            <Modal
+                isVisible={paymentSelectionActionScreen}
+                onSwipeComplete={() => setPaymentSelectionActionScreen(false)}
+                swipeDirection="down"
+                style={{ margin: 0, justifyContent: 'flex-end' }}
+                onBackButtonPress={() => setPaymentSelectionActionScreen(false)}
+                onBackdropPress={() => setPaymentSelectionActionScreen(false)}
+            >
+                <SafeAreaView style={{ height: "50%", backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
+                    <View style={{ alignSelf: 'center', height: 5, width: 50, backgroundColor: '#E2E2E2', borderRadius: 50, marginVertical: 15 }} />
+                    <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+                        <View style={{ flex: 1, margin: 4, width: "90%", marginBottom: 10, alignSelf: 'center', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Select payment method</Text>
+                            <Text style={{ color: '#727272', marginTop: 10 }}>Two easy ways to make payment</Text>
+                        </View>
+                        <TouchableOpacity activeOpacity={0.8} style={{
+                            flexDirection: 'row', marginTop: "5%", backgroundColor: "white", borderRadius: 5, marginHorizontal: 20, padding: 10, shadowColor: "#000", shadowOffset: { width: 0, height: 1, }, shadowOpacity: 0.22, shadowRadius: 2.22, elevation: 3, alignItems: "center"
+                        }} onPress={() => {
+                            setSelectedPaymentMethod("PREPAID")
+                        }}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Radio selected={selectedPaymentMethod == "PREPAID" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} />
+                            </View>
+                            <View style={{ marginLeft: 10, flexDirection: 'row', flex: 1 }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ textTransform: 'capitalize', color: 'black', fontSize: 14 }}>Make Online Payment </Text>
+                                    <Text style={{ color: '#727272', fontSize: 12, }}>Preferred payment due to covid </Text>
+                                </View>
+                                <View style={{}}>
+                                    <Image
+                                        style={{ alignSelf: 'flex-end', width: 80, height: 30, }}
+                                        resizeMode="contain"
+                                        source={require('../../assets/png/paymentImages.png')}
+                                    />
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity activeOpacity={0.8} style={{
+                            flexDirection: 'row', marginTop: "5%", marginBottom: 10, backgroundColor: "white", borderRadius: 5, marginHorizontal: 20, padding: 10, shadowColor: "#000", shadowOffset: { width: 0, height: 1, }, shadowOpacity: 0.22, shadowRadius: 2.22, elevation: 3, minHeight: 50, alignItems: "center"
+                        }} onPress={() => { setSelectedPaymentMethod("COD") }}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Radio selected={selectedPaymentMethod == "COD" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} />
+                            </View>
+                            <View style={{ marginLeft: 10 }}>
+                                <Text style={{ textTransform: 'capitalize', color: 'black', fontSize: 16 }}>Cash on delivery </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </ScrollView>
+                    <TouchableOpacity onPress={onPressContinue} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Continue </Text>
+                    </TouchableOpacity>
+                </SafeAreaView>
+            </Modal>
+        </View >
     );
 }
 
