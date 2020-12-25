@@ -458,12 +458,12 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                                 <Radio selected={selectedPaymentMethod == "COD" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} />
                             </View>
                             <View style={{ marginLeft: 10 }}>
-                                <Text style={{ textTransform: 'capitalize', color: 'black', fontSize: 16 }}>Cash on delivery </Text>
+                                <Text style={{ color: 'black', fontSize: 16 }}>Cash on delivery </Text>
                             </View>
                         </TouchableOpacity>
                     </ScrollView>
                     <TouchableOpacity onPress={onPressContinue} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Continue </Text>
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{selectedPaymentMethod == "COD" ? "Place Order" : "Continue"} </Text>
                     </TouchableOpacity>
                 </SafeAreaView>
             </Modal>

@@ -194,15 +194,16 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                             })
                     },
                     (error) => {
-                        if (error?.message == "Location permission was not granted.") {
+                        if (error?.message == "Location permission was not granted." || error?.message == "Location services disabled." || error?.message == "User denied access to location services.") {
                             navigation.navigate('PincodeScreen')
                         }
+                        // alert(JSON.stringify(error))
                         console.warn(error)
                     }
                 );
             }
         } catch (e) {
-            alert(e.message || "");
+            // alert(e.message || "");
         }
     };
 
