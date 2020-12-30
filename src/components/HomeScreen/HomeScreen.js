@@ -155,8 +155,8 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
     }, [userLocation])
 
     useEffect(() => {
-        if (homeScreenLocation?.pincode) {
-            isPincodeServiceable(homeScreenLocation?.pincode, (res, status) => {
+        if (homeScreenLocation?.lat) {
+            isPincodeServiceable(homeScreenLocation?.lat, homeScreenLocation?.lon, (res, status) => {
                 if (status) {
                     setPincodeError(false)
                 } else {
@@ -164,7 +164,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                 }
             })
         }
-    }, [homeScreenLocation])
+    }, [homeScreenLocation?.lat])
 
     const getCurrentPosition = async () => {
         try {
@@ -182,7 +182,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                                         lon: position.coords.longitude
                                     })
                                     // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
-                                    isPincodeServiceable(postal_code?.long_name, (res, status) => {
+                                    isPincodeServiceable(position.coords.latitude, position.coords.longitude, postal_code?.long_name, (res, status) => {
                                         if (status) {
                                         } else {
                                             setPincodeError(true)
@@ -194,15 +194,16 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                             })
                     },
                     (error) => {
-                        if (error?.message == "Location permission was not granted.") {
+                        if (error?.message == "Location permission was not granted." || error?.message == "Location services disabled." || error?.message == "User denied access to location services.") {
                             navigation.navigate('PincodeScreen')
                         }
+                        // alert(JSON.stringify(error))
                         console.warn(error)
                     }
                 );
             }
         } catch (e) {
-            alert(e.message || "");
+            // alert(e.message || "");
         }
     };
 

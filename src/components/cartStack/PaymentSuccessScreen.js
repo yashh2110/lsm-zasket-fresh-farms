@@ -5,10 +5,23 @@ import { Icon, Button, Text } from 'native-base';
 import LottieView from 'lottie-react-native';
 import Theme from '../../styles/Theme';
 import moment from 'moment'
+import InAppReview from "react-native-in-app-review";
 
 const PaymentSuccessScreen = ({ navigation, route }) => {
     const { date } = route.params;
 
+    // useEffect(() => {
+    //     const initialFunction = async () => {
+    //         try {
+    //             const isAvailable = await InAppReview.isAvailable();
+    //             if (!isAvailable) {
+    //                 return;
+    //             }
+    //             InAppReview.RequestInAppReview();
+    //         } catch (e) { }
+    //     }
+    //     initialFunction()
+    // }, [])
 
     const onShare = async () => {
         let appUrl
