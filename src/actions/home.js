@@ -29,9 +29,9 @@ export const getV2Config = (callback) => async dispatch => {
 };
 
 //isPincodeServiceable
-export const isPincodeServiceable = (pincode, callback) => async dispatch => {
+export const isPincodeServiceable = (lat, lon, callback) => async dispatch => {
     try {
-        const res = await axiosinstance.get(`/regions/serviceable`, { params: { pincode: pincode } })
+        const res = await axiosinstance.get(`/regions/is-area-serviceable`, { params: { lat: lat, lon: lon } })
         // alert(JSON.stringify(res.data, null, "      "))
         callback(res, true)
     } catch (err) {

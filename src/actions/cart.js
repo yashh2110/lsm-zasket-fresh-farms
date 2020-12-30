@@ -61,24 +61,24 @@ export const clearCart = (payload) => dispatch => {
     })
 }
 
-export const getV2DeliverySlots = (numOfDays, pincode, callback) => async dispatch => {
+export const getV2DeliverySlots = (numOfDays, lat, lon, callback) => async dispatch => {
     try {
-        const res = await axiosinstance.get('/order/v2/delivery-slots', { params: { numOfDays: numOfDays, pincode: pincode } })
+        const res = await axiosinstance.get('/order/v3/delivery-slots', { params: { numOfDays: numOfDays, lat: lat, lon: lon } })
         callback(res, true)
     } catch (err) {
-        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
     }
 }
 
-//addOrder
+//v2AddOrder
 export const addOrder = (payload, callback) => async dispatch => {
     try {
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
         // alert(JSON.stringify(userDetails, null, "     "))
-        const res = await axiosinstance.post(`/customers/${customerId}/orders`, payload)
+        const res = await axiosinstance.post(`/v2/customers/${customerId}/orders`, payload)
         callback(res, true)
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))

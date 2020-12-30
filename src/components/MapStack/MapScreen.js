@@ -302,7 +302,7 @@ class MyMapView extends React.Component {
                     } else {
                         // Alert.alert(response?.data)
                         this.setState({ errorMessage: response?.data })
-                        if (response?.data == "Pincode is not serviceable") {
+                        if (response?.data == "Your location is not serviceable") {
                             this.setState({ errorMessageBanner: true })
                         }
                         // this.refs._scrollView.scrollTo(0);

@@ -181,53 +181,61 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                         }
                         {totalCartValue >= config?.freeDeliveryMinOrder ?
                             selectedOffer?.offer?.displayName ?
-                                <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, justifyContent: 'center' }}>
-                                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                                        <Image
-                                            style={{ height: 18, width: 40, }}
-                                            resizeMode={"contain"}
-                                            source={require('../../assets/png/coupon.png')}
-                                        />
-                                        <View style={{ flex: 1 }}>
-                                            <Text style={{ fontSize: 14, color: '#39BE50' }}>{selectedOffer?.offer?.displayName} </Text>
-                                            <Text style={{ fontSize: 12, color: '#727272' }}>Coupon applied on the bill</Text>
+                                <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, paddingVertical: 10, justifyContent: 'center' }}>
+                                    <View style={{ flex: 1, flexDirection: 'row', }}>
+                                        <View style={{ backgroundColor: '#FDEFEF', borderWidth: 1, borderColor: "#F5C4C6", borderTopLeftRadius: 4, borderBottomLeftRadius: 4, justifyContent: 'center', alignItems: 'center', zIndex: 1 }}>
+                                            <Image
+                                                style={{ height: 16, width: 50, }}
+                                                resizeMode={"contain"}
+                                                source={require('../../assets/png/couponImage.png')}
+                                            />
                                         </View>
-                                        <TouchableOpacity onPress={() => { removeOffer() }} style={{ justifyContent: 'center', alignItems: 'center', height: 50, width: 50 }}>
-                                            <Icon name="closecircle" type="AntDesign" style={{ fontSize: 18, color: '#c9c9c9' }} />
-                                        </TouchableOpacity>
+                                        <View style={{ flex: 1, flexDirection: 'row', borderStyle: 'dashed', borderTopRightRadius: 4, borderBottomRightRadius: 4, backgroundColor: "#FAFAFA", alignItems: "center", borderWidth: 1.5, borderColor: '#E3E3E3', zIndex: 0, marginLeft: -1 }}>
+                                            <View style={{ flex: 1 }}>
+                                                <Text style={{ fontSize: 14, color: "#E1171E", marginLeft: 10, fontWeight: 'bold' }}>{selectedOffer?.offer?.displayName} </Text>
+                                                <Text style={{ fontSize: 12, color: '#727272', marginLeft: 10 }}>Coupon applied on the bill</Text>
+                                            </View>
+                                            <TouchableOpacity onPress={() => { removeOffer() }} style={{ justifyContent: 'center', alignItems: 'center', height: 50, width: 50 }}>
+                                                <Icon name="closecircle" type="AntDesign" style={{ fontSize: 18, color: '#c9c9c9' }} />
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 </View>
                                 :
                                 <View style={{
-                                    backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, justifyContent: 'center',
+                                    backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, paddingVertical: 10, justifyContent: 'center',
                                     // borderTopWidth: 1, borderBottomWidth: 1, borderColor: Theme.Colors.primary,
                                 }}>
-                                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                                        <Image
-                                            style={{ height: 18, width: 40, }}
-                                            resizeMode={"contain"}
-                                            source={require('../../assets/png/coupon.png')}
-                                        />
-                                        <TextInput
-                                            style={{ height: 40, flex: 1, marginLeft: 2, }}
-                                            onChangeText={text => setCoupon(text)}
-                                            placeholder="Enter Coupon Code"
-                                            value={coupon}
-                                            placeholderTextColor="black"
-                                            autoCapitalize="characters"
-                                        />
-                                        {couponLoading ?
-                                            <ActivityIndicator color={Theme.Colors.primary} size="small" />
-                                            :
-                                            coupon ?
-                                                <TouchableOpacity onPress={() => onPressApplyCoupon()} style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
-                                                    <Text style={{ marginHorizontal: 5, color: Theme.Colors.primary, fontWeight: 'bold' }}>Apply</Text>
-                                                </TouchableOpacity>
+                                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                                        <View style={{ backgroundColor: '#FDEFEF', borderWidth: 1, borderColor: "#F5C4C6", borderTopLeftRadius: 4, borderBottomLeftRadius: 4, justifyContent: 'center', alignItems: 'center', zIndex: 1 }}>
+                                            <Image
+                                                style={{ height: 16, width: 50, }}
+                                                resizeMode={"contain"}
+                                                source={require('../../assets/png/couponImage.png')}
+                                            />
+                                        </View>
+                                        <View style={{ flex: 1, flexDirection: 'row', borderStyle: 'dashed', borderTopRightRadius: 4, borderBottomRightRadius: 4, backgroundColor: "#FAFAFA", alignItems: "center", borderWidth: 1.5, borderColor: '#E3E3E3', zIndex: 0, marginLeft: -1 }}>
+                                            <TextInput
+                                                style={{ height: 40, flex: 1, marginLeft: 8, }}
+                                                onChangeText={text => setCoupon(text)}
+                                                placeholder="Enter Coupon Code"
+                                                value={coupon}
+                                                placeholderTextColor="black"
+                                                autoCapitalize="characters"
+                                            />
+                                            {couponLoading ?
+                                                <ActivityIndicator color={Theme.Colors.primary} size="small" style={{ marginRight: 10 }} />
                                                 :
-                                                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
-                                                    <Text style={{ marginHorizontal: 5, color: "#F5B0B2", fontWeight: 'bold' }}>Apply</Text>
-                                                </TouchableOpacity>
-                                        }
+                                                coupon ?
+                                                    <TouchableOpacity onPress={() => onPressApplyCoupon()} style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
+                                                        <Text style={{ marginHorizontal: 5, color: Theme.Colors.primary, fontWeight: 'bold' }}>Apply</Text>
+                                                    </TouchableOpacity>
+                                                    :
+                                                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
+                                                        <Text style={{ marginHorizontal: 5, color: "#F5B0B2", fontWeight: 'bold' }}>Apply</Text>
+                                                    </TouchableOpacity>
+                                            }
+                                        </View>
                                     </View>
                                 </View>
                             : undefined}

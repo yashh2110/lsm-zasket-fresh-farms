@@ -49,9 +49,9 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
     }, [cartItems])
 
     useEffect(() => {
-        getV2DeliverySlots(4, userLocation?.pincode, (res, status) => {
+        // alert(JSON.stringify(userLocation, null, "    "))
+        getV2DeliverySlots(4, userLocation?.lat, userLocation?.lon, (res, status) => {
             if (status) {
-                // alert(JSON.stringify(res.data, null, "    "))
                 setSlotsArray(res?.data)
             } else {
                 setSlotsArray([])

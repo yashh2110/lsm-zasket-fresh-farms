@@ -10,18 +10,18 @@ import InAppReview from "react-native-in-app-review";
 const PaymentSuccessScreen = ({ navigation, route }) => {
     const { date } = route.params;
 
-    useEffect(() => {
-        const initialFunction = async () => {
-            try {
-                const isAvailable = await InAppReview.isAvailable();
-                if (!isAvailable) {
-                    return;
-                }
-                InAppReview.RequestInAppReview();
-            } catch (e) { }
-        }
-        initialFunction()
-    }, [])
+    // useEffect(() => {
+    //     const initialFunction = async () => {
+    //         try {
+    //             const isAvailable = await InAppReview.isAvailable();
+    //             if (!isAvailable) {
+    //                 return;
+    //             }
+    //             InAppReview.RequestInAppReview();
+    //         } catch (e) { }
+    //     }
+    //     initialFunction()
+    // }, [])
 
     const onShare = async () => {
         let appUrl

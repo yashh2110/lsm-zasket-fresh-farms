@@ -22,13 +22,13 @@ export const getAllUserAddress = (callback) => async dispatch => {
     }
 }
 
-//addNewCustomerAddress
+//v2AddNewCustomerAddress
 export const addNewCustomerAddress = (payLoad, callback) => async dispatch => {
     try {
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
-        const res = await axiosinstance.post(`/customer/${customerId}/address`, payLoad)
+        const res = await axiosinstance.post(`/v2/customer/${customerId}/address`, payLoad)
         callback(res, true)
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
@@ -36,13 +36,13 @@ export const addNewCustomerAddress = (payLoad, callback) => async dispatch => {
     }
 }
 
-// updateUserAddress
+// v2UpdateUserAddress
 export const updateUserAddress = (addressId, payLoad, callback) => async dispatch => {
     try {
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
-        const res = await axiosinstance.put(`/customer/${customerId}/address/${addressId}`, payLoad)
+        const res = await axiosinstance.put(`/v2/customer/${customerId}/address/${addressId}`, payLoad)
         callback(res, true)
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))

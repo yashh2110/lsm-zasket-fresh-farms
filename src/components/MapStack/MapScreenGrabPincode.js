@@ -220,7 +220,7 @@ class MapScreenGrabPincode extends React.Component {
             "lat": this.state.latitude,
             "lon": this.state.longitude,
         })
-        await this.props.isPincodeServiceable(this.state.pincode, (res, status) => {
+        await this.props.isPincodeServiceable(this.state.latitude, this.state.longitude, (res, status) => {
             if (status) {
                 this.props.navigation.goBack()
             } else {
@@ -358,7 +358,7 @@ class MapScreenGrabPincode extends React.Component {
                                         <Text style={{ fontSize: 16 }}>{this.state.address} </Text>
                                     </View>
                                 }
-                                <View style={{ marginTop: 10 }}>
+                                {/* <View style={{ marginTop: 10 }}>
                                     <Text style={{ color: "#727272", fontSize: 12 }}>Pincode</Text>
                                     <TextInput
                                         style={{ height: 40, borderColor: this.state.errorMessageBanner ? 'red' : '#D8D8D8', borderBottomWidth: 1 }}
@@ -369,7 +369,7 @@ class MapScreenGrabPincode extends React.Component {
                                         value={this.state.pincode}
                                         onTouchStart={() => this.setState({ errorMessageBanner: false })}
                                     />
-                                </View>
+                                </View> */}
                             </View>
                         </ScrollView>
                         <Button full style={{ backgroundColor: Theme.Colors.primary, }} onPress={() => this.onSubmit()}><Text style={{ textTransform: 'capitalize' }}>Confirm Location</Text></Button>
