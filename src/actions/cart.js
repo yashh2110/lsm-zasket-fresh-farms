@@ -119,6 +119,17 @@ export const getOrderDetails = (order_id, callback) => async dispatch => {
     }
 }
 
+//cancelOrder
+export const cancelOrder = (order_id, payload, callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.post(`/orders/${order_id}/cancel`, payload)
+        callback(res, true)
+    } catch (err) {
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+    }
+}
+
 //getAllOffers
 export const getAllOffers = (callback) => async dispatch => {
     try {

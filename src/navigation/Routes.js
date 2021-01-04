@@ -18,6 +18,7 @@ import MapScreen from "../components/MapStack/MapScreen"
 import MapScreenGrabPincode from "../components/MapStack/MapScreenGrabPincode"
 import AccountScreen from "../components/AccountStack/AccountScreen"
 import SupportScreen from "../components/AccountStack/SupportScreen"
+import CancelOrderScreen from "../components/AccountStack/CancelOrderScreen"
 import MyOrders from "../components/AccountStack/MyOrders"
 import MyOrdersDetailScreen from "../components/AccountStack/MyOrdersDetailScreen"
 import ManageAddressScreen from "../components/AccountStack/ManageAddressScreen"
@@ -288,6 +289,10 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                 <Stack.Screen
                     name="SupportScreen"
                     component={SupportScreen}
+                />
+                <Stack.Screen
+                    name="CancelOrderScreen"
+                    component={CancelOrderScreen}
                 />
                 <Stack.Screen
                     name="MyOrders"

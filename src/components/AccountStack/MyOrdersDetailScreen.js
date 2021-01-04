@@ -12,9 +12,21 @@ import Loader from "../common/Loader";
 import moment from 'moment'
 
 
-const MyOrdersDetailScreen = ({ route, navigation, }) => {
+const MyOrdersDetailScreen = ({ route, navigation, config }) => {
     const { item } = route?.params;
-
+    const [showCancelButton, setShowCancelButton] = useState(true)
+    useEffect(() => {
+        const yesterday = new Date(item?.slotStartTime)
+        yesterday.setDate(yesterday.getDate() - 1)
+        var d1 = new Date();
+        var d2 = new Date(yesterday);
+        var same = d1.getTime() === d2.getTime();
+        if (same) {
+            if (new Date().getHours() >= config?.nextDayDeliveryCutOff) {
+                setShowCancelButton(false)
+            }
+        }
+    }, [])
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Orders Details"} showSearch={false} />
@@ -50,6 +62,26 @@ const MyOrdersDetailScreen = ({ route, navigation, }) => {
                                 <Text style={{ color: Theme.Colors.primary }}>Assigned</Text>
                             }
                         </View>
+                    </View>
+                    <View style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: "#EAEAEC", marginTop: 15, paddingTop: 5 }}>
+                        {showCancelButton ?
+                            item?.orderState == "CANCELLED" || item?.orderState == "DELIVERED" || item?.orderState == "REFUNDED" ?
+                                <View style={{ flex: 1, padding: 5, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text style={{ color: "#F5B0B2", fontWeight: 'bold' }}>Cancel Order </Text>
+                                </View>
+                                :
+                                <TouchableOpacity onPress={() => { navigation.navigate('CancelOrderScreen', { item: item }) }} style={{ flex: 1, padding: 5, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Cancel Order </Text>
+                                </TouchableOpacity>
+                            :
+                            <View style={{ flex: 1, padding: 5, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: "#F5B0B2", fontWeight: 'bold' }}>Cancel Order </Text>
+                            </View>
+                        }
+                        <View style={{ width: 1, backgroundColor: '#EAEAEC', }} />
+                        <TouchableOpacity onPress={() => { navigation.navigate('SupportScreen') }} style={{ flex: 1, padding: 5, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Need help?  </Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={{ backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
@@ -177,7 +209,7 @@ const MyOrdersDetailScreen = ({ route, navigation, }) => {
 
 
 const mapStateToProps = (state) => ({
-
+    config: state.config.config,
 })
 
 
