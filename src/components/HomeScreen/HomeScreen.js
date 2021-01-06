@@ -17,6 +17,8 @@ import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
 import { getCartItemsApi } from '../../actions/cart'
 import FeatherIcons from "react-native-vector-icons/Feather"
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
+import InAppReview from "react-native-in-app-review";
+
 const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
     const [showAppUpdate, setShowAppUpdate] = useState(false)
     useEffect(() => {
@@ -103,7 +105,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
     const [pincodeError, setPincodeError] = useState(false)
-
+    const [showAppReviewCard, setShowAppReviewCard] = useState(true)
     useEffect(() => {
         initialFunction()
         if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
@@ -237,6 +239,16 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
             });
         }
     }
+    const rateNow = async () => {
+        try {
+            const isAvailable = await InAppReview.isAvailable
+            if (!isAvailable) {
+                onPressUpdate()
+                return;
+            }
+            InAppReview.RequestInAppReview();
+        } catch (e) { }
+    }
     return (
         <>
             <ScrollView style={{ flex: 1, backgroundColor: 'white' }} showsVerticalScrollIndicator={false}
@@ -355,6 +367,31 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                     keyExtractor={item => item?.id.toString()}
                 />
 
+                {showAppReviewCard ?
+                    <View style={{ width: '90%', padding: 15, marginVertical: 10, backgroundColor: 'white', alignSelf: 'center', shadowColor: "#000", shadowOffset: { width: 0, height: 5, }, shadowOpacity: 0.34, shadowRadius: 6.27, elevation: 10, }}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
+                                <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Like using our app?</Text>
+                                <Text style={{ color: '#727272', fontSize: 13 }}>Recommend us to others by rating us 5 stars on the play store</Text>
+                            </View>
+                            <View style={{ backgroundColor: 'white' }}>
+                                <Image
+                                    style={{ height: 100, width: 80 }}
+                                    resizeMode="center"
+                                    source={require('../../assets/png/appReview.png')}
+                                />
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
+                            <TouchableOpacity onPress={() => setShowAppReviewCard(false)} style={{ padding: 10, borderRadius: 4, backgroundColor: '#FDEFEF', width: "47%", justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: "#E1171E", fontSize: 13 }}>No, Thanks</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => rateNow()} style={{ padding: 10, borderRadius: 4, backgroundColor: '#E1171E', width: "47%", justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: 'white', fontSize: 13 }}>Rate the app</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    : null}
                 {/* <Text>{JSON.stringify(sectionlistData, null, "      ")} </Text> */}
             </ScrollView>
             {showAppUpdate ?

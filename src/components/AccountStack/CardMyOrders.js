@@ -17,7 +17,7 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
     }, [item])
 
     return (
-        <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { item: item })} style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
+        <View style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
             {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
@@ -55,6 +55,16 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
                     }
                 </View>
             </View>
+            <View style={{ flex: 1, flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#EAEAEC', marginTop: 10 }}>
+                <TouchableOpacity onPress={() => navigation.navigate('RateOrdersScreen', { item: item })} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center', }}>
+                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Rate your order</Text>
+                </TouchableOpacity>
+                <View style={{ backgroundColor: "#EAEAEC", height: 40, width: 1, marginTop: 5 }} />
+                <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { item: item })} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Order</Text>
+                </TouchableOpacity>
+            </View>
+
             <Modal
                 isVisible={isVisible}
                 onSwipeComplete={() => setIsVisible(false)}
@@ -102,7 +112,7 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
                     </ScrollView>
                 </SafeAreaView>
             </Modal>
-        </TouchableOpacity>
+        </View>
     )
 }
 const mapStateToProps = (state) => ({

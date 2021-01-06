@@ -14,25 +14,26 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
   }, [defaultValue])
   const [currentPosition, setCurrentPosition] = useState({})
   useEffect(() => {
-    Geolocation.getCurrentPosition(({ coords }) => {
-      fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + coords.latitude + ',' + coords.longitude + '&key=' + "AIzaSyAu6f9dUxz6XRVNbwIzqyF4fe1S1ZnebWw")
-        .then((response) => {
-          response.json().then(async (json) => {
-            await setCurrentPosition({
-              data: json.results[0],
-              details: json.results[0],
-              geometry: {
-                location: {
-                  lat: coords.latitude,
-                  lng: coords.longitude
-                }
-              },
-              description: json.results[0].formatted_address,
-            }
-            )
-          });
-        })
-    })
+    // alert('autocompleteinput')
+    // Geolocation.getCurrentPosition(({ coords }) => {
+    //   fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + coords.latitude + ',' + coords.longitude + '&key=' + MapApiKey)
+    //     .then((response) => {
+    //       response.json().then(async (json) => {
+    //         await setCurrentPosition({
+    //           data: json.results[0],
+    //           details: json.results[0],
+    //           geometry: {
+    //             location: {
+    //               lat: coords.latitude,
+    //               lng: coords.longitude
+    //             }
+    //           },
+    //           description: json.results[0].formatted_address,
+    //         }
+    //         )
+    //       });
+    //     })
+    // })
   }, [])
   return (
     <GooglePlacesAutocomplete

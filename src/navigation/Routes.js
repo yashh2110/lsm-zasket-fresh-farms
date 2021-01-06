@@ -21,6 +21,7 @@ import SupportScreen from "../components/AccountStack/SupportScreen"
 import CancelOrderScreen from "../components/AccountStack/CancelOrderScreen"
 import MyOrders from "../components/AccountStack/MyOrders"
 import MyOrdersDetailScreen from "../components/AccountStack/MyOrdersDetailScreen"
+import RateOrdersScreen from "../components/AccountStack/RateOrdersScreen"
 import ManageAddressScreen from "../components/AccountStack/ManageAddressScreen"
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
 import FeatherIcons from "react-native-vector-icons/Feather"
@@ -269,6 +270,10 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                     name="MyOrdersDetailScreen"
                     component={MyOrdersDetailScreen}
                 />
+                <Stack.Screen
+                    name="RateOrdersScreen"
+                    component={RateOrdersScreen}
+                />
             </Stack.Navigator>
         );
     }
@@ -301,6 +306,10 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                 <Stack.Screen
                     name="MyOrdersDetailScreen"
                     component={MyOrdersDetailScreen}
+                />
+                <Stack.Screen
+                    name="RateOrdersScreen"
+                    component={RateOrdersScreen}
                 />
                 <Stack.Screen
                     name="MapScreen"
