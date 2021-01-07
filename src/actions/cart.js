@@ -167,3 +167,17 @@ export const applyOffer = (offerCode, orderAmount, callback) => async dispatch =
         callback(err, false)
     }
 }
+
+//rateOrder
+export const rateOrder = (order_id, payload, callback) => async dispatch => {
+    try {
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customerId = await parsedUserDetails?.customerDetails?.id
+        const res = await axiosinstance.post(`/customers/${customerId}/orders/${order_id}`, payload)
+        callback(res, true)
+    } catch (err) {
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+    }
+}

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { TouchableOpacity, StyleSheet, View, Text, FlatList, Dimensions, Image, TextInput } from 'react-native';
-import { Icon } from 'native-base'
+import { Icon, Toast } from 'native-base'
 import Modal from 'react-native-modal';
 import Theme from "../../styles/Theme";
 import { ScrollView } from "react-native-gesture-handler";
@@ -11,15 +11,28 @@ import CardMyOrders from "./CardMyOrders";
 import Loader from "../common/Loader";
 import moment from 'moment'
 import StarRating from 'react-native-star-rating';
-
-const RateOrdersScreen = ({ route, navigation, config }) => {
+import { rateOrder } from '../../actions/cart'
+const RateOrdersScreen = ({ route, navigation, config, rateOrder }) => {
     const { item } = route?.params;
     const [rating, setRating] = useState(0)
     const [feedBack, setFeedBack] = useState("")
 
     const onPressSubmit = () => {
-        alert(rating)
+        let rateOrderRequest = {
+            "feedback": feedBack,
+            "rated": rating
+        }
+        rateOrder(item?.id, rateOrderRequest, (res, status) => {
+            if (status) {
+                // alert(JSON.stringify(res))
+                navigation.goBack()
+            } else {
+                // alert(JSON.stringify(res?.response))
+                // console.warn(JSON.stringify(res?.response, null, "      "))
+            }
+        })
     }
+
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Rate your Order"} showSearch={false} />
@@ -82,7 +95,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, {})(RateOrdersScreen)
+export default connect(mapStateToProps, { rateOrder })(RateOrdersScreen)
 
 const styles = StyleSheet.create({
     textAreaContainer: {

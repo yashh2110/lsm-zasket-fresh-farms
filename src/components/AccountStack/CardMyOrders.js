@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Icon } from 'native-base';
 import Modal from 'react-native-modal';
 import moment from 'moment'
+import Icons from 'react-native-vector-icons/FontAwesome';
 
 const CardMyOrders = ({ item, navigation, cartItems, }) => {
     const [addButton, setAddButton] = useState(true)
@@ -39,10 +40,13 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
                         <Text style={{ color: Theme.Colors.primary }}>In transit</Text>
                     }
                     {item?.orderState == "DELIVERED" &&
-                        <Text style={{}}><Icon name="checkcircle" type="AntDesign" style={{ fontSize: 16, color: Theme.Colors.primary }} /> Delivered</Text>
+                        <Text style={{}}><Icon name="checkcircle" type="AntDesign" style={{ fontSize: 16, color: "#49C32C" }} /> Delivered</Text>
                     }
                     {item?.orderState == "CANCELLED" &&
-                        <Text style={{ color: "red" }}>Cancelled</Text>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                            <Icon name="cancel" type="MaterialIcons" style={{ fontSize: 16, color: "#E1171E" }} />
+                            <Text style={{ color: "#E1171E" }}> Cancelled</Text>
+                        </View>
                     }
                     {item?.orderState == "REFUNDED" &&
                         <Text style={{}}>Refunded</Text>
@@ -56,12 +60,21 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
                 </View>
             </View>
             <View style={{ flex: 1, flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#EAEAEC', marginTop: 10 }}>
-                <TouchableOpacity onPress={() => navigation.navigate('RateOrdersScreen', { item: item })} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center', }}>
-                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Rate your order</Text>
-                </TouchableOpacity>
+                {item?.orderState == "DELIVERED" ?
+                    item?.rateOrder?.rated ?
+                        <View style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center', }}>
+                            <Text style={{ color: "#909090" }}>You have Rated <Text style={{ color: "#000000", fontWeight: 'bold' }}><Icon name="star" type="AntDesign" style={{ fontSize: 12, color: '#E1A318', }} /> {item?.rateOrder?.rated}</Text></Text>
+                        </View>
+                        :
+                        <TouchableOpacity onPress={() => navigation.navigate('RateOrdersScreen', { item: item })} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center', }}>
+                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Rate your order</Text>
+                        </TouchableOpacity>
+                    :
+                    null
+                }
                 <View style={{ backgroundColor: "#EAEAEC", height: 40, width: 1, marginTop: 5 }} />
                 <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { item: item })} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Order</Text>
+                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Order Details</Text>
                 </TouchableOpacity>
             </View>
 
