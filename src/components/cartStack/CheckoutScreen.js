@@ -355,8 +355,12 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                     {nextDayBuffer == undefined || nextDayBuffer == null ?
                         <Text style={{ marginTop: 10, color: 'red' }}>No slots available</Text> : undefined}
                     {slot?.description ?
-                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
-                            <Radio selected={true} disabled selectedColor={Theme.Colors.primary} />
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, }}>
+                            <Image
+                                style={{ alignSelf: 'flex-end', width: 15, height: 15, }}
+                                resizeMode="contain"
+                                source={require('../../assets/png/timer.png')}
+                            />
                             <Text style={{ marginLeft: 10 }}>{slot?.description} </Text>
                         </View>
                         : undefined}
