@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, FlatList, ScrollView, Image, SafeAreaView } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, TextInput, ScrollView, Image, SafeAreaView, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { clearCart } from '../../actions/cart'
 import Theme from '../../styles/Theme';
@@ -12,10 +12,13 @@ import moment from 'moment'
 import { Radio, Toast } from 'native-base';
 import RazorpayCheckout from 'react-native-razorpay';
 import Modal from 'react-native-modal';
+import { applyOffer } from '../../actions/cart'
+import Loader from '../common/Loader';
 
-const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2DeliverySlots, addOrder, userLocation, config }) => {
+const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, setTotalCartValue] = useState(0)
+    const [loading, setLoading] = useState(false)
     const [nextDayBuffer, setNextDayBuffer] = useState(undefined)
     const [savedValue, setSavedValue] = useState(0)
     const [marketPrice, setMarketPrice] = useState(0)
@@ -23,7 +26,12 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
     const [slot, setSlot] = useState({})
     const [disableTomorrowSlot, setDisableTomorrowSlot] = useState(false)
     const [paymentSelectionActionScreen, setPaymentSelectionActionScreen] = useState(false)
-    const { offerPrice, selectedOffer } = route.params;
+    const [couponLoading, setCouponLoading] = useState(false)
+    const [selectedOffer, setSelectedOffer] = useState({})
+    const [offerPrice, setOfferPrice] = useState(0)
+    const [coupon, setCoupon] = useState("")
+    const [proceedPaymentMethod, setProceedPaymentMethod] = useState(false)
+    // const { offerPrice, selectedOffer } = route.params;
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("PREPAID")
     useEffect(() => {
         if (cartItems.length > 0) {
@@ -141,6 +149,16 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
         }
     }
 
+    const onPressContinue = () => {
+        setLoading(true)
+        setPaymentSelectionActionScreen(false)
+        if (selectedPaymentMethod == "PREPAID") {
+            onSelectPaymentMethod("PREPAID")
+        } else if (selectedPaymentMethod == "COD") {
+            onSelectPaymentMethod("COD")
+        }
+    }
+
     const onSelectPaymentMethod = async (option) => {
         let itemCreateRequests = []
         await cartItems?.forEach((el, index) => {
@@ -171,6 +189,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                 "paymentMethod": "COD"
             }
             addOrder(codPayload, async (res, status) => {
+                setLoading(false)
                 if (status) {
                     onClearCart()
                     navigation.pop()
@@ -185,6 +204,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
             }
             console.warn(JSON.stringify(payload, null, "     "))
             addOrder(prepaidPayload, async (res, status) => {
+                setLoading(false)
                 if (status) {
                     console.warn(JSON.stringify(res?.data, null, "        "))
                     let userDetails = await AsyncStorage.getItem('userDetails');
@@ -221,6 +241,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                         })
                     })
                 } else {
+                    setLoading(false)
                     if (__DEV__) {
                         alert(JSON.stringify(res?.response, null, "        "))
                     }
@@ -243,15 +264,47 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
     }
 
 
-    const onPressContinue = () => {
-        if (selectedPaymentMethod == "PREPAID") {
-            setPaymentSelectionActionScreen(false)
-            onSelectPaymentMethod("PREPAID")
-        } else if (selectedPaymentMethod == "COD") {
-            onSelectPaymentMethod("COD")
-        }
-    }
 
+
+    const onPressApplyCoupon = async () => {
+        setCouponLoading(true)
+        // console.warn(coupon + "         " + totalCartValue)
+        applyOffer(coupon, totalCartValue, (res, status) => {
+            if (status) {
+                setCouponLoading(false)
+                // alert(JSON.stringify(res?.data?.isEligible, null, "     "))
+                if (res?.data?.isEligible) {
+                    setOfferPrice(res?.data?.offerPrice)
+                    setSelectedOffer(res?.data)
+                    Toast.show({
+                        text: res?.data?.comments,
+                        buttonText: "Okay",
+                        type: "success",
+                        duration: 3000
+                    })
+                    setCouponLoading(false)
+                } else {
+                    Toast.show({
+                        text: res?.data?.comments,
+                        buttonText: "Okay",
+                        type: "danger",
+                        duration: 3000
+                    })
+                }
+            } else {
+                if (__DEV__) {
+                    alert(JSON.stringify(res.response, null, "     "))
+                }
+                setCouponLoading(false)
+                removeOffer()
+                // Toast.show({
+                //     text: res?.response?.comments,
+                //     buttonText: "Okay",
+                //     type: "danger"
+                // })
+            }
+        })
+    }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Checkout"} showSearch={false} />
@@ -365,6 +418,64 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                         </View>
                         : undefined}
                 </View>
+                {selectedOffer?.offer?.displayName ?
+                    <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, paddingVertical: 10, justifyContent: 'center' }}>
+                        <View style={{ flex: 1, flexDirection: 'row', }}>
+                            <View style={{ backgroundColor: '#FDEFEF', borderWidth: 1, borderColor: "#F5C4C6", borderTopLeftRadius: 4, borderBottomLeftRadius: 4, justifyContent: 'center', alignItems: 'center', zIndex: 1 }}>
+                                <Image
+                                    style={{ height: 16, width: 50, }}
+                                    resizeMode={"contain"}
+                                    source={require('../../assets/png/couponImage.png')}
+                                />
+                            </View>
+                            <View style={{ flex: 1, flexDirection: 'row', borderStyle: 'dashed', borderTopRightRadius: 4, borderBottomRightRadius: 4, backgroundColor: "#FAFAFA", alignItems: "center", borderWidth: 1.5, borderColor: '#E3E3E3', zIndex: 0, marginLeft: -1 }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ fontSize: 14, color: "#E1171E", marginLeft: 10, fontWeight: 'bold' }}>{selectedOffer?.offer?.displayName} </Text>
+                                    <Text style={{ fontSize: 12, color: '#727272', marginLeft: 10 }}>Coupon applied on the bill</Text>
+                                </View>
+                                <TouchableOpacity onPress={() => { removeOffer() }} style={{ justifyContent: 'center', alignItems: 'center', height: 50, width: 50 }}>
+                                    <Icon name="closecircle" type="AntDesign" style={{ fontSize: 18, color: '#c9c9c9' }} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                    :
+                    <View style={{
+                        backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, paddingVertical: 10, justifyContent: 'center',
+                        // borderTopWidth: 1, borderBottomWidth: 1, borderColor: Theme.Colors.primary,
+                    }}>
+                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                            <View style={{ backgroundColor: '#FDEFEF', borderWidth: 1, borderColor: "#F5C4C6", borderTopLeftRadius: 4, borderBottomLeftRadius: 4, justifyContent: 'center', alignItems: 'center', zIndex: 1 }}>
+                                <Image
+                                    style={{ height: 16, width: 50, }}
+                                    resizeMode={"contain"}
+                                    source={require('../../assets/png/couponImage.png')}
+                                />
+                            </View>
+                            <View style={{ flex: 1, flexDirection: 'row', borderStyle: 'dashed', borderTopRightRadius: 4, borderBottomRightRadius: 4, backgroundColor: "#FAFAFA", alignItems: "center", borderWidth: 1.5, borderColor: '#E3E3E3', zIndex: 0, marginLeft: -1 }}>
+                                <TextInput
+                                    style={{ height: 40, flex: 1, marginLeft: 8, }}
+                                    onChangeText={text => setCoupon(text)}
+                                    placeholder="Enter Coupon Code"
+                                    value={coupon}
+                                    placeholderTextColor="black"
+                                    autoCapitalize="characters"
+                                />
+                                {couponLoading ?
+                                    <ActivityIndicator color={Theme.Colors.primary} size="small" style={{ marginRight: 10 }} />
+                                    :
+                                    coupon ?
+                                        <TouchableOpacity onPress={() => onPressApplyCoupon()} style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
+                                            <Text style={{ marginHorizontal: 5, color: Theme.Colors.primary, fontWeight: 'bold' }}>Apply</Text>
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
+                                            <Text style={{ marginHorizontal: 5, color: "#F5B0B2", fontWeight: 'bold' }}>Apply</Text>
+                                        </TouchableOpacity>
+                                }
+                            </View>
+                        </View>
+                    </View>}
 
                 <View style={{ backgroundColor: 'white', marginTop: 10, padding: 10, paddingHorizontal: 15 }}>
                     <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
@@ -466,9 +577,11 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                             </View>
                         </TouchableOpacity>
                     </ScrollView>
-                    <TouchableOpacity onPress={onPressContinue} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{selectedPaymentMethod == "COD" ? "Place Order" : "Continue"} </Text>
-                    </TouchableOpacity>
+
+                    {loading ?
+                        <Loader /> : <TouchableOpacity onPress={onPressContinue} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{selectedPaymentMethod == "COD" ? "Place Order" : "Continue"} </Text>
+                        </TouchableOpacity>}
                 </SafeAreaView>
             </Modal>
         </View >
@@ -483,7 +596,7 @@ const mapStateToProps = (state) => ({
     userLocation: state.location
 })
 
-export default connect(mapStateToProps, { clearCart, getV2DeliverySlots, addOrder })(CheckoutScreen)
+export default connect(mapStateToProps, { clearCart, getV2DeliverySlots, addOrder, applyOffer })(CheckoutScreen)
 
 const styles = StyleSheet.create({
     button: {

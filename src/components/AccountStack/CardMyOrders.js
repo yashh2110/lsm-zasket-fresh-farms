@@ -25,7 +25,7 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
                     <Text>Vegetables & Fruits  <Icon name="right" type="AntDesign" style={{ fontSize: 12 }} /></Text>
                 </View>
                 <View>
-                    <Text>₹ {item?.totalPrice} </Text>
+                    <Text>₹ {item?.offerPrice ? item?.offerPrice : item?.totalPrice} </Text>
                 </View>
             </View>
             <TouchableOpacity onPress={() => setIsVisible(true)} style={{ marginTop: 10, width: 100 }}>

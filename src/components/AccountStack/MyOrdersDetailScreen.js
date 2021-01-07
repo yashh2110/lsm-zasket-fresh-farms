@@ -47,10 +47,13 @@ const MyOrdersDetailScreen = ({ route, navigation, config }) => {
                                 <Text style={{ color: Theme.Colors.primary }}>In transit</Text>
                             }
                             {item?.orderState == "DELIVERED" &&
-                                <Text style={{}}><Icon name="checkcircle" type="AntDesign" style={{ fontSize: 16, color: Theme.Colors.primary }} /> Delivered</Text>
+                                <Text style={{}}><Icon name="checkcircle" type="AntDesign" style={{ fontSize: 16, color: "#49C32C" }} /> Delivered</Text>
                             }
                             {item?.orderState == "CANCELLED" &&
-                                <Text style={{ color: "red" }}>Cancelled</Text>
+                                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                    <Icon name="cancel" type="MaterialIcons" style={{ fontSize: 16, color: "#E1171E" }} />
+                                    <Text style={{ color: "#E1171E" }}> Cancelled</Text>
+                                </View>
                             }
                             {item?.orderState == "REFUNDED" &&
                                 <Text style={{}}>Refunded</Text>

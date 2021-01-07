@@ -179,7 +179,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                             </View>
                             : undefined
                         }
-                        {totalCartValue >= config?.freeDeliveryMinOrder ?
+                        {/* {totalCartValue >= config?.freeDeliveryMinOrder ?
                             selectedOffer?.offer?.displayName ?
                                 <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, paddingVertical: 10, justifyContent: 'center' }}>
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
@@ -238,7 +238,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                         </View>
                                     </View>
                                 </View>
-                            : undefined}
+                            : undefined} */}
                         <View style={{ flex: 1, backgroundColor: 'white', marginTop: 10, paddingVertical: 5 }}>
                             <FlatList
                                 data={cartItems}
