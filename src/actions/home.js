@@ -28,6 +28,20 @@ export const getV2Config = (callback) => async dispatch => {
     }
 };
 
+//addCustomerDeviceDetails
+export const addCustomerDeviceDetails = (payload, callback) => async dispatch => {
+    try {
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customerId = await parsedUserDetails?.customerDetails?.id
+        const res = await axiosinstance.post(`/customer/${customerId}/device-details`, payload)
+        callback(res, true)
+    } catch (err) {
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+    }
+}
+
 //isPincodeServiceable
 export const isPincodeServiceable = (lat, lon, callback) => async dispatch => {
     try {

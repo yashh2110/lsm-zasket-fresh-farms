@@ -12,12 +12,13 @@ import Loader from '../common/Loader';
 import DarkModeToggle from '../common/DarkModeToggle';
 import AsyncStorage from '@react-native-community/async-storage';
 import Geolocation from '@react-native-community/geolocation';
-import { appVersion, MapApiKey } from '../../../env';
+import { appVersion, MapApiKey, OneSignalAppId } from '../../../env';
 import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
 import { getCartItemsApi } from '../../actions/cart'
 import FeatherIcons from "react-native-vector-icons/Feather"
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import InAppReview from "react-native-in-app-review";
+import OneSignal from "react-native-onesignal";
 
 const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
     const [showAppUpdate, setShowAppUpdate] = useState(false)
@@ -123,6 +124,26 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                     setRefresh(false)
                 }
             })
+
+
+            let userID;
+            OneSignal.init(OneSignalAppId, {
+                kOSSettingsKeyAutoPrompt: true,
+            });
+            OneSignal.getPermissionSubscriptionState((status) => {
+                userID = status.userId;
+                // DeviceInfo.getAndroidId().then(androidId => {
+                //     // androidId here
+                //     alert(JSON.stringify(androidId, null, "       "));
+                // });
+                let payload = {
+                    "appVersion": appVersion,
+                    "deviceId": "string",
+                    "mobileOS": Platform.OS == "android" ? "android" : "ios",
+                    "phoneModel": "string",
+                    "playerId": userID
+                }
+            });
         }
     }, [isAuthenticated])
 

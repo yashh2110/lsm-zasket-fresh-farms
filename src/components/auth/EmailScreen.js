@@ -21,6 +21,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
 
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
+    const [referralCode, setReferralCode] = useState("")
     const [emailErrorText, setemailErrorText] = useState("")
     const [nameErrorText, setNameErrorText] = useState("")
     const [loading, setLoading] = useState(false)
@@ -61,6 +62,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
             let payLoad = {
                 "name": name,
                 "otp": otp,
+                "referralCode": referralCode,
                 "userEmail": email.toLowerCase(),
                 "userMobileNumber": mobileNumber
             }
@@ -183,6 +185,20 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
                                     <Text style={{ color: 'red', fontSize: 14 }}>{emailErrorText} </Text>
                                 </>
                                 : undefined}
+                            <View style={{ marginTop: "10%", borderBottomColor: "#D8D8D8", flexDirection: 'row', borderBottomWidth: 1 }}>
+                                <View style={{ flex: 1 }}>
+                                    <TextInput
+                                        style={{ height: 40, }}
+                                        onChangeText={text => setReferralCode(text)}
+                                        value={referralCode}
+                                        placeholder={"Referral code"}
+                                        placeholderTextColor={"#727272"}
+                                    />
+                                </View>
+                                {/* <View style={{ justifyContent: 'center' }}>
+                                    <Icon name='mail' style={{ color: '#C3C3C3', fontSize: 20 }} />
+                                </View> */}
+                            </View>
                             {loading ?
                                 <ActivityIndicator style={{ marginTop: "10%", }} color={Theme.Colors.primary} size="large" />
                                 :
