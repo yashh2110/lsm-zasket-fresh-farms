@@ -4,7 +4,7 @@ import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
 import Theme from '../../styles/Theme';
-import { getAllCategories, isPincodeServiceable, getCustomerDetails, getAllBanners } from '../../actions/home'
+import { getAllCategories, isPincodeServiceable, getCustomerDetails, getAllBanners, addCustomerDeviceDetails } from '../../actions/home'
 import { onLogout } from '../../actions/auth'
 import { connect } from 'react-redux';
 import CategorySectionListItem from './CategorySectionListItem';
@@ -19,8 +19,9 @@ import FeatherIcons from "react-native-vector-icons/Feather"
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import InAppReview from "react-native-in-app-review";
 import OneSignal from "react-native-onesignal";
+import DeviceInfo from 'react-native-device-info';
 
-const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
+const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
     const [showAppUpdate, setShowAppUpdate] = useState(false)
     useEffect(() => {
         if (config?.appVersion !== undefined) {
@@ -132,17 +133,19 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
             });
             OneSignal.getPermissionSubscriptionState((status) => {
                 userID = status.userId;
-                // DeviceInfo.getAndroidId().then(androidId => {
-                //     // androidId here
-                //     alert(JSON.stringify(androidId, null, "       "));
-                // });
+                var deviceId = DeviceInfo.getUniqueId();
+                let getBrand = DeviceInfo.getBrand();
+                let version = DeviceInfo.getVersion();
+                let model = DeviceInfo.getModel();
                 let payload = {
                     "appVersion": appVersion,
-                    "deviceId": "string",
+                    "deviceId": deviceId,
                     "mobileOS": Platform.OS == "android" ? "android" : "ios",
-                    "phoneModel": "string",
+                    "phoneModel": getBrand + "-" + model + "   StoreBuildVersion-" + version,
                     "playerId": userID
                 }
+                // alert(JSON.stringify(payload, null, "       "));
+                addCustomerDeviceDetails(payload, (res, status) => { })
             });
         }
     }, [isAuthenticated])
@@ -450,7 +453,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { getAllCategories, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation, getCartItemsApi })(HomeScreen)
+export default connect(mapStateToProps, { getAllCategories, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation, getCartItemsApi, addCustomerDeviceDetails })(HomeScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

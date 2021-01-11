@@ -516,6 +516,27 @@ class MyMapView extends React.Component {
                                     </View>
                                     <View style={{ marginTop: 10 }}>
                                         {/* <Text style={{ color: "#727272", fontSize: 12 }}>Mobile Number</Text> */}
+                                        {/* <View style={{ borderBottomColor: '#D8D8D8', flexDirection: 'row', borderBottomWidth: 1 }}>
+                                            <View style={{ justifyContent: 'center' }}>
+                                                <Text style={{ fontSize: 16 }}>+91</Text>
+                                            </View>
+                                            <View style={{ backgroundColor: "grey", width: 0.5, margin: 13 }} />
+                                            <View style={{ flex: 1 }}>
+                                                <TextInput
+                                                    style={{ height: 40, }}
+                                                    onChangeText={text => this.setState({
+                                                        mobileNumber: text
+                                                    })}
+                                                    placeholder="Mobile Number"
+                                                    value={this.state.mobileNumber}
+                                                    keyboardType={"number-pad"}
+                                                    onTouchStart={() => {
+                                                        this.setState({ mobileNumberErrorText: "" })
+                                                    }}
+                                                />
+                                            </View>
+                                        </View> */}
+
                                         <TextInput
                                             style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                             onChangeText={text => this.setState({
