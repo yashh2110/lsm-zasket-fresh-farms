@@ -10,23 +10,41 @@ import CustomHeader from "../common/CustomHeader";
 import CardMyOrders from "./CardMyOrders";
 import Loader from "../common/Loader";
 import moment from 'moment'
+import { getOrderDetails } from "../../actions/cart"
 
-
-const MyOrdersDetailScreen = ({ route, navigation, config }) => {
-    const { item } = route?.params;
+const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails }) => {
+    const { order_id } = route?.params;
+    // const order_id = 514
+    const [item, setItem] = useState({})
+    const [loading, setLoading] = useState(false)
+    const [refresh, setRefresh] = useState(false)
     const [showCancelButton, setShowCancelButton] = useState(true)
     useEffect(() => {
-        const yesterday = new Date(item?.slotStartTime)
-        yesterday.setDate(yesterday.getDate() - 1)
-        var d1 = new Date();
-        var d2 = new Date(yesterday);
-        var same = d1.getTime() === d2.getTime();
-        if (same) {
-            if (new Date().getHours() >= config?.nextDayDeliveryCutOff) {
-                setShowCancelButton(false)
-            }
-        }
+        initialFunction()
     }, [])
+    const initialFunction = async () => {
+        setLoading(true)
+        getOrderDetails(order_id, async (response, status) => {
+            if (status) {
+                setItem(response?.data)
+                const yesterday = new Date(response?.data?.slotStartTime)
+                yesterday.setDate(yesterday.getDate() - 1)
+                var d1 = new Date();
+                var d2 = new Date(yesterday);
+                var same = d1.getTime() === d2.getTime();
+                if (same) {
+                    if (new Date().getHours() >= config?.nextDayDeliveryCutOff) {
+                        setShowCancelButton(false)
+                    }
+                }
+                setLoading(false)
+                setRefresh(false)
+            } else {
+                setLoading(false)
+                setRefresh(false)
+            }
+        })
+    }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Orders Details"} showSearch={false} />
@@ -41,10 +59,11 @@ const MyOrdersDetailScreen = ({ route, navigation, config }) => {
                     <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
                         <View style={{ flex: 1 }}>
                             <Text style={{ color: '#909090', fontSize: 13 }}>{moment(item?.slotStartTime).format("DD MMM")} ({item?.deliverySlot?.description})</Text>
+                            {/* <Text></Text> */}
                         </View>
                         <View>
                             {item?.orderState == "IN_TRANSIT" &&
-                                <Text style={{ color: Theme.Colors.primary }}>In transit</Text>
+                                <Text style={{ color: "#2D87C9" }}>In transit</Text>
                             }
                             {item?.orderState == "DELIVERED" &&
                                 <Text style={{}}><Icon name="checkcircle" type="AntDesign" style={{ fontSize: 16, color: "#49C32C" }} /> Delivered</Text>
@@ -52,17 +71,17 @@ const MyOrdersDetailScreen = ({ route, navigation, config }) => {
                             {item?.orderState == "CANCELLED" &&
                                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                     <Icon name="cancel" type="MaterialIcons" style={{ fontSize: 16, color: "#E1171E" }} />
-                                    <Text style={{ color: "#E1171E" }}> Cancelled</Text>
+                                    <Text style={{ color: "#000000" }}> Cancelled</Text>
                                 </View>
                             }
                             {item?.orderState == "REFUNDED" &&
                                 <Text style={{}}>Refunded</Text>
                             }
                             {item?.orderState == "IN_INVENTORY" &&
-                                <Text style={{ color: Theme.Colors.primary }}>Order placed</Text>
+                                <Text style={{ color: "#2D87C9" }}>Order placed</Text>
                             }
                             {item?.orderState == "ASSIGNED" &&
-                                <Text style={{ color: Theme.Colors.primary }}>Assigned</Text>
+                                <Text style={{ color: "#2D87C9" }}>Assigned</Text>
                             }
                         </View>
                     </View>
@@ -114,7 +133,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config }) => {
                                     </View>
                                 }
                                 <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: 'bold', }}>Deliver to {
-                                    ((item?.associatedAddress?.recepientName).length > 13) ?
+                                    ((item?.associatedAddress?.recepientName)?.length > 13) ?
                                         (((item?.associatedAddress?.recepientName).substring(0, 13 - 3)) + '...') :
                                         item?.associatedAddress?.recepientName
                                 }
@@ -133,7 +152,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config }) => {
                     </View>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
                         <Text style={{ color: '#909090', }}>Order Items </Text>
-                        <Text style={{ color: "#2D87C9" }}>{item?.items?.length} items </Text>
+                        <Text style={{ color: "#000000" }}>{item?.items?.length} items </Text>
                     </View>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
                         <Text style={{ color: '#909090', }}>Payment method </Text>
@@ -145,7 +164,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config }) => {
                     <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({item?.items?.length} item)</Text></Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                         <Text style={{ color: '#727272' }}>Item Total</Text>
-                        <Text style={{}}>₹ {(item?.totalPrice).toFixed(2)} </Text>
+                        <Text style={{}}>₹ {(item?.totalPrice)?.toFixed(2)} </Text>
                     </View>
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
@@ -157,15 +176,23 @@ const MyOrdersDetailScreen = ({ route, navigation, config }) => {
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ color: '#35B332' }}>Coupon Discount ({item?.applied_offer?.offerCode})</Text>
-                                <Text style={{ color: "#35B332", }}>- ₹{(item?.totalPrice - item?.offerPrice).toFixed(2)} </Text>
+                                <Text style={{ color: "#35B332", }}>- ₹{(item?.totalPrice - item?.offerPrice)?.toFixed(2)} </Text>
                             </View>
                         </>
                         : undefined}
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                         <Text style={{ fontWeight: 'bold' }}>Total Payable Amount</Text>
-                        <Text style={{ fontWeight: 'bold' }}>₹ {(item?.offerPrice > 0 ? item?.offerPrice : item?.totalPrice).toFixed(2)} </Text>
+                        <Text style={{ fontWeight: 'bold' }}>₹ {(item?.offerPrice > 0 ? item?.offerPrice : item?.totalPrice)?.toFixed(2)} </Text>
                     </View>
+                    {item?.paymentState == "REFUNDED" ?
+                        <>
+                            <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
+                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
+                                <Text style={{ fontWeight: 'bold' }}>Refunded</Text>
+                                <Text style={{ fontWeight: 'bold' }}>₹ {item?.refundedAmount} </Text>
+                            </View>
+                        </> : null}
                 </View>
                 <View style={{ marginTop: 10, paddingVertical: 5, backgroundColor: 'white' }}>
                     <Text style={{ marginLeft: 10 }}>{item?.items?.length} items</Text>
@@ -206,6 +233,9 @@ const MyOrdersDetailScreen = ({ route, navigation, config }) => {
                 </View>
                 {/* <Text Text style={{ marginBottom: 16 }}> {JSON.stringify(item, null, "       ")} </Text> */}
             </ScrollView >
+            {loading ?
+                <Loader />
+                : undefined}
         </View >
     );
 }
@@ -216,7 +246,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, {})(MyOrdersDetailScreen)
+export default connect(mapStateToProps, { getOrderDetails })(MyOrdersDetailScreen)
 
 const styles = StyleSheet.create({
 

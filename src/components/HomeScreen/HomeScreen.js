@@ -22,6 +22,42 @@ import OneSignal from "react-native-onesignal";
 import DeviceInfo from 'react-native-device-info';
 
 const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
+    useEffect(() => {
+        const onReceived = (notification) => {
+            console.log("Notification received: ", notification);
+        }
+        const onOpened = (openResult) => {
+            // alert(JSON.stringify(openResult.notification.isAppInFocus, null, "       "))
+            if (openResult.notification.payload.additionalData?.redirect_to == "MyOrdersDetailScreen") {
+                navigation.navigate(openResult.notification.payload.additionalData?.redirect_to, { order_id: openResult.notification.payload.additionalData?.order_id })
+                // navigation.navigate("AccountStack", {
+                //     screen: 'MyOrders',
+                //     params: {
+                //         screen: openResult.notification.payload.additionalData?.redirect_to,
+                //         params: {
+                //             order_id: openResult.notification.payload.additionalData?.order_id
+                //         },
+                //     },
+                // });
+            }
+            console.log('Message: ', openResult.notification.payload.body);
+            console.log('Data: ', openResult.notification.payload.additionalData);
+            console.log('isActive: ', openResult.notification.isAppInFocus);
+            console.log('openResult: ', openResult);
+        }
+        const onIds = (device) => {
+            console.log('Device info: ', device);
+        }
+        OneSignal.addEventListener('received', onReceived);
+        OneSignal.addEventListener('opened', onOpened);
+        OneSignal.addEventListener('ids', onIds);
+        return () => {
+            OneSignal.removeEventListener('received', onReceived);
+            OneSignal.removeEventListener('opened', onOpened);
+            OneSignal.removeEventListener('ids', onIds);
+        }
+    }, [])
+
     const [showAppUpdate, setShowAppUpdate] = useState(false)
     useEffect(() => {
         if (config?.appVersion !== undefined) {
@@ -31,17 +67,14 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
         }
     }, [config])
 
+
     useEffect(() => {
         const _bootstrapAsync = async () => {
             if (Platform.OS === 'ios') {
                 Geolocation.requestAuthorization();
                 // alert('work')
             } else {
-                enableGpsLocation()
-                DeviceEventEmitter.addListener('locationProviderStatusChange', function (status) { // only trigger when "providerListener" is enabled
-                    enableGpsLocation()
-                    console.warn(status); //  status => {enabled: false, status: "disabled"} or {enabled: true, status: "enabled"}
-                });
+
             }
             const onBoardKey = await AsyncStorage.getItem('onBoardKey');
             if (!onBoardKey) {
@@ -63,26 +96,40 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
     //     });
     //     return unsubscribe;
     // }, [navigation]);
-    const enableGpsLocation = () => {
-        LocationServicesDialogBox.checkLocationServicesIsEnabled({
-            message: "<h2 style='color: #0af13e'>Use Location ?</h2>Zasket wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location",
-            ok: "YES",
-            cancel: "No",
-            enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
-            showDialog: true, // false => Opens the Location access page directly
-            openLocationServices: true, // false => Directly catch method is called if location services are turned off
-            preventOutSideTouch: true, // true => To prevent the location services window from closing when it is clicked outside
-            preventBackClick: true, // true => To prevent the location services popup from closing when it is clicked back button
-            providerListener: true // true ==> Trigger locationProviderStatusChange listener when the location state changes
-        }).then(async (success) => {
-            checkForLocationAccess()
-            console.warn(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
-        }).catch((error) => {
-            console.warn(error.message); // error.message => "disabled"
-            BackHandler.exitApp()
-        });
-    }
 
+    useEffect(() => {
+        if (Platform?.OS == "android") {
+            LocationServicesDialogBox.checkLocationServicesIsEnabled({
+                message: "<h2 style='color: #0af13e'>Use Location ?</h2>Zasket wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location",
+                ok: "YES",
+                cancel: "No",
+                enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
+                showDialog: true, // false => Opens the Location access page directly
+                openLocationServices: true, // false => Directly catch method is called if location services are turned off
+                preventOutSideTouch: true, // true => To prevent the location services window from closing when it is clicked outside
+                preventBackClick: true, // true => To prevent the location services popup from closing when it is clicked back button
+                providerListener: true // true ==> Trigger locationProviderStatusChange listener when the location state changes
+            }).then(async (success) => {
+                checkForLocationAccess()
+                // console.warn(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
+            }).catch((error) => {
+                // console.warn(error.message); // error.message => "disabled"
+                // BackHandler.exitApp()
+                LocationServicesDialogBox.forceCloseDialog();
+            });
+
+            DeviceEventEmitter.addListener('locationProviderStatusChange', function (status) { // only trigger when "providerListener" is enabled
+                console.log(status); //  status => {enabled: false, status: "disabled"} or {enabled: true, status: "enabled"}
+                if (status?.enabled) {
+                    console.warn(status?.enabled)
+                    LocationServicesDialogBox.forceCloseDialog();
+                }
+            });
+            return () => {
+                LocationServicesDialogBox.stopListener();
+            }
+        }
+    }, [])
     const checkForLocationAccess = async () => {
         if (Platform.OS === 'android') {
             // Calling the permission function
@@ -264,14 +311,15 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
         }
     }
     const rateNow = async () => {
-        try {
-            const isAvailable = await InAppReview.isAvailable
-            if (!isAvailable) {
-                onPressUpdate()
-                return;
-            }
-            InAppReview.RequestInAppReview();
-        } catch (e) { }
+        onPressUpdate()
+        // try {
+        //     const isAvailable = await InAppReview.isAvailable
+        //     if (!isAvailable) {
+        //         onPressUpdate()
+        //         return;
+        //     }
+        //     InAppReview.RequestInAppReview();
+        // } catch (e) { }
     }
     return (
         <>

@@ -18,26 +18,28 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
     }, [item])
 
     return (
-        <View style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
+        <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { order_id: item?.id })} style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
             {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
-                    <Text>Vegetables & Fruits  <Icon name="right" type="AntDesign" style={{ fontSize: 12 }} /></Text>
+                    <Text style={{ fontWeight: 'bold' }}>Vegetables & Fruits  <Icon name="right" type="AntDesign" style={{ fontSize: 12, }} /></Text>
                 </View>
                 <View>
                     <Text>₹ {item?.offerPrice ? item?.offerPrice : item?.totalPrice} </Text>
                 </View>
             </View>
-            <TouchableOpacity onPress={() => setIsVisible(true)} style={{ marginTop: 10, width: 100 }}>
-                <Text style={{ color: '#2D87C9' }}>{productItem?.length} items <Icon name="right" type="AntDesign" style={{ fontSize: 12, color: "#2D87C9" }} /></Text>
-            </TouchableOpacity>
+            <View
+                //  onPress={() => setIsVisible(true)} 
+                style={{ marginTop: 10, width: 100 }}>
+                <Text style={{ color: '#000000' }}>{productItem?.length} items <Icon name="right" type="AntDesign" style={{ fontSize: 12, color: "#000000" }} /></Text>
+            </View>
             <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
                 <View style={{ flex: 1 }}>
                     <Text style={{ color: '#909090', fontSize: 13 }}>{moment(item?.slotStartTime).format("DD MMM")} ({item?.deliverySlot?.description})</Text>
                 </View>
                 <View>
                     {item?.orderState == "IN_TRANSIT" &&
-                        <Text style={{ color: Theme.Colors.primary }}>In transit</Text>
+                        <Text style={{ color: "#2D87C9" }}>In transit</Text>
                     }
                     {item?.orderState == "DELIVERED" &&
                         <Text style={{}}><Icon name="checkcircle" type="AntDesign" style={{ fontSize: 16, color: "#49C32C" }} /> Delivered</Text>
@@ -45,38 +47,41 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
                     {item?.orderState == "CANCELLED" &&
                         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                             <Icon name="cancel" type="MaterialIcons" style={{ fontSize: 16, color: "#E1171E" }} />
-                            <Text style={{ color: "#E1171E" }}> Cancelled</Text>
+                            <Text style={{ color: "#000000" }}> Cancelled</Text>
                         </View>
                     }
                     {item?.orderState == "REFUNDED" &&
                         <Text style={{}}>Refunded</Text>
                     }
                     {item?.orderState == "IN_INVENTORY" &&
-                        <Text style={{ color: Theme.Colors.primary }}>Order placed</Text>
+                        <Text style={{ color: "#2D87C9" }}>Order placed</Text>
                     }
                     {item?.orderState == "ASSIGNED" &&
-                        <Text style={{ color: Theme.Colors.primary }}>Assigned</Text>
+                        <Text style={{ color: "#2D87C9" }}>Assigned</Text>
                     }
                 </View>
             </View>
-            <View style={{ flex: 1, flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#EAEAEC', marginTop: 10 }}>
+            <TouchableOpacity style={{ flex: 1, flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#EAEAEC', marginTop: 10 }}>
                 {item?.orderState == "DELIVERED" ?
-                    item?.rateOrder?.rated ?
-                        <View style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center', }}>
-                            <Text style={{ color: "#909090" }}>You have Rated <Text style={{ color: "#000000", fontWeight: 'bold' }}><Icon name="star" type="AntDesign" style={{ fontSize: 12, color: '#E1A318', }} /> {item?.rateOrder?.rated}</Text></Text>
-                        </View>
-                        :
-                        <TouchableOpacity onPress={() => navigation.navigate('RateOrdersScreen', { item: item })} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center', }}>
-                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Rate your order</Text>
-                        </TouchableOpacity>
+                    <>
+                        {item?.rateOrder?.rated ?
+                            <View style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center', }}>
+                                <Text style={{ color: "#909090" }}>You have Rated <Text style={{ color: "#000000", fontWeight: 'bold' }}><Icon name="star" type="AntDesign" style={{ fontSize: 12, color: '#E1A318', }} /> {item?.rateOrder?.rated}</Text></Text>
+                            </View>
+                            :
+                            <TouchableOpacity onPress={() => navigation.navigate('RateOrdersScreen', { item: item })} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center', }}>
+                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Rate your order</Text>
+                            </TouchableOpacity>
+                        }
+                        <View style={{ backgroundColor: "#EAEAEC", height: 40, width: 1, marginTop: 5 }} />
+                    </>
                     :
                     null
                 }
-                <View style={{ backgroundColor: "#EAEAEC", height: 40, width: 1, marginTop: 5 }} />
-                <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { item: item })} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { order_id: item?.id })} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Order Details</Text>
                 </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
 
             <Modal
                 isVisible={isVisible}
@@ -125,7 +130,7 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
                     </ScrollView>
                 </SafeAreaView>
             </Modal>
-        </View>
+        </TouchableOpacity>
     )
 }
 const mapStateToProps = (state) => ({

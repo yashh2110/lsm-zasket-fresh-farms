@@ -37,6 +37,7 @@ import { ActivityIndicator } from 'react-native';
 import SetAuthContext from '../components/MapStack/setAuthContext';
 import CartButton from './CartButton';
 import { AxiosDefaultsManager } from '../axios/default';
+import OneSignal from "react-native-onesignal";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -192,7 +193,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
         </Tab.Navigator>
     )
 
-    function HomeStack() {
+    function HomeStack(props) {
         return (
             <Stack.Navigator
                 initialRouteName="Home"
@@ -217,6 +218,8 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                     component={ProductListScreen}
                     options={{ title: 'Home Page' }}
                 />
+
+                {/* for push stacks */}
             </Stack.Navigator>
         );
     }
@@ -382,7 +385,8 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                             <Stack.Screen name="MapScreenGrabPincode" component={MapScreenGrabPincode} options={{ cardStyleInterpolator: forFade }} />
                             <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
                             <Stack.Screen name="PincodeScreen" component={PincodeScreen} options={{ cardStyleInterpolator: forFade }} />
-
+                            <Stack.Screen name="MyOrdersDetailScreen" component={MyOrdersDetailScreen} options={{ cardStyleInterpolator: forFade }}
+                            />
                         </>
                     </Stack.Navigator>
                 </NavigationContainer>

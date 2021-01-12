@@ -62,7 +62,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
             let payLoad = {
                 "name": name,
                 "otp": otp,
-                "referralCode": referralCode,
+                "referralCode": referralCode.toUpperCase(),
                 "userEmail": email.toLowerCase(),
                 "userMobileNumber": mobileNumber
             }

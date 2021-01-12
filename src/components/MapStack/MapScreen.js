@@ -98,7 +98,7 @@ class MyMapView extends React.Component {
                 pincode: item?.pincode,
                 landMark: item?.landmark,
                 name: item?.recepientName,
-                mobileNumber: item?.recepientMobileNumber,
+                mobileNumber: item?.recepientMobileNumber.replace("+91", ""),
                 houseNumber: item?.houseNo
             })
         } else {
@@ -107,7 +107,7 @@ class MyMapView extends React.Component {
             let parsedUserDetails = await JSON.parse(userDetails);
             await this.setState({
                 name: parsedUserDetails?.customerDetails?.name,
-                mobileNumber: parsedUserDetails?.customerDetails?.userMobileNumber
+                mobileNumber: parsedUserDetails?.customerDetails?.userMobileNumber.replace("+91", "")
             })
             this.getCurrentPosition();
             await this.setState({ savedAddressLoading: true, })
@@ -515,8 +515,8 @@ class MyMapView extends React.Component {
                                             : undefined}
                                     </View>
                                     <View style={{ marginTop: 10 }}>
-                                        {/* <Text style={{ color: "#727272", fontSize: 12 }}>Mobile Number</Text> */}
-                                        {/* <View style={{ borderBottomColor: '#D8D8D8', flexDirection: 'row', borderBottomWidth: 1 }}>
+                                        <Text style={{ color: "#727272", fontSize: 12 }}>Mobile Number</Text>
+                                        <View style={{ borderBottomColor: '#D8D8D8', flexDirection: 'row', borderBottomWidth: 1 }}>
                                             <View style={{ justifyContent: 'center' }}>
                                                 <Text style={{ fontSize: 16 }}>+91</Text>
                                             </View>
@@ -535,9 +535,9 @@ class MyMapView extends React.Component {
                                                     }}
                                                 />
                                             </View>
-                                        </View> */}
+                                        </View>
 
-                                        <TextInput
+                                        {/* <TextInput
                                             style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                             onChangeText={text => this.setState({
                                                 mobileNumber: text
@@ -548,7 +548,7 @@ class MyMapView extends React.Component {
                                             onTouchStart={() => {
                                                 this.setState({ mobileNumberErrorText: "" })
                                             }}
-                                        />
+                                        /> */}
                                         {this.state.mobileNumberErrorText ?
                                             <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.mobileNumberErrorText} </Text>
                                             : undefined}
