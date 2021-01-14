@@ -22,7 +22,7 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
             {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
-                    <Text style={{ fontWeight: 'bold' }}>Vegetables & Fruits  <Icon name="right" type="AntDesign" style={{ fontSize: 12, }} /></Text>
+                    <Text style={{ fontWeight: 'bold' }}>Vegetables & Fruits </Text>
                 </View>
                 <View>
                     <Text>₹ {item?.offerPrice ? item?.offerPrice : item?.totalPrice} </Text>
@@ -31,7 +31,7 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
             <View
                 //  onPress={() => setIsVisible(true)} 
                 style={{ marginTop: 10, width: 100 }}>
-                <Text style={{ color: '#000000' }}>{productItem?.length} items <Icon name="right" type="AntDesign" style={{ fontSize: 12, color: "#000000" }} /></Text>
+                <Text style={{ color: '#000000' }}>{productItem?.length} items </Text>
             </View>
             <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
                 <View style={{ flex: 1 }}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, Image } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, Image, Linking } from 'react-native';
 import { Icon } from 'native-base'
 import Modal from 'react-native-modal';
 import Theme from "../../styles/Theme";
@@ -28,12 +28,30 @@ const SupportScreen = ({ navigation }) => {
         };
         call(args).catch(console.error);
     };
+    const onPressWhatsapp = () => {
+        Linking.canOpenURL("https://wa.me/message/7QWKVJGNQ4VJD1").then(supported => {
+            if (supported) {
+                Linking.openURL("https://wa.me/message/7QWKVJGNQ4VJD1");
+            } else {
+                console.warn("Don't know how to open URI");
+            }
+        });
+    }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Support"} showSearch={false} />
             <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false}>
                 <View style={{ backgroundColor: 'white', padding: 15, marginTop: 10 }}>
                     <Text style={{}}>We are Available to assist you from 10AM - 7PM on all days</Text>
+                    <TouchableOpacity onPress={() => onPressWhatsapp()} style={{ borderWidth: 1, borderColor: "#EFEFEF", borderRadius: 6, padding: 10, flexDirection: 'row', marginTop: 15 }}>
+                        <View style={{ backgroundColor: '#FDEFEF', borderRadius: 50, width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
+                            <Icon name="whatsapp" type="FontAwesome" style={{ fontSize: 24, color: Theme.Colors.primary }} />
+                        </View>
+                        <View style={{ flex: 1, justifyContent: 'center', paddingLeft: 15 }}>
+                            <Text style={{ color: '#727272' }}>Whatsapp</Text>
+                            {/* <Text style={{ fontWeight: 'bold' }}>6300105949</Text> */}
+                        </View>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => callToThisNumber()} style={{ borderWidth: 1, borderColor: "#EFEFEF", borderRadius: 6, padding: 10, flexDirection: 'row', marginTop: 15 }}>
                         <View style={{ backgroundColor: '#FDEFEF', borderRadius: 50, width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
                             <Image
