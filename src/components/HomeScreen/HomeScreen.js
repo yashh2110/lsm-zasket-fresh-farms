@@ -105,7 +105,9 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
             fastInterval: 5000,
         })
             .then((data) => {
-                checkForLocationAccess()
+                setTimeout(() => {
+                    checkForLocationAccess();
+                }, 1000);
                 // The user has accepted to enable the location services
                 // data can be :
                 //  - "already-enabled" if the location services has been already enabled
@@ -127,9 +129,6 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
         GPSState.addListener((status) => {
             switch (status) {
                 case GPSState.NOT_DETERMINED:
-                    if (Platform?.OS == "android") {
-                        androidLocationEnabler()
-                    }
                     break;
 
                 case GPSState.RESTRICTED:
@@ -141,9 +140,6 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                     break;
 
                 case GPSState.DENIED:
-                    if (Platform?.OS == "android") {
-                        androidLocationEnabler()
-                    }
                     break;
 
                 case GPSState.AUTHORIZED_ALWAYS:
@@ -159,35 +155,6 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
         return () => {
             GPSState.removeListener()
         }
-        // LocationServicesDialogBox.checkLocationServicesIsEnabled({
-        //     message: "<h2 style='color: #0af13e'>Use Location ?</h2>Zasket wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location",
-        //     ok: "YES",
-        //     cancel: "No",
-        //     enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
-        //     showDialog: true, // false => Opens the Location access page directly
-        //     openLocationServices: true, // false => Directly catch method is called if location services are turned off
-        //     preventOutSideTouch: true, // true => To prevent the location services window from closing when it is clicked outside
-        //     preventBackClick: true, // true => To prevent the location services popup from closing when it is clicked back button
-        //     providerListener: true // true ==> Trigger locationProviderStatusChange listener when the location state changes
-        // }).then(async (success) => {
-        //     checkForLocationAccess()
-        //     // console.warn(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
-        // }).catch((error) => {
-        //     // console.warn(error.message); // error.message => "disabled"
-        //     // BackHandler.exitApp()
-        //     LocationServicesDialogBox.forceCloseDialog();
-        // });
-
-        // DeviceEventEmitter.addListener('locationProviderStatusChange', function (status) { // only trigger when "providerListener" is enabled
-        //     console.log(status); //  status => {enabled: false, status: "disabled"} or {enabled: true, status: "enabled"}
-        //     if (status?.enabled) {
-        //         console.warn(status?.enabled)
-        //         LocationServicesDialogBox.forceCloseDialog();
-        //     }
-        // });
-        // return () => {
-        //     LocationServicesDialogBox.stopListener();
-        // }
     }, [])
     const checkForLocationAccess = async () => {
         if (Platform.OS === 'android') {
@@ -327,15 +294,15 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                                 if (Platform.OS == "android") {
                                     checkForLocationAccess()
                                 }
+
                             })
                     },
                     (error) => {
                         if (error?.message == "Location permission was not granted." || error?.message == "Location services disabled." || error?.message == "User denied access to location services.") {
                             navigation.navigate('PincodeScreen')
                         }
-                        // alert(JSON.stringify(error))
                         console.warn(error)
-                    }
+                    },
                 );
             }
         } catch (e) {
@@ -345,6 +312,10 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
 
     const onRefresh = () => {
         setRefresh(true)
+        getCurrentPosition()
+        if (Platform.OS == "android") {
+            androidLocationEnabler()
+        }
         initialFunction()
     }
 

@@ -10,6 +10,9 @@ import AppContainer from './AppContainer';
 import { store, persistor } from "./store";
 import OneSignal from 'react-native-onesignal';
 import { OneSignalAppId } from '../env';
+import { BackHandler, Platform } from 'react-native';
+import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+
 const App = () => {
   useEffect(() => {
     // store.dispatch(loadUser())
@@ -18,6 +21,20 @@ const App = () => {
       let parsedUserDetails = await JSON.parse(userDetails);
       if (parsedUserDetails !== null) {
         store.dispatch(onLogin(parsedUserDetails))
+      }
+
+
+      if (Platform.OS == "android") {
+        RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+          interval: 10000,
+          fastInterval: 5000,
+        })
+          .then((data) => {
+
+          })
+          .catch((err) => {
+            BackHandler.exitApp()
+          });
       }
     }
     initialFunction()

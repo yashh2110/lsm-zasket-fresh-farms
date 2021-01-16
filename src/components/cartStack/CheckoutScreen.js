@@ -305,6 +305,11 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
             }
         })
     }
+    const removeOffer = () => {
+        setOfferPrice(0)
+        setCoupon("")
+        setSelectedOffer([])
+    }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Checkout"} showSearch={false} />
