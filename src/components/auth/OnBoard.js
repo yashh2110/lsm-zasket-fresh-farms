@@ -23,12 +23,16 @@ const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) 
         navigation.navigate("BottomTabRoute")
     }
 
+    const onPressSetDeliveryLocation = () => {
+        navigation.navigate('MapScreenGrabPincode', { fromScreen: 'OnBoardScreen' })
+    }
+
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <StatusBar translucent backgroundColor="transparent" />
-            <TouchableOpacity onPress={() => { onSkip() }} style={{ backgroundColor: '#FDEFEF', position: 'absolute', top: 20, right: 20, paddingVertical: 5, borderRadius: 25, zIndex: 1 }}>
+            {/* <TouchableOpacity onPress={() => { onSkip() }} style={{ backgroundColor: '#FDEFEF', position: 'absolute', top: 20, right: 20, paddingVertical: 5, borderRadius: 25, zIndex: 1 }}>
                 <Text style={{ color: Theme.Colors.primary, paddingHorizontal: 10, fontWeight: 'bold' }}>Skip <Icon name="right" type="AntDesign" style={{ fontSize: 13, marginLeft: 10, color: Theme.Colors.primary }} /></Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <Image
                 style={{ width: 150, height: 60, position: 'absolute', left: 20, zIndex: 1, top: "2.5%" }}
                 resizeMode="contain"
@@ -42,7 +46,8 @@ const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) 
                 <Text style={{ fontSize: 20 }}>Welcome!</Text>
                 {/* <Text style={{ textAlign: 'center', color: "#727272", marginTop: 10 }}>We care about your health,</Text> */}
                 <Text style={{ textAlign: 'center', color: "#727272", marginTop: 5 }}>Get fresh fruits and vegetables at wholesale price, free to your home.</Text>
-                <Button full style={{ backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, marginTop: "10%", }} onPress={() => _onDone()}><Text style={{ textTransform: 'capitalize' }}>Login/Signup</Text></Button>
+                <Button full style={{ backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, marginTop: "10%", }} onPress={() => onPressSetDeliveryLocation()}><Text style={{ textTransform: 'uppercase' }}>SET DELIVERY LOCATION</Text></Button>
+                <Text onPress={() => _onDone()} style={{ textAlign: 'center', color: "#727272", marginTop: 10, }}>Have an account? <Text style={{ color: Theme.Colors.primary }}>Login/Signup</Text></Text>
             </View>
         </View>
     );

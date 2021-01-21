@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Image, Text, TouchableOpacity, Platform } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import Geolocation from '@react-native-community/geolocation';
 import { Icon } from 'native-base';
 import { MapApiKey } from '../../../env';
-navigator.geolocation = require('@react-native-community/geolocation');
 const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRequestClose }) => {
   let someRef = useRef()
   useEffect(() => {
@@ -12,29 +10,6 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
       someRef.setAddressText(defaultValue)
     }
   }, [defaultValue])
-  const [currentPosition, setCurrentPosition] = useState({})
-  useEffect(() => {
-    // alert('autocompleteinput')
-    // Geolocation.getCurrentPosition(({ coords }) => {
-    //   fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + coords.latitude + ',' + coords.longitude + '&key=' + MapApiKey)
-    //     .then((response) => {
-    //       response.json().then(async (json) => {
-    //         await setCurrentPosition({
-    //           data: json.results[0],
-    //           details: json.results[0],
-    //           geometry: {
-    //             location: {
-    //               lat: coords.latitude,
-    //               lng: coords.longitude
-    //             }
-    //           },
-    //           description: json.results[0].formatted_address,
-    //         }
-    //         )
-    //       });
-    //     })
-    // })
-  }, [])
   return (
     <GooglePlacesAutocomplete
       ref={ref => { someRef = ref }}

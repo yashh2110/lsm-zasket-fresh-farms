@@ -27,7 +27,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import FeatherIcons from "react-native-vector-icons/Feather"
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons"
 import Theme from '../styles/Theme';
-import PincodeScreen from '../components/MapStack/PincodeScreen';
+import AccessPermissionScreen from '../components/MapStack/AccessPermissionScreen';
 import CartScreen from '../components/cartStack/CartScreen';
 import CheckoutScreen from '../components/cartStack/CheckoutScreen';
 import PaymentSuccessScreen from '../components/cartStack/PaymentSuccessScreen';
@@ -38,6 +38,7 @@ import SetAuthContext from '../components/MapStack/setAuthContext';
 import CartButton from './CartButton';
 import { AxiosDefaultsManager } from '../axios/default';
 import OneSignal from "react-native-onesignal";
+import SetDeliveryLocationScreen from '../components/MapStack/SetDeliveryLocationScreen';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -89,11 +90,11 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
 
     const MapStack = () => (
         <Stack.Navigator
-            initialRouteName="PincodeScreen"
+            initialRouteName="AccessPermissionScreen"
             screenOptions={{
                 headerShown: false
             }}>
-            <Stack.Screen name="PincodeScreen" component={PincodeScreen} options={{ cardStyleInterpolator: forFade }} />
+            <Stack.Screen name="AccessPermissionScreen" component={AccessPermissionScreen} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="MapScreenGrabPincode" component={MapScreenGrabPincode} options={{ cardStyleInterpolator: forFade }} />
             <Stack.Screen name="SetAuthContext" component={SetAuthContext} options={{ cardStyleInterpolator: forFade }} />
@@ -384,7 +385,8 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                             <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
                             <Stack.Screen name="MapScreenGrabPincode" component={MapScreenGrabPincode} options={{ cardStyleInterpolator: forFade }} />
                             <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
-                            <Stack.Screen name="PincodeScreen" component={PincodeScreen} options={{ cardStyleInterpolator: forFade }} />
+                            <Stack.Screen name="AccessPermissionScreen" component={AccessPermissionScreen} options={{ cardStyleInterpolator: forFade }} />
+                            <Stack.Screen name="SetDeliveryLocationScreen" component={SetDeliveryLocationScreen} options={{ cardStyleInterpolator: forFade }} />
                             <Stack.Screen name="MyOrdersDetailScreen" component={MyOrdersDetailScreen} options={{ cardStyleInterpolator: forFade }}
                             />
                         </>

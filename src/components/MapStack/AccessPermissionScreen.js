@@ -16,8 +16,9 @@ import Geolocation from '@react-native-community/geolocation';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { MapApiKey } from '../../../env';
 import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
+import { CheckGpsState } from '../../utils/utils';
 
-const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, addHomeScreenLocation, homeScreenLocation }) => {
+const AccessPermissionScreen = ({ navigation, darkMode, setDarkMode, login, addHomeScreenLocation, homeScreenLocation }) => {
     useEffect(() => {
         const backAction = () => {
             BackHandler.exitApp()
@@ -62,7 +63,6 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, addHomeScreen
                 );
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                     getCurrentPosition()
-                    navigation.goBack()
                 } else {
                     // Permission Denied
                     initialFunction()
@@ -79,7 +79,6 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, addHomeScreen
                 );
                 if (granted === RESULTS.GRANTED) {
                     getCurrentPosition()
-                    navigation.goBack()
                 } else {
                     // Permission Denied
                     initialFunction()
@@ -92,28 +91,33 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, addHomeScreen
     const getCurrentPosition = async () => {
         try {
             if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
-                Geolocation.getCurrentPosition(
-                    async (position) => {
-                        fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
-                            .then((response) => {
-                                response.json().then(async (json) => {
-                                    let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                                    addHomeScreenLocation({
-                                        addressLine_1: json?.results?.[0]?.formatted_address,
-                                        pincode: postal_code?.long_name,
-                                        lat: position.coords.latitude,
-                                        lon: position.coords.longitude
+                CheckGpsState((status) => {
+                    if (status) {
+                        navigation.goBack()
+                        Geolocation.getCurrentPosition(
+                            async (position) => {
+                                fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
+                                    .then((response) => {
+                                        response.json().then(async (json) => {
+                                            let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                                            addHomeScreenLocation({
+                                                addressLine_1: json?.results?.[0]?.formatted_address,
+                                                pincode: postal_code?.long_name,
+                                                lat: position.coords.latitude,
+                                                lon: position.coords.longitude
+                                            })
+                                            // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                                        });
+                                    }).catch((err) => {
+                                        console.warn(err)
                                     })
-                                    // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
-                                });
-                            }).catch((err) => {
-                                console.warn(err)
-                            })
-                    },
-                    (error) => {
+                            },
+                            (error) => {
 
+                            }
+                        );
                     }
-                );
+                })
             }
         } catch (e) {
             // alert(e.message || "");
@@ -127,6 +131,13 @@ const PincodeScreen = ({ navigation, darkMode, setDarkMode, login, addHomeScreen
         >
             <ScrollView
                 showsVerticalScrollIndicator={false}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
+                    <Image
+                        style={{ width: 20, height: 20, }}
+                        resizeMode="contain"
+                        source={require('../../assets/png/backIcon.png')}
+                    />
+                </TouchableOpacity>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                     <View style={{ width: "90%", alignSelf: "center", flex: 1, }}>
                         {/* <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 10, width: 40, height: 40, justifyContent: 'center', }}>
@@ -168,7 +179,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, login, loginWithProvider, addHomeScreenLocation })(PincodeScreen)
+export default connect(mapStateToProps, { setDarkMode, login, loginWithProvider, addHomeScreenLocation })(AccessPermissionScreen)
 
 const styles = StyleSheet.create({
     container: {

@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 import FeatherIcons from "react-native-vector-icons/Feather"
 import AntDesignIcons from "react-native-vector-icons/AntDesign"
 import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
+import { CheckGpsState } from '../../utils/utils';
 
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
@@ -131,43 +132,48 @@ class MyMapView extends React.Component {
 
     getCurrentPosition() {
         try {
-            Geolocation.getCurrentPosition(
-                async (position) => {
-                    // alert(JSON.stringify(position, null, "      "))
-                    const region = {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        latitudeDelta,
-                        longitudeDelta,
-                    };
-                    await this.setRegion(region);
+            CheckGpsState((status) => {
+                if (status) {
+                    this.setState({ modalVisible: false })
+                    Geolocation.getCurrentPosition(
+                        async (position) => {
+                            // alert(JSON.stringify(position, null, "      "))
+                            const region = {
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                                latitudeDelta,
+                                longitudeDelta,
+                            };
+                            await this.setRegion(region);
 
-                    fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
-                        .then((response) => {
-                            response.json().then(async (json) => {
-                                let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                                await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
-                            });
-                        }).catch((err) => {
-                            console.warn(err)
-                        })
-                },
-                (error) => {
-                    //TODO: better design
-                    // switch (error.code) {
-                    //     case 1:
-                    //         if (Platform.OS === "ios") {
-                    //             Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Privacidad - Localización");
-                    //         } else {
-                    //             Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Apps - ExampleApp - Localización");
-                    //         }
-                    //         break;
-                    //     default:
-                    //         Alert.alert("", "Error al detectar tu locación");
-                    // }
+                            fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
+                                .then((response) => {
+                                    response.json().then(async (json) => {
+                                        let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                                        await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                                    });
+                                }).catch((err) => {
+                                    console.warn(err)
+                                })
+                        },
+                        (error) => {
+                            //TODO: better design
+                            // switch (error.code) {
+                            //     case 1:
+                            //         if (Platform.OS === "ios") {
+                            //             Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Privacidad - Localización");
+                            //         } else {
+                            //             Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Apps - ExampleApp - Localización");
+                            //         }
+                            //         break;
+                            //     default:
+                            //         Alert.alert("", "Error al detectar tu locación");
+                            // }
+                        },
+                        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+                    );
                 }
-            );
-
+            })
         } catch (e) {
             alert(e.message || "");
         }
@@ -674,7 +680,6 @@ class MyMapView extends React.Component {
                             <View style={{ flex: 1, zIndex: -1 }}>
                                 <View style={{ backgroundColor: 'white', flex: 1 }}>
                                     <TouchableOpacity onPress={() => {
-                                        this.setState({ modalVisible: false })
                                         this.getCurrentPosition()
                                     }} style={{ flexDirection: 'row' }}>
                                         <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>

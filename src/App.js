@@ -22,20 +22,6 @@ const App = () => {
       if (parsedUserDetails !== null) {
         store.dispatch(onLogin(parsedUserDetails))
       }
-
-
-      if (Platform.OS == "android") {
-        RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-          interval: 10000,
-          fastInterval: 5000,
-        })
-          .then((data) => {
-
-          })
-          .catch((err) => {
-            BackHandler.exitApp()
-          });
-      }
     }
     initialFunction()
   }, [])

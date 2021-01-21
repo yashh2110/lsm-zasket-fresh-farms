@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Platform, StyleSheet, FlatList, Image, SafeAreaView, Modal, View, TouchableOpacity, TextInput, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, ScrollView, ActivityIndicator } from 'react-native';
+import { Alert, Platform, StyleSheet, FlatList, Image, SafeAreaView, Modal, View, TouchableOpacity, TextInput, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import MapView, { Marker, Callout, ProviderPropType } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import marker from '../../assets/png/locationIcon.png';
@@ -19,6 +19,8 @@ import { connect } from 'react-redux';
 import FeatherIcons from "react-native-vector-icons/Feather"
 import AntDesignIcons from "react-native-vector-icons/AntDesign"
 import { isPincodeServiceable, } from '../../actions/home'
+import { CheckGpsState } from '../../utils/utils';
+import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
 
@@ -65,7 +67,8 @@ class MapScreenGrabPincode extends React.Component {
         errorMessage: "",
         errorMessageBanner: false,
         addressId: "",
-        pincodeAvailable: false
+        pincodeAvailable: false,
+        gpsEnabled: true
     };
 
 
@@ -78,9 +81,9 @@ class MapScreenGrabPincode extends React.Component {
 
 
     async componentDidMount() {
+        const { fromScreen } = this.props.route.params;
         if (this.props.homeScreenLocation?.pincode == undefined || this.props.homeScreenLocation?.pincode == "") {
             this.getCurrentPosition();
-            this.setState({ pincodeAvailable: false })
         } else {
             const region = {
                 latitude: this.props.homeScreenLocation?.lat,
@@ -122,43 +125,52 @@ class MapScreenGrabPincode extends React.Component {
 
     getCurrentPosition() {
         try {
-            Geolocation.getCurrentPosition(
-                async (position) => {
-                    // alert(JSON.stringify(position, null, "      "))
-                    const region = {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        latitudeDelta,
-                        longitudeDelta,
-                    };
-                    await this.setRegion(region);
+            CheckGpsState((status) => {
+                if (status) {
+                    this.setState({ gpsEnabled: true })
+                    this.setState({ modalVisible: false })
+                    Geolocation.getCurrentPosition(
+                        async (position) => {
+                            // alert(JSON.stringify(position, null, "      "))
+                            const region = {
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                                latitudeDelta,
+                                longitudeDelta,
+                            };
+                            await this.setRegion(region);
 
-                    fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
-                        .then((response) => {
-                            response.json().then(async (json) => {
-                                let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                                await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
-                            });
-                        }).catch((err) => {
-                            console.warn(err)
-                        })
-                },
-                (error) => {
-                    //TODO: better design
-                    // switch (error.code) {
-                    //     case 1:
-                    //         if (Platform.OS === "ios") {
-                    //             Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Privacidad - Localización");
-                    //         } else {
-                    //             Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Apps - ExampleApp - Localización");
-                    //         }
-                    //         break;
-                    //     default:
-                    //         Alert.alert("", "Error al detectar tu locación");
-                    // }
+                            fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
+                                .then((response) => {
+                                    response.json().then(async (json) => {
+                                        let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                                        await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                                    });
+                                }).catch((err) => {
+                                    console.warn(err)
+                                })
+                        },
+                        (error) => {
+                            //TODO: better design
+                            // switch (error.code) {
+                            //     case 1:
+                            //         if (Platform.OS === "ios") {
+                            //             Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Privacidad - Localización");
+                            //         } else {
+                            //             Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Apps - ExampleApp - Localización");
+                            //         }
+                            //         break;
+                            //     default:
+                            //         Alert.alert("", "Error al detectar tu locación");
+                            // }
+                        },
+                        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+                    );
+                } else {
+                    this.setState({ gpsEnabled: false })
+                    this.onPressTurnOn()
                 }
-            );
-
+            })
         } catch (e) {
             alert(e.message || "");
         }
@@ -222,7 +234,7 @@ class MapScreenGrabPincode extends React.Component {
         })
         await this.props.isPincodeServiceable(this.state.latitude, this.state.longitude, (res, status) => {
             if (status) {
-                this.props.navigation.goBack()
+                this.props.navigation.navigate("BottomTabRoute")
             } else {
                 this.setState({ errorMessageBanner: true })
             }
@@ -260,6 +272,28 @@ class MapScreenGrabPincode extends React.Component {
             pincode: item?.pincode
         })
         this.props.navigation.goBack()
+    }
+
+    onPressTurnOn = () => {
+        if (Platform.OS == "android") {
+            RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+                interval: 10000,
+                fastInterval: 5000,
+            })
+                .then((data) => {
+                })
+                .catch((err) => {
+                });
+        } else if (Platform.OS == "ios") {
+            Alert.alert(
+                "Enable location services",
+                "Enable location services on your device inside Settings -> Privacy -> Location Services",
+                [
+                    { text: "OK, GOT IT!", onPress: () => console.log('Ok') }
+                ],
+                { cancelable: true }
+            );
+        }
     }
 
     render() {
@@ -332,6 +366,21 @@ class MapScreenGrabPincode extends React.Component {
                             // ref='_scrollView' 
                             contentContainerStyle={{ zIndex: 1 }}
                             showsVerticalScrollIndicator={true}>
+                            {/* {!this.state.gpsEnabled ?
+                                <View style={{ backgroundColor: '#6B98DE' }}>
+                                    <View style={{ flexDirection: 'row', padding: 10 }}>
+                                        <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                            <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#ffffff' }} />
+                                        </View>
+                                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                                            <Text style={{ fontSize: 14, color: '#ffffff', fontWeight: 'bold' }}>Unable to get location</Text>
+                                            <Text style={{ fontSize: 12, color: "#ffffff" }}>Turning on Location ensures accurate and hassle-free delivery</Text>
+                                        </View>
+                                        <TouchableOpacity onPress={() => this.onPressTurnOn()} style={{ height: 30, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', margin: 10, borderRadius: 5 }}>
+                                            <Text style={{ fontSize: 14, color: '#6B98DE', marginHorizontal: 10, fontWeight: 'bold' }}>TURN ON</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View> : null} */}
                             <View style={{ flex: 1, width: "90%", alignSelf: 'center' }}>
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -351,11 +400,14 @@ class MapScreenGrabPincode extends React.Component {
                                     </View>
                                     :
                                     <View style={{ flexDirection: "row" }}>
-                                        <Image
-                                            style={{ width: 30, height: 30, marginLeft: -5 }}
-                                            source={require('../../assets/png/locationIcon.png')}
-                                        />
-                                        <Text style={{ fontSize: 16 }}>{this.state.address} </Text>
+                                        {this.state.address ?
+                                            <>
+                                                <Image
+                                                    style={{ width: 30, height: 30, marginLeft: -5 }}
+                                                    source={require('../../assets/png/locationIcon.png')}
+                                                />
+                                                <Text style={{ fontSize: 16 }}>{this.state.address} </Text>
+                                            </> : null}
                                     </View>
                                 }
                                 {/* <View style={{ marginTop: 10 }}>
@@ -418,7 +470,6 @@ class MapScreenGrabPincode extends React.Component {
                             <View style={{ flex: 1, zIndex: -1 }}>
                                 <View style={{ backgroundColor: 'white', flex: 1 }}>
                                     <TouchableOpacity onPress={() => {
-                                        this.setState({ modalVisible: false })
                                         this.getCurrentPosition()
                                     }} style={{ flexDirection: 'row' }}>
                                         <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
@@ -432,7 +483,6 @@ class MapScreenGrabPincode extends React.Component {
                                     <View
                                         style={{ height: 0.7, width: "95%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10, marginTop: 5 }}
                                     />
-
                                     {this.state.savedAddressLoading ?
                                         <ActivityIndicator size={"large"} color={Theme.Colors.primary} /> :
                                         <>
