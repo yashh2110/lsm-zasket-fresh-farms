@@ -9,8 +9,11 @@ import { setDarkMode } from "../../actions/dark";
 import AsyncStorage from '@react-native-community/async-storage';
 import Theme from '../../styles/Theme';
 import { Icon } from 'native-base';
+import { AuthContext } from '../../navigation/Routes';
+import { CheckGpsState, CheckPermissions } from '../../utils/utils';
 
 const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) => {
+    const { setOnBoardKey } = React.useContext(AuthContext);
 
     const _onDone = async () => {
         // await AsyncStorage.setItem('onBoardKey', 'onBoardKey');
@@ -24,7 +27,19 @@ const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) 
     }
 
     const onPressSetDeliveryLocation = () => {
-        navigation.navigate('MapScreenGrabPincode', { fromScreen: 'OnBoardScreen' })
+        // CheckGpsState((status) => {
+        //     if (status) {
+        //         navigation.navigate('AutoCompleteLocationScreen', { fromScreen: 'OnBoardScreen' })
+        //     }
+        // })
+        CheckPermissions((status) => {
+            if (status) {
+                alert('go to map screen')
+            } else {
+                alert('search location screen')
+                // navigation.navigate('AutoCompleteLocationScreen', { fromScreen: 'OnBoardScreen' })
+            }
+        })
     }
 
     return (

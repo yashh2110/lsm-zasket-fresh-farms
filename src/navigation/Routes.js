@@ -39,7 +39,7 @@ import CartButton from './CartButton';
 import { AxiosDefaultsManager } from '../axios/default';
 import OneSignal from "react-native-onesignal";
 import SetDeliveryLocationScreen from '../components/MapStack/SetDeliveryLocationScreen';
-
+import AutoCompleteLocationScreen from '../components/MapStack/AutoCompleteLocationScreen'
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -329,66 +329,87 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
         );
     }
 
+    const [state, dispatch] = React.useReducer(
+        (prevState, action) => {
+            switch (action.type) {
+                case 'SET_ONBOARD_KEY':
+                    return {
+                        ...prevState,
+                        onBoardKey: action.token,
+                    };
+                case 'REMOVE_ONBOARD_KEY':
+                    return {
+                        ...prevState,
+                        onBoardKey: null,
+                    };
+            }
+        },
+        {
+            onBoardKey: null,
+        }
+    );
+
 
     const authContext = React.useMemo(
         () => ({
-            signIn: async data => {
-                // alert(JSON.stringify(data?.customerSessionDetails?.sessionId, null, "       "))
-                new AxiosDefaultsManager().setAuthorizationHeader(data?.customerSessionDetails?.sessionId)
-                await AsyncStorage.setItem('userDetails', JSON.stringify(data))
+            setOnBoardKey: async data => {
+                await AsyncStorage.setItem('onBoardKey', 'onBoardKey')
+                dispatch({ type: 'SET_ONBOARD_KEY', token: data });
             },
-            signOut: async () => {
-
-            },
-            saveUserLocation: async data => {
-                await AsyncStorage.setItem('location', JSON.stringify(data))
-            },
+            removeOnBoardKey: () => dispatch({ type: 'REMOVE_ONBOARD_KEY' }),
         }),
         []
     );
+
+    React.useEffect(() => {
+        // Fetch the token from storage then navigate to our appropriate place
+        const bootstrapAsync = async () => {
+            let onBoardKey;
+            try {
+                onBoardKey = await AsyncStorage.getItem('onBoardKey');
+            } catch (e) {
+                // Restoring token failed
+            }
+            // After restoring token, we may need to validate it in production apps
+            // This will switch to the App screen or Auth screen and this loading
+            // screen will be unmounted and thrown away.
+            dispatch({ type: 'SET_ONBOARD_KEY', token: onBoardKey });
+        };
+        bootstrapAsync();
+    }, []);
 
     return (
         <>
             <AuthContext.Provider value={authContext}>
                 <NavigationContainer>
                     <Stack.Navigator
-                        initialRouteName="BottomTabRoute"
+                        // initialRouteName="BottomTabRoute"
                         screenOptions={{
                             headerShown: false
                         }}>
-                        {/* {state.isLoading ? (
-                            <Stack.Screen name="Splash" component={LoadingScreen} />
-                        ) : state.userDetails == null ? (
-                            <Stack.Screen
-                                options={{
-                                    animationTypeForReplace: state.isSignout ? 'pop' : 'push',
-                                }}
-                                name="AuthRoute" component={AuthRoute} />
-                        ) : state.userLocation == null ? (
-                            <Stack.Screen name="MapStack" component={MapStack} options={{ cardStyleInterpolator: forFade }} />
-                        ) : (
-                                        <>
-                                            <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
-                                            <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ title: 'Home Page' }} />
-                                            <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
-                                            <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
-                                        </>
-                                    )} */}
+                        {state.onBoardKey == null ? (
+                            <>
+                                <Stack.Screen name="OnBoardScreen" component={OnBoardScreen} />
+                                <Stack.Screen name="AuthRoute" component={AuthRoute} />
+                                <Stack.Screen name="AutoCompleteLocationScreen" component={AutoCompleteLocationScreen} options={{ cardStyleInterpolator: forFade }} />
+                                <Stack.Screen name="MapScreenGrabPincode" component={MapScreenGrabPincode} options={{ cardStyleInterpolator: forFade }} />
+                            </>) : (
+                                <>
+                                    <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
+                                    {/* <Stack.Screen name="AuthRoute" component={AuthRoute} /> */}
+                                    <Stack.Screen name="MapStack" component={MapStack} options={{ cardStyleInterpolator: forFade }} />
+                                    <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ title: 'Home Page' }} />
+                                    <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
+                                    <Stack.Screen name="MapScreenGrabPincode" component={MapScreenGrabPincode} options={{ cardStyleInterpolator: forFade }} />
+                                    <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
+                                    <Stack.Screen name="AccessPermissionScreen" component={AccessPermissionScreen} options={{ cardStyleInterpolator: forFade }} />
+                                    <Stack.Screen name="SetDeliveryLocationScreen" component={SetDeliveryLocationScreen} options={{ cardStyleInterpolator: forFade }} />
+                                    <Stack.Screen name="MyOrdersDetailScreen" component={MyOrdersDetailScreen} options={{ cardStyleInterpolator: forFade }}
+                                    />
+                                </>
+                            )}
                         <>
-                            {/* <Stack.Screen name="LoadingScreen" component={LoadingScreen} /> */}
-                            <Stack.Screen name="OnBoardScreen" component={OnBoardScreen} />
-                            <Stack.Screen name="AuthRoute" component={AuthRoute} />
-                            <Stack.Screen name="MapStack" component={MapStack} options={{ cardStyleInterpolator: forFade }} />
 
-                            <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
-                            <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ title: 'Home Page' }} />
-                            <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
-                            <Stack.Screen name="MapScreenGrabPincode" component={MapScreenGrabPincode} options={{ cardStyleInterpolator: forFade }} />
-                            <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
-                            <Stack.Screen name="AccessPermissionScreen" component={AccessPermissionScreen} options={{ cardStyleInterpolator: forFade }} />
-                            <Stack.Screen name="SetDeliveryLocationScreen" component={SetDeliveryLocationScreen} options={{ cardStyleInterpolator: forFade }} />
-                            <Stack.Screen name="MyOrdersDetailScreen" component={MyOrdersDetailScreen} options={{ cardStyleInterpolator: forFade }}
-                            />
                         </>
                     </Stack.Navigator>
                 </NavigationContainer>

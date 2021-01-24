@@ -19,7 +19,7 @@ import { getV2Config } from '../../actions/home'
 import CountDown from 'react-native-countdown-component';
 
 const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin, getV2Config, verifyOtp, requestOtp, route }) => {
-
+    const { setOnBoardKey } = React.useContext(AuthContext);
     const [otp, setOtp] = useState("")
     const [loading, setLoading] = useState(false)
     const [counter, SetCounter] = useState(45); // Set here your own timer configurable
@@ -41,8 +41,9 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin
                         setLoading(false)
                         await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
                         onLogin(response?.data)
-                        navigation.navigate('HomeStack')
+                        setOnBoardKey('onBoardKey')
                         getV2Config((res, status) => { })
+                        navigation.navigate('HomeStack')
                     } else {
                         setLoading(false)
                         if (response?.response?.data?.description == "OTP validation failed") {
