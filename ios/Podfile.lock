@@ -280,6 +280,8 @@ PODS:
     - React
   - react-native-in-app-review (2.1.5):
     - React
+  - react-native-location (2.5.0):
+    - React
   - react-native-maps (0.27.1):
     - React
   - react-native-netinfo (5.9.7):
@@ -287,7 +289,7 @@ PODS:
   - react-native-onesignal (3.9.3):
     - OneSignal (= 2.16.1)
     - React (< 1.0.0, >= 0.13.0)
-  - react-native-razorpay (2.2.1):
+  - react-native-razorpay (2.2.2):
     - razorpay-pod
     - React
   - react-native-safe-area-context (3.1.8):
@@ -420,6 +422,7 @@ DEPENDENCIES:
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-gps-state (from `../node_modules/react-native-gps-state`)
   - react-native-in-app-review (from `../node_modules/react-native-in-app-review`)
+  - react-native-location (from `../node_modules/react-native-location`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-onesignal (from `../node_modules/react-native-onesignal`)
@@ -513,6 +516,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gps-state"
   react-native-in-app-review:
     :path: "../node_modules/react-native-in-app-review"
+  react-native-location:
+    :path: "../node_modules/react-native-location"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
   react-native-netinfo:
@@ -604,10 +609,11 @@ SPEC CHECKSUMS:
   react-native-geolocation: cbd9d6bd06bac411eed2671810f454d4908484a8
   react-native-gps-state: ca94d5e3156fcc1c48c4eaa932910ec481bb5d8c
   react-native-in-app-review: 3ab4771ee96564a58c972902b7868952429ad0ae
+  react-native-location: 9c53c0957756f7d70e8fdc76b1c7ed85867c8d0b
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-netinfo: e36c1bb6df27ab84aa933679b3f5bbf9d180b18f
   react-native-onesignal: dd08d2ba301e1cb7ad4773a53d8e49d4e43ba6fd
-  react-native-razorpay: 8a8b0a30c4d9a344d602b4b225f02576d011b18e
+  react-native-razorpay: 4e851d32acf8147ae5799321e749b3e2d137e1a3
   react-native-safe-area-context: 01158a92c300895d79dee447e980672dc3fb85a6
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   React-RCTActionSheet: 910163b6b09685a35c4ebbc52b66d1bfbbe39fc5

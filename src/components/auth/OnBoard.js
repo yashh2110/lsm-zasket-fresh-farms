@@ -36,8 +36,7 @@ const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) 
             if (status) {
                 alert('go to map screen')
             } else {
-                alert('search location screen')
-                // navigation.navigate('AutoCompleteLocationScreen', { fromScreen: 'OnBoardScreen' })
+                navigation.navigate('AutoCompleteLocationScreen', { fromScreen: 'OnBoardScreen' })
             }
         })
     }

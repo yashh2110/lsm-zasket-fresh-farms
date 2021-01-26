@@ -23,6 +23,7 @@
 		B55E585A1258FACA7C8877CE /* libPods-Zasket-ZasketTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12A63233BABE411C8AB13591 /* libPods-Zasket-ZasketTests.a */; };
 		D75AA7882576DB1300A2E267 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75AA7872576DB1300A2E267 /* NotificationService.swift */; };
 		D75AA78C2576DB1300A2E267 /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D75AA7852576DB1300A2E267 /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D7E4E66C25BE35E5002967B1 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E4E66B25BE35E5002967B1 /* File.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = D75AA7842576DB1300A2E267;
 			remoteInfo = OneSignalNotificationServiceExtension;
+		};
+		D75F86F225BF76E800D048D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D75F86EE25BF76E700D048D5 /* RNPermissions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNPermissions;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -109,6 +117,10 @@
 		D75AA7852576DB1300A2E267 /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D75AA7872576DB1300A2E267 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		D75AA7892576DB1300A2E267 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D75F86EE25BF76E700D048D5 /* RNPermissions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNPermissions.xcodeproj; path = "../node_modules/react-native-permissions/ios/RNPermissions.xcodeproj"; sourceTree = "<group>"; };
+		D75F86FD25BF778700D048D5 /* libRNPermissions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNPermissions.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		D7E4E66A25BE35E5002967B1 /* Zasket-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Zasket-Bridging-Header.h"; sourceTree = "<group>"; };
+		D7E4E66B25BE35E5002967B1 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		DA6AE83CAC044A08A04DA89F /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		DC9731F7018355875BAAB6F0 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		DED89B13C5B54D5C8B9E4F1C /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
@@ -196,6 +208,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D75F86FD25BF778700D048D5 /* libRNPermissions.a */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				9BD92DF9891CB50143C5391C /* libPods-Zasket.a */,
@@ -234,6 +247,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				D75F86EE25BF76E700D048D5 /* RNPermissions.xcodeproj */,
+				D7E4E66B25BE35E5002967B1 /* File.swift */,
 				13B07FAE1A68108700A75B9A /* Zasket */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* ZasketTests */,
@@ -242,6 +257,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				6DDD54C63C26B81FD72FE419 /* Pods */,
 				AC66A6B1AB5C4D4FBB48FBF3 /* Resources */,
+				D7E4E66A25BE35E5002967B1 /* Zasket-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -291,6 +307,14 @@
 				D75AA7892576DB1300A2E267 /* Info.plist */,
 			);
 			path = OneSignalNotificationServiceExtension;
+			sourceTree = "<group>";
+		};
+		D75F86EF25BF76E700D048D5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D75F86F325BF76E800D048D5 /* libRNPermissions.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -413,7 +437,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 82P963U5A9;
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1230;
 						ProvisioningStyle = Manual;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -443,6 +467,12 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = D75F86EF25BF76E700D048D5 /* Products */;
+					ProjectRef = D75F86EE25BF76E700D048D5 /* RNPermissions.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* Zasket */,
@@ -453,6 +483,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		D75F86F325BF76E800D048D5 /* libRNPermissions.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNPermissions.a;
+			remoteRef = D75F86F225BF76E800D048D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		00E356EC1AD99517003FC87E /* Resources */ = {
@@ -828,6 +868,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				D7E4E66C25BE35E5002967B1 /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -882,6 +923,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 20197CFDEF575A11899BEF07 /* Pods-Zasket-ZasketTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -905,6 +947,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AEB4E2924428604788CC99F6 /* Pods-Zasket-ZasketTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = ZasketTests/Info.plist;
@@ -945,6 +988,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.freshleaftechnolgies.zasket;
 				PRODUCT_NAME = Zasket;
 				PROVISIONING_PROFILE_SPECIFIER = "Zasket Development Provisioning profile";
+				SWIFT_OBJC_BRIDGING_HEADER = "Zasket-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -975,6 +1019,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.freshleaftechnolgies.zasket;
 				PRODUCT_NAME = Zasket;
 				PROVISIONING_PROFILE_SPECIFIER = "Zasket App Store Provisioning profile";
+				SWIFT_OBJC_BRIDGING_HEADER = "Zasket-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";

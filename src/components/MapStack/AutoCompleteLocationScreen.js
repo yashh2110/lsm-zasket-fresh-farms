@@ -19,7 +19,7 @@ import { connect } from 'react-redux';
 import FeatherIcons from "react-native-vector-icons/Feather"
 import AntDesignIcons from "react-native-vector-icons/AntDesign"
 import { isPincodeServiceable, } from '../../actions/home'
-import { CheckGpsState } from '../../utils/utils';
+import { CheckGpsState, CheckPermissions } from '../../utils/utils';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
@@ -82,8 +82,15 @@ class MapScreenGrabPincode extends React.Component {
 
     async componentDidMount() {
         const { fromScreen } = this.props.route.params;
+        CheckPermissions((status) => {
+            if (status) {
+                this.setState({ gpsEnabled: false })
+            } else {
+                this.setState({ gpsEnabled: true })
+            }
+        }, false)
         if (this.props.homeScreenLocation?.pincode == undefined || this.props.homeScreenLocation?.pincode == "") {
-            this.getCurrentPosition();
+            // this.getCurrentPosition();
         } else {
             const region = {
                 latitude: this.props.homeScreenLocation?.lat,
@@ -275,25 +282,17 @@ class MapScreenGrabPincode extends React.Component {
     }
 
     onPressTurnOn = () => {
-        if (Platform.OS == "android") {
-            RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-                interval: 10000,
-                fastInterval: 5000,
-            })
-                .then((data) => {
-                })
-                .catch((err) => {
-                });
-        } else if (Platform.OS == "ios") {
-            Alert.alert(
-                "Enable location services",
-                "Enable location services on your device inside Settings -> Privacy -> Location Services",
-                [
-                    { text: "OK, GOT IT!", onPress: () => console.log('Ok') }
-                ],
-                { cancelable: true }
-            );
-        }
+        CheckPermissions((status) => {
+            if (status) {
+                this.setState({ gpsEnabled: false })
+                setTimeout(() => {
+                    this.props.navigation.navigate("MapScreenGrabPincode")
+                }, 1000);
+
+            } else {
+                this.setState({ gpsEnabled: true })
+            }
+        })
     }
 
     render() {
@@ -329,17 +328,35 @@ class MapScreenGrabPincode extends React.Component {
                         </View>
                         <View style={{ flex: 1, zIndex: -1 }}>
                             <View style={{ backgroundColor: 'white', flex: 1 }}>
-                                <TouchableOpacity onPress={() => {
-                                    this.getCurrentPosition()
-                                }} style={{ flexDirection: 'row' }}>
-                                    <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                        <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#232323' }} />
+
+                                {this.state.gpsEnabled ?
+                                    <View style={{ backgroundColor: '#6B98DE' }}>
+                                        <View style={{ flexDirection: 'row', padding: 10 }}>
+                                            <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                                <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#ffffff' }} />
+                                            </View>
+                                            <View style={{ flex: 1, justifyContent: 'center' }}>
+                                                <Text style={{ fontSize: 14, color: '#ffffff', fontWeight: 'bold' }}>Unable to get location</Text>
+                                                <Text style={{ fontSize: 12, color: "#ffffff" }}>Turning on Location ensures accurate and hassle-free delivery</Text>
+                                            </View>
+                                            <TouchableOpacity onPress={() => this.onPressTurnOn()} style={{ height: 30, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', margin: 10, borderRadius: 5 }}>
+                                                <Text style={{ fontSize: 14, color: '#6B98DE', marginHorizontal: 10, fontWeight: 'bold' }}>TURN ON</Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
-                                    <View style={{ flex: 1, justifyContent: 'center' }}>
-                                        <Text style={{ fontSize: 14, }}>Current Location</Text>
-                                        <Text style={{ fontSize: 12, color: "#727272" }}>Using GPS</Text>
-                                    </View>
-                                </TouchableOpacity>
+                                    :
+                                    <TouchableOpacity onPress={() => {
+                                        this.getCurrentPosition()
+                                    }} style={{ flexDirection: 'row' }}>
+                                        <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                            <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#232323' }} />
+                                        </View>
+                                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                                            <Text style={{ fontSize: 14, }}>Current Location</Text>
+                                            <Text style={{ fontSize: 12, color: "#727272" }}>Using GPS</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                }
                                 <View
                                     style={{ height: 0.7, width: "95%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10, marginTop: 5 }}
                                 />
