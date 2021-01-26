@@ -48,13 +48,6 @@
 			remoteGlobalIDString = D75AA7842576DB1300A2E267;
 			remoteInfo = OneSignalNotificationServiceExtension;
 		};
-		D75F86F225BF76E800D048D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D75F86EE25BF76E700D048D5 /* RNPermissions.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNPermissions;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -117,7 +110,6 @@
 		D75AA7852576DB1300A2E267 /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D75AA7872576DB1300A2E267 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		D75AA7892576DB1300A2E267 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D75F86EE25BF76E700D048D5 /* RNPermissions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNPermissions.xcodeproj; path = "../node_modules/react-native-permissions/ios/RNPermissions.xcodeproj"; sourceTree = "<group>"; };
 		D75F86FD25BF778700D048D5 /* libRNPermissions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNPermissions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7E4E66A25BE35E5002967B1 /* Zasket-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Zasket-Bridging-Header.h"; sourceTree = "<group>"; };
 		D7E4E66B25BE35E5002967B1 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
@@ -247,7 +239,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				D75F86EE25BF76E700D048D5 /* RNPermissions.xcodeproj */,
 				D7E4E66B25BE35E5002967B1 /* File.swift */,
 				13B07FAE1A68108700A75B9A /* Zasket */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -307,14 +298,6 @@
 				D75AA7892576DB1300A2E267 /* Info.plist */,
 			);
 			path = OneSignalNotificationServiceExtension;
-			sourceTree = "<group>";
-		};
-		D75F86EF25BF76E700D048D5 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				D75F86F325BF76E800D048D5 /* libRNPermissions.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -467,12 +450,6 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = D75F86EF25BF76E700D048D5 /* Products */;
-					ProjectRef = D75F86EE25BF76E700D048D5 /* RNPermissions.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* Zasket */,
@@ -483,16 +460,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		D75F86F325BF76E800D048D5 /* libRNPermissions.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNPermissions.a;
-			remoteRef = D75F86F225BF76E800D048D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		00E356EC1AD99517003FC87E /* Resources */ = {

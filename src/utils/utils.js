@@ -58,20 +58,10 @@ const iosPermissionAlert = (callback) => {
 
 const iosGpsAlert = (callback) => {
     Alert.alert(
-        "Turn On Location Services to Allow \"Swiggy\" to Determine Your Location",
+        "Turn On Location Services to Allow \"Zasket\" to Determine Your Location",
         "Enable location services on your device inside Settings -> Privacy -> Location Services",
         [
-            {
-                text: "Cancel",
-                onPress: () => { callback(false) },
-                style: "cancel"
-            },
-            {
-                text: "Settings", onPress: () => {
-                    callback(false)
-                    Linking.openURL('App-Prefs:{3}')
-                }
-            }
+            { text: "OK, GOT IT!", onPress: () => { callback(false) } }
         ],
         { cancelable: true }
     );
@@ -180,3 +170,27 @@ export const CheckPermissions = async (callback, prompt = true) => {
 
     }
 }
+
+
+
+// const iosGpsAlert = (callback) => {
+//     Alert.alert(
+//         "Turn On Location Services to Allow \"Zasket\" to Determine Your Location",
+//         "Enable location services on your device inside Settings -> Privacy -> Location Services",
+//         [
+//             {
+//                 text: "Settings", onPress: () => {
+//                     callback(false)
+//                     Linking.openURL('App-Prefs:LOCATION_SERVICES')
+//                     // Linking.openURL('App-Prefs:{3}')
+//                 }
+//             },
+//             {
+//                 text: "Cancel",
+//                 onPress: () => { callback(false) },
+//                 style: "cancel"
+//             }
+//         ],
+//         { cancelable: true }
+//     );
+// }
