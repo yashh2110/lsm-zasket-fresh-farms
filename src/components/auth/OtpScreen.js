@@ -17,8 +17,9 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
 import { getV2Config } from '../../actions/home'
 import CountDown from 'react-native-countdown-component';
+import { StackActions } from '@react-navigation/native';
 
-const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin, getV2Config, verifyOtp, requestOtp, route }) => {
+const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLogin, getV2Config, verifyOtp, requestOtp, route }) => {
     const { setOnBoardKey } = React.useContext(AuthContext);
     const [otp, setOtp] = useState("")
     const [loading, setLoading] = useState(false)
@@ -38,12 +39,17 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin
                 await verifyOtp(payLoad, async (response, status) => {
                     // Alert.alert(JSON.stringify(response, null, "     "))
                     if (status) {
+                        getV2Config((res, status) => { })
                         setLoading(false)
                         await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
                         onLogin(response?.data)
-                        setOnBoardKey('onBoardKey')
-                        getV2Config((res, status) => { })
-                        navigation.navigate('HomeStack')
+                        if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+                            // navigation.dispatch(StackActions.popToTop());
+                            navigation.navigate("SwitchNavigator", { role: "LOGIN" })
+                            navigation.navigate("BottomTabRoute")
+                        } else {
+                            navigation.navigate('HomeStack')
+                        }
                     } else {
                         setLoading(false)
                         if (response?.response?.data?.description == "OTP validation failed") {
@@ -173,7 +179,8 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, saveUserDetails, onLogin
 
 const mapStateToProps = (state) => ({
     darkMode: state.dark,
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    homeScreenLocation: state.homeScreenLocation,
 })
 
 

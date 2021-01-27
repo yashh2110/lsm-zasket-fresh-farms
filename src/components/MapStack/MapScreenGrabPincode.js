@@ -19,8 +19,10 @@ import { connect } from 'react-redux';
 import FeatherIcons from "react-native-vector-icons/Feather"
 import AntDesignIcons from "react-native-vector-icons/AntDesign"
 import { isPincodeServiceable, } from '../../actions/home'
-import { CheckGpsState } from '../../utils/utils';
+import { CheckGpsState, CheckPermissions } from '../../utils/utils';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import { AuthContext } from '../../navigation/Routes';
+import { StackActions } from '@react-navigation/native';
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
 
@@ -59,7 +61,7 @@ class MapScreenGrabPincode extends React.Component {
         officeCheck: false,
         othersCheck: false,
         // deliverFor: "self",
-        mode: "ON_INITIAL",
+        mode: "",
         pincode: "",
         savedAddress: [],
         mobileNumberErrorText: "",
@@ -68,7 +70,7 @@ class MapScreenGrabPincode extends React.Component {
         errorMessageBanner: false,
         addressId: "",
         pincodeAvailable: false,
-        gpsEnabled: true
+        gpsEnabled: false
     };
 
 
@@ -79,11 +81,25 @@ class MapScreenGrabPincode extends React.Component {
         //this.setState({ region });
     }
 
+    componentDidMount() {
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {
+            this.initialFunction()
+        });
+    }
 
-    async componentDidMount() {
-        const { fromScreen } = this.props.route.params;
+    componentWillUnmount() {
+        this._unsubscribe();
+    }
+
+    async initialFunction() {
+        const { fromScreen, regionalPositions } = this.props.route.params;
         if (this.props.homeScreenLocation?.pincode == undefined || this.props.homeScreenLocation?.pincode == "") {
-            this.getCurrentPosition();
+            this.setState({ mode: 'ON_INITIAL' })
+            if (regionalPositions == null) {
+                this.getCurrentPosition();
+            } else {
+                await this.setRegion(regionalPositions);
+            }
         } else {
             const region = {
                 latitude: this.props.homeScreenLocation?.lat,
@@ -125,10 +141,9 @@ class MapScreenGrabPincode extends React.Component {
 
     getCurrentPosition() {
         try {
-            CheckGpsState((status) => {
+            CheckPermissions((status) => {
                 if (status) {
-                    this.setState({ gpsEnabled: true })
-                    this.setState({ modalVisible: false })
+                    this.setState({ gpsEnabled: false })
                     Geolocation.getCurrentPosition(
                         async (position) => {
                             // alert(JSON.stringify(position, null, "      "))
@@ -151,6 +166,7 @@ class MapScreenGrabPincode extends React.Component {
                                 })
                         },
                         (error) => {
+                            console.warn(error)
                             //TODO: better design
                             // switch (error.code) {
                             //     case 1:
@@ -164,11 +180,10 @@ class MapScreenGrabPincode extends React.Component {
                             //         Alert.alert("", "Error al detectar tu locación");
                             // }
                         },
-                        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+                        { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 },
                     );
                 } else {
-                    this.setState({ gpsEnabled: false })
-                    this.onPressTurnOn()
+                    this.setState({ gpsEnabled: true })
                 }
             })
         } catch (e) {
@@ -224,7 +239,16 @@ class MapScreenGrabPincode extends React.Component {
         await this.getCurrentLocation()
     };
 
-
+    onPressTurnOn = () => {
+        CheckPermissions((status) => {
+            if (status) {
+                this.setState({ gpsEnabled: false })
+                this.getCurrentPosition()
+            } else {
+                this.setState({ gpsEnabled: true })
+            }
+        })
+    }
     onSubmit = async () => {
         await this.props.addHomeScreenLocation({
             "addressLine_1": this.state.address,
@@ -232,16 +256,19 @@ class MapScreenGrabPincode extends React.Component {
             "lat": this.state.latitude,
             "lon": this.state.longitude,
         })
-        await this.props.isPincodeServiceable(this.state.latitude, this.state.longitude, (res, status) => {
-            if (status) {
-                this.props.navigation.navigate("BottomTabRoute")
-            } else {
-                this.setState({ errorMessageBanner: true })
-            }
-        })
+        if (this.state.mode == 'ON_INITIAL') {
+            this.props.navigation.navigate("SwitchNavigator", { role: "LOGIN" })
+            this.props.navigation.navigate("BottomTabRoute")
+        } else {
+            await this.props.isPincodeServiceable(this.state.latitude, this.state.longitude, (res, status) => {
+                if (status) {
+                    this.props.navigation.navigate("BottomTabRoute")
+                } else {
+                    this.setState({ errorMessageBanner: true })
+                }
+            })
+        }
     }
-
-
 
     renderSeparator = () => {
         return (
@@ -250,51 +277,6 @@ class MapScreenGrabPincode extends React.Component {
             />
         );
     };
-
-    onPressSavedAddress = async (item) => {
-        // Alert.alert(JSON.stringify(item, null, "      "))
-        let payload = {
-            id: item?.id,
-            addressLine_1: item?.addressLine_1,
-            lat: item?.lat,
-            lon: item?.lon,
-            recepientName: item?.recepientName,
-            recepientMobileNumber: item?.recepientMobileNumber,
-            landMark: item?.landMark,
-            saveAs: item?.saveAs,
-            pincode: item?.pincode
-        }
-        this.props.addLocation(payload)
-        this.props.addHomeScreenLocation({
-            addressLine_1: item?.addressLine_1,
-            lat: item?.lat,
-            lon: item?.lon,
-            pincode: item?.pincode
-        })
-        this.props.navigation.goBack()
-    }
-
-    onPressTurnOn = () => {
-        if (Platform.OS == "android") {
-            RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-                interval: 10000,
-                fastInterval: 5000,
-            })
-                .then((data) => {
-                })
-                .catch((err) => {
-                });
-        } else if (Platform.OS == "ios") {
-            Alert.alert(
-                "Enable location services",
-                "Enable location services on your device inside Settings -> Privacy -> Location Services",
-                [
-                    { text: "OK, GOT IT!", onPress: () => console.log('Ok') }
-                ],
-                { cancelable: true }
-            );
-        }
-    }
 
     render() {
 
@@ -366,7 +348,7 @@ class MapScreenGrabPincode extends React.Component {
                             // ref='_scrollView' 
                             contentContainerStyle={{ zIndex: 1 }}
                             showsVerticalScrollIndicator={true}>
-                            {/* {!this.state.gpsEnabled ?
+                            {this.state.gpsEnabled ?
                                 <View style={{ backgroundColor: '#6B98DE' }}>
                                     <View style={{ flexDirection: 'row', padding: 10 }}>
                                         <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
@@ -380,13 +362,13 @@ class MapScreenGrabPincode extends React.Component {
                                             <Text style={{ fontSize: 14, color: '#6B98DE', marginHorizontal: 10, fontWeight: 'bold' }}>TURN ON</Text>
                                         </TouchableOpacity>
                                     </View>
-                                </View> : null} */}
+                                </View> : null}
                             <View style={{ flex: 1, width: "90%", alignSelf: 'center' }}>
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1, justifyContent: 'center' }}>
                                         <Text style={{ color: "#727272", fontSize: 12 }}>Your current location</Text>
                                     </View>
-                                    <TouchableOpacity activeOpacity={0.7} onPress={() => { this.setState({ modalVisible: true }) }} style={{ padding: 5 }}>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { fromScreen: 'OnBoardScreen' }) }} style={{ padding: 5 }}>
                                         <Text style={{ color: Theme.Colors.primary }}>Change</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -430,123 +412,6 @@ class MapScreenGrabPincode extends React.Component {
                         <Text style={styles.region}>{JSON.stringify(region, null, 2)} </Text>
                     </SafeAreaView> */}
                 </TouchableWithoutFeedback>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={this.state.modalVisible}
-                    onRequestClose={() => {
-                        this.setState({ modalVisible: false })
-                    }}>
-                    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-                        <View flex={1}>
-                            <View style={{ position: 'relative', height: 65 }}>
-                                <AutoCompleteLocation
-                                    style={{ container: { positition: 'absolute', height: 50 } }}
-                                    getLocation={async (data, details = null) => { // 'details' is provided when fetchDetails = true
-                                        // await setLocation(data.description, details?.geometry?.location?.lat, details?.geometry?.location?.lng)
-                                        this.setState({ modalVisible: false })
-                                        // await this.setState({
-                                        //     address: data.description,
-                                        //     latitude: details?.geometry?.location?.lat,
-                                        //     longitude: details?.geometry?.location?.lng,
-                                        // })
-                                        await this.setState({
-                                            region: {
-                                                latitude: details?.geometry?.location?.lat,
-                                                longitude: details?.geometry?.location?.lng,
-                                                latitudeDelta,
-                                                longitudeDelta,
-                                            },
-                                            address: data.description,
-                                        })
-                                        await this.getCurrentLocation()
-                                        await this.map.animateToRegion(this.state.region), 100
-                                    }}
-                                    onRequestClose={() => {
-                                        this.setState({ modalVisible: false })
-                                    }}
-                                />
-                            </View>
-                            <View style={{ flex: 1, zIndex: -1 }}>
-                                <View style={{ backgroundColor: 'white', flex: 1 }}>
-                                    <TouchableOpacity onPress={() => {
-                                        this.getCurrentPosition()
-                                    }} style={{ flexDirection: 'row' }}>
-                                        <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                            <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#232323' }} />
-                                        </View>
-                                        <View style={{ flex: 1, justifyContent: 'center' }}>
-                                            <Text style={{ fontSize: 14, }}>Current Location</Text>
-                                            <Text style={{ fontSize: 12, color: "#727272" }}>Using GPS</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                    <View
-                                        style={{ height: 0.7, width: "95%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10, marginTop: 5 }}
-                                    />
-                                    {this.state.savedAddressLoading ?
-                                        <ActivityIndicator size={"large"} color={Theme.Colors.primary} /> :
-                                        <>
-                                            {this.state.savedAddress?.length > 0 ?
-                                                <Text style={{ fontWeight: 'bold', marginLeft: 10, fontSize: 14, marginBottom: 10 }}>Saved Address</Text>
-                                                : undefined}
-                                            <FlatList
-                                                data={this.state.savedAddress}
-                                                renderItem={({ item }) =>
-                                                    <TouchableOpacity onPress={() => { this.onPressSavedAddress(item) }} style={{ flexDirection: 'row', paddingBottom: 10, paddingTop: 5 }}>
-                                                        {/* <Text style={styles.item}
-                                                //   onPress={this.getListViewItem.bind(this, item)}
-                                                >{JSON.stringify(item, null, "      ")} </Text> */}
-                                                        {item?.saveAs == "Home" &&
-                                                            <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                                                <Icon name="home" type="AntDesign" style={{ fontSize: 24, color: '#232323' }} />
-                                                            </View>
-                                                        }
-                                                        {item?.saveAs == "Office" &&
-                                                            <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                                                <Icon name="office-building" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#232323' }} />
-                                                            </View>
-                                                        }
-                                                        {item?.saveAs == "Others" &&
-                                                            <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                                                <Icon name="location-pin" type="SimpleLineIcons" style={{ fontSize: 24, color: '#232323' }} />
-                                                            </View>
-                                                        }
-                                                        <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'center' }}>
-                                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                                {item?.saveAs == "Home" &&
-                                                                    <View style={{ backgroundColor: "#FEF8FC", borderWidth: 1, borderRadius: 4, borderColor: "#FCD8EC", paddingVertical: 3, marginRight: 5 }}>
-                                                                        <Text style={{ color: "#F464AD", fontSize: 12, marginHorizontal: 5 }}>Home</Text>
-                                                                    </View>
-                                                                }
-                                                                {item?.saveAs == "Office" &&
-                                                                    <View style={{ backgroundColor: "#FCF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#F0D4FA", paddingVertical: 3, marginRight: 5 }}>
-                                                                        <Text style={{ color: "#CD64F4", fontSize: 12, marginHorizontal: 5 }}>Office</Text>
-                                                                    </View>
-                                                                }
-                                                                {item?.saveAs == "Others" &&
-                                                                    <View style={{ backgroundColor: "#EDF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#BEDCFF", paddingVertical: 3, marginRight: 5 }}>
-                                                                        <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
-                                                                    </View>
-                                                                }
-                                                                <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName} </Text>
-                                                            </View>
-                                                            <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
-                                                        </View>
-                                                    </TouchableOpacity>
-                                                }
-                                                ItemSeparatorComponent={this.renderSeparator}
-                                                keyExtractor={item => item?.id.toString()}
-                                            /></>}
-                                </View>
-                            </View>
-                        </View>
-
-
-                        {/* <ScrollView contentContainerStyle={{ backgroundColor: 'red', marginTop: 50, flex: 1 }}>
-                                <Text>{JSON.stringify(this.state.savedAddress, null, "   ")} </Text>
-                            </ScrollView> */}
-                    </SafeAreaView>
-                </Modal>
             </>
         );
     }

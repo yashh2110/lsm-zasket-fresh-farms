@@ -31,7 +31,7 @@ const initialRegion = {
     longitudeDelta,
 }
 
-class MapScreenGrabPincode extends React.Component {
+class AutoCompleteLocationScreen extends React.Component {
 
     map = null;
 
@@ -71,15 +71,6 @@ class MapScreenGrabPincode extends React.Component {
         gpsEnabled: true
     };
 
-
-    setRegion(region) {
-        if (this.state.ready) {
-            setTimeout(() => this.map.animateToRegion(region), 10);
-        }
-        //this.setState({ region });
-    }
-
-
     async componentDidMount() {
         const { fromScreen } = this.props.route.params;
         CheckPermissions((status) => {
@@ -92,163 +83,81 @@ class MapScreenGrabPincode extends React.Component {
         if (this.props.homeScreenLocation?.pincode == undefined || this.props.homeScreenLocation?.pincode == "") {
             // this.getCurrentPosition();
         } else {
-            const region = {
-                latitude: this.props.homeScreenLocation?.lat,
-                longitude: this.props.homeScreenLocation?.lon,
-                latitudeDelta,
-                longitudeDelta,
-            };
-            await this.setRegion(region);
-            await this.setState({
-                modalVisible: false,
-                address: this.props.homeScreenLocation.addressLine_1,
-                latitude: this.props.homeScreenLocation.lat,
-                longitude: this.props.homeScreenLocation.lon,
-                pincode: this.props.homeScreenLocation.pincode,
-                pincodeAvailable: true
-            })
-            // alert(JSON.stringify(this.state.pincode))
-            await this.forceUpdate()
+            // const region = {
+            //     latitude: this.props.homeScreenLocation?.lat,
+            //     longitude: this.props.homeScreenLocation?.lon,
+            //     latitudeDelta,
+            //     longitudeDelta,
+            // };
+            // await this.setRegion(region);
+            // await this.setState({
+            //     modalVisible: false,
+            //     address: this.props.homeScreenLocation.addressLine_1,
+            //     latitude: this.props.homeScreenLocation.lat,
+            //     longitude: this.props.homeScreenLocation.lon,
+            //     pincode: this.props.homeScreenLocation.pincode,
+            //     pincodeAvailable: true
+            // })
+            // await this.forceUpdate()
         }
 
-
-        await this.setState({ savedAddressLoading: true, })
-        await this.props.getAllUserAddress(async (response, status) => {
-            this.setState({ savedAddressLoading: false })
-            if (status) {
-                let newArray = []
-                await response?.data?.forEach((el, index) => {
-                    if (el?.isActive) newArray.push(el)
-                })
-                // Alert.alert(JSON.stringify(response, null, "   "))
-                this.setState({ savedAddress: newArray })
-
-            } else {
-                // Alert.alert(JSON.stringify(response?.data, null, "   "))
+        if (this.props.isAuthenticated) {
+            await this.setState({ savedAddressLoading: true, })
+            await this.props.getAllUserAddress(async (response, status) => {
                 this.setState({ savedAddressLoading: false })
+                if (status) {
+                    let newArray = []
+                    await response?.data?.forEach((el, index) => {
+                        if (el?.isActive) newArray.push(el)
+                    })
+                    // Alert.alert(JSON.stringify(response, null, "   "))
+                    this.setState({ savedAddress: newArray })
+
+                } else {
+                    // Alert.alert(JSON.stringify(response?.data, null, "   "))
+                    this.setState({ savedAddressLoading: false })
+                }
+            })
+        }
+    }
+    onPressTurnOn = () => {
+        CheckPermissions((status) => {
+            if (status) {
+                this.setState({ gpsEnabled: false })
+                this.getCurrentPosition()
+            } else {
+                this.setState({ gpsEnabled: true })
             }
         })
     }
-
     getCurrentPosition() {
         try {
-            CheckGpsState((status) => {
+            CheckPermissions((status) => {
                 if (status) {
-                    this.setState({ gpsEnabled: true })
-                    this.setState({ modalVisible: false })
+                    this.setState({ gpsEnabled: false })
                     Geolocation.getCurrentPosition(
                         async (position) => {
-                            // alert(JSON.stringify(position, null, "      "))
                             const region = {
                                 latitude: position.coords.latitude,
                                 longitude: position.coords.longitude,
                                 latitudeDelta,
                                 longitudeDelta,
                             };
-                            await this.setRegion(region);
-
-                            fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
-                                .then((response) => {
-                                    response.json().then(async (json) => {
-                                        let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                                        await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
-                                    });
-                                }).catch((err) => {
-                                    console.warn(err)
-                                })
+                            this.props.navigation.navigate("MapScreenGrabPincode", { regionalPositions: region })
                         },
                         (error) => {
-                            //TODO: better design
-                            // switch (error.code) {
-                            //     case 1:
-                            //         if (Platform.OS === "ios") {
-                            //             Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Privacidad - Localización");
-                            //         } else {
-                            //             Alert.alert("", "Para ubicar tu locación habilita permiso para la aplicación en Ajustes - Apps - ExampleApp - Localización");
-                            //         }
-                            //         break;
-                            //     default:
-                            //         Alert.alert("", "Error al detectar tu locación");
-                            // }
+                            console.warn(error)
                         },
                         { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
                     );
                 } else {
-                    this.setState({ gpsEnabled: false })
-                    this.onPressTurnOn()
+                    this.setState({ gpsEnabled: true })
                 }
             })
         } catch (e) {
             alert(e.message || "");
         }
     };
-
-    getCurrentLocation = async () => {
-        await this.setState({ addressLoading: true, errorMessage: "" })
-        fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + this.state.region.latitude + ',' + this.state.region.longitude + '&key=' + MapApiKey)
-            .then((response) => {
-                response.json().then(async (json) => {
-                    // console.warn(json)
-                    let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                    // alert(JSON.stringify(json?.results?.[1]?.address_components?.find(el => el.types.find(o => o == "political")), null, "  "))
-                    await this.setLocation(json?.results?.[0]?.formatted_address, this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
-                    await this.setState({ addressLoading: false })
-                });
-            }).catch(async (err) => {
-                console.warn(err)
-                await this.setState({ addressLoading: false })
-            })
-    }
-
-    setLocation = async (address, latitude, longitude, postal_code) => {
-        this.setState({
-            address: address ? address : "",
-            latitude: latitude ? latitude : "",
-            longitude: longitude ? longitude : "",
-            pincode: postal_code ? postal_code : ""
-        })
-    }
-
-
-    onMapReady = (e) => {
-        if (!this.state.ready) {
-            this.setState({ ready: true });
-        }
-    };
-
-
-    onRegionChange = async (region) => {
-        // await this.setState({
-        //     region
-        // })
-    };
-
-    onRegionChangeComplete = async (region) => {
-        this.setState({ errorMessageBanner: false })
-        await this.setState({
-            region: region
-        })
-        await this.getCurrentLocation()
-    };
-
-
-    onSubmit = async () => {
-        await this.props.addHomeScreenLocation({
-            "addressLine_1": this.state.address,
-            "pincode": this.state.pincode,
-            "lat": this.state.latitude,
-            "lon": this.state.longitude,
-        })
-        await this.props.isPincodeServiceable(this.state.latitude, this.state.longitude, (res, status) => {
-            if (status) {
-                this.props.navigation.navigate("BottomTabRoute")
-            } else {
-                this.setState({ errorMessageBanner: true })
-            }
-        })
-    }
-
-
 
     renderSeparator = () => {
         return (
@@ -281,25 +190,7 @@ class MapScreenGrabPincode extends React.Component {
         this.props.navigation.goBack()
     }
 
-    onPressTurnOn = () => {
-        CheckPermissions((status) => {
-            if (status) {
-                this.setState({ gpsEnabled: false })
-                setTimeout(() => {
-                    this.props.navigation.navigate("MapScreenGrabPincode")
-                }, 1000);
-
-            } else {
-                this.setState({ gpsEnabled: true })
-            }
-        })
-    }
-
     render() {
-
-        const { region } = this.state;
-        const { children, renderMarker, markers, navigation } = this.props;
-
         return (
             <>
                 <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
@@ -308,7 +199,6 @@ class MapScreenGrabPincode extends React.Component {
                             <AutoCompleteLocation
                                 style={{ container: { positition: 'absolute', height: 50 } }}
                                 getLocation={async (data, details = null) => {
-                                    this.setState({ modalVisible: false })
                                     await this.setState({
                                         region: {
                                             latitude: details?.geometry?.location?.lat,
@@ -318,8 +208,14 @@ class MapScreenGrabPincode extends React.Component {
                                         },
                                         address: data.description,
                                     })
-                                    await this.getCurrentLocation()
-                                    await this.map.animateToRegion(this.state.region), 100
+                                    let region = {
+                                        latitude: details?.geometry?.location?.lat,
+                                        longitude: details?.geometry?.location?.lng,
+                                        latitudeDelta,
+                                        longitudeDelta,
+                                    }
+                                    this.props.navigation.navigate("MapScreenGrabPincode", { regionalPositions: region })
+                                    // await this.getCurrentLocation()
                                 }}
                                 onRequestClose={() => {
                                     this.props.navigation.goBack()
@@ -328,7 +224,6 @@ class MapScreenGrabPincode extends React.Component {
                         </View>
                         <View style={{ flex: 1, zIndex: -1 }}>
                             <View style={{ backgroundColor: 'white', flex: 1 }}>
-
                                 {this.state.gpsEnabled ?
                                     <View style={{ backgroundColor: '#6B98DE' }}>
                                         <View style={{ flexDirection: 'row', padding: 10 }}>
@@ -417,8 +312,6 @@ class MapScreenGrabPincode extends React.Component {
                             </View>
                         </View>
                     </View>
-
-
                     {/* <ScrollView contentContainerStyle={{ backgroundColor: 'red', marginTop: 50, flex: 1 }}>
                                 <Text>{JSON.stringify(this.state.savedAddress, null, "   ")} </Text>
                             </ScrollView> */}
@@ -432,10 +325,11 @@ const mapStateToProps = (state) => ({
     darkMode: state.dark,
     userLocation: state.location,
     homeScreenLocation: state.homeScreenLocation,
+    isAuthenticated: state.auth.isAuthenticated
 })
 
 
-export default connect(mapStateToProps, { isPincodeServiceable, addHomeScreenLocation, addNewCustomerAddress, getAllUserAddress, updateUserAddress, addLocation, addHomeScreenLocation })(MapScreenGrabPincode)
+export default connect(mapStateToProps, { isPincodeServiceable, addHomeScreenLocation, addNewCustomerAddress, getAllUserAddress, updateUserAddress, addLocation, addHomeScreenLocation })(AutoCompleteLocationScreen)
 
 const styles = StyleSheet.create({
     map: {

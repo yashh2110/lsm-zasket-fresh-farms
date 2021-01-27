@@ -34,7 +34,7 @@ const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) 
         // })
         CheckPermissions((status) => {
             if (status) {
-                alert('go to map screen')
+                navigation.navigate("MapScreenGrabPincode", { regionalPositions: null })
             } else {
                 navigation.navigate('AutoCompleteLocationScreen', { fromScreen: 'OnBoardScreen' })
             }

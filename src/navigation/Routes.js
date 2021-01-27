@@ -40,6 +40,7 @@ import { AxiosDefaultsManager } from '../axios/default';
 import OneSignal from "react-native-onesignal";
 import SetDeliveryLocationScreen from '../components/MapStack/SetDeliveryLocationScreen';
 import AutoCompleteLocationScreen from '../components/MapStack/AutoCompleteLocationScreen'
+import SwitchNavigator from './SwitchNavigator';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -383,7 +384,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
             <AuthContext.Provider value={authContext}>
                 <NavigationContainer>
                     <Stack.Navigator
-                        // initialRouteName="BottomTabRoute"
+                        initialRouteName="BottomTabRoute"
                         screenOptions={{
                             headerShown: false
                         }}>
@@ -393,14 +394,17 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                                 <Stack.Screen name="AuthRoute" component={AuthRoute} />
                                 <Stack.Screen name="AutoCompleteLocationScreen" component={AutoCompleteLocationScreen} options={{ cardStyleInterpolator: forFade }} />
                                 <Stack.Screen name="MapScreenGrabPincode" component={MapScreenGrabPincode} options={{ cardStyleInterpolator: forFade }} />
+                                <Stack.Screen name="SwitchNavigator" component={SwitchNavigator} options={{ cardStyleInterpolator: forFade }} />
+                                <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
                             </>) : (
                                 <>
                                     <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
-                                    {/* <Stack.Screen name="AuthRoute" component={AuthRoute} /> */}
+                                    <Stack.Screen name="AuthRoute" component={AuthRoute} />
                                     <Stack.Screen name="MapStack" component={MapStack} options={{ cardStyleInterpolator: forFade }} />
                                     <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ title: 'Home Page' }} />
                                     <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
                                     <Stack.Screen name="MapScreenGrabPincode" component={MapScreenGrabPincode} options={{ cardStyleInterpolator: forFade }} />
+                                    <Stack.Screen name="AutoCompleteLocationScreen" component={AutoCompleteLocationScreen} options={{ cardStyleInterpolator: forFade }} />
                                     <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
                                     <Stack.Screen name="AccessPermissionScreen" component={AccessPermissionScreen} options={{ cardStyleInterpolator: forFade }} />
                                     <Stack.Screen name="SetDeliveryLocationScreen" component={SetDeliveryLocationScreen} options={{ cardStyleInterpolator: forFade }} />
