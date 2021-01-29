@@ -16,8 +16,9 @@ import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
 import { getV2Config } from '../../actions/home'
+import { StackActions } from '@react-navigation/native';
 
-const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserDetails, onLogin, loginWithProvider, isAuthenticated, getV2Config }) => {
+const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScreenLocation, onLogin, loginWithProvider, isAuthenticated, getV2Config }) => {
 
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
@@ -72,9 +73,17 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
                     if (status) {
                         // Alert.alert(JSON.stringify(response));
                         onLogin(response?.data)
-                        navigation.navigate('BottomTabRoute')
                         getV2Config((res, status) => { })
                         setLoading(false)
+                        // navigation.navigate('BottomTabRoute')
+
+                        if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+                            navigation.dispatch(StackActions.popToTop());
+                            navigation.goBack();
+                            navigation.navigate("SwitchNavigator")
+                        } else {
+                            navigation.navigate("BottomTabRoute")
+                        }
                     } else {
                         setLoading(false)
                         // Alert.alert(response?.response?.data?.description);
@@ -216,7 +225,8 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
 
 const mapStateToProps = (state) => ({
     darkMode: state.dark,
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    homeScreenLocation: state.homeScreenLocation,
 })
 
 

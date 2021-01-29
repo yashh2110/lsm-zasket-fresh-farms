@@ -52,7 +52,7 @@ export const createNewCustomer = (payLoad, callback) => async dispatch => {
 
 
 export const onLogin = (payload) => async dispatch => {
-    // await AsyncStorage.setItem('onBoardKey', 'onBoardKey')
+    await AsyncStorage.setItem('onBoardKey', 'onBoardKey')
     new AxiosDefaultsManager().setAuthorizationHeader(payload?.customerSessionDetails?.sessionId)
     dispatch({
         type: LOGIN

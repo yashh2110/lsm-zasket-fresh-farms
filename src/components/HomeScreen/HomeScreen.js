@@ -22,7 +22,8 @@ import OneSignal from "react-native-onesignal";
 import DeviceInfo from 'react-native-device-info';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import GPSState from 'react-native-gps-state'
-import { CheckGpsState } from '../../utils/utils'
+import { CheckGpsState, CheckPermissions } from '../../utils/utils'
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
     useEffect(() => {
         const onReceived = (notification) => {
@@ -70,122 +71,30 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
     }, [config])
 
 
-    useEffect(() => {
-        const _bootstrapAsync = async () => {
-            if (Platform.OS === 'ios') {
-                Geolocation.requestAuthorization();
-                // alert('work')
-            } else {
-
-            }
-            const onBoardKey = await AsyncStorage.getItem('onBoardKey');
-            if (!onBoardKey) {
-                navigation.navigate('OnBoardScreen')
-            } else {
-                // navigation.navigate('BottomTabRoute')
-            }
-        };
-        _bootstrapAsync()
-    }, [])
-    // useEffect(() => {
-    //     const unsubscribe = navigation.addListener('focus', () => {
-    //         // alert(JSON.stringify(homeScreenLocation))
-    //         if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
-    //             setTimeout(() => {
-    //                 checkForLocationAccess();
-    //             }, 1000);
-    //         }
-    //     });
-    //     return unsubscribe;
-    // }, [navigation]);
-
-    const androidLocationEnabler = () => {
-        RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-            interval: 10000,
-            fastInterval: 5000,
-        })
-            .then((data) => {
-                setTimeout(() => {
-                    checkForLocationAccess();
-                }, 1000);
-                // The user has accepted to enable the location services
-                // data can be :
-                //  - "already-enabled" if the location services has been already enabled
-                //  - "enabled" if user has clicked on OK button in the popup
-            })
-            .catch((err) => {
-                BackHandler.exitApp()
-                // The user has not accepted to enable the location services or something went wrong during the process
-                // "err" : { "code" : "ERR00|ERR01|ERR02|ERR03", "message" : "message"}
-                // codes :
-                //  - ERR00 : The user has clicked on Cancel button in the popup
-                //  - ERR01 : If the Settings change are unavailable
-                //  - ERR02 : If the popup has failed to open
-                //  - ERR03 : Internal error
-            });
-    }
-
-    // useEffect(() => {
-    //     GPSState.addListener((status) => {
-    //         switch (status) {
-    //             case GPSState.NOT_DETERMINED:
-    //                 break;
-
-    //             case GPSState.RESTRICTED:
-    //                 if (Platform?.OS == "android") {
-    //                     androidLocationEnabler()
-    //                 } else {
-    //                     GPSState.openLocationSettings()
-    //                 }
-    //                 break;
-
-    //             case GPSState.DENIED:
-    //                 break;
-
-    //             case GPSState.AUTHORIZED_ALWAYS:
-    //                 //TODO do something amazing with you app
-    //                 break;
-
-    //             case GPSState.AUTHORIZED_WHENINUSE:
-    //                 //TODO do something amazing with you app
-    //                 break;
-    //         }
-    //     })
-    //     GPSState.requestAuthorization(GPSState.AUTHORIZED_WHENINUSE)
-    //     return () => {
-    //         GPSState.removeListener()
-    //     }
-    // }, [])
-    // const checkForLocationAccess = async () => {
-    //     if (Platform.OS === 'android') {
-    //         // Calling the permission function
-    //         const granted = await PermissionsAndroid.request(
-    //             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-    //             {
-    //                 title: 'Zasket App Location Permission',
-    //                 message: 'Zasket App needs access to your location',
-    //                 buttonPositive: "Ok"
-    //             },
-    //         );
-    //         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-    //             // Permission Granted
-    //             getCurrentPosition();
-    //         } else {
-    //             // Permission Denied
-    //             // alert('Permission Denied');
-    //             navigation.navigate('AccessPermissionScreen')
-    //         }
-    //     }
-    // }
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
     const [pincodeError, setPincodeError] = useState(false)
     const [showAppReviewCard, setShowAppReviewCard] = useState(true)
+    const [isloaded, setLoaded] = useState(false)
+    useFocusEffect(() => {
+        if (!isloaded) {
+            if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+                CheckPermissions((status) => {
+                    if (status) {
+                        getCurrentPosition()
+                    } else {
+                        alert(false)
+                        //check for the user address if there is any address save the first address to homescreenlocation, and show the half modal for choosing the address and add new address button
+                        //if the api fails or if there is no address means turn the modal on
+                    }
+                }, false)
+            }
+            setLoaded(true)
+        }
+        return () => { }
+    }, [])
     useEffect(() => {
         initialFunction()
-        if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
-            getCurrentPosition()
-        }
     }, [])
 
     useEffect(() => {
@@ -266,54 +175,42 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
     }, [homeScreenLocation?.lat])
 
     const getCurrentPosition = async () => {
-        try {
-            if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
-                CheckGpsState((status) => {
-                    if (status) {
-                        Geolocation.getCurrentPosition(
-                            async (position) => {
-                                fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
-                                    .then((response) => {
-                                        response.json().then(async (json) => {
-                                            let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                                            addHomeScreenLocation({
-                                                addressLine_1: json?.results?.[0]?.formatted_address,
-                                                pincode: postal_code?.long_name,
-                                                lat: position.coords.latitude,
-                                                lon: position.coords.longitude
-                                            })
-                                            // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
-                                            isPincodeServiceable(position.coords.latitude, position.coords.longitude, postal_code?.long_name, (res, status) => {
-                                                if (status) {
-                                                } else {
-                                                    setPincodeError(true)
-                                                }
-                                            })
-                                        });
-                                    }).catch((err) => {
-                                        console.warn(err)
-                                        if (Platform.OS == "android") {
-                                            checkForLocationAccess()
-                                        }
-
-                                    })
-                            },
-                            (error) => {
-                                if (error?.message == "Location permission was not granted." || error?.message == "Location services disabled." || error?.message == "User denied access to location services.") {
-                                    // navigation.navigate('AccessPermissionScreen')
+        Geolocation.getCurrentPosition(
+            async (position) => {
+                fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
+                    .then((response) => {
+                        response.json().then(async (json) => {
+                            let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                            addHomeScreenLocation({
+                                addressLine_1: json?.results?.[0]?.formatted_address,
+                                pincode: postal_code?.long_name,
+                                lat: position.coords.latitude,
+                                lon: position.coords.longitude
+                            })
+                            // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                            isPincodeServiceable(position.coords.latitude, position.coords.longitude, postal_code?.long_name, (res, status) => {
+                                if (status) {
+                                } else {
+                                    setPincodeError(true)
                                 }
-                                console.warn(error)
-                            },
-                            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
-                        );
-                    } else {
-                        // navigation.navigate('SetDeliveryLocationScreen')
-                    }
-                })
-            }
-        } catch (e) {
-            // alert(e.message || "");
-        }
+                            })
+                        });
+                    }).catch((err) => {
+                        console.warn(err)
+                        if (Platform.OS == "android") {
+                            checkForLocationAccess()
+                        }
+
+                    })
+            },
+            (error) => {
+                if (error?.message == "Location permission was not granted." || error?.message == "Location services disabled." || error?.message == "User denied access to location services.") {
+                    // navigation.navigate('AccessPermissionScreen')
+                }
+                console.warn(error)
+            },
+            { enableHighAccuracy: false, timeout: 5000 },
+        );
     };
 
     const onRefresh = () => {

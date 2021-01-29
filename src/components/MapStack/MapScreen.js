@@ -170,7 +170,7 @@ class MyMapView extends React.Component {
                             //         Alert.alert("", "Error al detectar tu locación");
                             // }
                         },
-                        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+                        { enableHighAccuracy: false, timeout: 5000 },
                     );
                 }
             })

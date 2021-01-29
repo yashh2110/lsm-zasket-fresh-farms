@@ -180,7 +180,7 @@ class MapScreenGrabPincode extends React.Component {
                             //         Alert.alert("", "Error al detectar tu locación");
                             // }
                         },
-                        { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 },
+                        { enableHighAccuracy: false, timeout: 5000 },
                     );
                 } else {
                     this.setState({ gpsEnabled: true })
@@ -257,8 +257,10 @@ class MapScreenGrabPincode extends React.Component {
             "lon": this.state.longitude,
         })
         if (this.state.mode == 'ON_INITIAL') {
-            this.props.navigation.navigate("SwitchNavigator", { role: "LOGIN" })
-            this.props.navigation.navigate("BottomTabRoute")
+            this.props.navigation.dispatch(StackActions.popToTop());
+            this.props.navigation.navigate("SwitchNavigator")
+            // await AsyncStorage.setItem('onBoardKey', 'onBoardKey')
+            // this.props.navigation.navigate("BottomTabRoute")
         } else {
             await this.props.isPincodeServiceable(this.state.latitude, this.state.longitude, (res, status) => {
                 if (status) {

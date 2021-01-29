@@ -90,6 +90,8 @@ export const CheckPermissions = async (callback, prompt = true) => {
                                     iosGpsAlert((status) => {
                                         callback(status)
                                     }, prompt)
+                                } else {
+                                    callback(false)
                                 }
                                 console.warn('This feature is not available (on this device / in this context)');
                                 break;
@@ -97,7 +99,9 @@ export const CheckPermissions = async (callback, prompt = true) => {
                                 if (prompt) {
                                     iosPermissionAlert((status) => {
                                         callback(status)
-                                    }, prompt)
+                                    })
+                                } else {
+                                    callback(false)
                                 }
                                 console.warn('The permission has not been requested / is denied but requestable');
                                 break;
@@ -105,7 +109,9 @@ export const CheckPermissions = async (callback, prompt = true) => {
                                 if (prompt) {
                                     iosPermissionAlert((status) => {
                                         callback(status)
-                                    }, prompt)
+                                    })
+                                } else {
+                                    callback(false)
                                 }
                                 console.warn('The permission is limited: some actions are possible');
                                 break;
@@ -121,7 +127,9 @@ export const CheckPermissions = async (callback, prompt = true) => {
                                 if (prompt) {
                                     iosPermissionAlert((status) => {
                                         callback(status)
-                                    }, prompt)
+                                    })
+                                } else {
+                                    callback(false)
                                 }
                                 console.warn('The permission is denied and not requestable anymore');
                                 break;
@@ -150,7 +158,6 @@ export const CheckPermissions = async (callback, prompt = true) => {
                 }
             }, prompt)
         } else {
-            callback(false)
             if (prompt) {
                 Alert.alert(
                     "Zasket needs to access location",
@@ -165,6 +172,8 @@ export const CheckPermissions = async (callback, prompt = true) => {
                     ],
                     { cancelable: false }
                 );
+            } else {
+                callback(false)
             }
         }
 

@@ -148,7 +148,7 @@ class AutoCompleteLocationScreen extends React.Component {
                         (error) => {
                             console.warn(error)
                         },
-                        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+                        { enableHighAccuracy: false, timeout: 5000 },
                     );
                 } else {
                     this.setState({ gpsEnabled: true })
