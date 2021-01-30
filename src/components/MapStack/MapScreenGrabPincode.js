@@ -92,6 +92,13 @@ class MapScreenGrabPincode extends React.Component {
     }
 
     async initialFunction() {
+        CheckGpsState((status) => {
+            if (status) {
+                this.setState({ gpsEnabled: false })
+            } else {
+                this.setState({ gpsEnabled: true })
+            }
+        }, false)
         const { fromScreen, regionalPositions } = this.props.route.params;
         if (this.props.homeScreenLocation?.pincode == undefined || this.props.homeScreenLocation?.pincode == "") {
             this.setState({ mode: 'ON_INITIAL' })
@@ -101,42 +108,47 @@ class MapScreenGrabPincode extends React.Component {
                 await this.setRegion(regionalPositions);
             }
         } else {
-            const region = {
-                latitude: this.props.homeScreenLocation?.lat,
-                longitude: this.props.homeScreenLocation?.lon,
-                latitudeDelta,
-                longitudeDelta,
-            };
-            await this.setRegion(region);
-            await this.setState({
-                modalVisible: false,
-                address: this.props.homeScreenLocation.addressLine_1,
-                latitude: this.props.homeScreenLocation.lat,
-                longitude: this.props.homeScreenLocation.lon,
-                pincode: this.props.homeScreenLocation.pincode,
-                pincodeAvailable: true
-            })
+            if (regionalPositions == null) {
+                const region = {
+                    latitude: this.props.homeScreenLocation?.lat,
+                    longitude: this.props.homeScreenLocation?.lon,
+                    latitudeDelta,
+                    longitudeDelta,
+                };
+                await this.setRegion(region);
+                await this.setState({
+                    modalVisible: false,
+                    address: this.props.homeScreenLocation.addressLine_1,
+                    latitude: this.props.homeScreenLocation.lat,
+                    longitude: this.props.homeScreenLocation.lon,
+                    pincode: this.props.homeScreenLocation.pincode,
+                    pincodeAvailable: true
+                })
+            } else {
+                await this.setRegion(regionalPositions);
+            }
+
             // alert(JSON.stringify(this.state.pincode))
             await this.forceUpdate()
         }
 
 
-        await this.setState({ savedAddressLoading: true, })
-        await this.props.getAllUserAddress(async (response, status) => {
-            this.setState({ savedAddressLoading: false })
-            if (status) {
-                let newArray = []
-                await response?.data?.forEach((el, index) => {
-                    if (el?.isActive) newArray.push(el)
-                })
-                // Alert.alert(JSON.stringify(response, null, "   "))
-                this.setState({ savedAddress: newArray })
+        // await this.setState({ savedAddressLoading: true, })
+        // await this.props.getAllUserAddress(async (response, status) => {
+        //     this.setState({ savedAddressLoading: false })
+        //     if (status) {
+        //         let newArray = []
+        //         await response?.data?.forEach((el, index) => {
+        //             if (el?.isActive) newArray.push(el)
+        //         })
+        //         // Alert.alert(JSON.stringify(response, null, "   "))
+        //         this.setState({ savedAddress: newArray })
 
-            } else {
-                // Alert.alert(JSON.stringify(response?.data, null, "   "))
-                this.setState({ savedAddressLoading: false })
-            }
-        })
+        //     } else {
+        //         // Alert.alert(JSON.stringify(response?.data, null, "   "))
+        //         this.setState({ savedAddressLoading: false })
+        //     }
+        // })
     }
 
     getCurrentPosition() {
@@ -258,7 +270,9 @@ class MapScreenGrabPincode extends React.Component {
         })
         if (this.state.mode == 'ON_INITIAL') {
             this.props.navigation.dispatch(StackActions.popToTop());
-            this.props.navigation.navigate("SwitchNavigator")
+            if (this.props.isAuthenticated == false) {
+                this.props.navigation.navigate("SwitchNavigator")
+            }
             // await AsyncStorage.setItem('onBoardKey', 'onBoardKey')
             // this.props.navigation.navigate("BottomTabRoute")
         } else {
@@ -370,7 +384,7 @@ class MapScreenGrabPincode extends React.Component {
                                     <View style={{ flex: 1, justifyContent: 'center' }}>
                                         <Text style={{ color: "#727272", fontSize: 12 }}>Your current location</Text>
                                     </View>
-                                    <TouchableOpacity activeOpacity={0.7} onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { fromScreen: 'OnBoardScreen' }) }} style={{ padding: 5 }}>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { fromScreen: 'OnBoardScreen', navigateTo: 'MapScreenGrabPincode' }) }} style={{ padding: 5 }}>
                                         <Text style={{ color: Theme.Colors.primary }}>Change</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -423,6 +437,7 @@ const mapStateToProps = (state) => ({
     darkMode: state.dark,
     userLocation: state.location,
     homeScreenLocation: state.homeScreenLocation,
+    isAuthenticated: state.auth.isAuthenticated,
 })
 
 

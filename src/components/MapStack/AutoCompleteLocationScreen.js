@@ -21,6 +21,7 @@ import AntDesignIcons from "react-native-vector-icons/AntDesign"
 import { isPincodeServiceable, } from '../../actions/home'
 import { CheckGpsState, CheckPermissions } from '../../utils/utils';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import { StackActions } from '@react-navigation/native';
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
 
@@ -72,7 +73,7 @@ class AutoCompleteLocationScreen extends React.Component {
     };
 
     async componentDidMount() {
-        const { fromScreen } = this.props.route.params;
+        const { fromScreen, navigateTo } = this.props.route.params;
         CheckPermissions((status) => {
             if (status) {
                 this.setState({ gpsEnabled: false })
@@ -100,24 +101,25 @@ class AutoCompleteLocationScreen extends React.Component {
             // })
             // await this.forceUpdate()
         }
-
-        if (this.props.isAuthenticated) {
-            await this.setState({ savedAddressLoading: true, })
-            await this.props.getAllUserAddress(async (response, status) => {
-                this.setState({ savedAddressLoading: false })
-                if (status) {
-                    let newArray = []
-                    await response?.data?.forEach((el, index) => {
-                        if (el?.isActive) newArray.push(el)
-                    })
-                    // Alert.alert(JSON.stringify(response, null, "   "))
-                    this.setState({ savedAddress: newArray })
-
-                } else {
-                    // Alert.alert(JSON.stringify(response?.data, null, "   "))
+        if (navigateTo == "MapScreenGrabPincode") {
+            if (this.props.isAuthenticated) {
+                await this.setState({ savedAddressLoading: true, })
+                await this.props.getAllUserAddress(async (response, status) => {
                     this.setState({ savedAddressLoading: false })
-                }
-            })
+                    if (status) {
+                        let newArray = []
+                        await response?.data?.forEach((el, index) => {
+                            if (el?.isActive) newArray.push(el)
+                        })
+                        // Alert.alert(JSON.stringify(response, null, "   "))
+                        this.setState({ savedAddress: newArray })
+
+                    } else {
+                        // Alert.alert(JSON.stringify(response?.data, null, "   "))
+                        this.setState({ savedAddressLoading: false })
+                    }
+                })
+            }
         }
     }
     onPressTurnOn = () => {
@@ -131,6 +133,7 @@ class AutoCompleteLocationScreen extends React.Component {
         })
     }
     getCurrentPosition() {
+        const { fromScreen, navigateTo } = this.props.route.params;
         try {
             CheckPermissions((status) => {
                 if (status) {
@@ -143,7 +146,7 @@ class AutoCompleteLocationScreen extends React.Component {
                                 latitudeDelta,
                                 longitudeDelta,
                             };
-                            this.props.navigation.navigate("MapScreenGrabPincode", { regionalPositions: region })
+                            this.props.navigation.navigate(navigateTo, { regionalPositions: region })
                         },
                         (error) => {
                             console.warn(error)
@@ -187,7 +190,10 @@ class AutoCompleteLocationScreen extends React.Component {
             lon: item?.lon,
             pincode: item?.pincode
         })
-        this.props.navigation.goBack()
+        const { fromScreen, navigateTo } = this.props.route.params;
+        this.props.navigation.dispatch(StackActions.popToTop());
+
+
     }
 
     render() {
@@ -214,7 +220,8 @@ class AutoCompleteLocationScreen extends React.Component {
                                         latitudeDelta,
                                         longitudeDelta,
                                     }
-                                    this.props.navigation.navigate("MapScreenGrabPincode", { regionalPositions: region })
+                                    const { fromScreen, navigateTo } = this.props.route.params;
+                                    this.props.navigation.navigate(navigateTo, { regionalPositions: region })
                                     // await this.getCurrentLocation()
                                 }}
                                 onRequestClose={() => {

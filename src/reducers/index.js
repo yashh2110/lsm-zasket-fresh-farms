@@ -8,6 +8,7 @@ import location from './location'
 import homeScreenLocation from './homeScreenLocation'
 import AsyncStorage from '@react-native-community/async-storage'
 import { CLEAR_REDUX_PERSIST } from '../actions/types'
+
 // Redux: Root Reducer
 const appReducer = combineReducers({
     dark: dark,

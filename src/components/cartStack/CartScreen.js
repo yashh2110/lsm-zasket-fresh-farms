@@ -10,8 +10,10 @@ import { getCartItemsApi } from '../../actions/cart'
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment'
 import { getV2Config } from '../../actions/home';
+import AddressModal from '../common/AddressModal';
+import { getAllUserAddress } from '../../actions/map'
 
-const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, getAllOffers, applyOffer, getCartItemsApi, getV2Config }) => {
+const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, allUserAddress, getAllUserAddress, applyOffer, getCartItemsApi, getV2Config }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, setTotalCartValue] = useState(0)
     const [savedValue, setSavedValue] = useState(0)
@@ -21,6 +23,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
     const [offerPrice, setOfferPrice] = useState(0)
     const [selectedOffer, setSelectedOffer] = useState({})
     const [refresh, setRefresh] = useState(false)
+    const [addressModalVisible, setAddressModalVisible] = useState(false)
 
     useEffect(() => {
         if (cartItems.length > 0) {
@@ -48,6 +51,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
             }
         })
         getV2Config((res, status) => { })
+        getAllUserAddress(async (response, status) => { })
     }
 
     useEffect(() => {
@@ -128,6 +132,18 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
         setRefresh(true)
         initialFunction()
     }
+
+    const onPressSelectAddress = () => {
+        let newArray = []
+        allUserAddress?.forEach((el, index) => {
+            if (el?.isActive) newArray.push(el)
+        })
+        if (newArray?.length > 0) {
+            setAddressModalVisible(true)
+        } else {
+            navigation.navigate('MapScreen', { fromScreen: "CartScreen" })
+        }
+    }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Cart"} showSearch={false} />
@@ -170,7 +186,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                             }
                                             </Text>
                                         </View>
-                                        <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{}}>
+                                        <TouchableOpacity onPress={() => { onPressSelectAddress() }} style={{}}>
                                             <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Change</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -338,13 +354,19 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, ge
                                 <Text style={{ color: 'white', fontSize: 17 }}>Checkout <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
                             </TouchableOpacity>
                         :
-                        <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                        <TouchableOpacity onPress={() => { onPressSelectAddress() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
                             <Text style={{ color: 'white', fontSize: 17 }}>Select Address <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
                         </TouchableOpacity>
                     }
 
                 </View>
                 : undefined}
+            <AddressModal
+                addressModalVisible={addressModalVisible}
+                navigateTo="MapScreen"
+                setAddressModalVisible={(option) => setAddressModalVisible(option)}
+                navigation={navigation}
+            />
         </View>
     );
 }
@@ -355,9 +377,10 @@ const mapStateToProps = (state) => ({
     categories: state.home.categories,
     userLocation: state.location,
     config: state.config.config,
+    allUserAddress: state.auth.allUserAddress,
 })
 
-export default connect(mapStateToProps, { clearCart, getAllOffers, applyOffer, getCartItemsApi, getV2Config })(CartScreen)
+export default connect(mapStateToProps, { clearCart, getAllOffers, applyOffer, getCartItemsApi, getV2Config, getAllUserAddress })(CartScreen)
 
 const styles = StyleSheet.create({
     button: {

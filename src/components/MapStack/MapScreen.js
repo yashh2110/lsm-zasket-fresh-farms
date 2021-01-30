@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 import FeatherIcons from "react-native-vector-icons/Feather"
 import AntDesignIcons from "react-native-vector-icons/AntDesign"
 import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
-import { CheckGpsState } from '../../utils/utils';
+import { CheckGpsState, CheckPermissions } from '../../utils/utils';
 
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
@@ -52,7 +52,7 @@ class MyMapView extends React.Component {
         mobileNumber: "",
         addressLoading: false,
         savedAddressLoading: false,
-        modalVisible: true,
+        modalVisible: false,
         homeCheck: false,
         officeCheck: false,
         othersCheck: false,
@@ -64,7 +64,8 @@ class MyMapView extends React.Component {
         nameErrorText: "",
         errorMessage: "",
         errorMessageBanner: false,
-        addressId: ""
+        addressId: "",
+        gpsEnabled: false
     };
 
 
@@ -75,11 +76,25 @@ class MyMapView extends React.Component {
         //this.setState({ region });
     }
 
-
-    async componentDidMount() {
-        const { fromScreen } = this.props.route?.params;
+    componentDidMount() {
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {
+            this.initialFunction()
+        });
+    }
+    componentWillUnmount() {
+        this._unsubscribe();
+    }
+    async initialFunction() {
+        CheckGpsState((status) => {
+            if (status) {
+                this.setState({ gpsEnabled: false })
+            } else {
+                this.setState({ gpsEnabled: true })
+            }
+        }, false)
+        const { fromScreen, regionalPositions } = this.props.route?.params;
         await this.setState({ mode: fromScreen })
-        if (fromScreen == "EDIT_SCREEN") {
+        if (fromScreen == "EDIT_SCREEN" && regionalPositions == null) {
             await this.setState({ modalVisible: false })
             const { item } = this.props.route?.params;
             // alert(JSON.stringify(item, null, "        "))
@@ -110,31 +125,33 @@ class MyMapView extends React.Component {
                 name: parsedUserDetails?.customerDetails?.name,
                 mobileNumber: parsedUserDetails?.customerDetails?.userMobileNumber.replace("+91", "")
             })
-            this.getCurrentPosition();
-            await this.setState({ savedAddressLoading: true, })
-            await this.props.getAllUserAddress(async (response, status) => {
-                if (status) {
-                    let newArray = []
-                    await response?.data?.forEach((el, index) => {
-                        if (el?.isActive) newArray.push(el)
-                    })
-                    // Alert.alert(JSON.stringify(response, null, "   "))
-                    this.setState({ savedAddressLoading: false })
-                    this.setState({ savedAddress: newArray })
-
-                } else {
-                    // Alert.alert(JSON.stringify(response?.data, null, "   "))
-                    this.setState({ savedAddressLoading: false })
-                }
-            })
+            if (regionalPositions == null) {
+                // this.getCurrentPosition();
+                const region = {
+                    latitude: this.props.homeScreenLocation?.lat,
+                    longitude: this.props.homeScreenLocation?.lon,
+                    latitudeDelta,
+                    longitudeDelta,
+                };
+                await this.setRegion(region);
+                await this.setState({
+                    modalVisible: false,
+                    address: this.props.homeScreenLocation.addressLine_1,
+                    latitude: this.props.homeScreenLocation.lat,
+                    longitude: this.props.homeScreenLocation.lon,
+                    pincode: this.props.homeScreenLocation.pincode,
+                })
+            } else {
+                await this.setRegion(regionalPositions);
+            }
         }
     }
 
     getCurrentPosition() {
         try {
-            CheckGpsState((status) => {
+            CheckPermissions((status) => {
                 if (status) {
-                    this.setState({ modalVisible: false })
+                    this.setState({ gpsEnabled: false })
                     Geolocation.getCurrentPosition(
                         async (position) => {
                             // alert(JSON.stringify(position, null, "      "))
@@ -172,6 +189,8 @@ class MyMapView extends React.Component {
                         },
                         { enableHighAccuracy: false, timeout: 5000 },
                     );
+                } else {
+                    this.setState({ gpsEnabled: true })
                 }
             })
         } catch (e) {
@@ -205,7 +224,16 @@ class MyMapView extends React.Component {
         })
     }
 
-
+    onPressTurnOn = () => {
+        CheckPermissions((status) => {
+            if (status) {
+                this.setState({ gpsEnabled: false })
+                this.getCurrentPosition()
+            } else {
+                this.setState({ gpsEnabled: true })
+            }
+        })
+    }
     onMapReady = (e) => {
         if (!this.state.ready) {
             this.setState({ ready: true });
@@ -263,11 +291,15 @@ class MyMapView extends React.Component {
             if (fromScreen == "EDIT_SCREEN") {
                 await this.props.updateUserAddress(this.state.addressId, payload, async (response, status) => {
                     if (status) {
+                        // alert()
+                        this.props.getAllUserAddress(async (response, status) => { })
                         this.props.navigation.goBack()
                     } else {
-                        // alert(JSON.stringify(response?.data, null, "      "))
+                        if (__DEV__) {
+                            alert(JSON.stringify(response?.data, null, "      "))
+                        }
                         this.setState({ errorMessage: response?.data })
-                        if (response?.data == "Cannot update address to not serviceable Pincode") {
+                        if (response?.data == "Cannot update address to not serviceable area") {
                             this.setState({ errorMessageBanner: true })
                             await this.setState({ loading: false })
                         }
@@ -304,9 +336,12 @@ class MyMapView extends React.Component {
                             this.props.navigation.navigate('SetAuthContext', { userLocation: location }) // if you send it as null it wont navigate
                         } else {
                             this.props.navigation.goBack()
+                            this.props.getAllUserAddress(async (response, status) => { })
                         }
                     } else {
-                        // Alert.alert(response?.data)
+                        if (__DEV__) {
+                            alert(JSON.stringify(response?.data, null, "      "))
+                        }
                         this.setState({ errorMessage: response?.data })
                         if (response?.data == "Your location is not serviceable") {
                             this.setState({ errorMessageBanner: true })
@@ -465,12 +500,27 @@ class MyMapView extends React.Component {
                             // ref='_scrollView' 
                             contentContainerStyle={{ zIndex: 1 }}
                             showsVerticalScrollIndicator={true}>
+                            {this.state.gpsEnabled ?
+                                <View style={{ backgroundColor: '#6B98DE' }}>
+                                    <View style={{ flexDirection: 'row', padding: 10 }}>
+                                        <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                            <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#ffffff' }} />
+                                        </View>
+                                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                                            <Text style={{ fontSize: 14, color: '#ffffff', fontWeight: 'bold' }}>Unable to get location</Text>
+                                            <Text style={{ fontSize: 12, color: "#ffffff" }}>Turning on Location ensures accurate and hassle-free delivery</Text>
+                                        </View>
+                                        <TouchableOpacity onPress={() => this.onPressTurnOn()} style={{ height: 30, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', margin: 10, borderRadius: 5 }}>
+                                            <Text style={{ fontSize: 14, color: '#6B98DE', marginHorizontal: 10, fontWeight: 'bold' }}>TURN ON</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View> : null}
                             <View style={{ flex: 1, width: "90%", alignSelf: 'center' }}>
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1, justifyContent: 'center' }}>
                                         <Text style={{ color: "#727272", fontSize: 12 }}>Your current location</Text>
                                     </View>
-                                    <TouchableOpacity activeOpacity={0.7} onPress={() => { this.setState({ modalVisible: true }) }} style={{ padding: 5 }}>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { fromScreen: 'OnBoardScreen', navigateTo: 'MapScreen' }) }} style={{ padding: 5 }}>
                                         <Text style={{ color: Theme.Colors.primary }}>Change</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -765,7 +815,8 @@ class MyMapView extends React.Component {
 
 const mapStateToProps = (state) => ({
     darkMode: state.dark,
-    userLocation: state.location
+    userLocation: state.location,
+    homeScreenLocation: state.homeScreenLocation,
 })
 
 

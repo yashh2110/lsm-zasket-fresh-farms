@@ -14,8 +14,9 @@ import RazorpayCheckout from 'react-native-razorpay';
 import Modal from 'react-native-modal';
 import { applyOffer } from '../../actions/cart'
 import Loader from '../common/Loader';
+import AddressModal from '../common/AddressModal';
 
-const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer }) => {
+const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, setTotalCartValue] = useState(0)
     const [loading, setLoading] = useState(false)
@@ -31,6 +32,8 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
     const [offerPrice, setOfferPrice] = useState(0)
     const [coupon, setCoupon] = useState("")
     const [proceedPaymentMethod, setProceedPaymentMethod] = useState(false)
+    const [addressModalVisible, setAddressModalVisible] = useState(false)
+
     // const { offerPrice, selectedOffer } = route.params;
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("PREPAID")
     useEffect(() => {
@@ -148,7 +151,17 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
             onSelectPaymentMethod("PREPAID")
         }
     }
-
+    const onPressSelectAddress = () => {
+        let newArray = []
+        allUserAddress?.forEach((el, index) => {
+            if (el?.isActive) newArray.push(el)
+        })
+        if (newArray?.length > 0) {
+            setAddressModalVisible(true)
+        } else {
+            navigation.navigate('MapScreen', { fromScreen: "CartScreen" })
+        }
+    }
     const onPressContinue = () => {
         setLoading(true)
         setPaymentSelectionActionScreen(false)
@@ -347,7 +360,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                                         userLocation?.recepientName
                                 } </Text>
                             </View>
-                            <TouchableOpacity onPress={() => { navigation.navigate('MapScreen', { fromScreen: "CartScreen" }) }} style={{}}>
+                            <TouchableOpacity onPress={() => { onPressSelectAddress() }} style={{}}>
                                 <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Change</Text>
                             </TouchableOpacity>
                         </View>
@@ -533,6 +546,12 @@ const CheckoutScreen = ({ route, navigation, cartItems, clearCart, getV2Delivery
                     }
                 </View>
                 : undefined}
+            <AddressModal
+                addressModalVisible={addressModalVisible}
+                navigateTo="MapScreen"
+                setAddressModalVisible={(option) => setAddressModalVisible(option)}
+                navigation={navigation}
+            />
             <Modal
                 isVisible={paymentSelectionActionScreen}
                 onSwipeComplete={() => setPaymentSelectionActionScreen(false)}
@@ -598,7 +617,8 @@ const mapStateToProps = (state) => ({
     darkMode: state.dark,
     categories: state.home.categories,
     config: state.config.config,
-    userLocation: state.location
+    allUserAddress: state.auth.allUserAddress,
+    userLocation: state.location,
 })
 
 export default connect(mapStateToProps, { clearCart, getV2DeliverySlots, addOrder, applyOffer })(CheckoutScreen)

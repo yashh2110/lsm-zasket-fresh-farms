@@ -30,6 +30,8 @@ export const CheckGpsState = async (callback, prompt = true) => {
                     }
                     callback(false)
                 }
+            } else {
+                callback(false)
             }
         }
     });
@@ -150,6 +152,8 @@ export const CheckPermissions = async (callback, prompt = true) => {
         if (androidGranted === PermissionsAndroid.RESULTS.GRANTED) {
             // Permission Granted
             // Check for gps state
+
+
             CheckGpsState((status) => {
                 if (status) {
                     callback(true)
@@ -158,6 +162,7 @@ export const CheckPermissions = async (callback, prompt = true) => {
                 }
             }, prompt)
         } else {
+
             if (prompt) {
                 Alert.alert(
                     "Zasket needs to access location",
@@ -165,10 +170,15 @@ export const CheckPermissions = async (callback, prompt = true) => {
                     [
                         {
                             text: "Cancel",
-                            onPress: () => console.log("Cancel Pressed"),
+                            onPress: () => callback(false),
                             style: "cancel"
                         },
-                        { text: "OK", onPress: () => Linking.openSettings() }
+                        {
+                            text: "OK", onPress: () => {
+                                callback(false)
+                                Linking.openSettings()
+                            }
+                        }
                     ],
                     { cancelable: false }
                 );

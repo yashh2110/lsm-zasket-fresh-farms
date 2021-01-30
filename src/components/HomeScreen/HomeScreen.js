@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState, useLayoutEffect } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter, Linking } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter, Linking, } from 'react-native';
 import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
@@ -23,8 +23,14 @@ import DeviceInfo from 'react-native-device-info';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import GPSState from 'react-native-gps-state'
 import { CheckGpsState, CheckPermissions } from '../../utils/utils'
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
+import { useIsFocused } from '@react-navigation/native';
+import AddressModal from '../common/AddressModal';
+import { getAllUserAddress } from '../../actions/map'
+import Modal from 'react-native-modal';
+import SetDeliveryLocationModal from '../common/SetDeliveryLocationModal'
+
+const HomeScreen = ({ addHomeScreenLocation, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
+
     useEffect(() => {
         const onReceived = (notification) => {
             console.log("Notification received: ", notification);
@@ -75,28 +81,50 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
     const [refresh, setRefresh] = useState(false)
     const [pincodeError, setPincodeError] = useState(false)
     const [showAppReviewCard, setShowAppReviewCard] = useState(true)
-    const [isloaded, setLoaded] = useState(false)
-    useFocusEffect(() => {
-        if (!isloaded) {
-            if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
-                CheckPermissions((status) => {
-                    if (status) {
-                        getCurrentPosition()
-                    } else {
-                        alert(false)
-                        //check for the user address if there is any address save the first address to homescreenlocation, and show the half modal for choosing the address and add new address button
-                        //if the api fails or if there is no address means turn the modal on
-                    }
-                }, false)
-            }
-            setLoaded(true)
-        }
-        return () => { }
-    }, [])
+    const [addressModalVisible, setAddressModalVisible] = useState(false)
+    const [deliveryLocationModalVisible, setDeliveryLocationModalVisible] = useState(false)
     useEffect(() => {
         initialFunction()
+        checkForHomescreenLocationAddress()
     }, [])
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            checkForHomescreenLocationAddress()
+        });
+        // Return the function to unsubscribe from the event so it gets removed on unmount
+        return unsubscribe;
+    }, [navigation]);
 
+    const checkForHomescreenLocationAddress = () => {
+        if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+            CheckPermissions((status) => {
+                if (status) {
+                    getCurrentPosition()
+                } else {
+                    getAllUserAddress(async (response, status) => {
+                        if (status) {
+                            let newArray = []
+                            await response?.data?.forEach((el, index) => {
+                                if (el?.isActive) newArray.push(el)
+                            })
+                            if (newArray?.length > 0) {
+                                setAddressModalVisible(true)
+                            } else {
+                                setDeliveryLocationModalVisible(true)
+                            }
+                        } else {
+                            setDeliveryLocationModalVisible(true)
+                        }
+                    })
+                    // alert(false) // mounts twice issue is there fix it
+                    //check for the user address if there is any address save the first address to homescreenlocation, and show the half modal for choosing the address and add new address button
+                    //if the api fails or if there is no address means turn the modal on
+                }
+            }, false)
+        } else {
+            setDeliveryLocationModalVisible(false)
+        }
+    }
     useEffect(() => {
         if (isAuthenticated) {
             setRefresh(true)
@@ -164,6 +192,9 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
 
     useEffect(() => {
         if (homeScreenLocation?.lat) {
+            setTimeout(() => {
+                setDeliveryLocationModalVisible(false)
+            }, 1000);
             isPincodeServiceable(homeScreenLocation?.lat, homeScreenLocation?.lon, (res, status) => {
                 if (status) {
                     setPincodeError(false)
@@ -421,6 +452,16 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                 <Loader />
                 : undefined
             }
+            <AddressModal
+                addressModalVisible={addressModalVisible}
+                setAddressModalVisible={(option) => setAddressModalVisible(option)}
+                navigation={navigation}
+                navigateTo="MapScreenGrabPincode"
+            />
+            <SetDeliveryLocationModal
+                navigation={navigation}
+                deliveryLocationModalVisible={deliveryLocationModalVisible}
+                setDeliveryLocationModalVisible={(option) => setDeliveryLocationModalVisible(option)} />
         </>
     );
 }
@@ -431,11 +472,12 @@ const mapStateToProps = (state) => ({
     config: state.config.config,
     userLocation: state.location,
     homeScreenLocation: state.homeScreenLocation,
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    allUserAddress: state.auth.allUserAddress,
 })
 
 
-export default connect(mapStateToProps, { getAllCategories, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation, getCartItemsApi, addCustomerDeviceDetails })(HomeScreen)
+export default connect(mapStateToProps, { getAllCategories, getAllUserAddress, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation, getCartItemsApi, addCustomerDeviceDetails })(HomeScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {
