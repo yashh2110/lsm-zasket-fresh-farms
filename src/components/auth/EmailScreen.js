@@ -16,11 +16,13 @@ import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
 import { getV2Config } from '../../actions/home'
+import { StackActions } from '@react-navigation/native';
 
-const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserDetails, onLogin, loginWithProvider, isAuthenticated, getV2Config }) => {
+const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScreenLocation, onLogin, loginWithProvider, isAuthenticated, getV2Config }) => {
 
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
+    const [referralCode, setReferralCode] = useState("")
     const [emailErrorText, setemailErrorText] = useState("")
     const [nameErrorText, setNameErrorText] = useState("")
     const [loading, setLoading] = useState(false)
@@ -61,6 +63,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
             let payLoad = {
                 "name": name,
                 "otp": otp,
+                "referralCode": referralCode.toUpperCase(),
                 "userEmail": email.toLowerCase(),
                 "userMobileNumber": mobileNumber
             }
@@ -70,9 +73,17 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
                     if (status) {
                         // Alert.alert(JSON.stringify(response));
                         onLogin(response?.data)
-                        navigation.navigate('BottomTabRoute')
                         getV2Config((res, status) => { })
                         setLoading(false)
+                        // navigation.navigate('BottomTabRoute')
+
+                        if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+                            navigation.dispatch(StackActions.popToTop());
+                            navigation.goBack();
+                            navigation.navigate("SwitchNavigator")
+                        } else {
+                            navigation.navigate("BottomTabRoute")
+                        }
                     } else {
                         setLoading(false)
                         // Alert.alert(response?.response?.data?.description);
@@ -183,6 +194,20 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
                                     <Text style={{ color: 'red', fontSize: 14 }}>{emailErrorText} </Text>
                                 </>
                                 : undefined}
+                            <View style={{ marginTop: "10%", borderBottomColor: "#D8D8D8", flexDirection: 'row', borderBottomWidth: 1 }}>
+                                <View style={{ flex: 1 }}>
+                                    <TextInput
+                                        style={{ height: 40, }}
+                                        onChangeText={text => setReferralCode(text)}
+                                        value={referralCode}
+                                        placeholder={"Referral code"}
+                                        placeholderTextColor={"#727272"}
+                                    />
+                                </View>
+                                {/* <View style={{ justifyContent: 'center' }}>
+                                    <Icon name='mail' style={{ color: '#C3C3C3', fontSize: 20 }} />
+                                </View> */}
+                            </View>
                             {loading ?
                                 <ActivityIndicator style={{ marginTop: "10%", }} color={Theme.Colors.primary} size="large" />
                                 :
@@ -200,7 +225,8 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, saveUserD
 
 const mapStateToProps = (state) => ({
     darkMode: state.dark,
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    homeScreenLocation: state.homeScreenLocation,
 })
 
 

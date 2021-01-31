@@ -1,10 +1,10 @@
 import React, { useEffect, useContext, useState, useLayoutEffect } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter, Linking } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter, Linking, } from 'react-native';
 import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
 import Theme from '../../styles/Theme';
-import { getAllCategories, isPincodeServiceable, getCustomerDetails, getAllBanners } from '../../actions/home'
+import { getAllCategories, isPincodeServiceable, getCustomerDetails, getAllBanners, addCustomerDeviceDetails } from '../../actions/home'
 import { onLogout } from '../../actions/auth'
 import { connect } from 'react-redux';
 import CategorySectionListItem from './CategorySectionListItem';
@@ -12,12 +12,61 @@ import Loader from '../common/Loader';
 import DarkModeToggle from '../common/DarkModeToggle';
 import AsyncStorage from '@react-native-community/async-storage';
 import Geolocation from '@react-native-community/geolocation';
-import { appVersion, MapApiKey } from '../../../env';
+import { appVersion, MapApiKey, OneSignalAppId } from '../../../env';
 import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
 import { getCartItemsApi } from '../../actions/cart'
 import FeatherIcons from "react-native-vector-icons/Feather"
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
-const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServiceable, getAllBanners, isAuthenticated, getCustomerDetails, bannerImages, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
+import InAppReview from "react-native-in-app-review";
+import OneSignal from "react-native-onesignal";
+import DeviceInfo from 'react-native-device-info';
+import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import GPSState from 'react-native-gps-state'
+import { CheckGpsState, CheckPermissions } from '../../utils/utils'
+import { useIsFocused } from '@react-navigation/native';
+import AddressModal from '../common/AddressModal';
+import { getAllUserAddress } from '../../actions/map'
+import Modal from 'react-native-modal';
+import SetDeliveryLocationModal from '../common/SetDeliveryLocationModal'
+
+const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
+
+    useEffect(() => {
+        const onReceived = (notification) => {
+            console.log("Notification received: ", notification);
+        }
+        const onOpened = (openResult) => {
+            // alert(JSON.stringify(openResult.notification.isAppInFocus, null, "       "))
+            if (openResult.notification.payload.additionalData?.redirect_to == "MyOrdersDetailScreen") {
+                navigation.navigate(openResult.notification.payload.additionalData?.redirect_to, { order_id: openResult.notification.payload.additionalData?.order_id })
+                // navigation.navigate("AccountStack", {
+                //     screen: 'MyOrders',
+                //     params: {
+                //         screen: openResult.notification.payload.additionalData?.redirect_to,
+                //         params: {
+                //             order_id: openResult.notification.payload.additionalData?.order_id
+                //         },
+                //     },
+                // });
+            }
+            console.log('Message: ', openResult.notification.payload.body);
+            console.log('Data: ', openResult.notification.payload.additionalData);
+            console.log('isActive: ', openResult.notification.isAppInFocus);
+            console.log('openResult: ', openResult);
+        }
+        const onIds = (device) => {
+            console.log('Device info: ', device);
+        }
+        OneSignal.addEventListener('received', onReceived);
+        OneSignal.addEventListener('opened', onOpened);
+        OneSignal.addEventListener('ids', onIds);
+        return () => {
+            OneSignal.removeEventListener('received', onReceived);
+            OneSignal.removeEventListener('opened', onOpened);
+            OneSignal.removeEventListener('ids', onIds);
+        }
+    }, [])
+
     const [showAppUpdate, setShowAppUpdate] = useState(false)
     useEffect(() => {
         if (config?.appVersion !== undefined) {
@@ -27,88 +76,17 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
         }
     }, [config])
 
-    useEffect(() => {
-        const _bootstrapAsync = async () => {
-            if (Platform.OS === 'ios') {
-                Geolocation.requestAuthorization();
-                // alert('work')
-            } else {
-                enableGpsLocation()
-                DeviceEventEmitter.addListener('locationProviderStatusChange', function (status) { // only trigger when "providerListener" is enabled
-                    enableGpsLocation()
-                    console.warn(status); //  status => {enabled: false, status: "disabled"} or {enabled: true, status: "enabled"}
-                });
-            }
-            const onBoardKey = await AsyncStorage.getItem('onBoardKey');
-            if (!onBoardKey) {
-                navigation.navigate('OnBoardScreen')
-            } else {
-                // navigation.navigate('BottomTabRoute')
-            }
-        };
-        _bootstrapAsync()
-    }, [])
-    // useEffect(() => {
-    //     const unsubscribe = navigation.addListener('focus', () => {
-    //         // alert(JSON.stringify(homeScreenLocation))
-    //         if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
-    //             setTimeout(() => {
-    //                 checkForLocationAccess();
-    //             }, 1000);
-    //         }
-    //     });
-    //     return unsubscribe;
-    // }, [navigation]);
-    const enableGpsLocation = () => {
-        LocationServicesDialogBox.checkLocationServicesIsEnabled({
-            message: "<h2 style='color: #0af13e'>Use Location ?</h2>Zasket wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location",
-            ok: "YES",
-            cancel: "No",
-            enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
-            showDialog: true, // false => Opens the Location access page directly
-            openLocationServices: true, // false => Directly catch method is called if location services are turned off
-            preventOutSideTouch: true, // true => To prevent the location services window from closing when it is clicked outside
-            preventBackClick: true, // true => To prevent the location services popup from closing when it is clicked back button
-            providerListener: true // true ==> Trigger locationProviderStatusChange listener when the location state changes
-        }).then(async (success) => {
-            checkForLocationAccess()
-            console.warn(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
-        }).catch((error) => {
-            console.warn(error.message); // error.message => "disabled"
-            BackHandler.exitApp()
-        });
-    }
 
-    const checkForLocationAccess = async () => {
-        if (Platform.OS === 'android') {
-            // Calling the permission function
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                {
-                    title: 'Zasket App Location Permission',
-                    message: 'Zasket App needs access to your location',
-                    buttonPositive: "Ok"
-                },
-            );
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                // Permission Granted
-                getCurrentPosition();
-            } else {
-                // Permission Denied
-                // alert('Permission Denied');
-                navigation.navigate('PincodeScreen')
-            }
-        }
-    }
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
     const [pincodeError, setPincodeError] = useState(false)
-
+    const [showAppReviewCard, setShowAppReviewCard] = useState(true)
+    const [addressModalVisible, setAddressModalVisible] = useState(false)
+    const [deliveryLocationModalVisible, setDeliveryLocationModalVisible] = useState(false)
+    const [isHomeScreenLocationAvailable, setIsHomeScreenLocationAvailable] = useState(false)
     useEffect(() => {
         initialFunction()
-        if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
-            getCurrentPosition()
-        }
+        checkForHomescreenLocationAddress()
     }, [])
 
     useEffect(() => {
@@ -121,6 +99,28 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                     setRefresh(false)
                 }
             })
+
+
+            let userID;
+            OneSignal.init(OneSignalAppId, {
+                kOSSettingsKeyAutoPrompt: true,
+            });
+            OneSignal.getPermissionSubscriptionState((status) => {
+                userID = status.userId;
+                var deviceId = DeviceInfo.getUniqueId();
+                let getBrand = DeviceInfo.getBrand();
+                let version = DeviceInfo.getVersion();
+                let model = DeviceInfo.getModel();
+                let payload = {
+                    "appVersion": appVersion,
+                    "deviceId": deviceId,
+                    "mobileOS": Platform.OS == "android" ? "android" : "ios",
+                    "phoneModel": getBrand + "-" + model + "   StoreBuildVersion-" + version,
+                    "playerId": userID
+                }
+                // alert(JSON.stringify(payload, null, "       "));
+                addCustomerDeviceDetails(payload, (res, status) => { })
+            });
         }
     }, [isAuthenticated])
 
@@ -156,6 +156,9 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
 
     useEffect(() => {
         if (homeScreenLocation?.lat) {
+            setTimeout(() => {
+                setDeliveryLocationModalVisible(false)
+            }, 1000);
             isPincodeServiceable(homeScreenLocation?.lat, homeScreenLocation?.lon, (res, status) => {
                 if (status) {
                     setPincodeError(false)
@@ -165,50 +168,92 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
             })
         }
     }, [homeScreenLocation?.lat])
-
-    const getCurrentPosition = async () => {
-        try {
-            if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
-                Geolocation.getCurrentPosition(
-                    async (position) => {
-                        fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
-                            .then((response) => {
-                                response.json().then(async (json) => {
-                                    let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                                    addHomeScreenLocation({
-                                        addressLine_1: json?.results?.[0]?.formatted_address,
-                                        pincode: postal_code?.long_name,
-                                        lat: position.coords.latitude,
-                                        lon: position.coords.longitude
-                                    })
-                                    // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
-                                    isPincodeServiceable(position.coords.latitude, position.coords.longitude, postal_code?.long_name, (res, status) => {
-                                        if (status) {
-                                        } else {
-                                            setPincodeError(true)
-                                        }
-                                    })
-                                });
-                            }).catch((err) => {
-                                console.warn(err)
-                            })
-                    },
-                    (error) => {
-                        if (error?.message == "Location permission was not granted." || error?.message == "Location services disabled." || error?.message == "User denied access to location services.") {
-                            navigation.navigate('PincodeScreen')
-                        }
-                        // alert(JSON.stringify(error))
-                        console.warn(error)
-                    }
-                );
-            }
-        } catch (e) {
-            // alert(e.message || "");
+    useEffect(() => {
+        if (homeScreenLocation?.lat) {
+            setDeliveryLocationModalVisible(false)
+            // setAddressModalVisible(false)
         }
+    }, [homeScreenLocation?.lat])
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            checkForHomescreenLocationAddress()
+        });
+        return unsubscribe;
+        // Return the function to unsubscribe from the event so it gets removed on unmount
+    }, [navigation]);
+
+    const checkForHomescreenLocationAddress = async () => {
+        let isHomeScreenLocationAvailable = await AsyncStorage.getItem('homeScreenLocation');
+        if (!isHomeScreenLocationAvailable) {
+            if (homeScreenLocation?.lat == undefined || homeScreenLocation?.lat == "") {
+                CheckPermissions((status) => {
+                    if (status) {
+                        getCurrentPosition()
+                    } else {
+                        getAllUserAddress(async (response, status) => {
+                            if (status) {
+                                let newArray = []
+                                await response?.data?.forEach((el, index) => {
+                                    if (el?.isActive) newArray.push(el)
+                                })
+                                if (newArray?.length > 0) {
+                                    setAddressModalVisible(true)
+                                } else {
+                                    setDeliveryLocationModalVisible(true)
+                                }
+                            } else {
+                                setDeliveryLocationModalVisible(true)
+                            }
+                        })
+                    }
+                }, false)
+            } else {
+                setDeliveryLocationModalVisible(false)
+            }
+        }
+    }
+    const getCurrentPosition = async () => {
+        Geolocation.getCurrentPosition(
+            async (position) => {
+                fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
+                    .then((response) => {
+                        response.json().then(async (json) => {
+                            let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                            addHomeScreenLocation({
+                                addressLine_1: json?.results?.[0]?.formatted_address,
+                                pincode: postal_code?.long_name,
+                                lat: position.coords.latitude,
+                                lon: position.coords.longitude
+                            })
+                            // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                            isPincodeServiceable(position.coords.latitude, position.coords.longitude, postal_code?.long_name, (res, status) => {
+                                if (status) {
+                                } else {
+                                    setPincodeError(true)
+                                }
+                            })
+                        });
+                    }).catch((err) => {
+                        console.warn(err)
+                        if (Platform.OS == "android") {
+                            checkForLocationAccess()
+                        }
+
+                    })
+            },
+            (error) => {
+                if (error?.message == "Location permission was not granted." || error?.message == "Location services disabled." || error?.message == "User denied access to location services.") {
+                    // navigation.navigate('AccessPermissionScreen')
+                }
+                console.warn(error)
+            },
+            { enableHighAccuracy: false, timeout: 5000 },
+        );
     };
 
     const onRefresh = () => {
         setRefresh(true)
+        // getCurrentPosition()
         initialFunction()
     }
 
@@ -237,6 +282,17 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
             });
         }
     }
+    const rateNow = async () => {
+        onPressUpdate()
+        // try {
+        //     const isAvailable = await InAppReview.isAvailable
+        //     if (!isAvailable) {
+        //         onPressUpdate()
+        //         return;
+        //     }
+        //     InAppReview.RequestInAppReview();
+        // } catch (e) { }
+    }
     return (
         <>
             <ScrollView style={{ flex: 1, backgroundColor: 'white' }} showsVerticalScrollIndicator={false}
@@ -244,7 +300,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                     <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
                 }>
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
-                    <TouchableOpacity onPress={() => { navigation.navigate('MapScreenGrabPincode', { fromScreen: 'HomeScreen' }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
+                    <TouchableOpacity onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreenGrabPincode" }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                         <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
                         <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1} </Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
@@ -263,7 +319,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                             <Icon name="warning" type="AntDesign" style={{ fontSize: 22, color: 'white' }} />
                             <Text style={{ color: 'white' }}> We are not available at this location!</Text>
                         </View>
-                        <TouchableOpacity onPress={() => { navigation.navigate('MapScreenGrabPincode', { fromScreen: "HomeScreen" }) }} style={{ backgroundColor: '#DD4C55', paddingHorizontal: 5, paddingVertical: 4, borderRadius: 5 }}>
+                        <TouchableOpacity onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreenGrabPincode" }) }} style={{ backgroundColor: '#DD4C55', paddingHorizontal: 5, paddingVertical: 4, borderRadius: 5 }}>
                             <Text style={{ color: 'white' }}>Change</Text>
                         </TouchableOpacity>
                     </View>
@@ -355,6 +411,31 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                     keyExtractor={item => item?.id.toString()}
                 />
 
+                {showAppReviewCard ?
+                    <View style={{ width: '90%', padding: 15, marginVertical: 10, backgroundColor: 'white', alignSelf: 'center', shadowColor: "#000", shadowOffset: { width: 0, height: 5, }, shadowOpacity: 0.34, shadowRadius: 6.27, elevation: 10, }}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
+                                <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Like using our app?</Text>
+                                <Text style={{ color: '#727272', fontSize: 13 }}>Recommend us to others by rating us 5 stars on the play store</Text>
+                            </View>
+                            <View style={{ backgroundColor: 'white' }}>
+                                <Image
+                                    style={{ height: 100, width: 80 }}
+                                    resizeMode="center"
+                                    source={require('../../assets/png/appReview.png')}
+                                />
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
+                            <TouchableOpacity onPress={() => setShowAppReviewCard(false)} style={{ padding: 10, borderRadius: 4, backgroundColor: '#FDEFEF', width: "47%", justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: "#E1171E", fontSize: 13 }}>No, Thanks</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => rateNow()} style={{ padding: 10, borderRadius: 4, backgroundColor: '#E1171E', width: "47%", justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: 'white', fontSize: 13 }}>Rate the app</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    : null}
                 {/* <Text>{JSON.stringify(sectionlistData, null, "      ")} </Text> */}
             </ScrollView>
             {showAppUpdate ?
@@ -378,6 +459,16 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, isPincodeServicea
                 <Loader />
                 : undefined
             }
+            <AddressModal
+                addressModalVisible={addressModalVisible}
+                setAddressModalVisible={(option) => setAddressModalVisible(option)}
+                navigation={navigation}
+                navigateTo="MapScreenGrabPincode"
+            />
+            <SetDeliveryLocationModal
+                navigation={navigation}
+                deliveryLocationModalVisible={deliveryLocationModalVisible}
+                setDeliveryLocationModalVisible={(option) => setDeliveryLocationModalVisible(option)} />
         </>
     );
 }
@@ -388,11 +479,12 @@ const mapStateToProps = (state) => ({
     config: state.config.config,
     userLocation: state.location,
     homeScreenLocation: state.homeScreenLocation,
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    allUserAddress: state.auth.allUserAddress,
 })
 
 
-export default connect(mapStateToProps, { getAllCategories, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation, getCartItemsApi })(HomeScreen)
+export default connect(mapStateToProps, { getAllCategories, getAllUserAddress, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation, getCartItemsApi, addCustomerDeviceDetails })(HomeScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

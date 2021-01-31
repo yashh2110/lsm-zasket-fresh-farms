@@ -1,6 +1,6 @@
 PODS:
   - boost-for-react-native (1.63.0)
-  - CocoaAsyncSocket (7.6.4)
+  - CocoaAsyncSocket (7.6.5)
   - CocoaLibEvent (1.0.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.63.2)
@@ -29,12 +29,12 @@ PODS:
     - Flipper-Folly (~> 2.2)
     - Flipper-RSocket (~> 1.1)
   - Flipper-DoubleConversion (1.1.7)
-  - Flipper-Folly (2.2.0):
+  - Flipper-Folly (2.3.0):
     - boost-for-react-native
     - CocoaLibEvent (~> 1.0)
     - Flipper-DoubleConversion
     - Flipper-Glog
-    - OpenSSL-Universal (= 1.0.2.19)
+    - OpenSSL-Universal (= 1.0.2.20)
   - Flipper-Glog (0.3.6)
   - Flipper-PeerTalk (0.0.4)
   - Flipper-RSocket (1.1.0):
@@ -85,15 +85,15 @@ PODS:
   - lottie-react-native (3.5.0):
     - lottie-ios (~> 3.1.8)
     - React
-  - OneSignal (2.15.4)
-  - OpenSSL-Universal (1.0.2.19):
-    - OpenSSL-Universal/Static (= 1.0.2.19)
-  - OpenSSL-Universal/Static (1.0.2.19)
+  - OneSignal (2.16.1)
+  - OpenSSL-Universal (1.0.2.20):
+    - OpenSSL-Universal/Static (= 1.0.2.20)
+  - OpenSSL-Universal/Static (1.0.2.20)
   - Permission-LocationAlways (3.0.0):
     - RNPermissions
   - Permission-LocationWhenInUse (3.0.0):
     - RNPermissions
-  - razorpay-pod (1.1.7)
+  - razorpay-pod (1.1.11)
   - RCTRequired (0.63.2)
   - RCTTypeSafety (0.63.2):
     - FBLazyVector (= 0.63.2)
@@ -276,16 +276,20 @@ PODS:
     - React
   - react-native-geolocation (2.0.2):
     - React
+  - react-native-gps-state (2.0.3):
+    - React
   - react-native-in-app-review (2.1.5):
+    - React
+  - react-native-location (2.5.0):
     - React
   - react-native-maps (0.27.1):
     - React
   - react-native-netinfo (5.9.7):
     - React-Core
-  - react-native-onesignal (3.9.2):
-    - OneSignal (= 2.15.4)
+  - react-native-onesignal (3.9.3):
+    - OneSignal (= 2.16.1)
     - React (< 1.0.0, >= 0.13.0)
-  - react-native-razorpay (2.2.1):
+  - react-native-razorpay (2.2.2):
     - razorpay-pod
     - React
   - react-native-safe-area-context (3.1.8):
@@ -356,6 +360,8 @@ PODS:
     - React
   - RNCMaskedView (0.1.10):
     - React
+  - RNDeviceInfo (8.0.0):
+    - React-Core
   - RNGestureHandler (1.8.0):
     - React
   - RNPermissions (3.0.0):
@@ -414,7 +420,9 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-fbsdk (from `../node_modules/react-native-fbsdk`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
+  - react-native-gps-state (from `../node_modules/react-native-gps-state`)
   - react-native-in-app-review (from `../node_modules/react-native-in-app-review`)
+  - react-native-location (from `../node_modules/react-native-location`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-onesignal (from `../node_modules/react-native-onesignal`)
@@ -433,6 +441,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -503,8 +512,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fbsdk"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
+  react-native-gps-state:
+    :path: "../node_modules/react-native-gps-state"
   react-native-in-app-review:
     :path: "../node_modules/react-native-in-app-review"
+  react-native-location:
+    :path: "../node_modules/react-native-location"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
   react-native-netinfo:
@@ -541,6 +554,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/async-storage"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNPermissions:
@@ -556,7 +571,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  CocoaAsyncSocket: 694058e7c0ed05a9e217d1b3c7ded962f4180845
+  CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   CocoaLibEvent: 2fab71b8bd46dd33ddb959f7928ec5909f838e3f
   DoubleConversion: cde416483dac037923206447da6e1454df403714
   FBLazyVector: 3ef4a7f62e7db01092f9d517d2ebc0d0677c4a37
@@ -566,7 +581,7 @@ SPEC CHECKSUMS:
   FBSDKShareKit: 0c0d51b3af47075a85ed9bea0e28b2fc70e3594b
   Flipper: 33585e2d9810fe5528346be33bcf71b37bb7ae13
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
-  Flipper-Folly: c12092ea368353b58e992843a990a3225d4533c3
+  Flipper-Folly: e4493b013c02d9347d5e0cb4d128680239f6c78a
   Flipper-Glog: 1dfd6abf1e922806c52ceb8701a3599a79a200a6
   Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
   Flipper-RSocket: 64e7431a55835eb953b0bf984ef3b90ae9fdddd7
@@ -575,11 +590,11 @@ SPEC CHECKSUMS:
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
   lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
   lottie-react-native: 1fb4ce21d6ad37dab8343eaff8719df76035bd93
-  OneSignal: 6647275955d0f06d9e17c90dc93af9d85ecfd2b9
-  OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
+  OneSignal: 5f6514ec2b931306eb067acb124afbb2e49970af
+  OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
   Permission-LocationAlways: 20c287ae79fbc5659a9cc95b32a725810f5529df
   Permission-LocationWhenInUse: e09ae67e8db2b1eeefb35f18ca59848d0785de5b
-  razorpay-pod: 6ee0c8c7afad8eead9524d5eb516bc35ac1604ef
+  razorpay-pod: 968635ba3bed4572f5ea9fe72be705225dcbce48
   RCTRequired: f13f25e7b12f925f1f6a6a8c69d929a03c0129fe
   RCTTypeSafety: 44982c5c8e43ff4141eb519a8ddc88059acd1f3a
   React: e1c65dd41cb9db13b99f24608e47dd595f28ca9a
@@ -592,11 +607,13 @@ SPEC CHECKSUMS:
   React-jsinspector: b14e62ebe7a66e9231e9581279909f2fc3db6606
   react-native-fbsdk: 8e92c7a334fd8d9c2b5d8b8fcd7ae2c314161099
   react-native-geolocation: cbd9d6bd06bac411eed2671810f454d4908484a8
+  react-native-gps-state: ca94d5e3156fcc1c48c4eaa932910ec481bb5d8c
   react-native-in-app-review: 3ab4771ee96564a58c972902b7868952429ad0ae
+  react-native-location: 9c53c0957756f7d70e8fdc76b1c7ed85867c8d0b
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-netinfo: e36c1bb6df27ab84aa933679b3f5bbf9d180b18f
-  react-native-onesignal: 9fdf8cf885105266960a75567a38823bd824a22b
-  react-native-razorpay: 8a8b0a30c4d9a344d602b4b225f02576d011b18e
+  react-native-onesignal: dd08d2ba301e1cb7ad4773a53d8e49d4e43ba6fd
+  react-native-razorpay: 4e851d32acf8147ae5799321e749b3e2d137e1a3
   react-native-safe-area-context: 01158a92c300895d79dee447e980672dc3fb85a6
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   React-RCTActionSheet: 910163b6b09685a35c4ebbc52b66d1bfbbe39fc5
@@ -611,6 +628,7 @@ SPEC CHECKSUMS:
   ReactCommon: a0a1edbebcac5e91338371b72ffc66aa822792ce
   RNCAsyncStorage: 3eea36d9460c5159b592f9ecbe5a77f8aca98006
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
+  RNDeviceInfo: 72ded653ce636b3f03571e90bed99309a714944e
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
   RNPermissions: 350964d19150b183796a88180fb7ec62a1e41422
   RNReanimated: dd8c286ab5dd4ba36d3a7fef8bff7e08711b5476

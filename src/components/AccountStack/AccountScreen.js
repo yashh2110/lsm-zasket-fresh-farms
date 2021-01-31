@@ -11,9 +11,11 @@ import { ActivityIndicator } from "react-native";
 import { Validation } from "../../utils/validate";
 import { getCustomerDetails } from "../../actions/home";
 import { onLogout } from '../../actions/auth'
+import { AuthContext } from "../../navigation/Routes";
 
 
 const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigation, onLogout }) => {
+    const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
     const [loading, setLoading] = useState(false)
     const [userDetails, setUserDetails] = useState({})
     const [isVisible, setIsVisible] = useState(false)
@@ -142,9 +144,10 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
     // }
 
     const onPressLogout = async () => {
-        navigation.navigate("HomeStack")
-        navigation.navigate("OnBoardScreen")
+        // navigation.navigate("HomeStack")
+        // navigation.navigate("OnBoardScreen")
         await onLogout()
+        removeOnBoardKey()
     }
     const onShare = async () => {
         let appUrl

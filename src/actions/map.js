@@ -1,6 +1,7 @@
 import axiosinstance from '../axios/service/api';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import { GET_ALL_USER_ADDRESSES } from './types';
 
 //getAllUserAddress
 export const getAllUserAddress = (callback) => async dispatch => {
@@ -13,12 +14,24 @@ export const getAllUserAddress = (callback) => async dispatch => {
             const res = await axiosinstance.get(`/customer/${customerId}/address`)
             // Alert.alert(JSON.stringify(res.data, null, "     "))
             callback(res, true)
+            dispatch({
+                type: GET_ALL_USER_ADDRESSES,
+                payload: res?.data
+            })
         } else {
             callback("user not logged in", false)
+            dispatch({
+                type: GET_ALL_USER_ADDRESSES,
+                payload: []
+            })
         }
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response, null, "     "))
         callback(err.response, false)
+        dispatch({
+            type: GET_ALL_USER_ADDRESSES,
+            payload: []
+        })
     }
 }
 

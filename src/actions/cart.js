@@ -119,6 +119,17 @@ export const getOrderDetails = (order_id, callback) => async dispatch => {
     }
 }
 
+//cancelOrder
+export const cancelOrder = (order_id, payload, callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.post(`/orders/${order_id}/cancel`, payload)
+        callback(res, true)
+    } catch (err) {
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+    }
+}
+
 //getAllOffers
 export const getAllOffers = (callback) => async dispatch => {
     try {
@@ -153,6 +164,20 @@ export const applyOffer = (offerCode, orderAmount, callback) => async dispatch =
         // if (__DEV__) {
         //     alert(JSON.stringify(err.response, null, "     "))
         // }
+        callback(err, false)
+    }
+}
+
+//rateOrder
+export const rateOrder = (order_id, payload, callback) => async dispatch => {
+    try {
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customerId = await parsedUserDetails?.customerDetails?.id
+        const res = await axiosinstance.post(`/customers/${customerId}/orders/${order_id}`, payload)
+        callback(res, true)
+    } catch (err) {
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
     }
 }

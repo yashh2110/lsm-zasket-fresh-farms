@@ -15,6 +15,7 @@ export const CLEAR_REDUX_PERSIST = 'CLEAR_REDUX_PERSIST'
 export const SAVE_USER_DETAILS = 'SAVE_USER_DETAILS'
 export const LOGIN = 'LOGIN'
 export const LOGOUT = 'LOGOUT'
+export const GET_ALL_USER_ADDRESSES = 'GET_ALL_USER_ADDRESSES'
 
 
 
