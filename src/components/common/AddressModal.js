@@ -59,12 +59,13 @@ const AddressModal = ({ item, navigation, navigateTo, homeScreenLocation, addLoc
             style={{ margin: 0, justifyContent: 'flex-end' }}
             onBackButtonPress={() => setAddressModalVisible(false)}
             onBackdropPress={() => setAddressModalVisible(false)}
+            propagateSwipe={true}
         >
             <SafeAreaView style={{ height: "50%", backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
                 <View style={{ alignSelf: 'center', height: 5, width: 50, backgroundColor: '#E2E2E2', borderRadius: 50, marginVertical: 15 }} />
                 <Text style={{ color: 'black', textAlign: 'center', fontWeight: 'bold' }}>Choose a delivery address</Text>
                 <Text style={{ color: '#909090', textAlign: 'center', fontSize: 13 }}>Saved Address</Text>
-                <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+                <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='always'>
                     <View style={{ flex: 1, margin: 4, width: "90%", marginBottom: 10, alignSelf: 'center' }}>
                         <FlatList
                             data={savedUserAddresses}

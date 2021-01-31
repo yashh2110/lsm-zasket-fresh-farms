@@ -29,7 +29,7 @@ import { getAllUserAddress } from '../../actions/map'
 import Modal from 'react-native-modal';
 import SetDeliveryLocationModal from '../common/SetDeliveryLocationModal'
 
-const HomeScreen = ({ addHomeScreenLocation, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, homeScreenLocation, getCartItemsApi }) => {
+const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
 
     useEffect(() => {
         const onReceived = (notification) => {
@@ -83,48 +83,12 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, getAllUserAddress
     const [showAppReviewCard, setShowAppReviewCard] = useState(true)
     const [addressModalVisible, setAddressModalVisible] = useState(false)
     const [deliveryLocationModalVisible, setDeliveryLocationModalVisible] = useState(false)
+    const [isHomeScreenLocationAvailable, setIsHomeScreenLocationAvailable] = useState(false)
     useEffect(() => {
         initialFunction()
         checkForHomescreenLocationAddress()
     }, [])
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            checkForHomescreenLocationAddress()
-        });
-        // Return the function to unsubscribe from the event so it gets removed on unmount
-        return unsubscribe;
-    }, [navigation]);
 
-    const checkForHomescreenLocationAddress = () => {
-        if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
-            CheckPermissions((status) => {
-                if (status) {
-                    getCurrentPosition()
-                } else {
-                    getAllUserAddress(async (response, status) => {
-                        if (status) {
-                            let newArray = []
-                            await response?.data?.forEach((el, index) => {
-                                if (el?.isActive) newArray.push(el)
-                            })
-                            if (newArray?.length > 0) {
-                                setAddressModalVisible(true)
-                            } else {
-                                setDeliveryLocationModalVisible(true)
-                            }
-                        } else {
-                            setDeliveryLocationModalVisible(true)
-                        }
-                    })
-                    // alert(false) // mounts twice issue is there fix it
-                    //check for the user address if there is any address save the first address to homescreenlocation, and show the half modal for choosing the address and add new address button
-                    //if the api fails or if there is no address means turn the modal on
-                }
-            }, false)
-        } else {
-            setDeliveryLocationModalVisible(false)
-        }
-    }
     useEffect(() => {
         if (isAuthenticated) {
             setRefresh(true)
@@ -204,7 +168,50 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, getAllUserAddress
             })
         }
     }, [homeScreenLocation?.lat])
+    useEffect(() => {
+        if (homeScreenLocation?.lat) {
+            setDeliveryLocationModalVisible(false)
+            // setAddressModalVisible(false)
+        }
+    }, [homeScreenLocation?.lat])
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            checkForHomescreenLocationAddress()
+        });
+        return unsubscribe;
+        // Return the function to unsubscribe from the event so it gets removed on unmount
+    }, [navigation]);
 
+    const checkForHomescreenLocationAddress = async () => {
+        let isHomeScreenLocationAvailable = await AsyncStorage.getItem('homeScreenLocation');
+        if (!isHomeScreenLocationAvailable) {
+            if (homeScreenLocation?.lat == undefined || homeScreenLocation?.lat == "") {
+                CheckPermissions((status) => {
+                    if (status) {
+                        getCurrentPosition()
+                    } else {
+                        getAllUserAddress(async (response, status) => {
+                            if (status) {
+                                let newArray = []
+                                await response?.data?.forEach((el, index) => {
+                                    if (el?.isActive) newArray.push(el)
+                                })
+                                if (newArray?.length > 0) {
+                                    setAddressModalVisible(true)
+                                } else {
+                                    setDeliveryLocationModalVisible(true)
+                                }
+                            } else {
+                                setDeliveryLocationModalVisible(true)
+                            }
+                        })
+                    }
+                }, false)
+            } else {
+                setDeliveryLocationModalVisible(false)
+            }
+        }
+    }
     const getCurrentPosition = async () => {
         Geolocation.getCurrentPosition(
             async (position) => {
@@ -246,7 +253,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, getAllUserAddress
 
     const onRefresh = () => {
         setRefresh(true)
-        getCurrentPosition()
+        // getCurrentPosition()
         initialFunction()
     }
 
@@ -293,7 +300,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, getAllUserAddress
                     <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
                 }>
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
-                    <TouchableOpacity onPress={() => { navigation.navigate('MapScreenGrabPincode', { fromScreen: 'HomeScreen' }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
+                    <TouchableOpacity onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreenGrabPincode" }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                         <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
                         <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1} </Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
@@ -312,7 +319,7 @@ const HomeScreen = ({ addHomeScreenLocation, getAllCategories, getAllUserAddress
                             <Icon name="warning" type="AntDesign" style={{ fontSize: 22, color: 'white' }} />
                             <Text style={{ color: 'white' }}> We are not available at this location!</Text>
                         </View>
-                        <TouchableOpacity onPress={() => { navigation.navigate('MapScreenGrabPincode', { fromScreen: "HomeScreen" }) }} style={{ backgroundColor: '#DD4C55', paddingHorizontal: 5, paddingVertical: 4, borderRadius: 5 }}>
+                        <TouchableOpacity onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreenGrabPincode" }) }} style={{ backgroundColor: '#DD4C55', paddingHorizontal: 5, paddingVertical: 4, borderRadius: 5 }}>
                             <Text style={{ color: 'white' }}>Change</Text>
                         </TouchableOpacity>
                     </View>

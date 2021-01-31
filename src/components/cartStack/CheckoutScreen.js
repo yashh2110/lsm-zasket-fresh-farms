@@ -573,7 +573,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                             setSelectedPaymentMethod("PREPAID")
                         }}>
                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <Radio selected={selectedPaymentMethod == "PREPAID" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} />
+                                <Radio selected={selectedPaymentMethod == "PREPAID" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedPaymentMethod("PREPAID") }} />
                             </View>
                             <View style={{ marginLeft: 10, flexDirection: 'row', flex: 1 }}>
                                 <View style={{ flex: 1 }}>
@@ -594,7 +594,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                             flexDirection: 'row', marginTop: "5%", marginBottom: 10, backgroundColor: "white", borderRadius: 5, marginHorizontal: 20, padding: 10, shadowColor: "#000", shadowOffset: { width: 0, height: 1, }, shadowOpacity: 0.22, shadowRadius: 2.22, elevation: 3, minHeight: 50, alignItems: "center"
                         }} onPress={() => { setSelectedPaymentMethod("COD") }}>
                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <Radio selected={selectedPaymentMethod == "COD" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} />
+                                <Radio selected={selectedPaymentMethod == "COD" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedPaymentMethod("COD") }} />
                             </View>
                             <View style={{ marginLeft: 10 }}>
                                 <Text style={{ color: 'black', fontSize: 16 }}>Cash on delivery </Text>

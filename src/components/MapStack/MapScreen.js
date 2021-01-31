@@ -561,6 +561,7 @@ class MyMapView extends React.Component {
                                                 name: text
                                             })}
                                             placeholder="Name"
+                                            placeholderTextColor="#727272"
                                             value={this.state.name}
                                             onTouchStart={() => {
                                                 this.setState({ nameErrorText: "" })
@@ -584,6 +585,7 @@ class MyMapView extends React.Component {
                                                         mobileNumber: text
                                                     })}
                                                     placeholder="Mobile Number"
+                                                    placeholderTextColor="#727272"
                                                     value={this.state.mobileNumber}
                                                     keyboardType={"number-pad"}
                                                     onTouchStart={() => {
@@ -599,6 +601,7 @@ class MyMapView extends React.Component {
                                                 mobileNumber: text
                                             })}
                                             placeholder="Mobile Number"
+                                        placeholderTextColor="#727272"
                                             value={this.state.mobileNumber}
                                             keyboardType={"number-pad"}
                                             onTouchStart={() => {
@@ -618,6 +621,7 @@ class MyMapView extends React.Component {
                                             houseNumber: text
                                         })}
                                         placeholder="House No/ Flat No/Floor/Building"
+                                        placeholderTextColor="#727272"
                                         value={this.state.houseNumber}
                                     />
                                 </View>
@@ -629,6 +633,7 @@ class MyMapView extends React.Component {
                                             landMark: text
                                         })}
                                         placeholder="Landmark"
+                                        placeholderTextColor="#727272"
                                         value={this.state.landMark}
                                     />
                                 </View>
@@ -640,6 +645,7 @@ class MyMapView extends React.Component {
                                             pincode: text
                                         })}
                                         placeholder="Pincode"
+                                        placeholderTextColor="#727272"
                                         value={this.state.pincode}
                                         onTouchStart={() => this.setState({ errorMessageBanner: false })}
                                     />

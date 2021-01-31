@@ -280,6 +280,14 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                     name="RateOrdersScreen"
                     component={RateOrdersScreen}
                 />
+                <Stack.Screen
+                    name="SupportScreen"
+                    component={SupportScreen}
+                />
+                <Stack.Screen
+                    name="CancelOrderScreen"
+                    component={CancelOrderScreen}
+                />
             </Stack.Navigator>
         );
     }
