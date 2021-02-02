@@ -12,11 +12,15 @@ import OneSignal from 'react-native-onesignal';
 import { OneSignalAppId } from '../env';
 import { BackHandler, Platform } from 'react-native';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 const App = () => {
   useEffect(() => {
     // store.dispatch(loadUser())
     const initialFunction = async () => {
+      if (Platform.OS == "ios") {
+        PushNotificationIOS.requestPermissions()
+      }
       let userDetails = await AsyncStorage.getItem('userDetails');
       let parsedUserDetails = await JSON.parse(userDetails);
       if (parsedUserDetails !== null) {

@@ -207,6 +207,14 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                     onClearCart()
                     navigation.pop()
                     navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                } else {
+                    if (res?.response?.data?.description) {
+                        Toast.show({
+                            text: res?.response?.data?.description,
+                            type: "danger",
+                            duration: 3000
+                        })
+                    }
                 }
             })
         } else if (option == "PREPAID") {
@@ -215,7 +223,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                 ...payload,
                 "paymentMethod": "PREPAID"
             }
-            console.warn(JSON.stringify(payload, null, "     "))
+            // console.warn(JSON.stringify(payload, null, "     "))
             addOrder(prepaidPayload, async (res, status) => {
                 setLoading(false)
                 if (status) {
@@ -255,9 +263,16 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                     })
                 } else {
                     setLoading(false)
-                    if (__DEV__) {
-                        alert(JSON.stringify(res?.response, null, "        "))
+                    if (res?.response?.data?.description) {
+                        Toast.show({
+                            text: res?.response?.data?.description,
+                            type: "danger",
+                            duration: 3000
+                        })
                     }
+                    // if (__DEV__) {
+                    //     alert(JSON.stringify(res?.response, null, "        "))
+                    // }
                     let errorItems = []
                     if (res?.response?.data?.length > 0) {
                         if (cartItems.length > 0) {

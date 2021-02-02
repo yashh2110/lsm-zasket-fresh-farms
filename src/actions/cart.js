@@ -84,7 +84,7 @@ export const addOrder = (payload, callback) => async dispatch => {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
         if (__DEV__) {
-            alert(JSON.stringify(err.response, null, "     "))
+            // alert(JSON.stringify(err.response, null, "     "))
         }
     }
 }
@@ -123,6 +123,18 @@ export const getOrderDetails = (order_id, callback) => async dispatch => {
 export const cancelOrder = (order_id, payload, callback) => async dispatch => {
     try {
         const res = await axiosinstance.post(`/orders/${order_id}/cancel`, payload)
+        callback(res, true)
+    } catch (err) {
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+    }
+}
+
+
+//reOrder
+export const reOrder = (order_id, callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.post(`/v2/orders/${order_id}/reorder`)
         callback(res, true)
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))

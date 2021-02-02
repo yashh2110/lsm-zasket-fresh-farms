@@ -6,8 +6,9 @@ import { Icon } from 'native-base';
 import Modal from 'react-native-modal';
 import moment from 'moment'
 import Icons from 'react-native-vector-icons/FontAwesome';
+import { reOrder } from '../../actions/cart';
 
-const CardMyOrders = ({ item, navigation, cartItems, }) => {
+const CardMyOrders = ({ item, navigation, cartItems, onRepeatOrder, reOrder }) => {
     const [addButton, setAddButton] = useState(true)
     const [isUpdate, setIsUpdate] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
@@ -16,6 +17,17 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
     useEffect(() => {
         setProductItem(item?.items)
     }, [item])
+
+    const onPressRepeatOrder = () => {
+        reOrder(item?.id, (res, status) => {
+            if (status) {
+                onRepeatOrder()
+                alert(JSON.stringify(res?.data, null, "        "))
+            } else {
+                alert(res?.response?.data.description)
+            }
+        })
+    }
 
     return (
         <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { order_id: item?.id })} style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
@@ -78,8 +90,8 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
                     :
                     null
                 }
-                <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { order_id: item?.id })} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Order Details</Text>
+                <TouchableOpacity onPress={() => onPressRepeatOrder()} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Repeat order</Text>
                 </TouchableOpacity>
             </TouchableOpacity>
 
@@ -138,7 +150,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, {})(CardMyOrders)
+export default connect(mapStateToProps, { reOrder })(CardMyOrders)
 const styles = StyleSheet.create({
 
     scrollChildParent: {
