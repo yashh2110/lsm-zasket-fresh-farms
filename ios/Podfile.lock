@@ -372,8 +372,14 @@ PODS:
     - React
   - RNScreens (2.11.0):
     - React
+  - RNSentry (2.2.0):
+    - React-Core
+    - Sentry (= 6.1.4)
   - RNVectorIcons (7.1.0):
     - React
+  - Sentry (6.1.4):
+    - Sentry/Core (= 6.1.4)
+  - Sentry/Core (6.1.4)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -449,6 +455,7 @@ DEPENDENCIES:
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -470,6 +477,7 @@ SPEC REPOS:
     - OneSignal
     - OpenSSL-Universal
     - razorpay-pod
+    - Sentry
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -569,6 +577,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSentry:
+    :path: "../node_modules/@sentry/react-native"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -639,7 +649,9 @@ SPEC CHECKSUMS:
   RNPermissions: 350964d19150b183796a88180fb7ec62a1e41422
   RNReanimated: dd8c286ab5dd4ba36d3a7fef8bff7e08711b5476
   RNScreens: 0e91da98ab26d5d04c7b59a9b6bd694124caf88c
+  RNSentry: 6aeba1adc242fd22a6826acae92f430697b47a9c
   RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
+  Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

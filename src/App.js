@@ -13,8 +13,9 @@ import { OneSignalAppId } from '../env';
 import { BackHandler, Platform } from 'react-native';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
-
+import * as Sentry from "@sentry/react-native";
 const App = () => {
+
   useEffect(() => {
     // store.dispatch(loadUser())
     const initialFunction = async () => {
@@ -28,6 +29,11 @@ const App = () => {
       }
     }
     initialFunction()
+
+    Sentry.init({
+      dsn: "https://3fe28747315644a6adfe8787746b7923@o515547.ingest.sentry.io/5621805",
+    });
+
   }, [])
 
   useEffect(() => {

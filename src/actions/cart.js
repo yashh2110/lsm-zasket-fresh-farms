@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { Alert } from 'react-native';
 import axiosinstance from '../axios/service/api'
 import { CLEAR_CART, GET_CART_ITEMS } from './types'
+import * as Sentry from "@sentry/react-native";
 
 export const getCartItemsApi = (callback) => async dispatch => {
     try {
@@ -83,6 +84,7 @@ export const addOrder = (payload, callback) => async dispatch => {
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
+        Sentry.captureException(err);
         if (__DEV__) {
             // alert(JSON.stringify(err.response, null, "     "))
         }
