@@ -182,6 +182,22 @@ export const applyOffer = (offerCode, orderAmount, callback) => async dispatch =
     }
 }
 
+//getAvailableOffers
+export const getAvailableOffers = (orderAmount, callback) => async dispatch => {
+    try {
+        // console.warn(JSON.stringify(offerCode + "      " + orderAmount, null, "     "))
+        const res = await axiosinstance.get(`/available-offers`, { params: { "order-amount": orderAmount } })
+        // alert(JSON.stringify(res, null, "     "))
+        callback(res, true)
+    } catch (err) {
+
+        // if (__DEV__) {
+        //     alert(JSON.stringify(err.response, null, "     "))
+        // }
+        callback(err, false)
+    }
+}
+
 //rateOrder
 export const rateOrder = (order_id, payload, callback) => async dispatch => {
     try {
