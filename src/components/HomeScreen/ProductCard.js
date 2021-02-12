@@ -3,25 +3,29 @@ import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList }
 import Theme from '../../styles/Theme';
 import { updateCartItemsApi } from '../../actions/cart'
 import { connect } from 'react-redux';
+import LottieView from 'lottie-react-native';
 
 const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthenticated }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(0)
-
+    const [loadingCount, setLoadingCount] = useState(false)
     useEffect(() => {
         let filteredItems = cartItems.filter(element => element?.id == item?.id);
         if (filteredItems.length == 1) {
             setAddButton(false)
             setCount(filteredItems[0].count)
+            setLoadingCount(false)
         } else {
             setAddButton(true)
             setCount(0)
+            setLoadingCount(false)
         }
 
     }, [cartItems])
 
     const onAddToCart = async () => {
         if (isAuthenticated) {
+            setLoadingCount(true)
             updateCartItemsApi(item?.id, 1, (res, status) => {
                 setAddButton(!addButton)
                 setCount(1)
@@ -48,6 +52,7 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
     }
 
     const onUpdateCartItemApi = (quantity) => {
+        setLoadingCount(true)
         updateCartItemsApi(item?.id, quantity, (res, status) => {
             // alert(JSON.stringify(res, null, "     "))
         })
@@ -55,7 +60,7 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
 
     return (
         <View style={{ flex: 1, margin: 4, width: 160, marginBottom: 20 }}>
-            {/* <Text>{JSON.stringify(item?.itemImages?.[0]?.mediumImagePath, null, "         ")} </Text> */}
+            {/* <Text>{JSON.stringify(item?.priority, null, "         ")} </Text> */}
             <TouchableOpacity
                 onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
                 style={[styles.productCard,]}>
@@ -83,33 +88,40 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
                     <Text numberOfLines={1} style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.itemSubName} </Text>
                 </View>
             </TouchableOpacity>
-
-            {addButton ?
-                <TouchableOpacity
-                    onPress={() => onAddToCart()}
-                    style={[styles.addButton, {}]}
-                >
-                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', }}>+ Add </Text>
-                </TouchableOpacity>
+            {!loadingCount ?
+                addButton ?
+                    <TouchableOpacity
+                        onPress={() => onAddToCart()}
+                        style={[styles.addButton, {}]}
+                    >
+                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', padding: 5, }}>+ Add </Text>
+                    </TouchableOpacity>
+                    :
+                    <View style={[styles.addButton, {}]}>
+                        <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5 }}>
+                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
+                        </TouchableOpacity>
+                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
+                        </View>
+                        {count < item?.maxAllowedQuantity ?
+                            <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
+                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
+                            </TouchableOpacity>
+                            : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                                <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
+                            </View>
+                        }
+                    </View>
                 :
                 <View style={[styles.addButton, {}]}>
-                    <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
-                    </TouchableOpacity>
-                    <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
-                    </View>
-                    {count < item?.maxAllowedQuantity ?
-                        <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
-                        </TouchableOpacity>
-                        : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                            <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
-                        </View>
-                    }
+                    <LottieView
+                        style={{ height: 50, }}
+                        source={require("../../assets/json/countLoading.json")}
+                        autoPlay
+                    />
                 </View>
             }
-
         </View>
     )
 }
@@ -149,7 +161,8 @@ const styles = StyleSheet.create({
         elevation: 1,
     },
     addButton: {
-        padding: 5,
+        // padding: 5,
+        height: 28,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

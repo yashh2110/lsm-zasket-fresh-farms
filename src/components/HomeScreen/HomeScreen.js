@@ -125,8 +125,8 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
             OneSignal.init(OneSignalAppId, {
                 kOSSettingsKeyAutoPrompt: true,
             });
-            OneSignal.getPermissionSubscriptionState((status) => {
-                userID = status.userId;
+            OneSignal.getPermissionSubscriptionState(async (status) => {
+                userID = await status.userId;
                 var deviceId = DeviceInfo.getUniqueId();
                 let getBrand = DeviceInfo.getBrand();
                 let version = DeviceInfo.getVersion();
@@ -138,8 +138,10 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                     "phoneModel": getBrand + "-" + model + "   StoreBuildVersion-" + version,
                     "playerId": userID
                 }
-                // alert(JSON.stringify(payload, null, "       "));
-                addCustomerDeviceDetails(payload, (res, status) => { })
+                // alert(JSON.stringify(userID, null, "       "));
+                if (userID) {
+                    addCustomerDeviceDetails(payload, (res, status) => { })
+                }
             });
         }
     }, [isAuthenticated])

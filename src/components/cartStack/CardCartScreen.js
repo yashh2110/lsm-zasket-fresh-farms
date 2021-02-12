@@ -4,25 +4,30 @@ import Theme from '../../styles/Theme';
 import { updateCartItemsApi } from '../../actions/cart'
 import { connect } from 'react-redux';
 import { Icon } from 'native-base';
+import LottieView from 'lottie-react-native';
 
 const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAuthenticated }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(0)
+    const [loadingCount, setLoadingCount] = useState(false)
 
     useEffect(() => {
         let filteredItems = cartItems.filter(element => element?.id == item?.id);
         if (filteredItems.length == 1) {
             setAddButton(false)
             setCount(filteredItems[0].count)
+            setLoadingCount(false)
         } else {
             setAddButton(true)
             setCount(0)
+            setLoadingCount(false)
         }
 
     }, [cartItems])
 
     const onAddToCart = async () => {
         if (isAuthenticated) {
+            setLoadingCount(true)
             updateCartItemsApi(item?.id, 1, (res, status) => {
                 setAddButton(!addButton)
                 setCount(1)
@@ -49,6 +54,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
     }
 
     const onUpdateCartItemApi = (quantity) => {
+        setLoadingCount(true)
         updateCartItemsApi(item?.id, quantity, (res, status) => {
             // alert(JSON.stringify(res, null, "     "))
         })
@@ -73,31 +79,41 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                 <View style={[{ padding: 5, flex: 2 }]}>
                     <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
                     <Text style={{ fontSize: 12, color: '#909090', marginBottom: 10 }}>{item?.itemSubName} </Text>
-                    {addButton ?
-                        <TouchableOpacity
-                            onPress={() => onAddToCart()}
-                            style={[styles.addButton, {}]}
-                        >
-                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+ Add </Text>
-                        </TouchableOpacity>
+                    {!loadingCount ?
+                        addButton ?
+                            <TouchableOpacity
+                                onPress={() => onAddToCart()}
+                                style={[styles.addButton, {}]}
+                            >
+                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', padding: 5, }}>+ Add </Text>
+                            </TouchableOpacity>
+                            :
+                            <View style={[styles.addButton, {}]}>
+                                <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
+                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
+                                </TouchableOpacity>
+                                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
+                                </View>
+                                {count < item?.maxAllowedQuantity ?
+                                    <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
+                                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
+                                    </TouchableOpacity>
+                                    : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                                        <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
+                                    </View>
+                                }
+                            </View>
                         :
                         <View style={[styles.addButton, {}]}>
-                            <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
-                            </TouchableOpacity>
-                            <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
-                            </View>
-                            {count < item?.maxAllowedQuantity ?
-                                <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
-                                </TouchableOpacity>
-                                : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                                    <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
-                                </View>
-                            }
+                            <LottieView
+                                style={{ height: 50, }}
+                                source={require("../../assets/json/countLoading.json")}
+                                autoPlay
+                            />
                         </View>
                     }
+
                 </View>
                 <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', padding: 10, }}>
                     {/* <TouchableOpacity onPress={() => onDeleteItem()} style={{ backgroundColor: 'white', position: 'absolute', top: 0, padding: 10 }}>
@@ -147,7 +163,8 @@ const styles = StyleSheet.create({
         shadowRadius: 1.00
     },
     addButton: {
-        padding: 5,
+        // padding: 5,
+        height: 28,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

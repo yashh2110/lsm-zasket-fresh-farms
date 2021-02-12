@@ -9,12 +9,14 @@ import Theme from '../../styles/Theme';
 import { TouchableOpacity } from 'react-native';
 import { updateCartItemsApi } from '../../actions/cart'
 import CartFloatingCard from '../cartStack/CartFloatingCard';
+import { ActivityIndicator } from 'react-native';
 
 const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCartItemsApi, isAuthenticated }) => {
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
     const [item, setItem] = useState({})
     // const { item } = route?.params;
+    const [loadingCount, setLoadingCount] = useState(false)
 
     useEffect(() => {
         // alert(JSON.stringify(paramsItem, null, "      "))
@@ -49,15 +51,18 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
         let filteredItems = cartItems.filter(element => element?.id == route?.params?.item?.id);
         if (filteredItems.length == 1) {
             setAddButton(false)
+            setLoadingCount(false)
             setCount(filteredItems[0].count)
         } else {
             setAddButton(true)
             setCount(0)
+            setLoadingCount(false)
         }
     }, [cartItems])
 
     const onAddToCart = async () => {
         if (isAuthenticated) {
+            setLoadingCount(true)
             updateCartItemsApi(item?.id, 1, (res, status) => {
                 setAddButton(!addButton)
                 setCount(1)
@@ -84,6 +89,7 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
     }
 
     const onUpdateCartItemApi = (quantity) => {
+        setLoadingCount(true)
         updateCartItemsApi(item?.id, quantity, (res, status) => {
             // alert(JSON.stringify(res, null, "     "))
         })
@@ -132,7 +138,10 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
                     <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ width: 35, height: 35, backgroundColor: "#B90E14", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
                         <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: 20 }}>-</Text>
                     </TouchableOpacity>
-                    <Text style={{ color: 'white', alignSelf: 'center', fontSize: 18 }}>{count} </Text>
+                    {loadingCount ?
+                        <ActivityIndicator color="white" /> :
+                        <Text style={{ color: 'white', alignSelf: 'center', fontSize: 18 }}>{count} </Text>
+                    }
                     {count < item?.maxAllowedQuantity ?
                         <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ width: 35, height: 35, backgroundColor: "#B90E14", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
                             <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: 20 }}>+</Text>

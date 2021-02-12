@@ -69,12 +69,13 @@ const CancelOrderScreen = ({ route, navigation, cancelOrder }) => {
                             type: "success",
                             duration: 5000
                         })
+                        // alert(`${JSON.stringify(res?.data?.isCancelled, null, "        ")}`);
                         navigation.pop(2)
                     } else {
-                        alert(`${res?.data?.cancellationComment}`);
+                        // alert(`${res?.data?.cancellationComment}`);
                     }
                 } else {
-                    // alert(JSON.stringify(res?.response))
+                    // alert(JSON.stringify(res, null, "       "))
                     // console.warn(JSON.stringify(res?.response, null, "      "))
                 }
             })
@@ -101,7 +102,7 @@ const CancelOrderScreen = ({ route, navigation, cancelOrder }) => {
                         return (
                             <TouchableOpacity activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: "center", marginTop: 10 }} onPress={() => { setSelectedReason(el) }}>
                                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Radio selected={selectedReason?.id == el?.id ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} />
+                                    <Radio selected={selectedReason?.id == el?.id ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedReason(el) }} />
                                 </View>
                                 <View style={{ marginLeft: 10 }}>
                                     <Text style={{ color: 'black', fontSize: 14 }}>{el?.reason} </Text>

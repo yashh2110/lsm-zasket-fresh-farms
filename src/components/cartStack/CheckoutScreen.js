@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, TextInput, ScrollView, Image, SafeAreaView, ActivityIndicator, Modal as NativeModal, FlatList } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, TextInput, ScrollView, Image, SafeAreaView, ActivityIndicator, Modal as NativeModal, FlatList, Pressable, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
 import { clearCart } from '../../actions/cart'
 import Theme from '../../styles/Theme';
@@ -36,6 +36,8 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
     const [addressModalVisible, setAddressModalVisible] = useState(false)
     const [couponModalVisible, setCouponModalVisible] = useState(false)
     const [availableCouponList, setAvailableCouponList] = useState([])
+    const [couponSuccessModal, setCouponSuccessModal] = useState(false)
+    const [appliedCoupon, setAppliedCoupon] = useState({})
     // const { offerPrice, selectedOffer } = route.params;
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("PREPAID")
     useEffect(() => {
@@ -322,6 +324,8 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                 setCouponLoading(false)
                 // alert(JSON.stringify(res?.data?.isEligible, null, "     "))
                 if (res?.data?.isEligible) {
+                    setAppliedCoupon(res?.data)
+                    setCouponSuccessModal(true)
                     setOfferPrice(res?.data?.offerPrice)
                     setSelectedOffer(res?.data)
                     Toast.show({
@@ -510,18 +514,11 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                             </View>
                             <View style={{ flex: 1, flexDirection: 'row', borderStyle: 'dashed', borderTopRightRadius: 4, borderBottomRightRadius: 4, backgroundColor: "#FAFAFA", alignItems: "center", borderWidth: 1.5, borderColor: '#E3E3E3', zIndex: 0, marginLeft: -1 }}>
                                 <Text style={{ fontSize: 15, marginLeft: 10, flex: 1 }}>Apply Coupon Code</Text>
-                                {couponLoading ?
-                                    <ActivityIndicator color={Theme.Colors.primary} size="small" style={{ marginRight: 10 }} />
-                                    :
-                                    coupon ?
-                                        <TouchableOpacity onPress={() => onPressApplyCoupon()} style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
-                                            <Text style={{ marginHorizontal: 5, color: Theme.Colors.primary, fontWeight: 'bold' }}>Apply</Text>
-                                        </TouchableOpacity>
-                                        :
-                                        <View style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
-                                            <Icon name="chevron-small-right" type="Entypo" style={[{ color: 'black', fontSize: 26 }]} />
-                                        </View>
-                                }
+
+                                <View style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
+                                    <Icon name="chevron-small-right" type="Entypo" style={[{ color: 'black', fontSize: 26 }]} />
+                                </View>
+
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -644,6 +641,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
             <NativeModal
                 animationType="slide"
                 visible={couponModalVisible}
+                onRequestClose={() => setCouponModalVisible(false)}
             >
                 <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
                     <Root>
@@ -754,6 +752,36 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                     }
                 </SafeAreaView>
             </NativeModal>
+            <NativeModal
+                animationType="fade"
+                transparent={true}
+                visible={couponSuccessModal}
+                onRequestClose={() => setCouponSuccessModal(false)}
+            >
+                <TouchableWithoutFeedback onPress={() => { setCouponSuccessModal(false) }} >
+                    <View style={styles.centeredView}>
+                        <TouchableWithoutFeedback onPress={() => { }}>
+                            <View style={styles.modalView}>
+                                <View style={{ backgroundColor: '#FDEFEF', borderWidth: 1, borderColor: "#F77E82", justifyContent: 'center', alignItems: 'center', zIndex: 1, borderRadius: 50, height: 50, width: 50, alignSelf: 'center', marginTop: -25 }}>
+                                    <Image
+                                        style={{ height: 16, width: 50, }}
+                                        resizeMode={"contain"}
+                                        source={require('../../assets/png/couponImage.png')}
+                                    />
+                                </View>
+                                <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+                                    <Text style={styles.modalText}>{appliedCoupon?.offer?.uiListDisplayNameHeader}</Text>
+                                    <Text style={{ color: '#909090', textAlign: "center", fontSize: 14 }}>Saving with this coupon</Text>
+                                    <Text style={{ color: '#909090', fontWeight: 'bold', textAlign: "center", marginVertical: 10 }}>“{appliedCoupon?.offer?.offerCode}” Applied</Text>
+                                </View>
+                                <TouchableOpacity onPress={() => { setCouponSuccessModal(false) }} style={{ backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center', padding: 10, borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
+                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>OK </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </View>
+                </TouchableWithoutFeedback>
+            </NativeModal>
         </View >
     );
 }
@@ -784,4 +812,39 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 5
     },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        // marginTop: 22,
+        backgroundColor: 'rgba(52, 52, 52, 0.8)'
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 10,
+        // padding: 35,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    buttonClose: {
+        backgroundColor: "#2196F3",
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    modalText: {
+        color: "#E1171E",
+        fontWeight: 'bold',
+        fontSize: 16,
+        textAlign: "center"
+    }
 });
