@@ -35,6 +35,8 @@
 	<string>3588521487934442</string>
 	<key>FacebookDisplayName</key>
 	<string>Zasket</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>itms-apps</string>

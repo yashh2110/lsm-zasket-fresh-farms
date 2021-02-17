@@ -105,7 +105,8 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                         text: res?.data?.comments,
                         buttonText: "Okay",
                         type: "danger",
-                        duration: 3000
+                        duration: 3000,
+                        buttonStyle: { backgroundColor: "#a52f2b" }
                     })
                 }
             } else {

@@ -231,7 +231,8 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         Toast.show({
                             text: res?.response?.data?.description,
                             type: "danger",
-                            duration: 3000
+                            duration: 3000,
+                            buttonStyle: { backgroundColor: "#a52f2b" }
                         })
                     }
                 }
@@ -247,7 +248,6 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                 setLoading(false)
                 if (status) {
                     setPaymentSelectionActionScreen(false)
-                    console.warn(JSON.stringify(res?.data, null, "        "))
                     let userDetails = await AsyncStorage.getItem('userDetails');
                     let parsedUserDetails = await JSON.parse(userDetails);
                     var options = {
@@ -265,6 +265,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         },
                         theme: { color: Theme.Colors.primary }
                     }
+                    // console.warn(JSON.stringify(options, null, "        "))
                     RazorpayCheckout.open(options).then((data) => {
                         // handle success
                         // alert(`Success: ${data.razorpay_payment_id}`);
@@ -279,7 +280,8 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         Toast.show({
                             text: "Payment failed",
                             buttonText: "Okay",
-                            type: "danger"
+                            type: "danger",
+                            buttonStyle: { backgroundColor: "#a52f2b" }
                         })
                     })
                 } else {
@@ -288,7 +290,8 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         Toast.show({
                             text: res?.response?.data?.description,
                             type: "danger",
-                            duration: 3000
+                            duration: 3000,
+                            buttonStyle: { backgroundColor: "#a52f2b" }
                         })
                     }
                     // if (__DEV__) {
@@ -341,7 +344,8 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         text: res?.data?.comments,
                         buttonText: "Okay",
                         type: "danger",
-                        duration: 3000
+                        duration: 3000,
+                        buttonStyle: { backgroundColor: "#a52f2b" }
                     })
                 }
             } else {
@@ -523,7 +527,42 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         </View>
                     </TouchableOpacity>
                 }
-
+                <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15 }}>
+                    <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Select payment method</Text>
+                    <TouchableOpacity activeOpacity={0.8} style={{
+                        flexDirection: 'row', backgroundColor: "white", borderRadius: 5, alignItems: "center", padding: 10, marginTop: 10, borderWidth: 1, borderColor: '#EFEFEF'
+                    }} onPress={() => {
+                        setSelectedPaymentMethod("PREPAID")
+                    }}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <Radio style={{ width: 20 }} selected={selectedPaymentMethod == "PREPAID" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedPaymentMethod("PREPAID") }} />
+                        </View>
+                        <View style={{ marginLeft: 10, flexDirection: 'row', flex: 1 }}>
+                            <View style={{ flex: 1 }}>
+                                <Text style={{ color: 'black', fontSize: 14, fontWeight: "bold" }}>Make Online Payment </Text>
+                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: null }}>Preferred payment due to covid </Text>
+                            </View>
+                            <View style={{}}>
+                                <Image
+                                    style={{ alignSelf: 'flex-end', width: 80, height: 30, }}
+                                    resizeMode="contain"
+                                    source={require('../../assets/png/paymentImages.png')}
+                                />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.8} style={{
+                        flexDirection: 'row', backgroundColor: "white", borderRadius: 5, alignItems: "center", padding: 10, marginTop: 10, marginBottom: 10, minHeight: 50, borderWidth: 1, borderColor: '#EFEFEF'
+                    }} onPress={() => { setSelectedPaymentMethod("COD") }}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <Radio style={{ width: 20 }} selected={selectedPaymentMethod == "COD" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedPaymentMethod("COD") }} />
+                        </View>
+                        <View style={{ marginLeft: 10 }}>
+                            <Text style={{ color: 'black', fontSize: 14, fontWeight: "bold" }}>Cash on delivery </Text>
+                            {/* <Text style={{ color: '#727272', fontSize: 12, fontWeight: null }}>Coupon Codes not applicable for COD </Text> */}
+                        </View>
+                    </TouchableOpacity>
+                </View>
                 <View style={{ backgroundColor: 'white', marginTop: 10, padding: 10, paddingHorizontal: 15 }}>
                     <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
@@ -556,25 +595,38 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         : undefined}
                 </View>
             </ScrollView>
-            {cartItems?.length > 0 ?
-                <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
-                    <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
-                        {/* <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
-                            <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
-                        </TouchableOpacity> */}
-                    </View>
-                    {nextDayBuffer == undefined || nextDayBuffer == null ?
-                        <View style={{ flex: 1.2, backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
-                            <Text style={{ color: 'white', fontSize: 17 }}>Make a Payment <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
+            {
+                cartItems?.length > 0 ?
+                    <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
+                        <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
+                            <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
+                                <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
+                            </TouchableOpacity>
                         </View>
-                        :
-                        <TouchableOpacity onPress={() => { onPressMakePayment() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                        {nextDayBuffer == undefined || nextDayBuffer == null ?
+                            <View style={{ flex: 1.2, backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                                <Text style={{ color: 'white', fontSize: 17 }}>Make a Payment <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
+                            </View>
+                            :
+                            <>
+                                {/* <TouchableOpacity onPress={() => { onPressMakePayment() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
                             <Text style={{ color: 'white', fontSize: 17 }}>Make a Payment <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
-                        </TouchableOpacity>
-                    }
-                </View>
-                : undefined}
+                        </TouchableOpacity> */}
+                                {loading ?
+                                    <View style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                                        <ActivityIndicator color="white" />
+                                    </View>
+                                    :
+                                    <TouchableOpacity onPress={() => onPressContinue()} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{selectedPaymentMethod == "COD" ? "Place Order" : "Continue"} </Text>
+                                    </TouchableOpacity>
+                                }
+                            </>
+                        }
+                    </View>
+                    : undefined
+            }
             <AddressModal
                 addressModalVisible={addressModalVisible}
                 navigateTo="MapScreen"
@@ -631,10 +683,10 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         </TouchableOpacity>
                     </ScrollView>
 
-                    {loading ?
+                    {/* {loading ?
                         <Loader /> : <TouchableOpacity onPress={() => onPressContinue()} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{selectedPaymentMethod == "COD" ? "Place Order" : "Continue"} </Text>
-                        </TouchableOpacity>}
+                        </TouchableOpacity>} */}
                 </SafeAreaView>
             </Modal>
 
