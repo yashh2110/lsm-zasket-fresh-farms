@@ -171,10 +171,10 @@ export const applyOffer = (offerCode, orderAmount, callback) => async dispatch =
             "orderAmount": orderAmount
         }
         const res = await axiosinstance.post(`/v2/apply-offer`, payload)
-        // alert(JSON.stringify(res, null, "     "))
+        await AsyncStorage.setItem('appliedCoupon', JSON.stringify(res?.data))
         callback(res, true)
     } catch (err) {
-
+        await AsyncStorage.removeItem('appliedCoupon')
         // if (__DEV__) {
         //     alert(JSON.stringify(err.response, null, "     "))
         // }

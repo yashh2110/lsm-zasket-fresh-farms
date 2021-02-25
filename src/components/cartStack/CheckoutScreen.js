@@ -12,13 +12,13 @@ import moment from 'moment'
 import { Radio, Toast, Root, Container, Content } from 'native-base';
 import RazorpayCheckout from 'react-native-razorpay';
 import Modal from 'react-native-modal';
-import { applyOffer, getAvailableOffers } from '../../actions/cart'
+import { applyOffer, getAvailableOffers, } from '../../actions/cart'
 import Loader from '../common/Loader';
 import AddressModal from '../common/AddressModal';
 import { AppEventsLogger } from "react-native-fbsdk";
-
-const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer, getAvailableOffers }) => {
+const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDetails, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer, getAvailableOffers }) => {
     const scrollViewRef = useRef();
+    const [coupon, setCoupon] = useState("")
     const [totalCartValue, setTotalCartValue] = useState(0)
     const [loading, setLoading] = useState(false)
     const [nextDayBuffer, setNextDayBuffer] = useState(undefined)
@@ -31,7 +31,6 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
     const [couponLoading, setCouponLoading] = useState(false)
     const [selectedOffer, setSelectedOffer] = useState({})
     const [offerPrice, setOfferPrice] = useState(0)
-    const [coupon, setCoupon] = useState("")
     const [proceedPaymentMethod, setProceedPaymentMethod] = useState(false)
     const [addressModalVisible, setAddressModalVisible] = useState(false)
     const [couponModalVisible, setCouponModalVisible] = useState(false)
@@ -40,12 +39,21 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
     const [appliedCoupon, setAppliedCoupon] = useState({})
     // const { offerPrice, selectedOffer } = route.params;
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("PREPAID")
+
+    const totalCartValueRef = useRef(totalCartValue);
+
+    const setTotalCartValueRef = newText => {
+        totalCartValueRef.current = newText;
+        setTotalCartValue(newText);
+    };
+
+
     useEffect(() => {
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
                 return sum + (item.discountedPrice * item.count);
             }, 0);
-            setTotalCartValue(total)
+            setTotalCartValueRef(total)
 
             let saved = cartItems.reduce(function (sum, item) {
                 return sum + ((item.actualPrice - item.discountedPrice) * item.count);
@@ -58,7 +66,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
 
             setMarketPrice(marketPriceValue)
         } else {
-            setTotalCartValue(0)
+            setTotalCartValueRef(0)
             setSavedValue(0)
         }
     }, [cartItems])
@@ -223,6 +231,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                 if (status) {
                     setPaymentSelectionActionScreen(false)
                     onClearCart()
+                    await AsyncStorage.removeItem('appliedCoupon')
                     navigation.pop()
                     AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
                     navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
@@ -266,10 +275,11 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         theme: { color: Theme.Colors.primary }
                     }
                     // console.warn(JSON.stringify(options, null, "        "))
-                    RazorpayCheckout.open(options).then((data) => {
+                    RazorpayCheckout.open(options).then(async (data) => {
                         // handle success
                         // alert(`Success: ${data.razorpay_payment_id}`);
                         onClearCart()
+                        await AsyncStorage.removeItem('appliedCoupon')
                         navigation.pop()
                         AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
                         navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
@@ -315,38 +325,70 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
         }
     }
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', async () => {
+            let offerDetail = await AsyncStorage.getItem('appliedCoupon');
+            let parsedCouponDetails = await JSON.parse(offerDetail);
+            // console.warn(JSON.stringify(parsedCouponDetails?.offer?.offerCode))
+            if (parsedCouponDetails !== null) {
+                if (parsedCouponDetails?.offer?.offerCode) {
+                    onPressApplyCoupon(parsedCouponDetails?.offer?.offerCode, totalCartValueRef.current, false)
+                }
+            }
+        });
+        return unsubscribe;
+    }, [navigation]);
+
+    // useEffect(() => {
+    //     if (totalCartValue > config?.freeDeliveryMinOrder) {
+    //         if (offerPrice > 0) {
+    //             onPressApplyCoupon()
+    //         } else {
+    //             removeOffer()
+    //         }
+    //     } else {
+    //         console.warn('removed here')
+    //         removeOffer()
+    //     }
+    // }, [totalCartValue])
 
 
-
-    const onPressApplyCoupon = async (option = undefined) => {
+    const onPressApplyCoupon = async (option = undefined, optionalTotalCartValue = undefined, showAlert = true) => {
         setCouponLoading(true)
-        // console.warn(coupon + "         " + totalCartValue)
         let couponValue = option ? option : coupon
-        applyOffer(couponValue, totalCartValue, (res, status) => {
+        let cartValue = optionalTotalCartValue ? optionalTotalCartValue : totalCartValue
+        // console.warn(couponValue + "         " + cartValue)
+        applyOffer(couponValue, cartValue, (res, status) => {
             if (status) {
                 setCouponLoading(false)
                 // alert(JSON.stringify(res?.data?.isEligible, null, "     "))
                 if (res?.data?.isEligible) {
                     setAppliedCoupon(res?.data)
-                    setCouponSuccessModal(true)
+                    if (showAlert) {
+                        setCouponSuccessModal(true)
+                    }
                     setOfferPrice(res?.data?.offerPrice)
                     setSelectedOffer(res?.data)
-                    Toast.show({
-                        text: res?.data?.comments,
-                        buttonText: "Okay",
-                        type: "success",
-                        duration: 3000
-                    })
+                    // Toast.show({
+                    //     text: res?.data?.comments,
+                    //     buttonText: "Okay",
+                    //     type: "success",
+                    //     duration: 3000
+                    // })
                     setCouponModalVisible(false)
                     setCouponLoading(false)
                 } else {
-                    Toast.show({
-                        text: res?.data?.comments,
-                        buttonText: "Okay",
-                        type: "danger",
-                        duration: 3000,
-                        buttonStyle: { backgroundColor: "#a52f2b" }
-                    })
+                    // alert(res?.data?.comments)
+                    removeOffer()
+                    if (showAlert) {
+                        Toast.show({
+                            text: res?.data?.comments,
+                            buttonText: "Okay",
+                            type: "danger",
+                            duration: 3000,
+                            buttonStyle: { backgroundColor: "#a52f2b" }
+                        })
+                    }
                 }
             } else {
                 if (__DEV__) {
@@ -354,18 +396,21 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                 }
                 setCouponLoading(false)
                 removeOffer()
-                // Toast.show({
-                //     text: res?.response?.comments,
-                //     buttonText: "Okay",
-                //     type: "danger"
-                // })
+                if (showAlert) {
+                    Toast.show({
+                        text: res?.response?.comments,
+                        buttonText: "Okay",
+                        type: "danger"
+                    })
+                }
             }
         })
     }
-    const removeOffer = () => {
+    const removeOffer = async () => {
         setOfferPrice(0)
         setCoupon("")
         setSelectedOffer([])
+        await AsyncStorage.removeItem('appliedCoupon')
     }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -528,7 +573,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                     </TouchableOpacity>
                 }
                 <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15 }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Select payment method</Text>
+                    <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Select payment method </Text>
                     <TouchableOpacity activeOpacity={0.8} style={{
                         flexDirection: 'row', backgroundColor: "white", borderRadius: 5, alignItems: "center", padding: 10, marginTop: 10, borderWidth: 1, borderColor: '#EFEFEF'
                     }} onPress={() => {
@@ -567,7 +612,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                     <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                         <Text style={{ color: '#727272' }}>Item Total</Text>
-                        <Text style={{}}>₹ {(totalCartValue).toFixed(2)} </Text>
+                        <Text style={{}}>₹ {(totalCartValue)?.toFixed(2)} </Text>
                     </View>
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
@@ -764,7 +809,9 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                                         </View>}
 
                                     <View style={{ backgroundColor: 'white', marginTop: 10 }}>
-                                        <Text style={{ paddingLeft: 20, paddingTop: 10, fontWeight: 'bold' }}>Available Coupons for you</Text>
+                                        {availableCouponList?.length > 0 ?
+                                            <Text style={{ paddingLeft: 20, paddingTop: 10, fontWeight: 'bold' }}>Available Coupons for you</Text>
+                                            : null}
                                         <FlatList
                                             data={availableCouponList}
                                             renderItem={({ item }) =>
@@ -779,7 +826,10 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                                                             <View style={{ justifyContent: 'space-between', alignItems: 'flex-end', flexDirection: 'row', borderWidth: 1, borderColor: "#F77E82", borderStyle: 'dashed', backgroundColor: '#FDEFEF', padding: 7, borderRadius: 4 }}>
                                                                 <Text style={{ fontSize: 14, color: '#E1171E', fontWeight: 'bold' }}>{item?.offerCode} </Text>
                                                             </View>
-                                                            <TouchableOpacity onPress={() => onPressApplyCoupon(item?.offerCode)} style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                                            <TouchableOpacity onPress={() => {
+                                                                setCoupon(item?.offerCode)
+                                                                onPressApplyCoupon(item?.offerCode)
+                                                            }} style={{ justifyContent: 'center', alignItems: 'center' }}>
                                                                 <Text style={{ marginHorizontal: 5, color: Theme.Colors.primary, fontWeight: 'bold' }}>Apply</Text>
                                                             </TouchableOpacity>
                                                         </View>
@@ -834,12 +884,13 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                     </View>
                 </TouchableWithoutFeedback>
             </NativeModal>
-        </View >
+        </View>
     );
 }
 
 const mapStateToProps = (state) => ({
     cartItems: state.cart.cartItems,
+    offerDetails: state.cart.couponDetails,
     darkMode: state.dark,
     categories: state.home.categories,
     config: state.config.config,
@@ -847,7 +898,7 @@ const mapStateToProps = (state) => ({
     userLocation: state.location,
 })
 
-export default connect(mapStateToProps, { clearCart, getV2DeliverySlots, addOrder, applyOffer, getAvailableOffers })(CheckoutScreen)
+export default connect(mapStateToProps, { clearCart, getV2DeliverySlots, addOrder, applyOffer, getAvailableOffers, })(CheckoutScreen)
 
 const styles = StyleSheet.create({
     button: {

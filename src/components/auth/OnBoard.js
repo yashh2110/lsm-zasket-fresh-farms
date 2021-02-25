@@ -61,7 +61,9 @@ const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) 
                 {/* <Text style={{ textAlign: 'center', color: "#727272", marginTop: 10 }}>We care about your health,</Text> */}
                 <Text style={{ textAlign: 'center', color: "#727272", marginTop: 5 }}>Get fresh fruits and vegetables at wholesale price, free to your home.</Text>
                 <Button full style={{ backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, marginTop: "10%", }} onPress={() => onPressSetDeliveryLocation()}><Text style={{ textTransform: 'uppercase' }}>SET DELIVERY LOCATION</Text></Button>
-                <Text onPress={() => _onDone()} style={{ textAlign: 'center', color: "#727272", marginTop: 10, }}>Have an account? <Text style={{ color: Theme.Colors.primary }}>Login</Text></Text>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => _onDone()} style={{ paddingHorizontal: 50, paddingVertical: 20 }}>
+                    <Text onPress={() => _onDone()} style={{ textAlign: 'center', color: "#727272", }}>Have an account? <Text style={{ color: Theme.Colors.primary }}>Login</Text></Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
