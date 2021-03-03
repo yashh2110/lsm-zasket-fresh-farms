@@ -61,7 +61,7 @@ const SupportScreen = ({ navigation }) => {
                             />
                         </View>
                         <View style={{ flex: 1, justifyContent: 'center', paddingLeft: 15 }}>
-                            <Text style={{ color: '#727272' }}>Call Us</Text>
+                            <Text style={{ color: '#727272' }}>Call Us (10AM - 5PM) </Text>
                             <Text style={{ fontWeight: 'bold' }}>6300105949</Text>
                         </View>
                     </TouchableOpacity>

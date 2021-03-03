@@ -28,8 +28,10 @@ import AddressModal from '../common/AddressModal';
 import { getAllUserAddress } from '../../actions/map'
 import Modal from 'react-native-modal';
 import SetDeliveryLocationModal from '../common/SetDeliveryLocationModal'
+import { EventRegister } from 'react-native-event-listeners'
 
 const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
+    const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
 
     useEffect(() => {
         const onReceived = (notification) => {
@@ -64,6 +66,24 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
             OneSignal.removeEventListener('received', onReceived);
             OneSignal.removeEventListener('opened', onOpened);
             OneSignal.removeEventListener('ids', onIds);
+        }
+    }, [])
+
+    useEffect(() => {
+        const listener = EventRegister.addEventListener('SessionExpiryEvent', (data) => {
+            if (data == "logOut") {
+                Alert.alert(
+                    "Session Expired",
+                    "Please login again",
+                    [
+                        { text: "OK", onPress: () => onPressLogout() }
+                    ],
+                    { cancelable: false }
+                );
+            }
+        });
+        return () => {
+            EventRegister.removeEventListener(listener)
         }
     }, [])
 
@@ -105,8 +125,8 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
             OneSignal.init(OneSignalAppId, {
                 kOSSettingsKeyAutoPrompt: true,
             });
-            OneSignal.getPermissionSubscriptionState((status) => {
-                userID = status.userId;
+            OneSignal.getPermissionSubscriptionState(async (status) => {
+                userID = await status.userId;
                 var deviceId = DeviceInfo.getUniqueId();
                 let getBrand = DeviceInfo.getBrand();
                 let version = DeviceInfo.getVersion();
@@ -118,8 +138,10 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                     "phoneModel": getBrand + "-" + model + "   StoreBuildVersion-" + version,
                     "playerId": userID
                 }
-                // alert(JSON.stringify(payload, null, "       "));
-                addCustomerDeviceDetails(payload, (res, status) => { })
+                // alert(JSON.stringify(userID, null, "       "));
+                if (userID) {
+                    addCustomerDeviceDetails(payload, (res, status) => { })
+                }
             });
         }
     }, [isAuthenticated])
@@ -258,8 +280,8 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
     }
 
     const onPressLogout = async () => {
-        navigation.navigate("OnBoardScreen")
         await onLogout()
+        removeOnBoardKey()
     }
     const onPressUpdate = () => {
         if (Platform.OS == "ios") {

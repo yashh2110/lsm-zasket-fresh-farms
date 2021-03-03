@@ -44,7 +44,7 @@ const CancelOrderScreen = ({ route, navigation, cancelOrder }) => {
     const [selectedReason, setSelectedReason] = useState({})
     const [customReason, setCustomReason] = useState("")
     const [errorColor, setErrorColor] = useState("#909090")
-
+    const [loading, setLoading] = useState(false)
     const validate = () => {
         let status = true
         if (selectedReason?.id == 1) {
@@ -60,21 +60,33 @@ const CancelOrderScreen = ({ route, navigation, cancelOrder }) => {
             let payload = {
                 cancellation_reason: selectedReason?.id == 1 ? customReason : selectedReason?.reason
             }
+            setLoading(true)
             cancelOrder(item?.id, payload, (res, status) => {
                 if (status) {
                     if (res?.data?.isCancelled) {
-                        Toast.show({
-                            text: `${res?.data?.cancellationComment}`,
-                            buttonText: "Okay",
-                            type: "success",
-                            duration: 5000
-                        })
+                        Alert.alert(
+                            "Alert",
+                            `${res?.data?.cancellationComment}`,
+                            [
+                                { text: "OK", onPress: () => console.log("OK Pressed") }
+                            ],
+                            { cancelable: true }
+                        );
+                        // Toast.show({
+                        //     text: `${res?.data?.cancellationComment}`,
+                        //     buttonText: "Okay",
+                        //     type: "success",
+                        //     duration: 5000
+                        // })
                         navigation.pop(2)
+                        setLoading(false)
                     } else {
-                        alert(`${res?.data?.cancellationComment}`);
+                        // alert(`${res?.data?.cancellationComment}`);
+                        setLoading(false)
                     }
                 } else {
-                    // alert(JSON.stringify(res?.response))
+                    setLoading(false)
+                    // alert(JSON.stringify(res, null, "       "))
                     // console.warn(JSON.stringify(res?.response, null, "      "))
                 }
             })
@@ -101,7 +113,7 @@ const CancelOrderScreen = ({ route, navigation, cancelOrder }) => {
                         return (
                             <TouchableOpacity activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: "center", marginTop: 10 }} onPress={() => { setSelectedReason(el) }}>
                                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Radio selected={selectedReason?.id == el?.id ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} />
+                                    <Radio selected={selectedReason?.id == el?.id ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedReason(el) }} />
                                 </View>
                                 <View style={{ marginLeft: 10 }}>
                                     <Text style={{ color: 'black', fontSize: 14 }}>{el?.reason} </Text>
@@ -145,9 +157,14 @@ const CancelOrderScreen = ({ route, navigation, cancelOrder }) => {
                         <Text style={{ color: 'white', fontSize: 17 }}>Confirm <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
                     </View>
                     :
-                    <TouchableOpacity onPress={() => { onPressConfirm() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
-                        <Text style={{ color: 'white', fontSize: 17 }}>Confirm <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
-                    </TouchableOpacity>
+                    loading ?
+                        <View style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                            <ActivityIndicator color={"white"} />
+                        </View>
+                        :
+                        <TouchableOpacity onPress={() => { onPressConfirm() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                            <Text style={{ color: 'white', fontSize: 17 }}>Confirm <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
+                        </TouchableOpacity>
                 }
             </View>
         </View>

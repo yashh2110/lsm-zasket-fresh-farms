@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { Alert } from 'react-native';
 import axiosinstance from '../axios/service/api'
 import { CLEAR_CART, GET_CART_ITEMS } from './types'
+import * as Sentry from "@sentry/react-native";
 
 export const getCartItemsApi = (callback) => async dispatch => {
     try {
@@ -83,8 +84,9 @@ export const addOrder = (payload, callback) => async dispatch => {
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
+        Sentry.captureException(err);
         if (__DEV__) {
-            alert(JSON.stringify(err.response, null, "     "))
+            // alert(JSON.stringify(err.response, null, "     "))
         }
     }
 }
@@ -130,6 +132,18 @@ export const cancelOrder = (order_id, payload, callback) => async dispatch => {
     }
 }
 
+
+//reOrder
+export const reOrder = (order_id, callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.post(`/v2/orders/${order_id}/reorder`)
+        callback(res, true)
+    } catch (err) {
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+    }
+}
+
 //getAllOffers
 export const getAllOffers = (callback) => async dispatch => {
     try {
@@ -157,6 +171,22 @@ export const applyOffer = (offerCode, orderAmount, callback) => async dispatch =
             "orderAmount": orderAmount
         }
         const res = await axiosinstance.post(`/v2/apply-offer`, payload)
+        await AsyncStorage.setItem('appliedCoupon', JSON.stringify(res?.data))
+        callback(res, true)
+    } catch (err) {
+        await AsyncStorage.removeItem('appliedCoupon')
+        // if (__DEV__) {
+        //     alert(JSON.stringify(err.response, null, "     "))
+        // }
+        callback(err, false)
+    }
+}
+
+//getAvailableOffers
+export const getAvailableOffers = (orderAmount, callback) => async dispatch => {
+    try {
+        // console.warn(JSON.stringify(offerCode + "      " + orderAmount, null, "     "))
+        const res = await axiosinstance.get(`/available-offers`, { params: { "order-amount": orderAmount } })
         // alert(JSON.stringify(res, null, "     "))
         callback(res, true)
     } catch (err) {

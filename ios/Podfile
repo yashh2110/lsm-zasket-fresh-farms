@@ -13,7 +13,8 @@ target 'Zasket' do
   pod 'react-native-razorpay', :path => '../node_modules/react-native-razorpay'
 
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
-
+  
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
   permissions_path = '../node_modules/react-native-permissions/ios'
 
   pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways"

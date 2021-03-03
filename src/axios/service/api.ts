@@ -1,7 +1,7 @@
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage'
 import { AxiosDefaultsManager } from '../default'
-// import { EventRegister } from 'react-native-event-listeners'
+import { EventRegister } from 'react-native-event-listeners'
 import { baseURL } from '../../../env'
 
 const axiosinstance = axios.create({
@@ -43,16 +43,16 @@ axiosinstance.interceptors.response.use(
         return response
     },
     error => {
-        if (error.response.status == '422') {
-            if (error.response.data.message == "Missing token") {
-                // EventRegister.emit('SessionExpiryEvent', 'logOut')
+        if (error.response.status == '400') {
+            if (error.response.data.description == "Session Expired!!. Please login again") {
+                EventRegister.emit('SessionExpiryEvent', 'logOut')
             }
         }
-        if (error.response.status == '401') {
-            if (error.response.data.message == ("Session Expired" || "Signature has expired")) {
-                // EventRegister.emit('SessionExpiryEvent', 'logOut')
-            }
-        }
+        // if (error.response.status == '401') {
+        //     if (error.response.data.message == ("Session Expired" || "Signature has expired")) {
+        // EventRegister.emit('SessionExpiryEvent', 'logOut')
+        //     }
+        // }
         return Promise.reject(error);
     }
 );

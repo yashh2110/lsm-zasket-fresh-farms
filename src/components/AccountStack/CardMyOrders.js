@@ -6,8 +6,9 @@ import { Icon } from 'native-base';
 import Modal from 'react-native-modal';
 import moment from 'moment'
 import Icons from 'react-native-vector-icons/FontAwesome';
+import { reOrder, getCartItemsApi } from '../../actions/cart';
 
-const CardMyOrders = ({ item, navigation, cartItems, }) => {
+const CardMyOrders = ({ item, navigation, cartItems, onRepeatOrder, getCartItemsApi, reOrder }) => {
     const [addButton, setAddButton] = useState(true)
     const [isUpdate, setIsUpdate] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
@@ -16,6 +17,24 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
     useEffect(() => {
         setProductItem(item?.items)
     }, [item])
+
+    const onPressRepeatOrder = () => {
+        reOrder(item?.id, (res, status) => {
+            if (status) {
+                // onRepeatOrder()
+                getCartItemsApi((res, status) => {
+                    if (status) {
+                        navigation.navigate("CartStack", { screen: 'Cart' })
+                    } else {
+
+                    }
+                })
+                // alert(JSON.stringify(res?.data, null, "        "))
+            } else {
+                // alert(res?.response?.data.description)
+            }
+        })
+    }
 
     return (
         <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { order_id: item?.id })} style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
@@ -78,9 +97,15 @@ const CardMyOrders = ({ item, navigation, cartItems, }) => {
                     :
                     null
                 }
-                <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { order_id: item?.id })} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Order Details</Text>
-                </TouchableOpacity>
+                {item?.orderState == "IN_INVENTORY" || item?.orderState == "ASSIGNED" ?
+                    <TouchableOpacity onPress={() => navigation.navigate('MyOrdersDetailScreen', { order_id: item?.id })} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Order details</Text>
+                    </TouchableOpacity>
+                    :
+                    <TouchableOpacity onPress={() => onPressRepeatOrder()} style={{ backgroundColor: 'white', flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Repeat order</Text>
+                    </TouchableOpacity>
+                }
             </TouchableOpacity>
 
             <Modal
@@ -138,7 +163,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, {})(CardMyOrders)
+export default connect(mapStateToProps, { reOrder, getCartItemsApi })(CardMyOrders)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

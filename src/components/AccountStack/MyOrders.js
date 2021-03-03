@@ -50,7 +50,10 @@ const MyOrders = ({ route, navigation, getCustomerOrders }) => {
                 <FlatList
                     data={orderDetails}
                     renderItem={({ item }) =>
-                        <CardMyOrders item={item} navigation={navigation} />
+                        <CardMyOrders item={item} navigation={navigation} onRepeatOrder={() => {
+                            setLoading(true)
+                            initialFunction()
+                        }} />
                     }
                     onRefresh={() => onRefresh()}
                     refreshing={refresh}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, TextInput, ScrollView, Image, SafeAreaView, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, TextInput, ScrollView, Image, SafeAreaView, ActivityIndicator, Modal as NativeModal, FlatList, Pressable, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
 import { clearCart } from '../../actions/cart'
 import Theme from '../../styles/Theme';
@@ -9,15 +9,16 @@ import { Button, Icon } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage';
 import { getV2DeliverySlots, addOrder } from '../../actions/cart'
 import moment from 'moment'
-import { Radio, Toast } from 'native-base';
+import { Radio, Toast, Root, Container, Content } from 'native-base';
 import RazorpayCheckout from 'react-native-razorpay';
 import Modal from 'react-native-modal';
-import { applyOffer } from '../../actions/cart'
+import { applyOffer, getAvailableOffers, } from '../../actions/cart'
 import Loader from '../common/Loader';
 import AddressModal from '../common/AddressModal';
-
-const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer }) => {
+import { AppEventsLogger } from "react-native-fbsdk";
+const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDetails, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer, getAvailableOffers }) => {
     const scrollViewRef = useRef();
+    const [coupon, setCoupon] = useState("")
     const [totalCartValue, setTotalCartValue] = useState(0)
     const [loading, setLoading] = useState(false)
     const [nextDayBuffer, setNextDayBuffer] = useState(undefined)
@@ -30,18 +31,29 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
     const [couponLoading, setCouponLoading] = useState(false)
     const [selectedOffer, setSelectedOffer] = useState({})
     const [offerPrice, setOfferPrice] = useState(0)
-    const [coupon, setCoupon] = useState("")
     const [proceedPaymentMethod, setProceedPaymentMethod] = useState(false)
     const [addressModalVisible, setAddressModalVisible] = useState(false)
-
+    const [couponModalVisible, setCouponModalVisible] = useState(false)
+    const [availableCouponList, setAvailableCouponList] = useState([])
+    const [couponSuccessModal, setCouponSuccessModal] = useState(false)
+    const [appliedCoupon, setAppliedCoupon] = useState({})
     // const { offerPrice, selectedOffer } = route.params;
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("PREPAID")
+
+    const totalCartValueRef = useRef(totalCartValue);
+
+    const setTotalCartValueRef = newText => {
+        totalCartValueRef.current = newText;
+        setTotalCartValue(newText);
+    };
+
+
     useEffect(() => {
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
                 return sum + (item.discountedPrice * item.count);
             }, 0);
-            setTotalCartValue(total)
+            setTotalCartValueRef(total)
 
             let saved = cartItems.reduce(function (sum, item) {
                 return sum + ((item.actualPrice - item.discountedPrice) * item.count);
@@ -54,10 +66,24 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
 
             setMarketPrice(marketPriceValue)
         } else {
-            setTotalCartValue(0)
+            setTotalCartValueRef(0)
             setSavedValue(0)
         }
     }, [cartItems])
+
+    useEffect(() => {
+        getAvailableOffers(totalCartValue, (res, status) => {
+            if (status) {
+                let newArray = []
+                res?.data?.forEach((el, index) => {
+                    if (el?.isActive) newArray.push(el)
+                })
+                setAvailableCouponList(newArray)
+            } else {
+
+            }
+        })
+    }, [totalCartValue])
 
     useEffect(() => {
         // alert(JSON.stringify(userLocation, null, "    "))
@@ -162,13 +188,12 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
             navigation.navigate('MapScreen', { fromScreen: "CartScreen" })
         }
     }
-    const onPressContinue = () => {
-        setLoading(true)
-        setPaymentSelectionActionScreen(false)
+    const onPressContinue = async () => {
+        await setLoading(true)
         if (selectedPaymentMethod == "PREPAID") {
-            onSelectPaymentMethod("PREPAID")
+            await onSelectPaymentMethod("PREPAID")
         } else if (selectedPaymentMethod == "COD") {
-            onSelectPaymentMethod("COD")
+            await onSelectPaymentMethod("COD")
         }
     }
 
@@ -204,9 +229,21 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
             addOrder(codPayload, async (res, status) => {
                 setLoading(false)
                 if (status) {
+                    setPaymentSelectionActionScreen(false)
                     onClearCart()
+                    await AsyncStorage.removeItem('appliedCoupon')
                     navigation.pop()
+                    AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
                     navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                } else {
+                    if (res?.response?.data?.description) {
+                        Toast.show({
+                            text: res?.response?.data?.description,
+                            type: "danger",
+                            duration: 3000,
+                            buttonStyle: { backgroundColor: "#a52f2b" }
+                        })
+                    }
                 }
             })
         } else if (option == "PREPAID") {
@@ -215,11 +252,11 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                 ...payload,
                 "paymentMethod": "PREPAID"
             }
-            console.warn(JSON.stringify(payload, null, "     "))
+            // console.warn(JSON.stringify(payload, null, "     "))
             addOrder(prepaidPayload, async (res, status) => {
                 setLoading(false)
                 if (status) {
-                    console.warn(JSON.stringify(res?.data, null, "        "))
+                    setPaymentSelectionActionScreen(false)
                     let userDetails = await AsyncStorage.getItem('userDetails');
                     let parsedUserDetails = await JSON.parse(userDetails);
                     var options = {
@@ -237,11 +274,14 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         },
                         theme: { color: Theme.Colors.primary }
                     }
-                    RazorpayCheckout.open(options).then((data) => {
+                    // console.warn(JSON.stringify(options, null, "        "))
+                    RazorpayCheckout.open(options).then(async (data) => {
                         // handle success
                         // alert(`Success: ${data.razorpay_payment_id}`);
                         onClearCart()
+                        await AsyncStorage.removeItem('appliedCoupon')
                         navigation.pop()
+                        AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
                         navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
                         // navigation.navigate('AccountStack', { screen: 'MyOrders' })
                     }).catch((error) => {
@@ -250,14 +290,23 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         Toast.show({
                             text: "Payment failed",
                             buttonText: "Okay",
-                            type: "danger"
+                            type: "danger",
+                            buttonStyle: { backgroundColor: "#a52f2b" }
                         })
                     })
                 } else {
                     setLoading(false)
-                    if (__DEV__) {
-                        alert(JSON.stringify(res?.response, null, "        "))
+                    if (res?.response?.data?.description) {
+                        Toast.show({
+                            text: res?.response?.data?.description,
+                            type: "danger",
+                            duration: 3000,
+                            buttonStyle: { backgroundColor: "#a52f2b" }
+                        })
                     }
+                    // if (__DEV__) {
+                    //     alert(JSON.stringify(res?.response, null, "        "))
+                    // }
                     let errorItems = []
                     if (res?.response?.data?.length > 0) {
                         if (cartItems.length > 0) {
@@ -276,33 +325,70 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
         }
     }
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', async () => {
+            let offerDetail = await AsyncStorage.getItem('appliedCoupon');
+            let parsedCouponDetails = await JSON.parse(offerDetail);
+            // console.warn(JSON.stringify(parsedCouponDetails?.offer?.offerCode))
+            if (parsedCouponDetails !== null) {
+                if (parsedCouponDetails?.offer?.offerCode) {
+                    onPressApplyCoupon(parsedCouponDetails?.offer?.offerCode, totalCartValueRef.current, false)
+                }
+            }
+        });
+        return unsubscribe;
+    }, [navigation]);
+
+    // useEffect(() => {
+    //     if (totalCartValue > config?.freeDeliveryMinOrder) {
+    //         if (offerPrice > 0) {
+    //             onPressApplyCoupon()
+    //         } else {
+    //             removeOffer()
+    //         }
+    //     } else {
+    //         console.warn('removed here')
+    //         removeOffer()
+    //     }
+    // }, [totalCartValue])
 
 
-
-    const onPressApplyCoupon = async () => {
+    const onPressApplyCoupon = async (option = undefined, optionalTotalCartValue = undefined, showAlert = true) => {
         setCouponLoading(true)
-        // console.warn(coupon + "         " + totalCartValue)
-        applyOffer(coupon, totalCartValue, (res, status) => {
+        let couponValue = option ? option : coupon
+        let cartValue = optionalTotalCartValue ? optionalTotalCartValue : totalCartValue
+        // console.warn(couponValue + "         " + cartValue)
+        applyOffer(couponValue, cartValue, (res, status) => {
             if (status) {
                 setCouponLoading(false)
                 // alert(JSON.stringify(res?.data?.isEligible, null, "     "))
                 if (res?.data?.isEligible) {
+                    setAppliedCoupon(res?.data)
+                    if (showAlert) {
+                        setCouponSuccessModal(true)
+                    }
                     setOfferPrice(res?.data?.offerPrice)
                     setSelectedOffer(res?.data)
-                    Toast.show({
-                        text: res?.data?.comments,
-                        buttonText: "Okay",
-                        type: "success",
-                        duration: 3000
-                    })
+                    // Toast.show({
+                    //     text: res?.data?.comments,
+                    //     buttonText: "Okay",
+                    //     type: "success",
+                    //     duration: 3000
+                    // })
+                    setCouponModalVisible(false)
                     setCouponLoading(false)
                 } else {
-                    Toast.show({
-                        text: res?.data?.comments,
-                        buttonText: "Okay",
-                        type: "danger",
-                        duration: 3000
-                    })
+                    // alert(res?.data?.comments)
+                    removeOffer()
+                    if (showAlert) {
+                        Toast.show({
+                            text: res?.data?.comments,
+                            buttonText: "Okay",
+                            type: "danger",
+                            duration: 3000,
+                            buttonStyle: { backgroundColor: "#a52f2b" }
+                        })
+                    }
                 }
             } else {
                 if (__DEV__) {
@@ -310,18 +396,21 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                 }
                 setCouponLoading(false)
                 removeOffer()
-                // Toast.show({
-                //     text: res?.response?.comments,
-                //     buttonText: "Okay",
-                //     type: "danger"
-                // })
+                if (showAlert) {
+                    Toast.show({
+                        text: res?.response?.comments,
+                        buttonText: "Okay",
+                        type: "danger"
+                    })
+                }
             }
         })
     }
-    const removeOffer = () => {
+    const removeOffer = async () => {
         setOfferPrice(0)
         setCoupon("")
         setSelectedOffer([])
+        await AsyncStorage.removeItem('appliedCoupon')
     }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -458,10 +547,12 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         </View>
                     </View>
                     :
-                    <View style={{
-                        backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, paddingVertical: 10, justifyContent: 'center',
-                        // borderTopWidth: 1, borderBottomWidth: 1, borderColor: Theme.Colors.primary,
-                    }}>
+                    <TouchableOpacity
+                        onPress={() => { setCouponModalVisible(true) }}
+                        style={{
+                            backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, paddingVertical: 10, justifyContent: 'center',
+                            // borderTopWidth: 1, borderBottomWidth: 1, borderColor: Theme.Colors.primary,
+                        }}>
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ backgroundColor: '#FDEFEF', borderWidth: 1, borderColor: "#F5C4C6", borderTopLeftRadius: 4, borderBottomLeftRadius: 4, justifyContent: 'center', alignItems: 'center', zIndex: 1 }}>
                                 <Image
@@ -471,35 +562,57 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                                 />
                             </View>
                             <View style={{ flex: 1, flexDirection: 'row', borderStyle: 'dashed', borderTopRightRadius: 4, borderBottomRightRadius: 4, backgroundColor: "#FAFAFA", alignItems: "center", borderWidth: 1.5, borderColor: '#E3E3E3', zIndex: 0, marginLeft: -1 }}>
-                                <TextInput
-                                    style={{ height: 40, flex: 1, marginLeft: 8, }}
-                                    onChangeText={text => setCoupon(text)}
-                                    placeholder="Enter Coupon Code"
-                                    value={coupon}
-                                    placeholderTextColor="black"
-                                    autoCapitalize="characters"
-                                />
-                                {couponLoading ?
-                                    <ActivityIndicator color={Theme.Colors.primary} size="small" style={{ marginRight: 10 }} />
-                                    :
-                                    coupon ?
-                                        <TouchableOpacity onPress={() => onPressApplyCoupon()} style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
-                                            <Text style={{ marginHorizontal: 5, color: Theme.Colors.primary, fontWeight: 'bold' }}>Apply</Text>
-                                        </TouchableOpacity>
-                                        :
-                                        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
-                                            <Text style={{ marginHorizontal: 5, color: "#F5B0B2", fontWeight: 'bold' }}>Apply</Text>
-                                        </TouchableOpacity>
-                                }
+                                <Text style={{ fontSize: 15, marginLeft: 10, flex: 1 }}>Apply Coupon Code</Text>
+
+                                <View style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
+                                    <Icon name="chevron-small-right" type="Entypo" style={[{ color: 'black', fontSize: 26 }]} />
+                                </View>
+
                             </View>
                         </View>
-                    </View>}
-
+                    </TouchableOpacity>
+                }
+                <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15 }}>
+                    <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Select payment method </Text>
+                    <TouchableOpacity activeOpacity={0.8} style={{
+                        flexDirection: 'row', backgroundColor: "white", borderRadius: 5, alignItems: "center", padding: 10, marginTop: 10, borderWidth: 1, borderColor: '#EFEFEF'
+                    }} onPress={() => {
+                        setSelectedPaymentMethod("PREPAID")
+                    }}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <Radio style={{ width: 20 }} selected={selectedPaymentMethod == "PREPAID" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedPaymentMethod("PREPAID") }} />
+                        </View>
+                        <View style={{ marginLeft: 10, flexDirection: 'row', flex: 1 }}>
+                            <View style={{ flex: 1 }}>
+                                <Text style={{ color: 'black', fontSize: 14, fontWeight: "bold" }}>Make Online Payment </Text>
+                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: null }}>Preferred payment due to covid </Text>
+                            </View>
+                            <View style={{}}>
+                                <Image
+                                    style={{ alignSelf: 'flex-end', width: 80, height: 30, }}
+                                    resizeMode="contain"
+                                    source={require('../../assets/png/paymentImages.png')}
+                                />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.8} style={{
+                        flexDirection: 'row', backgroundColor: "white", borderRadius: 5, alignItems: "center", padding: 10, marginTop: 10, marginBottom: 10, minHeight: 50, borderWidth: 1, borderColor: '#EFEFEF'
+                    }} onPress={() => { setSelectedPaymentMethod("COD") }}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <Radio style={{ width: 20 }} selected={selectedPaymentMethod == "COD" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedPaymentMethod("COD") }} />
+                        </View>
+                        <View style={{ marginLeft: 10 }}>
+                            <Text style={{ color: 'black', fontSize: 14, fontWeight: "bold" }}>Cash on delivery </Text>
+                            {/* <Text style={{ color: '#727272', fontSize: 12, fontWeight: null }}>Coupon Codes not applicable for COD </Text> */}
+                        </View>
+                    </TouchableOpacity>
+                </View>
                 <View style={{ backgroundColor: 'white', marginTop: 10, padding: 10, paddingHorizontal: 15 }}>
                     <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                         <Text style={{ color: '#727272' }}>Item Total</Text>
-                        <Text style={{}}>₹ {(totalCartValue).toFixed(2)} </Text>
+                        <Text style={{}}>₹ {(totalCartValue)?.toFixed(2)} </Text>
                     </View>
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
@@ -527,25 +640,38 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         : undefined}
                 </View>
             </ScrollView>
-            {cartItems?.length > 0 ?
-                <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
-                    <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
-                        {/* <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
-                            <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
-                        </TouchableOpacity> */}
-                    </View>
-                    {nextDayBuffer == undefined || nextDayBuffer == null ?
-                        <View style={{ flex: 1.2, backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
-                            <Text style={{ color: 'white', fontSize: 17 }}>Make a Payment <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
+            {
+                cartItems?.length > 0 ?
+                    <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
+                        <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
+                            <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
+                                <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
+                            </TouchableOpacity>
                         </View>
-                        :
-                        <TouchableOpacity onPress={() => { onPressMakePayment() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                        {nextDayBuffer == undefined || nextDayBuffer == null ?
+                            <View style={{ flex: 1.2, backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                                <Text style={{ color: 'white', fontSize: 17 }}>Make a Payment <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
+                            </View>
+                            :
+                            <>
+                                {/* <TouchableOpacity onPress={() => { onPressMakePayment() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
                             <Text style={{ color: 'white', fontSize: 17 }}>Make a Payment <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
-                        </TouchableOpacity>
-                    }
-                </View>
-                : undefined}
+                        </TouchableOpacity> */}
+                                {loading ?
+                                    <View style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                                        <ActivityIndicator color="white" />
+                                    </View>
+                                    :
+                                    <TouchableOpacity onPress={() => onPressContinue()} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{selectedPaymentMethod == "COD" ? "Place Order" : "Continue"} </Text>
+                                    </TouchableOpacity>
+                                }
+                            </>
+                        }
+                    </View>
+                    : undefined
+            }
             <AddressModal
                 addressModalVisible={addressModalVisible}
                 navigateTo="MapScreen"
@@ -602,18 +728,169 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, clearCar
                         </TouchableOpacity>
                     </ScrollView>
 
-                    {loading ?
-                        <Loader /> : <TouchableOpacity onPress={onPressContinue} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>
+                    {/* {loading ?
+                        <Loader /> : <TouchableOpacity onPress={() => onPressContinue()} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{selectedPaymentMethod == "COD" ? "Place Order" : "Continue"} </Text>
-                        </TouchableOpacity>}
+                        </TouchableOpacity>} */}
                 </SafeAreaView>
             </Modal>
-        </View >
+
+            <NativeModal
+                animationType="slide"
+                visible={couponModalVisible}
+                onRequestClose={() => setCouponModalVisible(false)}
+            >
+                <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+                    <Root>
+                        <Container>
+                            <Content>
+                                <View style={{ flexDirection: 'row', minHeight: 50 }}>
+                                    <TouchableOpacity
+                                        onPress={() => { setCouponModalVisible(false) }}
+                                        style={{ width: 60, justifyContent: 'center', alignItems: 'center', }}
+                                    >
+                                        <Icon name="chevron-small-left" type="Entypo" style={[{ color: 'black', fontSize: 36 }]} />
+                                    </TouchableOpacity>
+                                    <View style={{ flex: 1, justifyContent: 'center', }}>
+                                        <Text style={{ fontSize: 18, color: 'black', textTransform: 'capitalize', fontWeight: 'bold' }}>Apply Coupon </Text>
+                                    </View>
+                                </View>
+                                <View style={{ flex: 1, backgroundColor: '#F8F8F8' }} >
+                                    {selectedOffer?.offer?.displayName ?
+                                        <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, paddingVertical: 10, justifyContent: 'center' }}>
+                                            <View style={{ flex: 1, flexDirection: 'row', }}>
+                                                <View style={{ backgroundColor: '#FDEFEF', borderWidth: 1, borderColor: "#F5C4C6", borderTopLeftRadius: 4, borderBottomLeftRadius: 4, justifyContent: 'center', alignItems: 'center', zIndex: 1 }}>
+                                                    <Image
+                                                        style={{ height: 16, width: 50, }}
+                                                        resizeMode={"contain"}
+                                                        source={require('../../assets/png/couponImage.png')}
+                                                    />
+                                                </View>
+                                                <View style={{ flex: 1, flexDirection: 'row', borderStyle: 'dashed', borderTopRightRadius: 4, borderBottomRightRadius: 4, backgroundColor: "#FAFAFA", alignItems: "center", borderWidth: 1.5, borderColor: '#E3E3E3', zIndex: 0, marginLeft: -1 }}>
+                                                    <View style={{ flex: 1 }}>
+                                                        <Text style={{ fontSize: 14, color: "#E1171E", marginLeft: 10, fontWeight: 'bold' }}>{selectedOffer?.offer?.displayName} </Text>
+                                                        <Text style={{ fontSize: 12, color: '#727272', marginLeft: 10 }}>Coupon applied on the bill</Text>
+                                                    </View>
+                                                    <TouchableOpacity onPress={() => { removeOffer() }} style={{ justifyContent: 'center', alignItems: 'center', height: 50, width: 50 }}>
+                                                        <Icon name="closecircle" type="AntDesign" style={{ fontSize: 18, color: '#c9c9c9' }} />
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        </View>
+                                        :
+                                        <View style={{
+                                            backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, paddingVertical: 10, justifyContent: 'center', height: 65
+                                            // borderTopWidth: 1, borderBottomWidth: 1, borderColor: Theme.Colors.primary,
+                                        }}>
+                                            <View style={{ flex: 1, flexDirection: 'row' }}>
+                                                {/* <View style={{ backgroundColor: '#FDEFEF', borderWidth: 1, borderColor: "#F5C4C6", borderTopLeftRadius: 4, borderBottomLeftRadius: 4, justifyContent: 'center', alignItems: 'center', zIndex: 1 }}>
+                                                <Image
+                                                    style={{ height: 16, width: 50, }}
+                                                    resizeMode={"contain"}
+                                                    source={require('../../assets/png/couponImage.png')}
+                                                />
+                                            </View> */}
+                                                <View style={{ flex: 1, flexDirection: 'row', borderStyle: 'dashed', borderTopRightRadius: 4, borderBottomRightRadius: 4, backgroundColor: "#FAFAFA", alignItems: "center", borderWidth: 1.5, borderColor: '#E3E3E3', zIndex: 0, marginLeft: -1 }}>
+                                                    <TextInput
+                                                        style={{ height: 40, flex: 1, marginLeft: 8, }}
+                                                        onChangeText={text => setCoupon(text)}
+                                                        placeholder="Apply Coupon Code"
+                                                        value={coupon}
+                                                        placeholderTextColor="black"
+                                                        autoCapitalize="characters"
+                                                    />
+
+                                                    <TouchableOpacity onPress={() => onPressApplyCoupon()} style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
+                                                        <Text style={{ marginHorizontal: 5, color: Theme.Colors.primary, fontWeight: 'bold' }}>Apply</Text>
+                                                    </TouchableOpacity>
+
+                                                </View>
+                                            </View>
+                                        </View>}
+
+                                    <View style={{ backgroundColor: 'white', marginTop: 10 }}>
+                                        {availableCouponList?.length > 0 ?
+                                            <Text style={{ paddingLeft: 20, paddingTop: 10, fontWeight: 'bold' }}>Available Coupons for you</Text>
+                                            : null}
+                                        <FlatList
+                                            data={availableCouponList}
+                                            renderItem={({ item }) =>
+                                                <View
+                                                    // onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
+                                                    style={styles.productCard}>
+                                                    {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
+                                                    <View style={[{ padding: 10, flex: 1 }]}>
+                                                        <Text style={{ fontSize: 16, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.uiListDisplayNameHeader} </Text>
+                                                        <Text style={{ fontSize: 14, color: '#909090', marginVertical: 5 }}>{item?.uiListDisplayNameSubHeader} </Text>
+                                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                            <View style={{ justifyContent: 'space-between', alignItems: 'flex-end', flexDirection: 'row', borderWidth: 1, borderColor: "#F77E82", borderStyle: 'dashed', backgroundColor: '#FDEFEF', padding: 7, borderRadius: 4 }}>
+                                                                <Text style={{ fontSize: 14, color: '#E1171E', fontWeight: 'bold' }}>{item?.offerCode} </Text>
+                                                            </View>
+                                                            <TouchableOpacity onPress={() => {
+                                                                setCoupon(item?.offerCode)
+                                                                onPressApplyCoupon(item?.offerCode)
+                                                            }} style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                                                <Text style={{ marginHorizontal: 5, color: Theme.Colors.primary, fontWeight: 'bold' }}>Apply</Text>
+                                                            </TouchableOpacity>
+                                                        </View>
+                                                    </View>
+                                                </View>
+                                            }
+                                            ItemSeparatorComponent={() => (
+                                                <View
+                                                    style={{ height: 0.7, width: "90%", alignSelf: 'center', backgroundColor: '#EAEAEC', }}
+                                                />
+                                            )}
+                                            keyExtractor={item => item?.id.toString()}
+                                        />
+                                    </View>
+
+                                </View>
+                            </Content>
+                        </Container>
+                    </Root>
+                    {couponLoading &&
+                        <Loader />
+                    }
+                </SafeAreaView>
+            </NativeModal>
+            <NativeModal
+                animationType="fade"
+                transparent={true}
+                visible={couponSuccessModal}
+                onRequestClose={() => setCouponSuccessModal(false)}
+            >
+                <TouchableWithoutFeedback onPress={() => { setCouponSuccessModal(false) }} >
+                    <View style={styles.centeredView}>
+                        <TouchableWithoutFeedback onPress={() => { }}>
+                            <View style={styles.modalView}>
+                                <View style={{ backgroundColor: '#FDEFEF', borderWidth: 1, borderColor: "#F77E82", justifyContent: 'center', alignItems: 'center', zIndex: 1, borderRadius: 50, height: 50, width: 50, alignSelf: 'center', marginTop: -25 }}>
+                                    <Image
+                                        style={{ height: 16, width: 50, }}
+                                        resizeMode={"contain"}
+                                        source={require('../../assets/png/couponImage.png')}
+                                    />
+                                </View>
+                                <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+                                    <Text style={styles.modalText}>{appliedCoupon?.offer?.uiListDisplayNameHeader}</Text>
+                                    <Text style={{ color: '#909090', textAlign: "center", fontSize: 14 }}>Saving with this coupon</Text>
+                                    <Text style={{ color: '#909090', fontWeight: 'bold', textAlign: "center", marginVertical: 10 }}>“{appliedCoupon?.offer?.offerCode}” Applied</Text>
+                                </View>
+                                <TouchableOpacity onPress={() => { setCouponSuccessModal(false) }} style={{ backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center', padding: 10, borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
+                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>OK </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </View>
+                </TouchableWithoutFeedback>
+            </NativeModal>
+        </View>
     );
 }
 
 const mapStateToProps = (state) => ({
     cartItems: state.cart.cartItems,
+    offerDetails: state.cart.couponDetails,
     darkMode: state.dark,
     categories: state.home.categories,
     config: state.config.config,
@@ -621,7 +898,7 @@ const mapStateToProps = (state) => ({
     userLocation: state.location,
 })
 
-export default connect(mapStateToProps, { clearCart, getV2DeliverySlots, addOrder, applyOffer })(CheckoutScreen)
+export default connect(mapStateToProps, { clearCart, getV2DeliverySlots, addOrder, applyOffer, getAvailableOffers, })(CheckoutScreen)
 
 const styles = StyleSheet.create({
     button: {
@@ -631,4 +908,46 @@ const styles = StyleSheet.create({
         width: 300,
         marginTop: 16,
     },
+    productCard: {
+        flexDirection: 'row',
+        backgroundColor: '#FFFFFF',
+        flex: 1,
+        paddingHorizontal: 10,
+        paddingVertical: 5
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        // marginTop: 22,
+        backgroundColor: 'rgba(52, 52, 52, 0.8)'
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 10,
+        // padding: 35,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    buttonClose: {
+        backgroundColor: "#2196F3",
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    modalText: {
+        color: "#E1171E",
+        fontWeight: 'bold',
+        fontSize: 16,
+        textAlign: "center"
+    }
 });

@@ -5,6 +5,7 @@ import axiosinstance from '../axios/service/api';
 import {
     GET_CATEGORIES, GET_CONFIG, SET_BANNER_IMAGES
 } from './types';
+import * as Sentry from "@sentry/react-native";
 
 //getV2Config
 export const getV2Config = (callback) => async dispatch => {
@@ -18,6 +19,7 @@ export const getV2Config = (callback) => async dispatch => {
         });
         callback(res, true)
     } catch (err) {
+        Sentry.captureException(err);
         console.warn('config api error')
         // alert(JSON.stringify(err?.response, null, "      "))
         dispatch({
