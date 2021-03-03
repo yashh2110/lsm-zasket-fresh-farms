@@ -154,7 +154,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                 {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")} </Text> */}
                 {cartItems.length > 0 ?
                     <>
-                        {userLocation?.addressLine_1 ?
+                        {userLocation?.lat ?
                             <View style={{ backgroundColor: 'white', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
                                 <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center' }}>
                                     <Image
@@ -345,7 +345,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                             <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
                         </TouchableOpacity>
                     </View>
-                    {userLocation?.addressLine_1 ?
+                    {userLocation?.lat ?
                         totalCartValue < config?.freeDeliveryMinOrder ?
                             <View style={{ flex: 1.2, backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
                                 <Text style={{ color: 'white', fontSize: 14 }}>Add ₹{config?.freeDeliveryMinOrder - totalCartValue} more to order</Text>

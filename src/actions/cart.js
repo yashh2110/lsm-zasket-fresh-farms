@@ -67,7 +67,7 @@ export const getV2DeliverySlots = (numOfDays, lat, lon, callback) => async dispa
         const res = await axiosinstance.get('/order/v3/delivery-slots', { params: { numOfDays: numOfDays, lat: lat, lon: lon } })
         callback(res, true)
     } catch (err) {
-        Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        // alert(JSON.stringify(err.response.data, null, "     "))
         callback(err, false)
     }
 }

@@ -43,7 +43,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLo
                         setLoading(false)
                         await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
                         onLogin(response?.data)
-                        if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+                        if (homeScreenLocation?.lat == undefined || homeScreenLocation?.lat == "") {
                             navigation.dispatch(StackActions.popToTop());
                             navigation.goBack();
                             navigation.navigate("SwitchNavigator")

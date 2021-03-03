@@ -24,7 +24,7 @@ const AddressModal = ({ item, navigation, navigateTo, homeScreenLocation, addLoc
                 if (el?.isActive) newArray.push(el)
             })
             setSavedUserAddresses(newArray)
-            if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+            if (homeScreenLocation?.lat == undefined || homeScreenLocation?.lat == "") {
                 onPressSavedAddress(newArray[0])
             }
         }
@@ -34,7 +34,7 @@ const AddressModal = ({ item, navigation, navigateTo, homeScreenLocation, addLoc
         // Alert.alert(JSON.stringify(item, null, "      "))
         let payload = {
             id: item?.id,
-            addressLine_1: item?.addressLine_1,
+            addressLine_1: item?.addressLine_1 ? item?.addressLine_1 : "",
             lat: item?.lat,
             lon: item?.lon,
             recepientName: item?.recepientName,
@@ -45,7 +45,7 @@ const AddressModal = ({ item, navigation, navigateTo, homeScreenLocation, addLoc
         }
         addLocation(payload)
         addHomeScreenLocation({
-            addressLine_1: item?.addressLine_1,
+            addressLine_1: item?.addressLine_1 ? item?.addressLine_1 : "",
             lat: item?.lat,
             lon: item?.lon,
             pincode: item?.pincode

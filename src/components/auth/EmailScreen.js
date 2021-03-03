@@ -77,7 +77,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                         setLoading(false)
                         // navigation.navigate('BottomTabRoute')
 
-                        if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+                        if (homeScreenLocation?.lat == undefined || homeScreenLocation?.lat == "") {
                             navigation.dispatch(StackActions.popToTop());
                             navigation.goBack();
                             navigation.navigate("SwitchNavigator")
