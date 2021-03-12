@@ -72,9 +72,9 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
                             { uri: item?.itemImages[0]?.mediumImagePath } : require('../../assets/png/default.png')}
                     />
                 </View>
-                <View style={[{ padding: 10 }]}>
+                <View style={[{ padding: 10, }]}>
                     <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
-                    <View style={{ flexDirection: 'row', marginTop: 5 }}>
+                    <View style={{ flexDirection: 'row', marginTop: 5, flexWrap: 'wrap' }}>
                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice} </Text>
                         {item?.discountedPrice == item?.actualPrice ?
                             undefined :
