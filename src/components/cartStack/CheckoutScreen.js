@@ -236,6 +236,9 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
                     AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
                     navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
                 } else {
+                    if (__DEV__) {
+                        alert(JSON.stringify(res?.response))
+                    }
                     if (res?.response?.data?.description) {
                         Toast.show({
                             text: res?.response?.data?.description,

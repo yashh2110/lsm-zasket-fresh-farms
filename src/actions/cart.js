@@ -211,3 +211,14 @@ export const rateOrder = (order_id, payload, callback) => async dispatch => {
         callback(err, false)
     }
 }
+
+//findItems
+export const findItems = (item_ids, callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.get('/items/find', { params: { item_ids: item_ids, } })
+        callback(res, true)
+    } catch (err) {
+        // alert(JSON.stringify(err.response.data, null, "     "))
+        callback(err, false)
+    }
+}
