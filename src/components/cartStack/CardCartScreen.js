@@ -107,19 +107,19 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                                         <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
                                             <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>+</Text>
                                         </TouchableOpacity>
-                                        : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                                        : <TouchableOpacity onPress={() => { }} activeOpacity={1} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
                                             <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
-                                        </View>
+                                        </TouchableOpacity>
                                     }
                                 </View>
                             :
-                            <View style={[styles.addButton, {}]}>
+                            <TouchableOpacity onPress={() => { }} activeOpacity={1} style={[styles.addButton, {}]}>
                                 <LottieView
                                     style={{ height: 50, }}
                                     source={require("../../assets/json/countLoading.json")}
                                     autoPlay
                                 />
-                            </View>
+                            </TouchableOpacity>
                         }
 
                     </View>

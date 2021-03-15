@@ -274,7 +274,7 @@ class MyMapView extends React.Component {
             await this.setState({ loading: true })
             let payload;
             payload = {
-                // "addressLine1": this.state.address,
+                "addressLine1": this.state.address,
                 "houseNo": this.state.houseNumber,
                 "pincode": this.state.pincode,
                 "isActive": true,

@@ -38,18 +38,18 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
             }, 0);
             setSavedValue(saved)
 
-            cartItems?.map(element => {
-                if (element?.count > element?.maxAllowedQuantity) {
+
+            for (var i = 0; i < cartItems.length; i++) {
+                if (cartItems[i]?.count > cartItems[i]?.maxAllowedQuantity) {
                     setIsCartIssue(true)
-                    return false
-                }
-                if (element?.isActive == false) {
+                    break;
+                } else if (cartItems[i]?.isActive == false) {
                     setIsCartIssue(true)
-                    return false
+                    break;
                 } else {
                     setIsCartIssue(false)
                 }
-            });
+            }
 
         } else {
             setTotalCartValue(0)
@@ -360,7 +360,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                 <View style={{ height: 55, width: "100%", backgroundColor: '#FDEFEF', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>
                         <FeatherIcons name="info" color={'#E1271E'} size={18} />
-                        <Text style={{ color: "#E1271E" }}> Please resolve the issues to continue </Text>
+                        <Text style={{ color: "#E1271E" }}> Please resolve cart item issues to continue. </Text>
                     </View>
                 </View>
             }
