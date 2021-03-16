@@ -88,7 +88,7 @@ const Login = ({ navigation, darkMode, requestOtp }) => {
                     </TouchableOpacity>
                     <Text style={{ marginTop: "4%", fontSize: 20, fontWeight: Platform.OS == "ios" ? "500" : "700", letterSpacing: .5 }}>Enter Mobile Number</Text>
                     <Text style={{ marginTop: "2%", fontSize: 14, color: "#727272" }}>Login or Sign up to get started</Text>
-                    <View style={{ flex: 1, marginTop: "15%" }}>
+                    <View style={{ flex: 1, marginTop: "15%", zIndex: 1, }}>
                         <Text style={{ fontSize: 14, color: "#727272" }}>Mobile Number</Text>
                         <View style={{ borderBottomColor: Theme.Colors.primary, flexDirection: 'row', borderBottomWidth: 1 }}>
                             <View style={{ justifyContent: 'center' }}>
@@ -115,9 +115,11 @@ const Login = ({ navigation, darkMode, requestOtp }) => {
                                 }, 100);
                             }}><Text style={{ textTransform: 'capitalize' }}>Continue</Text></Button>
                         }
-                        <Text style={{ marginTop: 10, zIndex: 1, fontSize: 12, color: "#727272", textAlign: 'center' }}>By proceeding to create your account you are agreeing to our <Text onPress={() => handleClick("TERMS")} style={{ fontWeight: 'bold', fontSize: 13 }}>Terms of Service</Text> and <Text onPress={() => handleClick("PRIVACY")} style={{ fontWeight: 'bold', fontSize: 14 }}>Privacy Policy</Text></Text>
+                        <View style={{ marginTop: 10, zIndex: 1 }}>
+                            <Text style={{ fontSize: 12, color: "#727272", textAlign: 'center' }}>By proceeding to create your account you are agreeing to our <Text onPress={() => handleClick("TERMS")} style={{ fontWeight: 'bold', fontSize: 13 }}>Terms of Service</Text> and <Text onPress={() => handleClick("PRIVACY")} style={{ fontWeight: 'bold', fontSize: 14 }}>Privacy Policy</Text></Text>
+                        </View>
                     </View>
-                    <View style={{ justifyContent: 'flex-end', alignItems: 'center' }}>
+                    <View style={{ justifyContent: 'flex-end', alignItems: 'center', zIndex: 0, }}>
                         <Image
                             style={{ height: 300, width: 400, zIndex: 0, }}
                             resizeMode="contain"

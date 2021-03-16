@@ -43,7 +43,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLo
                         setLoading(false)
                         await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
                         onLogin(response?.data)
-                        if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+                        if (homeScreenLocation?.lat == undefined || homeScreenLocation?.lat == "") {
                             navigation.dispatch(StackActions.popToTop());
                             navigation.goBack();
                             navigation.navigate("SwitchNavigator")
@@ -100,7 +100,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLo
                     contentContainerStyle={{ flex: 1, }}
                     keyboardShouldPersistTaps="always"
                     showsVerticalScrollIndicator={false}>
-                    <View style={{ width: "90%", alignSelf: "center", flex: 1, }}>
+                    <View style={{ width: "90%", alignSelf: "center", flex: 1, zIndex: 1 }}>
                         <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 10, width: 40, height: 40, justifyContent: 'center', }}>
                             <Image
                                 style={{ width: 20, height: 20, }}
@@ -159,7 +159,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLo
 
                         </View>
                     </View>
-                    <View style={{}}>
+                    <View style={{ zIndex: 0 }}>
                         <Image
                             style={{ width: "70%", height: 100, marginLeft: "5%" }}
                             resizeMode="contain"

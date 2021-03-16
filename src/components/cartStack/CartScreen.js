@@ -12,6 +12,7 @@ import moment from 'moment'
 import { getV2Config } from '../../actions/home';
 import AddressModal from '../common/AddressModal';
 import { getAllUserAddress } from '../../actions/map'
+import FeatherIcons from "react-native-vector-icons/Feather"
 
 const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, allUserAddress, getAllUserAddress, applyOffer, getCartItemsApi, getV2Config }) => {
     const scrollViewRef = useRef();
@@ -24,7 +25,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
     const [selectedOffer, setSelectedOffer] = useState({})
     const [refresh, setRefresh] = useState(false)
     const [addressModalVisible, setAddressModalVisible] = useState(false)
-
+    const [isCartIssue, setIsCartIssue] = useState(false)
     useEffect(() => {
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
@@ -36,10 +37,25 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                 return sum + ((item.actualPrice - item.discountedPrice) * item.count);
             }, 0);
             setSavedValue(saved)
+
+
+            for (var i = 0; i < cartItems.length; i++) {
+                if (cartItems[i]?.count > cartItems[i]?.maxAllowedQuantity) {
+                    setIsCartIssue(true)
+                    break;
+                } else if (cartItems[i]?.isActive == false) {
+                    setIsCartIssue(true)
+                    break;
+                } else {
+                    setIsCartIssue(false)
+                }
+            }
+
         } else {
             setTotalCartValue(0)
             setSavedValue(0)
         }
+
     }, [cartItems])
 
     const initialFunction = () => {
@@ -145,6 +161,9 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
             navigation.navigate('MapScreen', { fromScreen: "CartScreen" })
         }
     }
+    // const cartIssue = (option) => {
+    //     setIsCartIssue(option)
+    // }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Cart"} showSearch={false} />
@@ -154,7 +173,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                 {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")} </Text> */}
                 {cartItems.length > 0 ?
                     <>
-                        {userLocation?.addressLine_1 ?
+                        {userLocation?.lat ?
                             <View style={{ backgroundColor: 'white', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
                                 <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center' }}>
                                     <Image
@@ -263,12 +282,12 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                                     <CardCartScreen item={item} navigation={navigation} />
                                 )}
                                 keyExtractor={item => item?.id?.toString()}
-                            // ListEmptyComponent={emptyComponent}
-                            // ItemSeparatorComponent={() => (
-                            //     <View
-                            //         style={{ height: 0.7, width: "90%", alignSelf: 'center', backgroundColor: '#EAEAEC', }}
-                            //     />
-                            // )}
+                                // ListEmptyComponent={emptyComponent}
+                                ItemSeparatorComponent={() => (
+                                    <View
+                                        style={{ height: 0.7, width: "90%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginVertical: 5 }}
+                                    />
+                                )}
                             />
                         </View>
                         <View style={{ backgroundColor: 'white', marginTop: 10, padding: 10, paddingHorizontal: 15 }}>
@@ -337,6 +356,14 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                     <Text>clearCart</Text>
                 </TouchableOpacity> */}
             </ScrollView>
+            {isCartIssue &&
+                <View style={{ height: 55, width: "100%", backgroundColor: '#FDEFEF', flexDirection: 'row', justifyContent: 'center' }}>
+                    <View style={{ flex: 1, paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>
+                        <FeatherIcons name="info" color={'#E1271E'} size={18} />
+                        <Text style={{ color: "#E1271E" }}> Please resolve cart item issues to continue. </Text>
+                    </View>
+                </View>
+            }
             {cartItems.length > 0 ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
@@ -345,15 +372,20 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                             <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
                         </TouchableOpacity>
                     </View>
-                    {userLocation?.addressLine_1 ?
-                        totalCartValue < config?.freeDeliveryMinOrder ?
+                    {userLocation?.lat ?
+                        isCartIssue ?
                             <View style={{ flex: 1.2, backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
-                                <Text style={{ color: 'white', fontSize: 14 }}>Add ₹{config?.freeDeliveryMinOrder - totalCartValue} more to order</Text>
+                                <Text style={{ color: 'white', fontSize: 14 }}>Continue</Text>
                             </View>
                             :
-                            <TouchableOpacity onPress={() => { navigation.navigate('Checkout', { offerPrice: offerPrice, selectedOffer: selectedOffer }) }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
-                                <Text style={{ color: 'white', fontSize: 17 }}>Checkout <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
-                            </TouchableOpacity>
+                            totalCartValue < config?.freeDeliveryMinOrder ?
+                                <View style={{ flex: 1.2, backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                                    <Text style={{ color: 'white', fontSize: 14 }}>Add ₹{config?.freeDeliveryMinOrder - totalCartValue} more to order</Text>
+                                </View>
+                                :
+                                <TouchableOpacity onPress={() => { navigation.navigate('Checkout', { offerPrice: offerPrice, selectedOffer: selectedOffer }) }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                                    <Text style={{ color: 'white', fontSize: 17 }}>Checkout <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
+                                </TouchableOpacity>
                         :
                         <TouchableOpacity onPress={() => { onPressSelectAddress() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
                             <Text style={{ color: 'white', fontSize: 17 }}>Select Address <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>

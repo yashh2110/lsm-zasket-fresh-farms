@@ -171,7 +171,7 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
     }
 
     useEffect(() => {
-        if (userLocation?.addressLine_1) {
+        if (userLocation?.lat) {
             setPincodeError(false)
         }
     }, [userLocation])
@@ -324,7 +324,7 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
                     <TouchableOpacity onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreenGrabPincode" }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                         <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
-                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1} </Text>
+                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1}</Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                     </TouchableOpacity>
                     {/* {__DEV__ ?
@@ -337,9 +337,8 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                 </View>
                 {pincodeError ?
                     <View style={{ backgroundColor: '#F65C65', width: "95%", alignSelf: 'center', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 3 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Icon name="warning" type="AntDesign" style={{ fontSize: 22, color: 'white' }} />
-                            <Text style={{ color: 'white' }}> We are not available at this location!</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 5 }}>
+                            <Text style={{ color: 'white' }}><Icon name="warning" type="AntDesign" style={{ fontSize: 22, color: 'white' }} /> We are not available at this location!</Text>
                         </View>
                         <TouchableOpacity onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreenGrabPincode" }) }} style={{ backgroundColor: '#DD4C55', paddingHorizontal: 5, paddingVertical: 4, borderRadius: 5 }}>
                             <Text style={{ color: 'white' }}>Change</Text>
@@ -420,7 +419,7 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                 </View>
 
                 <Image
-                    style={{ borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', height: 115, aspectRatio: 3 }}
+                    style={{ borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', height: 125, aspectRatio: 3 }}
                     resizeMode={"cover"}
                     source={require('../../assets/png/HomeScreenFreeDelivery.png')}
                 />

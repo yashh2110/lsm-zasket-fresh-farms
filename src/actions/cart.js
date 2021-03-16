@@ -67,7 +67,7 @@ export const getV2DeliverySlots = (numOfDays, lat, lon, callback) => async dispa
         const res = await axiosinstance.get('/order/v3/delivery-slots', { params: { numOfDays: numOfDays, lat: lat, lon: lon } })
         callback(res, true)
     } catch (err) {
-        Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        // alert(JSON.stringify(err.response.data, null, "     "))
         callback(err, false)
     }
 }
@@ -208,6 +208,17 @@ export const rateOrder = (order_id, payload, callback) => async dispatch => {
         callback(res, true)
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+    }
+}
+
+//findItems
+export const findItems = (item_ids, callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.get('/items/find', { params: { item_ids: item_ids, } })
+        callback(res, true)
+    } catch (err) {
+        // alert(JSON.stringify(err.response.data, null, "     "))
         callback(err, false)
     }
 }

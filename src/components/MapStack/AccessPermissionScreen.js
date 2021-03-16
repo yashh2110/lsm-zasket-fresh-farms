@@ -90,7 +90,7 @@ const AccessPermissionScreen = ({ navigation, darkMode, setDarkMode, login, addH
     }
     const getCurrentPosition = async () => {
         try {
-            if (homeScreenLocation?.addressLine_1 == undefined || homeScreenLocation?.addressLine_1 == "") {
+            if (homeScreenLocation?.lat == undefined || homeScreenLocation?.lat == "") {
                 CheckGpsState((status) => {
                     if (status) {
                         navigation.goBack()
