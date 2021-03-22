@@ -248,7 +248,7 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                                 lon: position.coords.longitude
                             })
                             // await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
-                            isPincodeServiceable(position.coords.latitude, position.coords.longitude, postal_code?.long_name, (res, status) => {
+                            isPincodeServiceable(position.coords.latitude, position.coords.longitude, (res, status) => {
                                 if (status) {
                                 } else {
                                     setPincodeError(true)

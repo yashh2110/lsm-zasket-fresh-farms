@@ -61,8 +61,8 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
 
     return (
         <View style={{ flex: 1, width: "90%", marginBottom: 5, alignSelf: 'center' }}>
-            <TouchableOpacity
-                onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
+            <View
+                // onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
                 style={styles.productCard}>
                 <View style={{
                     backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
@@ -76,8 +76,9 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                     />
                 </View>
                 <View style={[{ padding: 10, flex: 1 }]}>
-                    <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
-                    <View style={{ flexDirection: 'row' }}>
+                    <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
+                    <Text style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.itemSubName} </Text>
+                    <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice} </Text>
                         {item?.discountedPrice == item?.actualPrice ?
                             undefined :
@@ -88,44 +89,43 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                             <Text style={{ fontSize: 15, color: Theme.Colors.primary, marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
                         }
                     </View>
-                    <Text style={{ fontSize: 12, color: '#909090', }}>{item?.itemSubName} </Text>
-                </View>
-            </TouchableOpacity>
-            {!loadingCount ?
-                addButton ?
-                    <TouchableOpacity
-                        onPress={() => onAddToCart()}
-                        style={[styles.addButton, {}]}
-                    >
-                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', padding: 5, }}>+ Add </Text>
-                    </TouchableOpacity>
-                    :
-                    <View style={[styles.addButton, {}]}>
-                        <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
-                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
-                        </TouchableOpacity>
-                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
-                        </View>
-
-                        {count < item?.maxAllowedQuantity ?
-                            <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
-                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', }}>+</Text>
+                    {!loadingCount ?
+                        addButton ?
+                            <TouchableOpacity
+                                onPress={() => onAddToCart()}
+                                style={[styles.addButton, {}]}
+                            >
+                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', padding: 5, }}>+ Add </Text>
                             </TouchableOpacity>
-                            : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                                <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
+                            :
+                            <View style={[styles.addButton, {}]}>
+                                <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
+                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
+                                </TouchableOpacity>
+                                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
+                                </View>
+
+                                {count < item?.maxAllowedQuantity ?
+                                    <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
+                                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', }}>+</Text>
+                                    </TouchableOpacity>
+                                    : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                                        <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
+                                    </View>
+                                }
                             </View>
-                        }
-                    </View>
-                :
-                <View style={[styles.addButton, {}]}>
-                    <LottieView
-                        style={{ height: 50, }}
-                        source={require("../../assets/json/countLoading.json")}
-                        autoPlay
-                    />
+                        :
+                        <View style={[styles.addButton, {}]}>
+                            <LottieView
+                                style={{ height: 50, }}
+                                source={require("../../assets/json/countLoading.json")}
+                                autoPlay
+                            />
+                        </View>
+                    }
                 </View>
-            }
+            </View>
 
         </View>
     )
@@ -181,9 +181,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 4,
-        position: 'absolute',
         zIndex: 1,
-        right: 7,
-        bottom: 7,
+        // position: 'absolute',
+        // right: 7,
+        // bottom: 7,
     }
 });
