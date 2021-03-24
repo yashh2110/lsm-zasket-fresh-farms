@@ -61,8 +61,8 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
     return (
         <View style={{ flex: 1, margin: 4, width: 160, marginBottom: 20 }}>
             {/* <Text>{JSON.stringify(item?.priority, null, "         ")} </Text> */}
-            <TouchableOpacity
-                onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
+            <View
+                // onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
                 style={[styles.productCard,]}>
                 <View style={{ backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', height: 120, width: 160 }} onPress={() => { }}>
                     <Image
@@ -73,7 +73,7 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
                     />
                 </View>
                 <View style={[{ padding: 10, }]}>
-                    <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
+                    <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
                     <View style={{ flexDirection: 'row', marginTop: 5, flexWrap: 'wrap' }}>
                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice} </Text>
                         {item?.discountedPrice == item?.actualPrice ?
@@ -87,7 +87,7 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
                     </View>
                     <Text numberOfLines={1} style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.itemSubName} </Text>
                 </View>
-            </TouchableOpacity>
+            </View>
             {!loadingCount ?
                 addButton ?
                     <TouchableOpacity

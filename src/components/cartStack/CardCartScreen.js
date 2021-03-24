@@ -70,8 +70,8 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
     return (
         <View style={{ flex: 1, width: "90%", alignSelf: 'center', marginVertical: 1.5, }}>
             {item?.isActive ?
-                <TouchableOpacity
-                    onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
+                <View
+                    // onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
                     style={styles.productCard}>
                     <View style={{
                         backgroundColor: '#F7F7F7', borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5, height: 90
@@ -85,7 +85,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                         />
                     </View>
                     <View style={[{ padding: 5, flex: 2 }]}>
-                        <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
+                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
                         <Text style={{ fontSize: 12, color: '#909090', marginBottom: 10 }}>{item?.itemSubName} </Text>
                         {!loadingCount ?
                             addButton ?
@@ -133,7 +133,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                         }
                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice * item?.count} </Text>
                     </View>
-                </TouchableOpacity>
+                </View>
 
                 : <>
                     <View
