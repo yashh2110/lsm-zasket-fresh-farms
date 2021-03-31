@@ -345,7 +345,7 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                         </TouchableOpacity>
                     </View>
                     : undefined}
-                <View style={{ height: 160, justifyContent: 'center', alignItems: 'center', marginTop: 5, marginBottom: 5 }}>
+                <View style={{ height: 160, justifyContent: 'center', alignItems: 'center', marginTop: 5, }}>
                     {bannerImages?.length > 0 ?
                         <Swiper
                             autoplay={true}
@@ -399,30 +399,46 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                         )
                     })}
                 </ScrollView> */}
-                <View style={{ flexDirection: 'row', backgroundColor: 'white', height: 125, justifyContent: 'space-around', alignItems: 'center' }}>
-                    <TouchableOpacity onPress={() => { navigation.navigate('ProductListScreen', { categoryName: "VEGETABLES" }) }} style={{ height: 120, width: 150, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
-                        <Text style={{ padding: 15 }}>Vegetables</Text>
-                        <Image
-                            style={{ borderRadius: 5, position: 'absolute', bottom: -3, right: 0, width: 130, height: 80 }}
-                            resizeMode={"contain"}
-                            source={require('../../assets/png/HomeScreenVegetable.png')}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { navigation.navigate('ProductListScreen', { categoryName: "FRUITS" }) }} style={{ height: 120, width: 150, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
-                        <Text style={{ padding: 15 }}>Fruits</Text>
-                        <Image
-                            style={{ borderRadius: 5, position: 'absolute', bottom: 0, right: 0, width: 150, height: 100 }}
-                            resizeMode={"contain"}
-                            source={require('../../assets/png/HomeScreenVegetable2.png')}
-                        />
-                    </TouchableOpacity>
-                </View>
-
                 <Image
-                    style={{ borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', height: 125, aspectRatio: 3 }}
+                    style={{
+                        borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', height: 125, width: "110%",
+                        // aspectRatio:3
+                    }}
                     resizeMode={"cover"}
                     source={require('../../assets/png/HomeScreenFreeDelivery.png')}
                 />
+                <View style={{ flexDirection: 'row', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', padding: 5, marginTop: -10 }}>
+                    <FlatList
+                        data={categories}
+                        numColumns={3}
+                        renderItem={({ item }) => (
+                            <>
+                                <TouchableOpacity activeOpacity={0.5} onPress={() => { navigation.navigate('ProductListScreen', { item: item }) }} style={{
+                                    // justifyContent: 'center',
+                                    flex: 1,
+                                    // alignItems: 'center',
+                                    // height: 100,
+                                    margin: 5,
+                                    // backgroundColor: '#00BCD4'
+                                }}>
+                                    <View style={{ backgroundColor: '#F7F7F7', borderRadius: 6, padding: 10, borderColor: '#EDEDED', borderWidth: 1 }}>
+                                        <Image
+                                            style={{ aspectRatio: 1.3 }}
+                                            // source={require('../../assets/png/HomeScreenVegetable.png')}
+                                            resizeMode="contain"
+                                            source={item?.categoryImage ?
+                                                { uri: item?.categoryImage } : require('../../assets/png/default.png')}
+                                        />
+                                    </View>
+                                    <Text style={{ alignSelf: 'center', textAlign: 'center', marginVertical: 5, fontWeight: 'bold', fontSize: 13 }}>{item?.categoryDisplayName}</Text>
+                                </TouchableOpacity>
+                            </>
+                        )}
+                        keyExtractor={item => item?.id.toString()}
+                    />
+                </View>
+
+
 
                 <FlatList
                     data={categories}

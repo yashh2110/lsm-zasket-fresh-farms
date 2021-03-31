@@ -97,9 +97,9 @@ export const getAllBanners = (callback) => async dispatch => {
 
 
 // getItemsByCategory
-export const getItemsByCategory = (category_name, callback) => async dispatch => {
+export const getItemsByCategory = (category_id, callback) => async dispatch => {
     try {
-        const res = await axiosinstance.get(`/${category_name}/items`);
+        const res = await axiosinstance.get(`/category/${category_id}/items`);
         // alert(JSON.stringify(res.data, null, "      "))
         callback(res, true)
     } catch (err) {

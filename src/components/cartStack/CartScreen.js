@@ -46,7 +46,18 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                 } else if (cartItems[i]?.isActive == false) {
                     setIsCartIssue(true)
                     break;
-                } else {
+                } else if (cartItems[i]?.onDemand == false && cartItems[i]?.availableQuantity < 1) {
+                    setIsCartIssue(true)
+                    break;
+                } else if (cartItems[i]?.onDemand == false) {
+                    if (cartItems[i]?.availableQuantity < cartItems[i]?.count) {
+                        setIsCartIssue(true)
+                        break;
+                    } else {
+                        setIsCartIssue(false)
+                    }
+                }
+                else {
                     setIsCartIssue(false)
                 }
             }
@@ -54,6 +65,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
         } else {
             setTotalCartValue(0)
             setSavedValue(0)
+            setIsCartIssue(false)
         }
 
     }, [cartItems])
@@ -360,7 +372,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                 <View style={{ height: 55, width: "100%", backgroundColor: '#FDEFEF', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>
                         <FeatherIcons name="info" color={'#E1271E'} size={18} />
-                        <Text style={{ color: "#E1271E" }}> Please resolve cart item issues to continue. </Text>
+                        <Text style={{ color: "#E1271E", fontWeight: 'bold' }}> Please resolve cart item issues to continue. </Text>
                     </View>
                 </View>
             }

@@ -12,7 +12,7 @@ import { ActivityIndicator } from 'react-native';
 import Draggable from '../common/Draggable';
 import LottieView from 'lottie-react-native';
 
-const SearchScreen = ({ navigation, searchItems }) => {
+const SearchScreen = ({ navigation, searchItems, categories }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
@@ -56,7 +56,7 @@ const SearchScreen = ({ navigation, searchItems }) => {
 
     const emptyComponent = () => {
         return (
-            <View style={[{ marginTop: 5, width: '90%', alignSelf: 'center' }]}>
+            <View style={[{ marginTop: 5, }]}>
                 {loading ?
                     <ActivityIndicator style={{}} size="large" color="grey" />
                     : searchTerm.length > 2 ?
@@ -72,25 +72,31 @@ const SearchScreen = ({ navigation, searchItems }) => {
                         </View>
                         :
                         <>
-                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Search by category</Text>
-                            <View style={{ flexDirection: 'row', backgroundColor: 'white', height: 125, justifyContent: 'space-around', alignItems: 'center', marginTop: 5 }}>
-                                <TouchableOpacity onPress={() => { setSearchTerm("VEGETABLES") }} style={{ height: 120, width: 150, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
-                                    <Text style={{ padding: 15 }}>Vegetables</Text>
-                                    <Image
-                                        style={{ borderRadius: 5, position: 'absolute', bottom: -3, right: 0, width: 130, height: 80 }}
-                                        resizeMode={"contain"}
-                                        source={require('../../assets/png/HomeScreenVegetable.png')}
-                                    />
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => { setSearchTerm("FRUITS") }} style={{ height: 120, width: 150, backgroundColor: '#F2F5F7', borderRadius: 4, overflow: 'hidden' }}>
-                                    <Text style={{ padding: 15 }}>Fruits</Text>
-                                    <Image
-                                        style={{ borderRadius: 5, position: 'absolute', bottom: 0, right: 0, width: 150, height: 100 }}
-                                        resizeMode={"contain"}
-                                        source={require('../../assets/png/HomeScreenVegetable2.png')}
-                                    />
-                                </TouchableOpacity>
+                            <Text style={{ fontWeight: 'bold', fontSize: 16, marginLeft: 10 }}>Search by category</Text>
+                            <View style={{ padding: 5 }}>
+                                <FlatList
+                                    data={categories}
+                                    numColumns={3}
+                                    renderItem={({ item }) => (
+                                        <TouchableOpacity style={{
+                                            margin: 5,
+                                            flex: 1,
+                                        }} activeOpacity={0.5} onPress={() => { setSearchTerm(item?.categoryName) }}>
+                                            <View style={{ backgroundColor: '#F7F7F7', borderRadius: 6, padding: 10, borderColor: '#EDEDED', borderWidth: 1, justifyContent: 'center' }}>
+                                                <Image
+                                                    style={{ aspectRatio: 1.3 }}
+                                                    resizeMode="contain"
+                                                    source={item?.categoryImage ?
+                                                        { uri: item?.categoryImage } : require('../../assets/png/default.png')}
+                                                />
+                                            </View>
+                                            <Text style={{ alignSelf: 'center', textAlign: 'center', marginVertical: 5, fontWeight: 'bold', fontSize: 13 }}>{item?.categoryDisplayName}</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                    keyExtractor={item => item?.id.toString()}
+                                />
                             </View>
+
                         </>
                 }
             </View>
@@ -136,7 +142,7 @@ const SearchScreen = ({ navigation, searchItems }) => {
     )
 }
 const mapStateToProps = (state) => ({
-
+    categories: state.home.categories,
 })
 
 
