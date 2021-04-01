@@ -12,7 +12,7 @@ const CategorySectionListItem = ({ item, navigation }) => {
                     <Text style={{ color: '#2E2E2E', paddingLeft: 10, paddingVertical: 4, fontWeight: 'bold', fontSize: 16, textTransform: 'capitalize', marginBottom: 5 }}>{item?.categoryDisplayName} </Text>
                 </View>
                 <TouchableOpacity
-                    onPress={() => { navigation.navigate('ProductListScreen', { categoryName: item?.categoryName }) }}
+                    onPress={() => { navigation.navigate('ProductListScreen', { item: item }) }}
                     style={{ justifyContent: 'center', alignItems: 'center', paddingRight: 10, paddingVertical: 4, }}
                 >
                     <Text style={{ color: "#727272", fontSize: 13 }}>View all</Text>

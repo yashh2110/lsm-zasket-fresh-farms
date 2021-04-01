@@ -85,7 +85,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                     // alert(`Success: ${data.razorpay_payment_id}`);
                     initialFunction()
                     AppEventsLogger.logPurchase(item?.payableAmount, "INR", { param: "value" });
-                    // navigation.navigate('AccountStack', { screen: 'MyOrders' })
+                    navigation.navigate('PaymentSuccessScreenOrderDetail')
                 }).catch((error) => {
                     // handle failure
                     // alert(`Error: ${error.code} | ${error.description}`);
@@ -269,22 +269,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                     </View>
                 </View>
 
-                {item?.paymentMethod == "COD" &&
-                    item?.orderState == "DELIVERED" || item?.orderState == "RETURNED" || item?.paymentState == "PAID" || item?.paymentState == "REFUNDED" ? null :
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
-                        <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {item?.payableAmount} </Text>
-                            <View style={{}}>
-                                <Text style={{ color: "#2D87C9" }}>Total Amount </Text>
-                            </View>
-                        </View>
-                        <View style={{ height: 55, width: 150, backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
-                            <TouchableOpacity onPress={() => { onPressPayNow() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
-                                <Text style={{ color: 'white', fontSize: 17 }}>Pay Now <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                }
+
                 <View style={{ marginTop: 10, paddingVertical: 5, backgroundColor: 'white' }}>
                     <Text style={{ marginLeft: 10 }}>{item?.items?.length} items</Text>
                     <FlatList
@@ -307,13 +292,13 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                                 <View style={[{ padding: 10, flex: 1 }]}>
                                     <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.item?.itemName} </Text>
                                     <Text style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.item?.itemSubName} </Text>
-                                    <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
-                                        <View style={{ backgroundColor: '#F4F4F4', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 2 }}>
-                                            {item?.paymentState == "REFUNDED" && item?.state == "RETURNED" ?
+                                    {item?.paymentState == "REFUNDED" && item?.state == "RETURNED" ?
+                                        <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
+                                            <View style={{ backgroundColor: '#F4F4F4', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 2 }}>
                                                 <Text style={{ fontSize: 12, color: '#E1171E' }}>Returned</Text>
-                                                : null}
+                                            </View>
                                         </View>
-                                    </View>
+                                        : null}
                                     <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'flex-end', flexDirection: 'row', }}>
                                         <Text style={{ fontSize: 14, color: '#909090', }}>Quantity: {item?.quantity} </Text>
                                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.totalPrice} </Text>
@@ -331,6 +316,22 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                 </View>
                 {/* <Text Text style={{ marginBottom: 16 }}> {JSON.stringify(item, null, "       ")} </Text> */}
             </ScrollView >
+            {item?.paymentMethod == "COD" &&
+                item?.orderState == "DELIVERED" || item?.orderState == "RETURNED" || item?.paymentState == "PAID" || item?.paymentState == "REFUNDED" ? null :
+                <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'space-between', }}>
+                    <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {item?.payableAmount} </Text>
+                        <View style={{}}>
+                            <Text style={{ color: "#2D87C9" }}>Total Amount </Text>
+                        </View>
+                    </View>
+                    <View style={{ height: 55, width: 150, backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={() => { onPressPayNow() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                            <Text style={{ color: 'white', fontSize: 17 }}>Pay Now <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            }
             {loading ?
                 <Loader />
                 : undefined}

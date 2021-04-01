@@ -4,6 +4,7 @@ import Theme from '../../styles/Theme';
 import { updateCartItemsApi } from '../../actions/cart'
 import { connect } from 'react-redux';
 import LottieView from 'lottie-react-native';
+import { Icon } from 'native-base';
 
 const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAuthenticated }) => {
     const [addButton, setAddButton] = useState(true)
@@ -69,16 +70,26 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                 }} onPress={() => { }}>
                     {/* <Text>{JSON.stringify(item?.itemImages[0]?.mediumImagePath, null, "         ")} </Text> */}
                     <Image
-                        style={{ height: 90, borderRadius: 5, aspectRatio: 1.3 }}
                         resizeMode="contain"
+                        style={{ height: 130, width: 120, borderRadius: 5, }}
                         source={item?.itemImages[0]?.mediumImagePath ?
                             { uri: item?.itemImages[0]?.mediumImagePath } : require('../../assets/png/default.png')}
+                    // style={{ height: 130, borderRadius: 5, width: 100 }}
+                    // source={require('../../assets/png/verticalImage.jpg')}
                     />
+                    {item?.discountedPrice == 1 &&
+                        <View style={[styles.offerButton, {}]}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
+                                <Icon name="brightness-percent" type="MaterialCommunityIcons" style={{ fontSize: 12, color: '#ffffff' }} />
+                                <Text style={{ color: "#ffffff", fontWeight: 'bold', fontSize: 11 }}>  OFFER </Text>
+                            </View>
+                        </View>
+                    }
                 </View>
                 <View style={[{ padding: 10, flex: 1 }]}>
                     <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
                     <Text style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.itemSubName} </Text>
-                    <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                    <View style={{ flexDirection: 'row', marginBottom: 5 }}>
                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice} </Text>
                         {item?.discountedPrice == item?.actualPrice ?
                             undefined :
@@ -89,40 +100,49 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                             <Text style={{ fontSize: 15, color: Theme.Colors.primary, marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
                         }
                     </View>
-                    {!loadingCount ?
-                        addButton ?
-                            <TouchableOpacity
-                                onPress={() => onAddToCart()}
-                                style={[styles.addButton, {}]}
-                            >
-                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', padding: 5, }}>+ Add </Text>
-                            </TouchableOpacity>
+                    {item?.onDemand == false && (item?.availableQuantity < 1) &&
+                        <View style={[styles.outOfStockButton, {}]}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                                <Text style={{ color: "#909090", fontWeight: 'bold' }}>Out of stock </Text>
+                            </View>
+                        </View>
+                    }
+                    {item?.onDemand == false && (item?.availableQuantity < 1) ?
+                        null
+                        : !loadingCount ?
+                            addButton ?
+                                <TouchableOpacity
+                                    onPress={() => onAddToCart()}
+                                    style={[styles.addButton, {}]}
+                                >
+                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', padding: 5, }}>+ Add </Text>
+                                </TouchableOpacity>
+                                :
+                                <View style={[styles.addButton, {}]}>
+                                    <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
+                                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
+                                    </TouchableOpacity>
+                                    <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
+                                    </View>
+
+                                    {count < item?.maxAllowedQuantity ?
+                                        <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
+                                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', }}>+</Text>
+                                        </TouchableOpacity>
+                                        : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                                            <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
+                                        </View>
+                                    }
+                                </View>
                             :
                             <View style={[styles.addButton, {}]}>
-                                <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
-                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
-                                </TouchableOpacity>
-                                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
-                                </View>
-
-                                {count < item?.maxAllowedQuantity ?
-                                    <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
-                                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', }}>+</Text>
-                                    </TouchableOpacity>
-                                    : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                                        <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
-                                    </View>
-                                }
+                                <LottieView
+                                    style={{ height: 50, }}
+                                    source={require("../../assets/json/countLoading.json")}
+                                    autoPlay
+                                />
                             </View>
-                        :
-                        <View style={[styles.addButton, {}]}>
-                            <LottieView
-                                style={{ height: 50, }}
-                                source={require("../../assets/json/countLoading.json")}
-                                autoPlay
-                            />
-                        </View>
                     }
                 </View>
             </View>
@@ -185,5 +205,45 @@ const styles = StyleSheet.create({
         // position: 'absolute',
         // right: 7,
         // bottom: 7,
+    },
+    outOfStockButton: {
+        height: 28,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+        elevation: 2,
+        backgroundColor: '#FBFBFB',
+        flexDirection: 'row',
+        width: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 4,
+        zIndex: 1,
+        // position: 'absolute',
+    },
+    offerButton: {
+        height: 19,
+        width: 68,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+        elevation: 2,
+        backgroundColor: '#E1171E',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 2,
+        zIndex: 1,
+        position: 'absolute',
+        top: 5,
+        right: 5
     }
 });
