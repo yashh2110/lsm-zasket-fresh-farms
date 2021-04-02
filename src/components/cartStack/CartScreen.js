@@ -324,7 +324,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                                 : undefined}
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
-                                <Text style={{ fontWeight: 'bold' }}>Total Payable Amount</Text>
+                                <Text style={{ fontWeight: 'bold' }}>Total Amount </Text>
                                 <Text style={{ fontWeight: 'bold' }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
                             </View>
                             {totalCartValue < config?.freeDeliveryMinOrder ?

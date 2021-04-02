@@ -80,7 +80,9 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
                                     renderItem={({ item }) => (
                                         <TouchableOpacity style={{
                                             margin: 5,
-                                            flex: 1,
+                                            // flex: 1,
+                                            minHeight: 100,
+                                            width: "31%",
                                         }} activeOpacity={0.5} onPress={() => { setSearchTerm(item?.categoryName) }}>
                                             <View style={{ backgroundColor: '#F7F7F7', borderRadius: 6, padding: 10, borderColor: '#EDEDED', borderWidth: 1, justifyContent: 'center' }}>
                                                 <Image

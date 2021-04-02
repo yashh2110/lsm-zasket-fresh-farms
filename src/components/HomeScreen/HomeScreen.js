@@ -415,9 +415,10 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                             <>
                                 <TouchableOpacity activeOpacity={0.5} onPress={() => { navigation.navigate('ProductListScreen', { item: item }) }} style={{
                                     // justifyContent: 'center',
-                                    flex: 1,
+                                    // flex: 1,
+                                    minHeight: 100,
+                                    width: "31%",
                                     // alignItems: 'center',
-                                    // height: 100,
                                     margin: 5,
                                     // backgroundColor: '#00BCD4'
                                 }}>

@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet, View, Text, FlatList, Dimensions, Image, 
 import { Icon } from 'native-base'
 import Modal from 'react-native-modal';
 import Theme from "../../styles/Theme";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView } from "react-native";
 import { connect } from 'react-redux';
 import { ActivityIndicator } from "react-native";
 import CustomHeader from "../common/CustomHeader";
@@ -119,9 +119,10 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Orders Details"} showSearch={false} />
-            <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={true} refreshControl={
-                <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
-            }>
+            <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={true}
+                refreshControl={
+                    <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+                }>
                 <View style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
                     {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
                     <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -248,7 +249,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                         <>
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
-                                <Text style={{ color: '#727272' }}>Return/Refund</Text>
+                                <Text style={{ color: '#727272' }}>Return/Refund Total</Text>
                                 <Text style={{}}>₹ {item?.refundedAmount}</Text>
                             </View>
                         </>
@@ -264,7 +265,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                         : undefined}
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
-                        <Text style={{ fontWeight: 'bold' }}>Total Payable Amount</Text>
+                        <Text style={{ fontWeight: 'bold' }}>Total Amount </Text>
                         <Text style={{ fontWeight: 'bold' }}>₹ {(item?.payableAmount)} </Text>
                     </View>
                 </View>

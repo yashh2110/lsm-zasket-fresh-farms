@@ -73,16 +73,17 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                 <View
                     // onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
                     style={styles.productCard}>
-                    <View style={{
-                        justifyContent: 'center', alignItems: 'center', backgroundColor: '#F7F7F7', borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5, height: 90
-                    }} onPress={() => { }}>
-                        <Image
-                            style={{ height: 90, borderRadius: 5, aspectRatio: 1.3 }}
-                            resizeMode="contain"
-                            source={item?.itemImages?.[0]?.mediumImagePath ?
-                                { uri: item?.itemImages?.[0]?.mediumImagePath } : require('../../assets/png/default.png')}
-                        />
-                        {/* {item?.discountedPrice == 1 &&
+                    <View style={{ justifyContent: 'center' }}>
+                        <View style={{
+                            justifyContent: 'center', alignItems: 'center', backgroundColor: '#F7F7F7', borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5, height: 90
+                        }} onPress={() => { }}>
+                            <Image
+                                style={{ height: 90, borderRadius: 5, aspectRatio: 1.3, }}
+                                resizeMode="contain"
+                                source={item?.itemImages?.[0]?.mediumImagePath ?
+                                    { uri: item?.itemImages?.[0]?.mediumImagePath } : require('../../assets/png/default.png')}
+                            />
+                            {/* {item?.discountedPrice == 1 &&
                             <View style={[styles.offerButton, {}]}>
                                 <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
                                     <Icon name="brightness-percent" type="MaterialCommunityIcons" style={{ fontSize: 14, color: '#ffffff' }} />
@@ -90,11 +91,12 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                                 </View>
                             </View>
                         } */}
+                        </View>
                     </View>
                     <View style={[{ padding: 5, flex: 2 }]}>
                         {/* <Text>{JSON.stringify(item?.availableQuantity, null, "         ")} </Text> */}
-                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
-                        <Text style={{ fontSize: 12, color: '#909090', marginBottom: 10 }}>{item?.itemSubName} </Text>
+                        <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
+                        <Text numberOfLines={2} style={{ fontSize: 12, color: '#909090', marginBottom: 10 }}>{item?.itemSubName} </Text>
                         {item?.onDemand == false && (item?.availableQuantity < 1) &&
                             <View style={[styles.outOfStockButton, {}]}>
                                 <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
@@ -142,8 +144,8 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                         }
 
                     </View>
-                    <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', padding: 10, }}>
-                        <TouchableOpacity onPress={() => onDeleteItem()} style={{ backgroundColor: 'white', position: 'absolute', top: 0, padding: 10 }}>
+                    <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', padding: 10, }}>
+                        <TouchableOpacity onPress={() => onDeleteItem()} style={{ backgroundColor: 'white', position: 'absolute', top: 10, right: 10, }}>
                             <Icon name="trash-o" type="FontAwesome" style={{ fontSize: 20 }} />
                         </TouchableOpacity>
                         {item?.discountedPrice == item?.actualPrice ?
