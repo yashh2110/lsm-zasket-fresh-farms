@@ -59,7 +59,7 @@ export const isPincodeServiceable = (lat, lon, callback) => async dispatch => {
 // getAllCategories
 export const getAllCategories = (callback) => async dispatch => {
     try {
-        const res = await axiosinstance.get('/categories');
+        const res = await axiosinstance.get('/v2/categories');
         // alert(JSON.stringify(res.data, null, "      "))
         dispatch({
             type: GET_CATEGORIES,
