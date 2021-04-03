@@ -282,7 +282,6 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                                 <View style={{
                                     backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', padding: 10, borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
                                 }} onPress={() => { }}>
-                                    {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
                                     <Image
                                         style={{ width: 100, height: 80, borderRadius: 5 }}
                                         resizeMode="contain"
@@ -299,7 +298,13 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                                                 <Text style={{ fontSize: 12, color: '#E1171E' }}>Returned</Text>
                                             </View>
                                         </View>
-                                        : null}
+                                        : item?.paymentState == "REFUNDED" ?
+                                            <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
+                                                <View style={{ backgroundColor: '#F4F4F4', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 2 }}>
+                                                    <Text style={{ fontSize: 12, color: '#E1171E' }}>Refunded</Text>
+                                                </View>
+                                            </View> : null
+                                    }
                                     <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'flex-end', flexDirection: 'row', }}>
                                         <Text style={{ fontSize: 14, color: '#909090', }}>Quantity: {item?.quantity} </Text>
                                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.totalPrice} </Text>
@@ -317,25 +322,28 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                 </View>
                 {/* <Text Text style={{ marginBottom: 16 }}> {JSON.stringify(item, null, "       ")} </Text> */}
             </ScrollView >
-            {item?.paymentMethod == "COD" &&
-                item?.orderState == "DELIVERED" || item?.orderState == "RETURNED" || item?.paymentState == "PAID" || item?.paymentState == "REFUNDED" ? null :
-                <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'space-between', }}>
-                    <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {item?.payableAmount} </Text>
-                        <View style={{}}>
-                            <Text style={{ color: "#2D87C9" }}>Total Amount </Text>
+            {item?.paymentMethod == "COD" ?
+                item?.orderState == "DELIVERED" || item?.orderState == "RETURNED" || item?.paymentState == "PAID" || item?.paymentState == "REFUNDED" || item?.paymentState == "PARTIALLY_REFUNDED" ? null :
+                    <View View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'space-between', }}>
+                        <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {item?.payableAmount} </Text>
+                            <View style={{}}>
+                                <Text style={{ color: "#2D87C9" }}>Total Amount </Text>
+                            </View>
+                        </View>
+                        <View style={{ height: 55, width: 150, backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
+                            <TouchableOpacity onPress={() => { onPressPayNow() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                                <Text style={{ color: 'white', fontSize: 17 }}>Pay Now <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={{ height: 55, width: 150, backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
-                        <TouchableOpacity onPress={() => { onPressPayNow() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
-                            <Text style={{ color: 'white', fontSize: 17 }}>Pay Now <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                : null
             }
-            {loading ?
-                <Loader />
-                : undefined}
+            {
+                loading ?
+                    <Loader />
+                    : undefined
+            }
         </View >
     );
 }
