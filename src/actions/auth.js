@@ -22,6 +22,23 @@ export const requestOtp = (mobileNumber, callback) => async dispatch => {
     }
 }
 
+//resendOtp
+export const resendOtp = (mobileNumber, callback) => async dispatch => {
+    let payLoad = {
+        "mobileNumber": mobileNumber
+    }
+    try {
+        const res = await axiosinstance.post('/resend-otp', payLoad)
+        callback(res, true)
+    } catch (err) {
+        callback(err, false)
+        // Alert.alert(JSON.stringify(err.response.data, null, "     "))
+        if (__DEV__) {
+            alert(JSON.stringify(err.response, null, "     "))
+        }
+    }
+}
+
 //verify otp
 export const verifyOtp = (payLoad, callback) => async dispatch => {
     try {

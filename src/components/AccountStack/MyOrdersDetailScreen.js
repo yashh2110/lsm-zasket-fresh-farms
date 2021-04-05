@@ -320,10 +320,10 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                         keyExtractor={item => item?.id.toString()}
                     />
                 </View>
-                {/* <Text Text style={{ marginBottom: 16 }}> {JSON.stringify(item, null, "       ")} </Text> */}
+                <Text Text style={{ marginBottom: 16 }}> {JSON.stringify(item, null, "       ")} </Text>
             </ScrollView >
             {item?.paymentMethod == "COD" ?
-                item?.orderState == "DELIVERED" || item?.orderState == "RETURNED" || item?.paymentState == "PAID" || item?.paymentState == "REFUNDED" || item?.paymentState == "PARTIALLY_REFUNDED" ? null :
+                item?.orderState == "DELIVERED" || item?.orderState == "RETURNED" || item?.paymentState == "PAID" || item?.paymentState == "REFUNDED" ? null :
                     <View View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'space-between', }}>
                         <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
                             <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {item?.payableAmount} </Text>
