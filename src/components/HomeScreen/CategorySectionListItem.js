@@ -6,13 +6,13 @@ import ProductCard from './ProductCard';
 const CategorySectionListItem = ({ item, navigation }) => {
     return (
         <>
-            {/* <Text>{JSON.stringify(item?.items, null, "      ")} </Text> */}
+            {/* <Text>{JSON.stringify(item, null, "      ")} </Text> */}
             <View style={{ flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
-                    <Text style={{ color: '#2E2E2E', paddingLeft: 10, paddingVertical: 4, fontWeight: 'bold', fontSize: 16, textTransform: 'capitalize' }}>{item?.categoryName} </Text>
+                    <Text style={{ color: '#2E2E2E', paddingLeft: 10, paddingVertical: 4, fontWeight: 'bold', fontSize: 16, textTransform: 'capitalize', marginBottom: 5 }}>{item?.categoryDisplayName} </Text>
                 </View>
                 <TouchableOpacity
-                    onPress={() => { navigation.navigate('ProductListScreen', { categoryName: item?.categoryName }) }}
+                    onPress={() => { navigation.navigate('ProductListScreen', { item: item }) }}
                     style={{ justifyContent: 'center', alignItems: 'center', paddingRight: 10, paddingVertical: 4, }}
                 >
                     <Text style={{ color: "#727272", fontSize: 13 }}>View all</Text>

@@ -7,7 +7,7 @@ import CardProductListScreen from './CardProductListScreen';
 import Loader from '../common/Loader';
 
 const ProductListScreen = ({ route, navigation, getItemsByCategory }) => {
-    const { categoryName } = route?.params;
+    const { item } = route?.params;
     const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
     const [products, setProducts] = useState([])
@@ -17,7 +17,7 @@ const ProductListScreen = ({ route, navigation, getItemsByCategory }) => {
     }, [])
 
     const initialFunction = () => {
-        getItemsByCategory(categoryName, (res, status) => {
+        getItemsByCategory(item?.id, (res, status) => {
             if (status) {
                 setProducts(res?.data)
                 // console.warn(JSON.stringify(res?.data, null, "      "))
@@ -35,7 +35,7 @@ const ProductListScreen = ({ route, navigation, getItemsByCategory }) => {
     }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
-            <CustomHeader navigation={navigation} title={categoryName} />
+            <CustomHeader navigation={navigation} title={item?.categoryDisplayName} />
             <View style={{ flex: 1 }}>
                 <FlatList
                     data={products}

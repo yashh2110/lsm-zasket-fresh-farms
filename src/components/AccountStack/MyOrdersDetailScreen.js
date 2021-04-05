@@ -3,16 +3,19 @@ import { TouchableOpacity, StyleSheet, View, Text, FlatList, Dimensions, Image, 
 import { Icon } from 'native-base'
 import Modal from 'react-native-modal';
 import Theme from "../../styles/Theme";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView } from "react-native";
 import { connect } from 'react-redux';
 import { ActivityIndicator } from "react-native";
 import CustomHeader from "../common/CustomHeader";
 import CardMyOrders from "./CardMyOrders";
 import Loader from "../common/Loader";
 import moment from 'moment'
-import { getOrderDetails } from "../../actions/cart"
-
-const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails }) => {
+import { getOrderDetails, payOrder } from "../../actions/cart"
+import AsyncStorage from "@react-native-community/async-storage";
+import RazorpayCheckout from 'react-native-razorpay';
+import { AppEventsLogger } from "react-native-fbsdk";
+import { Radio, Toast, Root, Container, Content } from 'native-base';
+const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payOrder }) => {
     const { order_id } = route?.params;
     // const order_id = 514
     const [item, setItem] = useState({})
@@ -22,6 +25,12 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails }) =>
     useEffect(() => {
         initialFunction()
     }, [])
+    const isSameDay = (d1, d2) => {
+        return d1.getFullYear() === d2.getFullYear() &&
+            d1.getDate() === d2.getDate() &&
+            d1.getMonth() === d2.getMonth();
+    }
+
     const initialFunction = async () => {
         setLoading(true)
         getOrderDetails(order_id, async (response, status) => {
@@ -31,11 +40,13 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails }) =>
                 yesterday.setDate(yesterday.getDate() - 1)
                 var d1 = new Date();
                 var d2 = new Date(yesterday);
-                var same = d1.getTime() === d2.getTime();
-                if (same) {
+
+                if (isSameDay(d1, d2)) {
                     if (new Date().getHours() >= config?.nextDayDeliveryCutOff) {
                         setShowCancelButton(false)
                     }
+                } else if (d1 > d2) {
+                    setShowCancelButton(false)
                 }
                 setLoading(false)
                 setRefresh(false)
@@ -45,10 +56,73 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails }) =>
             }
         })
     }
+
+    const onPressPayNow = () => {
+        setLoading(true)
+        payOrder(item?.id, async (res, status) => {
+            setLoading(false)
+            if (status) {
+                let userDetails = await AsyncStorage.getItem('userDetails');
+                let parsedUserDetails = await JSON.parse(userDetails);
+                var options = {
+                    description: 'Select the payment method',
+                    image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
+                    currency: 'INR',
+                    key: config?.razorpayApiKey,
+                    amount: item?.payableAmount,
+                    name: 'Zasket',
+                    order_id: res?.data?.paymentResponseId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+                    prefill: {
+                        email: parsedUserDetails?.customerDetails?.userEmail,
+                        contact: parsedUserDetails?.customerDetails?.userMobileNumber,
+                        name: parsedUserDetails?.customerDetails?.name
+                    },
+                    theme: { color: Theme.Colors.primary }
+                }
+                // console.warn(JSON.stringify(options, null, "        "))
+                RazorpayCheckout.open(options).then(async (data) => {
+                    // handle success
+                    // alert(`Success: ${data.razorpay_payment_id}`);
+                    initialFunction()
+                    AppEventsLogger.logPurchase(item?.payableAmount, "INR", { param: "value" });
+                    navigation.navigate('PaymentSuccessScreenOrderDetail')
+                }).catch((error) => {
+                    // handle failure
+                    // alert(`Error: ${error.code} | ${error.description}`);
+                    Toast.show({
+                        text: "Payment failed",
+                        buttonText: "Okay",
+                        type: "danger",
+                        buttonStyle: { backgroundColor: "#a52f2b" }
+                    })
+                })
+            } else {
+                setLoading(false)
+                if (res?.response?.data?.description) {
+                    Toast.show({
+                        text: res?.response?.data?.description,
+                        type: "danger",
+                        duration: 3000,
+                        buttonStyle: { backgroundColor: "#a52f2b" }
+                    })
+                }
+                // if (__DEV__) {
+                //     alert(JSON.stringify(res?.response, null, "        "))
+                // }
+            }
+        })
+    }
+    const onRefresh = () => {
+        // setRefresh(true)
+        initialFunction()
+    }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <CustomHeader navigation={navigation} title={"Orders Details"} showSearch={false} />
-            <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={true}>
+            <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={true}
+                refreshControl={
+                    <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+                }>
                 <View style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
                     {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
                     <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -166,34 +240,37 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails }) =>
                         <Text style={{ color: '#727272' }}>Item Total</Text>
                         <Text style={{}}>₹ {(item?.totalPrice)?.toFixed(2)} </Text>
                     </View>
-                    <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
+                    <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                         <Text style={{ color: '#727272' }}>Delivery Charges</Text>
                         <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Free</Text>
                     </View>
+                    {item?.refundedAmount > 0 ?
+                        <>
+                            <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, marginBottom: 10 }} />
+                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
+                                <Text style={{ color: '#727272' }}>Return/Refund Total</Text>
+                                <Text style={{}}>₹ {item?.refundedAmount}</Text>
+                            </View>
+                        </>
+                        : undefined}
                     {(item?.totalPrice - item?.offerPrice > 0) ?
                         <>
-                            <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
+                            <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ color: '#35B332' }}>Coupon Discount ({item?.applied_offer?.offerCode})</Text>
                                 <Text style={{ color: "#35B332", }}>- ₹{(item?.totalPrice - item?.offerPrice)?.toFixed(2)} </Text>
                             </View>
                         </>
                         : undefined}
-                    <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
+                    <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
-                        <Text style={{ fontWeight: 'bold' }}>Total Payable Amount</Text>
-                        <Text style={{ fontWeight: 'bold' }}>₹ {(item?.offerPrice > 0 ? item?.offerPrice : item?.totalPrice)?.toFixed(2)} </Text>
+                        <Text style={{ fontWeight: 'bold' }}>Total Amount </Text>
+                        <Text style={{ fontWeight: 'bold' }}>₹ {(item?.payableAmount)} </Text>
                     </View>
-                    {item?.paymentState == "REFUNDED" ?
-                        <>
-                            <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
-                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
-                                <Text style={{ fontWeight: 'bold' }}>Refunded</Text>
-                                <Text style={{ fontWeight: 'bold' }}>₹ {item?.refundedAmount} </Text>
-                            </View>
-                        </> : null}
                 </View>
+
+
                 <View style={{ marginTop: 10, paddingVertical: 5, backgroundColor: 'white' }}>
                     <Text style={{ marginLeft: 10 }}>{item?.items?.length} items</Text>
                     <FlatList
@@ -205,7 +282,6 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails }) =>
                                 <View style={{
                                     backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', padding: 10, borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
                                 }} onPress={() => { }}>
-                                    {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
                                     <Image
                                         style={{ width: 100, height: 80, borderRadius: 5 }}
                                         resizeMode="contain"
@@ -216,6 +292,19 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails }) =>
                                 <View style={[{ padding: 10, flex: 1 }]}>
                                     <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.item?.itemName} </Text>
                                     <Text style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.item?.itemSubName} </Text>
+                                    {item?.paymentState == "REFUNDED" && item?.state == "RETURNED" ?
+                                        <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
+                                            <View style={{ backgroundColor: '#F4F4F4', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 2 }}>
+                                                <Text style={{ fontSize: 12, color: '#E1171E' }}>Returned</Text>
+                                            </View>
+                                        </View>
+                                        : item?.paymentState == "REFUNDED" ?
+                                            <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
+                                                <View style={{ backgroundColor: '#F4F4F4', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 2 }}>
+                                                    <Text style={{ fontSize: 12, color: '#E1171E' }}>Refunded</Text>
+                                                </View>
+                                            </View> : null
+                                    }
                                     <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'flex-end', flexDirection: 'row', }}>
                                         <Text style={{ fontSize: 14, color: '#909090', }}>Quantity: {item?.quantity} </Text>
                                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.totalPrice} </Text>
@@ -231,11 +320,30 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails }) =>
                         keyExtractor={item => item?.id.toString()}
                     />
                 </View>
-                {/* <Text Text style={{ marginBottom: 16 }}> {JSON.stringify(item, null, "       ")} </Text> */}
+                <Text Text style={{ marginBottom: 16 }}> {JSON.stringify(item, null, "       ")} </Text>
             </ScrollView >
-            {loading ?
-                <Loader />
-                : undefined}
+            {item?.paymentMethod == "COD" ?
+                item?.orderState == "DELIVERED" || item?.orderState == "RETURNED" || item?.paymentState == "PAID" || item?.paymentState == "REFUNDED" ? null :
+                    <View View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'space-between', }}>
+                        <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {item?.payableAmount} </Text>
+                            <View style={{}}>
+                                <Text style={{ color: "#2D87C9" }}>Total Amount </Text>
+                            </View>
+                        </View>
+                        <View style={{ height: 55, width: 150, backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
+                            <TouchableOpacity onPress={() => { onPressPayNow() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
+                                <Text style={{ color: 'white', fontSize: 17 }}>Pay Now <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                : null
+            }
+            {
+                loading ?
+                    <Loader />
+                    : undefined
+            }
         </View >
     );
 }
@@ -246,7 +354,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { getOrderDetails })(MyOrdersDetailScreen)
+export default connect(mapStateToProps, { getOrderDetails, payOrder })(MyOrdersDetailScreen)
 
 const styles = StyleSheet.create({
 

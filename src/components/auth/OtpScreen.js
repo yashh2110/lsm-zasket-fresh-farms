@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, Image, ImageBackground, Keyboard, Platform, ScrollView, StyleSheet, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import { verifyOtp, requestOtp, saveUserDetails, onLogin } from '../../actions/auth';
+import { verifyOtp, resendOtp, saveUserDetails, onLogin } from '../../actions/auth';
 import { setDarkMode } from "../../actions/dark";
 import Theme from "../../styles/Theme";
 import { Validation } from "../../utils/validate";
@@ -19,7 +19,7 @@ import { getV2Config } from '../../actions/home'
 import CountDown from 'react-native-countdown-component';
 import { StackActions } from '@react-navigation/native';
 
-const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLogin, getV2Config, verifyOtp, requestOtp, route }) => {
+const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLogin, getV2Config, verifyOtp, resendOtp, route }) => {
     const { setOnBoardKey } = React.useContext(AuthContext);
     const [otp, setOtp] = useState("")
     const [loading, setLoading] = useState(false)
@@ -83,7 +83,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLo
     const handleResend = async () => {
         setRandom(random + 1)
         setDisabled(true)
-        await requestOtp(mobileNumber, (response, status) => {
+        await resendOtp(mobileNumber, (response, status) => {
             if (status) {
                 setLoading(false)
             } else {
@@ -184,7 +184,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { setDarkMode, verifyOtp, getV2Config, saveUserDetails, onLogin, requestOtp })(OtpScreen)
+export default connect(mapStateToProps, { setDarkMode, verifyOtp, getV2Config, saveUserDetails, onLogin, resendOtp })(OtpScreen)
 
 const styles = StyleSheet.create({
     container: {

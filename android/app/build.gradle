@@ -137,13 +137,15 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
+    dexOptions {
+       javaMaxHeapSize "3g" //added by me for Expiring Daemon because JVM heap space is exhausted error
+    }
     defaultConfig {
         applicationId "com.zasket"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 9
-        versionName "1.0.8"
+        versionCode 10
+        versionName "1.0.9"
         multiDexEnabled true //added by me for razorpay issue, checked here('https://github.com/facebook/screenshot-tests-for-android/issues/141')
     }
     splits {
