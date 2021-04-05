@@ -141,8 +141,12 @@ export const getCustomerDetails = (callback) => async dispatch => {
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
-        const res = await axiosinstance.get(`/customers/${customerId}`)
-        callback(res, true)
+        if (customerId) {
+            const res = await axiosinstance.get(`/customers/${customerId}`)
+            callback(res, true)
+        } else {
+            callback("error", false)
+        }
     } catch (err) {
         callback(err, false)
         // Alert.alert(JSON.stringify(err.response.data, null, "     "))
