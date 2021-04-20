@@ -196,8 +196,8 @@ export const applyOffer = (offerCode, orderAmount, callback) => async dispatch =
 //getAvailableOffers
 export const getAvailableOffers = (orderAmount, callback) => async dispatch => {
     try {
-        // console.warn(JSON.stringify(offerCode + "      " + orderAmount, null, "     "))
-        const res = await axiosinstance.get(`/available-offers`, { params: { "order-amount": orderAmount } })
+        // console.warn(JSON.stringify(orderAmount, null, "     "))
+        const res = await axiosinstance.get(`/v2/available-offers`, { params: { "order-amount": orderAmount } })
         // alert(JSON.stringify(res, null, "     "))
         callback(res, true)
     } catch (err) {

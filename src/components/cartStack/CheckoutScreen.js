@@ -16,6 +16,8 @@ import { applyOffer, getAvailableOffers, } from '../../actions/cart'
 import Loader from '../common/Loader';
 import AddressModal from '../common/AddressModal';
 import { AppEventsLogger } from "react-native-fbsdk";
+import FeatherIcons from "react-native-vector-icons/Feather"
+
 const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDetails, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer, getAvailableOffers }) => {
     const scrollViewRef = useRef();
     const [coupon, setCoupon] = useState("")
@@ -72,17 +74,20 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
     }, [cartItems])
 
     useEffect(() => {
-        getAvailableOffers(totalCartValue, (res, status) => {
-            if (status) {
-                let newArray = []
-                res?.data?.forEach((el, index) => {
-                    if (el?.isActive) newArray.push(el)
-                })
-                setAvailableCouponList(newArray)
-            } else {
-
-            }
-        })
+        if (totalCartValue > 0) {
+            getAvailableOffers(totalCartValue, (res, status) => {
+                if (status) {
+                    // alert(JSON.stringify(res.data, null, "     "))
+                    // let newArray = []
+                    // res?.data?.forEach((el, index) => {
+                    //     if (el?.isEligible) newArray.push(el)
+                    // })
+                    setAvailableCouponList(res?.data)
+                } else {
+                    // alert(JSON.stringify(res, null, "     "))
+                }
+            })
+        }
     }, [totalCartValue])
 
     useEffect(() => {
@@ -803,9 +808,15 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
                                                         autoCapitalize="characters"
                                                     />
 
-                                                    <TouchableOpacity onPress={() => onPressApplyCoupon()} style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
-                                                        <Text style={{ marginHorizontal: 5, color: Theme.Colors.primary, fontWeight: 'bold' }}>Apply</Text>
-                                                    </TouchableOpacity>
+                                                    {coupon ?
+                                                        <TouchableOpacity onPress={() => onPressApplyCoupon()} style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
+                                                            <Text style={{ marginHorizontal: 5, color: Theme.Colors.primary, fontWeight: 'bold' }}>Apply</Text>
+                                                        </TouchableOpacity>
+                                                        :
+                                                        <View style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
+                                                            <Text style={{ marginHorizontal: 5, color: "#F5C4C6", fontWeight: 'bold' }}>Apply</Text>
+                                                        </View>
+                                                    }
 
                                                 </View>
                                             </View>
@@ -823,19 +834,28 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
                                                     style={styles.productCard}>
                                                     {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
                                                     <View style={[{ padding: 10, flex: 1 }]}>
-                                                        <Text style={{ fontSize: 16, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.uiListDisplayNameHeader} </Text>
-                                                        <Text style={{ fontSize: 14, color: '#909090', marginVertical: 5 }}>{item?.uiListDisplayNameSubHeader} </Text>
                                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                                             <View style={{ justifyContent: 'space-between', alignItems: 'flex-end', flexDirection: 'row', borderWidth: 1, borderColor: "#F77E82", borderStyle: 'dashed', backgroundColor: '#FDEFEF', padding: 7, borderRadius: 4 }}>
-                                                                <Text style={{ fontSize: 14, color: '#E1171E', fontWeight: 'bold' }}>{item?.offerCode} </Text>
+                                                                <Text style={{ fontSize: 14, color: '#E1171E', fontWeight: 'bold' }}>{item?.offerResponse?.offerCode} </Text>
                                                             </View>
-                                                            <TouchableOpacity onPress={() => {
-                                                                setCoupon(item?.offerCode)
-                                                                onPressApplyCoupon(item?.offerCode)
-                                                            }} style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                                                <Text style={{ marginHorizontal: 5, color: Theme.Colors.primary, fontWeight: 'bold' }}>Apply</Text>
-                                                            </TouchableOpacity>
+                                                            {item?.isEligible ?
+                                                                <TouchableOpacity onPress={() => {
+                                                                    setCoupon(item?.offerResponse?.offerCode)
+                                                                    onPressApplyCoupon(item?.offerResponse?.offerCode)
+                                                                }} style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                                                    <Text style={{ marginHorizontal: 5, color: Theme.Colors.primary, fontWeight: 'bold' }}>Apply</Text>
+                                                                </TouchableOpacity>
+                                                                :
+                                                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                                                    <Text style={{ marginHorizontal: 5, color: "#F5C4C6", fontWeight: 'bold' }}>Apply</Text>
+                                                                </View>
+                                                            }
                                                         </View>
+                                                        <Text style={{ fontSize: 16, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize', marginVertical: 5 }}>{item?.offerResponse?.uiListDisplayNameHeader} </Text>
+                                                        <Text style={{ fontSize: 14, color: '#909090', }}>{item?.offerResponse?.uiListDisplayNameSubHeader} </Text>
+                                                        {!item?.isEligible ?
+                                                            <Text style={{ fontSize: 14, color: '#E1171E', marginVertical: 10 }}>{item?.comment} </Text>
+                                                            : null}
                                                     </View>
                                                 </View>
                                             }
@@ -844,12 +864,15 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
                                                     style={{ height: 0.7, width: "90%", alignSelf: 'center', backgroundColor: '#EAEAEC', }}
                                                 />
                                             )}
-                                            keyExtractor={item => item?.id.toString()}
+                                            keyExtractor={item => item?.offerResponse?.id.toString()}
                                         />
                                     </View>
-
                                 </View>
                             </Content>
+                            {/* <View style={{ backgroundColor: "#FDEFEF", padding: 10, flexDirection: 'row', alignItems: 'center', marginTop: 5, justifyContent: 'center' }}>
+                                <FeatherIcons name="info" color={'#E1271E'} size={18} />
+                                <Text style={{ fontSize: 14, color: Theme.Colors.primary, fontWeight: 'bold' }}> Coupon codes not applicable for COD </Text>
+                            </View> */}
                         </Container>
                     </Root>
                     {couponLoading &&
