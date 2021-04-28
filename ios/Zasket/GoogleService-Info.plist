@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>135821146938-44hsd79puuvf33hsu0i0cqr1uemvo3ed.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.135821146938-44hsd79puuvf33hsu0i0cqr1uemvo3ed</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>135821146938-q9lb6u78rr733uikc1cr75mi94jun76q.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBJwFWNxLCCk99P911k5LmuCEcsWqFtz6o</string>
+	<key>GCM_SENDER_ID</key>
+	<string>135821146938</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.freshleaftechnolgies.zasket</string>
+	<key>PROJECT_ID</key>
+	<string>zasket-9f0ab</string>
+	<key>STORAGE_BUCKET</key>
+	<string>zasket-9f0ab.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:135821146938:ios:e21478741c6b9e770a6e03</string>
+	<key>DATABASE_URL</key>
+	<string>https://zasket-9f0ab.firebaseio.com</string>
+</dict>
+</plist>
