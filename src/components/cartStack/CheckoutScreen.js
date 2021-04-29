@@ -17,6 +17,7 @@ import Loader from '../common/Loader';
 import AddressModal from '../common/AddressModal';
 import { AppEventsLogger } from "react-native-fbsdk";
 import FeatherIcons from "react-native-vector-icons/Feather"
+import { getV2Config } from '../../actions/home';
 
 const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDetails, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer, getAvailableOffers }) => {
     const scrollViewRef = useRef();
@@ -151,6 +152,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
     }, [nextDayBuffer])
 
     useEffect(() => {
+        getV2Config((res, status) => { })
         var today = new Date();
         var hour = today.getHours();
         if (hour >= config?.nextDayDeliveryCutOff) {
@@ -195,10 +197,14 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
     }
     const onPressContinue = async () => {
         await setLoading(true)
-        if (selectedPaymentMethod == "PREPAID") {
+        if (config?.enableCOD) {
+            if (selectedPaymentMethod == "PREPAID") {
+                await onSelectPaymentMethod("PREPAID")
+            } else if (selectedPaymentMethod == "COD") {
+                await onSelectPaymentMethod("COD")
+            }
+        } else {
             await onSelectPaymentMethod("PREPAID")
-        } else if (selectedPaymentMethod == "COD") {
-            await onSelectPaymentMethod("COD")
         }
     }
 
@@ -580,42 +586,44 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
                         </View>
                     </TouchableOpacity>
                 }
-                <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15 }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Select payment method </Text>
-                    <TouchableOpacity activeOpacity={0.8} style={{
-                        flexDirection: 'row', backgroundColor: "white", borderRadius: 5, alignItems: "center", padding: 10, marginTop: 10, borderWidth: 1, borderColor: '#EFEFEF'
-                    }} onPress={() => {
-                        setSelectedPaymentMethod("PREPAID")
-                    }}>
-                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                            <Radio style={{ width: 20 }} selected={selectedPaymentMethod == "PREPAID" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedPaymentMethod("PREPAID") }} />
-                        </View>
-                        <View style={{ marginLeft: 10, flexDirection: 'row', flex: 1 }}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ color: 'black', fontSize: 14, fontWeight: "bold" }}>Make Online Payment </Text>
-                                <Text style={{ color: '#727272', fontSize: 12, fontWeight: null }}>Preferred payment due to covid </Text>
+                {config?.enableCOD ?
+                    <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15 }}>
+                        <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Select payment method </Text>
+                        <TouchableOpacity activeOpacity={0.8} style={{
+                            flexDirection: 'row', backgroundColor: "white", borderRadius: 5, alignItems: "center", padding: 10, marginTop: 10, borderWidth: 1, borderColor: '#EFEFEF'
+                        }} onPress={() => {
+                            setSelectedPaymentMethod("PREPAID")
+                        }}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Radio style={{ width: 20 }} selected={selectedPaymentMethod == "PREPAID" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedPaymentMethod("PREPAID") }} />
                             </View>
-                            <View style={{}}>
-                                <Image
-                                    style={{ alignSelf: 'flex-end', width: 80, height: 30, }}
-                                    resizeMode="contain"
-                                    source={require('../../assets/png/paymentImages.png')}
-                                />
+                            <View style={{ marginLeft: 10, flexDirection: 'row', flex: 1 }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ color: 'black', fontSize: 14, fontWeight: "bold" }}>Make Online Payment </Text>
+                                    <Text style={{ color: '#727272', fontSize: 12, fontWeight: null }}>Preferred payment due to covid </Text>
+                                </View>
+                                <View style={{}}>
+                                    <Image
+                                        style={{ alignSelf: 'flex-end', width: 80, height: 30, }}
+                                        resizeMode="contain"
+                                        source={require('../../assets/png/paymentImages.png')}
+                                    />
+                                </View>
                             </View>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.8} style={{
-                        flexDirection: 'row', backgroundColor: "white", borderRadius: 5, alignItems: "center", padding: 10, marginTop: 10, marginBottom: 10, minHeight: 50, borderWidth: 1, borderColor: '#EFEFEF'
-                    }} onPress={() => { setSelectedPaymentMethod("COD") }}>
-                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                            <Radio style={{ width: 20 }} selected={selectedPaymentMethod == "COD" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedPaymentMethod("COD") }} />
-                        </View>
-                        <View style={{ marginLeft: 10 }}>
-                            <Text style={{ color: 'black', fontSize: 14, fontWeight: "bold" }}>Cash on delivery </Text>
-                            {/* <Text style={{ color: '#727272', fontSize: 12, fontWeight: null }}>Coupon Codes not applicable for COD </Text> */}
-                        </View>
-                    </TouchableOpacity>
-                </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity activeOpacity={0.8} style={{
+                            flexDirection: 'row', backgroundColor: "white", borderRadius: 5, alignItems: "center", padding: 10, marginTop: 10, marginBottom: 10, minHeight: 50, borderWidth: 1, borderColor: '#EFEFEF'
+                        }} onPress={() => { setSelectedPaymentMethod("COD") }}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Radio style={{ width: 20 }} selected={selectedPaymentMethod == "COD" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedPaymentMethod("COD") }} />
+                            </View>
+                            <View style={{ marginLeft: 10 }}>
+                                <Text style={{ color: 'black', fontSize: 14, fontWeight: "bold" }}>Cash on delivery </Text>
+                                {/* <Text style={{ color: '#727272', fontSize: 12, fontWeight: null }}>Coupon Codes not applicable for COD </Text> */}
+                            </View>
+                        </TouchableOpacity>
+                    </View> :
+                    null}
                 <View style={{ backgroundColor: 'white', marginTop: 10, padding: 10, paddingHorizontal: 15 }}>
                     <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
@@ -672,7 +680,10 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
                                     </View>
                                     :
                                     <TouchableOpacity onPress={() => onPressContinue()} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
-                                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{selectedPaymentMethod == "COD" ? "Place Order" : "Continue"} </Text>
+                                        {config?.enableCOD ?
+                                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{selectedPaymentMethod == "COD" ? "Place Order" : "Continue"} </Text>
+                                            :
+                                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Make payment </Text>}
                                     </TouchableOpacity>
                                 }
                             </>
