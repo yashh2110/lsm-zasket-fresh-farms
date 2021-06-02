@@ -339,6 +339,10 @@ class MapScreenGrabPincode extends React.Component {
                             </MapView>
                             <View style={styles.markerFixed}>
                                 {/* <Image style={styles.marker} source={marker} /> */}
+                                <View style={{ backgroundColor: 'black', alignSelf: 'center', marginLeft: -50, width: 215, padding: 5, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -40, marginBottom: -15 }}>
+                                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>Order will be delivered here</Text>
+                                    <Text style={{ color: 'white', fontSize: 12 }}>Place the pin accurately on the map</Text>
+                                </View>
                                 <LottieView
                                     style={styles.marker}
                                     source={require("../../assets/animations/favoriteDoctorHeart.json")}
@@ -408,6 +412,9 @@ class MapScreenGrabPincode extends React.Component {
                                             </> : null}
                                     </View>
                                 }
+                                <View style={{ borderRadius: 5, borderColor: "#ECE1D6", paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#FFFCF5', borderWidth: 1, marginTop: 10 }}>
+                                    <Text style={{ color: '#8e6847', fontSize: 14 }}>A detailed address will help our delivery executive reach your doorstep easily</Text>
+                                </View>
                                 {/* <View style={{ marginTop: 10 }}>
                                     <Text style={{ color: "#727272", fontSize: 12 }}>Pincode</Text>
                                     <TextInput
@@ -457,7 +464,7 @@ const styles = StyleSheet.create({
     markerFixed: {
         left: '50%',
         marginLeft: -49,
-        marginTop: -50,
+        marginTop: -40,
         position: 'absolute',
         top: '50%',
     },
@@ -467,7 +474,7 @@ const styles = StyleSheet.create({
     // },
     marker: {
         height: 100,
-        width: 100
+        width: 100,
     },
     footer: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',

@@ -50,6 +50,7 @@ class MyMapView extends React.Component {
         saveAs: "",
         name: "",
         mobileNumber: "",
+        alternateMobileNumber: "",
         addressLoading: false,
         savedAddressLoading: false,
         modalVisible: false,
@@ -115,7 +116,8 @@ class MyMapView extends React.Component {
                 landMark: item?.landmark,
                 name: item?.recepientName,
                 mobileNumber: item?.recepientMobileNumber.replace("+91", ""),
-                houseNumber: item?.houseNo
+                houseNumber: item?.houseNo,
+                alternateMobileNumber: item?.alternateMobileNumber ? item?.alternateMobileNumber.replace("+91", "") : "",
             })
         } else {
             this.setState({ homeCheck: true, saveAs: 'Home' })
@@ -282,6 +284,7 @@ class MyMapView extends React.Component {
                 "lat": this.state.latitude,
                 "lon": this.state.longitude,
                 "recepientMobileNumber": this.state.mobileNumber.includes("+91") ? this.state.mobileNumber : "+91" + this.state.mobileNumber,
+                "alternateMobileNumber": this.state.alternateMobileNumber.includes("+91") ? this.state.alternateMobileNumber : "+91" + this.state.alternateMobileNumber,
                 "recepientName": this.state.name,
                 "saveAs": this.state.saveAs
             }
@@ -475,6 +478,10 @@ class MyMapView extends React.Component {
                             </MapView>
                             <View style={styles.markerFixed}>
                                 {/* <Image style={styles.marker} source={marker} /> */}
+                                <View style={{ backgroundColor: 'black', alignSelf: 'center', marginLeft: -50, width: 215, padding: 5, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -40, marginBottom: -15 }}>
+                                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>Order will be delivered here</Text>
+                                    <Text style={{ color: 'white', fontSize: 12 }}>Place the pin accurately on the map</Text>
+                                </View>
                                 <LottieView
                                     style={styles.marker}
                                     source={require("../../assets/animations/favoriteDoctorHeart.json")}
@@ -541,6 +548,9 @@ class MyMapView extends React.Component {
                                         <Text style={{ fontSize: 16 }}>{this.state.address} </Text>
                                     </View>
                                 }
+                                <View style={{ borderRadius: 5, borderColor: "#ECE1D6", paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#FFFCF5', borderWidth: 1, marginTop: 10 }}>
+                                    <Text style={{ color: '#8e6847', fontSize: 14 }}>A detailed address will help our delivery executive reach your doorstep easily</Text>
+                                </View>
                                 {/* <Text style={{ color: "red", fontSize: 12, marginTop: 5, fontWeight: 'bold' }}>{this.state.errorMessage} </Text> */}
                                 {/* <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
                             <View style={{ flexDirection: 'row', justifyContent: "space-around", marginTop: 5, }}>
@@ -613,6 +623,27 @@ class MyMapView extends React.Component {
                                             : undefined}
                                     </View>
                                 </>
+                                <View style={{ marginTop: 10 }}>
+                                    <Text style={{ color: "#727272", fontSize: 12 }}>Alternate Mobile Number</Text>
+                                    <View style={{ borderBottomColor: '#D8D8D8', flexDirection: 'row', borderBottomWidth: 1 }}>
+                                        <View style={{ justifyContent: 'center' }}>
+                                            <Text style={{ fontSize: 16 }}>+91</Text>
+                                        </View>
+                                        <View style={{ backgroundColor: "grey", width: 0.5, margin: 13 }} />
+                                        <View style={{ flex: 1 }}>
+                                            <TextInput
+                                                style={{ height: 40, }}
+                                                onChangeText={text => this.setState({
+                                                    alternateMobileNumber: text
+                                                })}
+                                                placeholder="Alternate Mobile Number"
+                                                placeholderTextColor="#727272"
+                                                value={this.state.alternateMobileNumber}
+                                                keyboardType={"number-pad"}
+                                            />
+                                        </View>
+                                    </View>
+                                </View>
                                 <View style={{ marginTop: 10 }}>
                                     {/* <Text style={{ color: "#727272", fontSize: 12 }}>House No/ Flat No/Floor/Building</Text> */}
                                     <TextInput
@@ -842,7 +873,7 @@ const styles = StyleSheet.create({
     markerFixed: {
         left: '50%',
         marginLeft: -49,
-        marginTop: -50,
+        marginTop: -40,
         position: 'absolute',
         top: '50%',
     },

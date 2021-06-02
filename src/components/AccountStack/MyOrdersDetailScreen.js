@@ -124,7 +124,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                     <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
                 }>
                 <View style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
-                    {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
+                    <Text>{JSON.stringify(item, null, "         ")} </Text>
                     <View style={{ flex: 1, flexDirection: 'row' }}>
                         <View style={{ flex: 1 }}>
                             <Text style={{ fontWeight: 'bold' }}>Vegetables & Fruits</Text>
@@ -132,12 +132,12 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                     </View>
                     <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
                         <View style={{ flex: 1 }}>
-                            <Text style={{ color: '#909090', fontSize: 13 }}>{moment(item?.slotStartTime).format("DD MMM")} ({item?.deliverySlot?.description})</Text>
+                            <Text style={{ color: '#909090', fontSize: 13 }}>{moment(item?.slotStartTime).format("DD MMM")} ({moment(item?.slotStartTime).add(1, 'minutes').format("hh:mm A")} - {moment(item?.slotEndTime).add(1, 'minutes').format("hh:mm A")})</Text>
                             {/* <Text></Text> */}
                         </View>
                         <View>
                             {item?.orderState == "IN_TRANSIT" &&
-                                <Text style={{ color: "#2D87C9" }}>In transit</Text>
+                                <Text style={{ color: "#2D87C9" }}>Out for delivery</Text>
                             }
                             {item?.orderState == "DELIVERED" &&
                                 <Text style={{}}><Icon name="checkcircle" type="AntDesign" style={{ fontSize: 16, color: "#49C32C" }} /> Delivered</Text>

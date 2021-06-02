@@ -195,7 +195,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                                 </View>
                                 <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'center' }}>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, flexWrap: 'wrap' }}>
                                             {userLocation?.saveAs == "Home" &&
                                                 <View style={{ backgroundColor: "#FEF8FC", borderWidth: 1, borderRadius: 4, borderColor: "#FCD8EC", paddingVertical: 3, marginRight: 5 }}>
                                                     <Text style={{ color: "#F464AD", fontSize: 12, marginHorizontal: 5 }}>Home</Text>
