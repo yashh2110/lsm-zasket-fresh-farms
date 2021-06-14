@@ -124,7 +124,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                     <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
                 }>
                 <View style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 16, marginTop: 10, flex: 1 }}>
-                    <Text>{JSON.stringify(item, null, "         ")} </Text>
+                    {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
                     <View style={{ flex: 1, flexDirection: 'row' }}>
                         <View style={{ flex: 1 }}>
                             <Text style={{ fontWeight: 'bold' }}>Vegetables & Fruits</Text>
