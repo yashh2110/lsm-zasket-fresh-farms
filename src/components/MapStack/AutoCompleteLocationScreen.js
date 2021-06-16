@@ -200,37 +200,56 @@ class AutoCompleteLocationScreen extends React.Component {
         return (
             <>
                 <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-                    <View flex={1}>
-                        <View style={{ position: 'relative', height: 65 }}>
-                            <AutoCompleteLocation
-                                style={{ container: { positition: 'absolute', height: 50 } }}
-                                getLocation={async (data, details = null) => {
-                                    await this.setState({
-                                        region: {
+                    <View style={{ flex: 1, width: ("95%"), alignSelf: "center", }}>
+                        <View style={{ flex: 1 }}>
+                            <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', }}>
+                                <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
+                            </TouchableOpacity>
+                            <View style={{ marginTop: 10 }}>
+                                <Text style={{ fontWeight: "bold" }}>Search for your location</Text>
+                            </View>
+                            <View style={{ marginTop: ("4%") }}>
+                                <AutoCompleteLocation
+                                    style={{}}
+                                    getLocation={async (data, details = null) => {
+                                        await this.setState({
+                                            region: {
+                                                latitude: details?.geometry?.location?.lat,
+                                                longitude: details?.geometry?.location?.lng,
+                                                latitudeDelta,
+                                                longitudeDelta,
+                                            },
+                                            address: data.description,
+                                        })
+                                        let region = {
                                             latitude: details?.geometry?.location?.lat,
                                             longitude: details?.geometry?.location?.lng,
                                             latitudeDelta,
                                             longitudeDelta,
-                                        },
-                                        address: data.description,
-                                    })
-                                    let region = {
-                                        latitude: details?.geometry?.location?.lat,
-                                        longitude: details?.geometry?.location?.lng,
-                                        latitudeDelta,
-                                        longitudeDelta,
-                                    }
-                                    const { fromScreen, navigateTo } = this.props.route.params;
-                                    this.props.navigation.navigate(navigateTo, { regionalPositions: region })
-                                    // await this.getCurrentLocation()
-                                }}
-                                onRequestClose={() => {
-                                    this.props.navigation.goBack()
-                                }}
-                            />
-                        </View>
-                        <View style={{ flex: 1, zIndex: -1 }}>
-                            <View style={{ backgroundColor: 'white', flex: 1 }}>
+                                        }
+                                        const { fromScreen, navigateTo } = this.props.route.params;
+                                        this.props.navigation.navigate(navigateTo, { regionalPositions: region })
+                                    }}
+                                    onRequestClose={() => {
+                                        this.props.navigation.goBack()
+                                    }}
+
+                                />
+                                <View style={{ position: "absolute", top: 20, left: 20 }}>
+                                    <Icon name="search" style={{ fontSize: 22, color: "gray", }} />
+                                </View>
+                            </View>
+                            <View style={{ marginTop: 80 }}>
+                                <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                                    <View
+                                        style={{ height: 0.7, width: "46%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, }}
+                                    />
+                                    <Text style={{ marginLeft: 5, marginRight: 5, color: "gray", fontSize: 14, fontWeight: "bold" }}>OR</Text>
+                                    <View
+                                        style={{ height: 0.7, width: "46%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, }}
+                                    />
+
+                                </View>
                                 {this.state.gpsEnabled ?
                                     <View style={{ backgroundColor: '#6B98DE' }}>
                                         <View style={{ flexDirection: 'row', padding: 10 }}>
@@ -250,23 +269,24 @@ class AutoCompleteLocationScreen extends React.Component {
                                     <TouchableOpacity onPress={() => {
                                         this.getCurrentPosition()
                                     }} style={{ flexDirection: 'row' }}>
-                                        <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                            <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#232323' }} />
+                                        <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                            <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 20, color: "red" }} />
                                         </View>
-                                        <View style={{ flex: 1, justifyContent: 'center' }}>
-                                            <Text style={{ fontSize: 14, }}>Current Location</Text>
-                                            <Text style={{ fontSize: 12, color: "#727272" }}>Using GPS</Text>
+                                        <View style={{ flex: 1, justifyContent: 'center', }}>
+                                            <Text style={{ fontSize: 16, fontWeight: "bold", color: "red" }}>Use current location</Text>
                                         </View>
                                     </TouchableOpacity>
                                 }
-                                <View
-                                    style={{ height: 0.7, width: "95%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10, marginTop: 5 }}
-                                />
+
                                 {this.state.savedAddressLoading ?
                                     <ActivityIndicator size={"large"} color={Theme.Colors.primary} /> :
                                     <>
                                         {this.state.savedAddress?.length > 0 ?
-                                            <Text style={{ fontWeight: 'bold', marginLeft: 10, fontSize: 14, marginBottom: 10 }}>Saved Address</Text>
+                                            <>
+                                                <View style={{ marginTop: 8, width: ("100%"), backgroundColor: "#e8e8e8", height: 8 }}>
+                                                </View>
+                                                <Text style={{ fontWeight: 'bold', marginLeft: 8, fontSize: 14, marginBottom: 10, marginTop: 15 }}>Saved Address</Text>
+                                            </>
                                             : undefined}
                                         <FlatList
                                             data={this.state.savedAddress}
@@ -315,7 +335,8 @@ class AutoCompleteLocationScreen extends React.Component {
                                             }
                                             ItemSeparatorComponent={this.renderSeparator}
                                             keyExtractor={item => item?.id.toString()}
-                                        /></>}
+                                        /></>
+                                }
                             </View>
                         </View>
                     </View>

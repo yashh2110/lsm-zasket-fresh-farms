@@ -13,10 +13,10 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
   return (
     <GooglePlacesAutocomplete
       ref={ref => { someRef = ref }}
-      placeholder='Search'
+      // placeholder='Search'
       minLength={2} // minimum length of text to search
       autoFocus={true}
-      placeholder="Search for a location"
+      placeholder="Address search e.g. Niligiri's HSR"
       // styles={[commonStyle.fullHeight, commonStyle.greenBg]}
       // textInputContainer={[commonStyle.fullHeight, commonStyle.greenBg]}
       returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
@@ -27,6 +27,10 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
       onPress={getLocation}
       value={defaultValue}
       getDefaultValue={() => ''}
+      textInputProps={{
+        leftIcon: { type: 'font-awesome', name: 'chevron-left' },
+        errorStyle: { color: 'red' },
+      }}
       query={{
         // available options: https://developers.google.com/places/web-service/autocomplete
         key: MapApiKey,
@@ -42,27 +46,30 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
           fontSize: 12,
         },
         textInputContainer: {
-          backgroundColor: '#F2F2F2',
-          height: 60
+          backgroundColor: '#ffffff',
+          height: 60,
         },
-        textInput: {
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 3,
-          },
-          shadowOpacity: 0.27,
-          shadowRadius: 4.65,
 
-          elevation: 6,
-          height: 40
+        textInput: {
+          // shadowColor: "#000",
+          // shadowOffset: {
+          //   width: 0,
+          //   height: 3,
+          // },
+          // shadowOpacity: 0.27,
+          // shadowRadius: 4.65,
+          // elevation: 6,
+          height: 50,
+          borderRadius: 25,
+          paddingLeft: 45,
+          backgroundColor: "#F3F3F5"
         },
         predefinedPlacesDescription: {
           color: "black",
         },
         listView: {
           position: "absolute",
-          marginTop: 44,
+          marginTop: 60,
           backgroundColor: "white",
           borderBottomEndRadius: 15,
           elevation: 2,
@@ -70,6 +77,11 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
         // textInputContainer: {
         //   backgroundColor: 'white'
         // },
+        textInputContainer: {
+          borderTopWidth: 0,
+          borderBottomWidth: 0,
+          backgroundColor: "#ffffff"
+        },
       }}
       // currentLocation={true}
       // currentLocationLabel='Current location'
@@ -90,17 +102,18 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
       // predefinedPlaces={[currentPosition]}
 
       debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
-      renderLeftButton={() => <TouchableOpacity style={{ justifyContent: 'center' }} onPress={onRequestClose}>
-        <Icon name="arrowleft" type="AntDesign" style={{ fontSize: 20, marginLeft: 10, color: "grey" }} />
-      </TouchableOpacity>}
+
+      // renderLeftButton={() => <TouchableOpacity style={{ justifyContent: 'center' }} onPress={onRequestClose}>
+      //   <Icon name="arrowleft" type="AntDesign" style={{ fontSize: 20, marginLeft: 10, color: "grey" }} />
+      // </TouchableOpacity>}
       // renderRightButton={() => <Text>Custom text after the input</Text>}
       renderRightButton={() =>
         Platform.OS === "ios" ?
           undefined :
+
           <TouchableOpacity
-            style={{ backgroundColor: '#C8C8CD', borderRadius: 50, height: 20, width: 20, justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginRight: 10 }}
+            style={{ backgroundColor: '#C8C8CD', borderRadius: 50, height: 20, width: 20, justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginRight: 10, marginTop: 18 }}
             onPress={() => {
-              // someRef.clear();
               someRef.setAddressText("")
             }}
           >

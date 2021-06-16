@@ -623,7 +623,7 @@ class MyMapView extends React.Component {
                                             : undefined}
                                     </View>
                                 </>
-                                <View style={{ marginTop: 10 }}>
+                                {/* <View style={{ marginTop: 10 }}>
                                     <Text style={{ color: "#727272", fontSize: 12 }}>Alternate Mobile Number</Text>
                                     <View style={{ borderBottomColor: '#D8D8D8', flexDirection: 'row', borderBottomWidth: 1 }}>
                                         <View style={{ justifyContent: 'center' }}>
@@ -643,7 +643,7 @@ class MyMapView extends React.Component {
                                             />
                                         </View>
                                     </View>
-                                </View>
+                                </View> */}
                                 <View style={{ marginTop: 10 }}>
                                     {/* <Text style={{ color: "#727272", fontSize: 12 }}>House No/ Flat No/Floor/Building</Text> */}
                                     <TextInput
@@ -651,7 +651,7 @@ class MyMapView extends React.Component {
                                         onChangeText={text => this.setState({
                                             houseNumber: text
                                         })}
-                                        placeholder="House No/ Flat No/Floor/Building"
+                                        placeholder="Flat / Floor / Building Name"
                                         placeholderTextColor="#727272"
                                         value={this.state.houseNumber}
                                     />
@@ -668,8 +668,7 @@ class MyMapView extends React.Component {
                                         value={this.state.landMark}
                                     />
                                 </View>
-                                <View style={{ marginTop: 10 }}>
-                                    {/* <Text style={{ color: "#727272", fontSize: 12 }}>Landmark</Text> */}
+                                {/* <View style={{ marginTop: 10 }}>
                                     <TextInput
                                         style={{ height: 40, borderColor: this.state.errorMessageBanner ? 'red' : '#D8D8D8', borderBottomWidth: 1 }}
                                         onChangeText={text => this.setState({
@@ -680,7 +679,7 @@ class MyMapView extends React.Component {
                                         value={this.state.pincode}
                                         onTouchStart={() => this.setState({ errorMessageBanner: false })}
                                     />
-                                </View>
+                                </View> */}
                                 <View style={{ marginTop: 10 }}>
                                     <Text style={{ color: "#727272", fontSize: 12 }}>Save as</Text>
                                 </View>
