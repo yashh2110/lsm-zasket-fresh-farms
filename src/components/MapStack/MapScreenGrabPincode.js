@@ -70,7 +70,8 @@ class MapScreenGrabPincode extends React.Component {
         errorMessageBanner: false,
         addressId: "",
         pincodeAvailable: false,
-        gpsEnabled: false
+        gpsEnabled: false,
+        movetoadjust: false
     };
 
 
@@ -204,7 +205,7 @@ class MapScreenGrabPincode extends React.Component {
     };
 
     getCurrentLocation = async () => {
-        await this.setState({ addressLoading: true, errorMessage: "" })
+        await this.setState({ addressLoading: true, errorMessage: "", movetoadjust: true })
         fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + this.state.region.latitude + ',' + this.state.region.longitude + '&key=' + MapApiKey)
             .then((response) => {
                 response.json().then(async (json) => {
@@ -212,11 +213,11 @@ class MapScreenGrabPincode extends React.Component {
                     let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
                     // alert(JSON.stringify(json?.results?.[1]?.address_components?.find(el => el.types.find(o => o == "political")), null, "  "))
                     await this.setLocation(json?.results?.[0]?.formatted_address, this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
-                    await this.setState({ addressLoading: false })
+                    await this.setState({ addressLoading: false, })
                 });
             }).catch(async (err) => {
-                console.warn(err)
-                await this.setState({ addressLoading: false })
+                console.warn('err', err)
+                await this.setState({ addressLoading: false, movetoadjust: false })
             })
     }
 
@@ -244,7 +245,7 @@ class MapScreenGrabPincode extends React.Component {
     };
 
     onRegionChangeComplete = async (region) => {
-        this.setState({ errorMessageBanner: false })
+        this.setState({ errorMessageBanner: false, movetoadjust: false })
         await this.setState({
             region: region
         })
@@ -301,6 +302,8 @@ class MapScreenGrabPincode extends React.Component {
 
         return (
             <>
+
+
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS == "ios" ? "padding" : null}>
                         {this.state.errorMessageBanner &&
@@ -316,13 +319,16 @@ class MapScreenGrabPincode extends React.Component {
                                 </TouchableOpacity>
                             </View>}
                         <View style={styles.map}>
-                            <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
-                                <Image
-                                    style={{ width: 20, height: 20, }}
-                                    resizeMode="contain"
-                                    source={require('../../assets/png/backIcon.png')}
-                                />
-                            </TouchableOpacity>
+                            {!this.state.errorMessageBanner &&
+                                <View style={{}}>
+                                    <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
+                                        <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
+                                    </TouchableOpacity>
+                                    <View style={{ zIndex: 1, left: 45, top: 17 }}>
+                                        <Text style={{ fontWeight: "bold", fontSize: 18, color: "#242A40" }}>Set delivery location</Text>
+                                    </View>
+                                </View>
+                            }
                             <MapView
                                 showsUserLocation
                                 ref={map => { this.map = map }}
@@ -339,10 +345,30 @@ class MapScreenGrabPincode extends React.Component {
                             </MapView>
                             <View style={styles.markerFixed}>
                                 {/* <Image style={styles.marker} source={marker} /> */}
-                                <View style={{ backgroundColor: 'black', alignSelf: 'center', marginLeft: -50, width: 215, padding: 5, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -40, marginBottom: -15 }}>
+                                {/* <View style={{ backgroundColor: 'black', alignSelf: 'center', marginLeft: -50, width: 215, padding: 5, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -40, marginBottom: -15 }}>
                                     <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>Order will be delivered here</Text>
                                     <Text style={{ color: 'white', fontSize: 12 }}>Place the pin accurately on the map</Text>
-                                </View>
+                                </View> */}
+                                {this.state.addressLoading ?
+                                    <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: -125, width: 345, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -55, marginBottom: -28 }}>
+                                        <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
+                                        <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating...</Text>
+                                    </View>
+                                    :
+                                    <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: -125, width: 345, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -55, marginBottom: -28 }}>
+                                        {this.state.address ?
+                                            <>
+                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
+                                                <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14 }}>{this.state.address}</Text>
+                                            </>
+                                            :
+                                            <>
+                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
+                                                <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating...</Text>
+                                            </>
+                                        }
+                                    </View>
+                                }
                                 <LottieView
                                     style={styles.marker}
                                     source={require("../../assets/animations/favoriteDoctorHeart.json")}
@@ -353,7 +379,25 @@ class MapScreenGrabPincode extends React.Component {
                                 <Icon name='gps-fixed' type="MaterialIcons" style={{ color: '#979197', fontSize: 20 }} />
                             </TouchableOpacity>
                         </View>
-                        <View style={{ width: "100%", height: 3, overflow: "hidden" }}>
+                        {
+                            this.state.movetoadjust && this.state.addressLoading == false ?
+                                <>
+                                    <View style={{
+                                        bottom: '12%',
+                                        left: '25%',
+                                        position: 'absolute',
+                                        zIndex: 1
+                                    }}>
+                                        <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: 0, width: 200, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', }}>
+                                            <Text style={{ color: '#ffffff', fontSize: 14, letterSpacing: 0.2 }}>Move the pin to adjust</Text>
+                                        </View>
+                                    </View>
+
+                                </>
+                                :
+                                null
+                        }
+                        <View style={{ width: "100%", height: 5, overflow: "hidden" }}>
                             {this.state.addressLoading ?
                                 <LottieView
                                     style={{ width: "100%", }}
@@ -364,35 +408,36 @@ class MapScreenGrabPincode extends React.Component {
                                 null
                             }
                         </View>
-                        <ScrollView
+                        {/* <ScrollView
                             // ref='_scrollView' 
                             contentContainerStyle={{ zIndex: 1 }}
-                            showsVerticalScrollIndicator={true}>
-                            {this.state.gpsEnabled ?
-                                <View style={{ backgroundColor: '#6B98DE' }}>
-                                    <View style={{ flexDirection: 'row', padding: 10 }}>
-                                        <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                            <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#ffffff' }} />
-                                        </View>
-                                        <View style={{ flex: 1, justifyContent: 'center' }}>
-                                            <Text style={{ fontSize: 14, color: '#ffffff', fontWeight: 'bold' }}>Unable to get location</Text>
-                                            <Text style={{ fontSize: 12, color: "#ffffff" }}>Turning on Location ensures accurate and hassle-free delivery</Text>
-                                        </View>
-                                        <TouchableOpacity onPress={() => this.onPressTurnOn()} style={{ height: 30, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', margin: 10, borderRadius: 5 }}>
-                                            <Text style={{ fontSize: 14, color: '#6B98DE', marginHorizontal: 10, fontWeight: 'bold' }}>TURN ON</Text>
-                                        </TouchableOpacity>
+                            showsVerticalScrollIndicator={true}> */}
+                        {this.state.gpsEnabled ?
+                            <View style={{ backgroundColor: '#6B98DE', position: "absolute", bottom: 140 }}>
+                                <View style={{ flexDirection: 'row', padding: 10 }}>
+                                    <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                        <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#ffffff' }} />
                                     </View>
-                                </View> : null}
-                            <View style={{ flex: 1, width: "90%", alignSelf: 'center' }}>
-                                <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ width: ("60%") }}>
+                                        <Text style={{ fontSize: 14, color: '#ffffff', fontWeight: 'bold', }}>Unable to get location</Text>
+                                        <Text style={{ fontSize: 12, color: "#ffffff" }}>Turning on Location ensures accurate and hassle-free delivery</Text>
+                                    </View>
+                                    <TouchableOpacity onPress={() => this.onPressTurnOn()} style={{ height: 30, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', margin: 10, borderRadius: 5 }}>
+                                        <Text style={{ fontSize: 14, color: '#6B98DE', marginHorizontal: 10, fontWeight: 'bold' }}>TURN ON</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            : null}
+                        {/* <View style={{ flex: 1, width: "90%", alignSelf: 'center' }}> */}
+                        {/* <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1, justifyContent: 'center' }}>
                                         <Text style={{ color: "#727272", fontSize: 12 }}>Your current location</Text>
                                     </View>
                                     <TouchableOpacity activeOpacity={0.7} onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { fromScreen: 'OnBoardScreen', navigateTo: 'MapScreenGrabPincode' }) }} style={{ padding: 5 }}>
                                         <Text style={{ color: Theme.Colors.primary }}>Change</Text>
                                     </TouchableOpacity>
-                                </View>
-                                {this.state.addressLoading ?
+                                </View> */}
+                        {/* {this.state.addressLoading ?
                                     <View style={{ flexDirection: "row" }}>
                                         <Image
                                             style={{ width: 30, height: 30, marginLeft: -5 }}
@@ -411,11 +456,11 @@ class MapScreenGrabPincode extends React.Component {
                                                 <Text style={{ fontSize: 16 }}>{this.state.address} </Text>
                                             </> : null}
                                     </View>
-                                }
-                                <View style={{ borderRadius: 5, borderColor: "#ECE1D6", paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#FFFCF5', borderWidth: 1, marginTop: 10 }}>
+                                } */}
+                        {/* <View style={{ borderRadius: 5, borderColor: "#ECE1D6", paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#FFFCF5', borderWidth: 1, marginTop: 10 }}>
                                     <Text style={{ color: '#8e6847', fontSize: 14 }}>A detailed address will help our delivery executive reach your doorstep easily</Text>
-                                </View>
-                                {/* <View style={{ marginTop: 10 }}>
+                                </View> */}
+                        {/* <View style={{ marginTop: 10 }}>
                                     <Text style={{ color: "#727272", fontSize: 12 }}>Pincode</Text>
                                     <TextInput
                                         style={{ height: 40, borderColor: this.state.errorMessageBanner ? 'red' : '#D8D8D8', borderBottomWidth: 1 }}
@@ -427,9 +472,9 @@ class MapScreenGrabPincode extends React.Component {
                                         onTouchStart={() => this.setState({ errorMessageBanner: false })}
                                     />
                                 </View> */}
-                            </View>
-                        </ScrollView>
-                        <Button full style={{ backgroundColor: Theme.Colors.primary, }} onPress={() => this.onSubmit()}><Text style={{ textTransform: 'capitalize' }}>Confirm Location</Text></Button>
+                        {/* </View> */}
+                        {/* </ScrollView> */}
+                        <Button full style={{ backgroundColor: Theme.Colors.primary, marginTop: 10 }} onPress={() => this.onSubmit()}><Text style={{ textTransform: 'capitalize' }}>Confirm Location</Text></Button>
                     </KeyboardAvoidingView>
                     {/* <SafeAreaView style={styles.footer}>
                         <Text style={styles.region}>{JSON.stringify(region, null, 2)} </Text>
@@ -452,7 +497,7 @@ export default connect(mapStateToProps, { isPincodeServiceable, addHomeScreenLoc
 
 const styles = StyleSheet.create({
     map: {
-        height: "70%"
+        height: "90%"
     },
     // markerFixed: {
     //     left: '50%',

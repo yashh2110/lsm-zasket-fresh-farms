@@ -8,6 +8,8 @@ import { Icon } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage';
 import { getAllUserAddress, deleteAddress } from '../../actions/map'
 import Loader from '../common/Loader';
+import * as Animatable from 'react-native-animatable';
+import LottieView from 'lottie-react-native';
 
 const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddress, deleteAddress, userLocation }) => {
 
@@ -52,7 +54,8 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
     }
 
     const onPressAddNewAddress = () => {
-        navigation.navigate('MapScreen', { fromScreen: "ManageAddressScreen" })
+        navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapConfirmLocation" })
+        // navigation.navigate('MapScreen', { fromScreen: "ManageAddressScreen" })
     }
 
     const onPressEdit = (option) => {
@@ -153,6 +156,19 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
                                     </TouchableOpacity>
                                 </View>
                             </View>
+                        </View>
+                    }
+                    ListEmptyComponent={() =>
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
+                            {/* <Draggable> */}
+                            <LottieView
+                                style={{ width: 200, height: 220, marginVertical: 55 }}
+                                source={require("../../assets/animations/sadSearch.json")}
+                                autoPlay
+                                loop
+                            />
+                            {/* // </Draggable>  */}
+                            <Animatable.Text animation="pulse" easing="ease-in" duration={1500} iterationCount="infinite" style={{ fontSize: 20, marginTop: 50, color: '#474747' }}>No data found</Animatable.Text>
                         </View>
                     }
                     keyExtractor={item => item?.id.toString()}

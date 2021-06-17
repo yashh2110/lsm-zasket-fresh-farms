@@ -18,6 +18,7 @@ import FeatherIcons from "react-native-vector-icons/Feather"
 import AntDesignIcons from "react-native-vector-icons/AntDesign"
 import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
 import { CheckGpsState, CheckPermissions } from '../../utils/utils';
+import { isPincodeServiceable, } from '../../actions/home'
 
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
@@ -29,7 +30,7 @@ const initialRegion = {
     longitudeDelta,
 }
 
-class MyMapView extends React.Component {
+class MapConfirmLocation extends React.Component {
 
     map = null;
 
@@ -66,7 +67,8 @@ class MyMapView extends React.Component {
         errorMessage: "",
         errorMessageBanner: false,
         addressId: "",
-        gpsEnabled: false
+        gpsEnabled: false,
+        movetoadjust: false
     };
 
 
@@ -94,12 +96,11 @@ class MyMapView extends React.Component {
             }
         }, false)
         const { fromScreen, regionalPositions } = this.props.route?.params;
-        console.warn("regionalPositionsregionalPositions", regionalPositions)
         await this.setState({ mode: fromScreen })
-        if (fromScreen == "EDIT_SCREEN" && regionalPositions == null) {
-            // alert("Aaaaaaaaa")
+        if (fromScreen == "EDIT_MAPSCREEN" && regionalPositions == null) {
             await this.setState({ modalVisible: false })
             const { item } = this.props.route?.params;
+            const { mode } = this.props.route?.params
             // alert(JSON.stringify(item, null, "        "))
             const region = {
                 latitude: item?.lat,
@@ -203,7 +204,7 @@ class MyMapView extends React.Component {
     };
 
     getCurrentLocation = async () => {
-        await this.setState({ addressLoading: true, errorMessage: "" })
+        await this.setState({ addressLoading: true, errorMessage: "", movetoadjust: true })
         fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + this.state.region.latitude + ',' + this.state.region.longitude + '&key=' + MapApiKey)
             .then((response) => {
                 response.json().then(async (json) => {
@@ -215,7 +216,7 @@ class MyMapView extends React.Component {
                 });
             }).catch(async (err) => {
                 console.warn(err)
-                await this.setState({ addressLoading: false })
+                await this.setState({ addressLoading: false, movetoadjust: false })
             })
     }
 
@@ -274,90 +275,104 @@ class MyMapView extends React.Component {
     }
 
     onSubmit = async () => {
-        if (this.validate()) {
-            await this.setState({ loading: true })
-            let payload;
-            payload = {
-                "addressLine1": this.state.address,
-                "houseNo": this.state.houseNumber,
-                "pincode": this.state.pincode,
-                "isActive": true,
-                "landmark": this.state.landMark,
-                "lat": this.state.latitude,
-                "lon": this.state.longitude,
-                "recepientMobileNumber": this.state.mobileNumber.includes("+91") ? this.state.mobileNumber : "+91" + this.state.mobileNumber,
-                "alternateMobileNumber": this.state.alternateMobileNumber.includes("+91") ? this.state.alternateMobileNumber : "+91" + this.state.alternateMobileNumber,
-                "recepientName": this.state.name,
-                "saveAs": this.state.saveAs
-            }
-            console.warn("this.state.mobileNumber", this.state.mobileNumber)
-            const { fromScreen } = this.props.route?.params;
-            await this.setState({ mode: fromScreen })
-            if (fromScreen == "EDIT_SCREEN") {
-                await this.props.updateUserAddress(this.state.addressId, payload, async (response, status) => {
-                    if (status) {
-                        // alert()
-                        this.props.getAllUserAddress(async (response, status) => { })
-                        this.props.navigation.goBack()
-                    } else {
-                        if (__DEV__) {
-                            alert(JSON.stringify(response?.data, null, "      "))
-                        }
-                        this.setState({ errorMessage: response?.data })
-                        if (response?.data == "Cannot update address to not serviceable area") {
-                            this.setState({ errorMessageBanner: true })
-                            await this.setState({ loading: false })
-                        }
-                    }
-                })
-            } else {
-                await this.props.addNewCustomerAddress(payload, async (response, status) => {
-                    if (status) {
-                        // Alert.alert(JSON.stringify(response, null, "   "))
-
-                        let location = {
-                            "id": response?.data?.id,
-                            "addressLine_1": response?.data?.addressLine_1,
-                            "pincode": response?.data?.pincode,
-                            "isActive": true,
-                            "landmark": response?.data?.landMark,
-                            "lat": response?.data?.lat,
-                            "lon": response?.data?.lon,
-                            "recepientMobileNumber": response?.data?.recepientMobileNumber,
-                            "recepientName": response?.data?.recepientName,
-                            "saveAs": response?.data?.saveAs
-                        }
-
-                        this.props.addLocation(location)
-                        this.props.addHomeScreenLocation({
-                            "addressLine_1": response?.data?.addressLine_1,
-                            "pincode": response?.data?.pincode,
-                            "lat": response?.data?.lat,
-                            "lon": response?.data?.lon,
-                        })
-                        // await AsyncStorage.setItem("location", JSON.stringify(location));
-                        this.setState({ loading: false })
-                        if (this.state.mode === "ON_INITIAL") {
-                            this.props.navigation.navigate('SetAuthContext', { userLocation: location }) // if you send it as null it wont navigate
-                        } else {
-                            this.props.navigation.goBack()
-                            this.props.getAllUserAddress(async (response, status) => { })
-                        }
-                    } else {
-                        if (__DEV__) {
-                            alert(JSON.stringify(response?.data, null, "      "))
-                        }
-                        this.setState({ errorMessage: response?.data })
-                        if (response?.data == "Your location is not serviceable") {
-                            this.setState({ errorMessageBanner: true })
-                        }
-                        // this.refs._scrollView.scrollTo(0);
-                        this.setState({ loading: false })
-                    }
-                })
-            }
-
+        console.warn("this.state.addressthis.state.address", this.state.address)
+        if (this.state.mode === "ON_INITIAL") {
+            this.props.navigation.navigate('SetAuthContext', { userLocation: location }) // if you send it as null it wont navigate
+        } else {
+            await this.props.isPincodeServiceable(this.state.latitude, this.state.longitude, (res, status) => {
+                if (status) {
+                    this.props.navigation.navigate("MapScreen", { fromScreen: "EDIT_SCREEN", item: { addressLine_1: this.state.address, lat: this.state.latitude, lon: this.state.longitude } })
+                } else {
+                    this.setState({ errorMessageBanner: true })
+                }
+            })
+            this.props.getAllUserAddress(async (response, status) => { })
         }
+
+        // if (this.validate()) {
+        //     await this.setState({ loading: true })
+        //     let payload;
+        //     payload = {
+        //         "addressLine1": this.state.address,
+        //         "houseNo": this.state.houseNumber,
+        //         "pincode": this.state.pincode,
+        //         "isActive": true,
+        //         "landmark": this.state.landMark,
+        //         "lat": this.state.latitude,
+        //         "lon": this.state.longitude,
+        //         "recepientMobileNumber": this.state.mobileNumber.includes("+91") ? this.state.mobileNumber : "+91" + this.state.mobileNumber,
+        //         "alternateMobileNumber": this.state.alternateMobileNumber.includes("+91") ? this.state.alternateMobileNumber : "+91" + this.state.alternateMobileNumber,
+        //         "recepientName": this.state.name,
+        //         "saveAs": this.state.saveAs
+        //     }
+        //     // console.warn(payload)
+        //     const { fromScreen } = this.props.route?.params;
+        //     await this.setState({ mode: fromScreen })
+        //     if (fromScreen == "EDIT_MAPSCREEN") {
+        //         await this.props.updateUserAddress(this.state.addressId, payload, async (response, status) => {
+        //             if (status) {
+        //                 // alert()
+        //                 this.props.getAllUserAddress(async (response, status) => { })
+        //                 this.props.navigation.goBack()
+        //             } else {
+        //                 if (__DEV__) {
+        //                     alert(JSON.stringify(response?.data, null, "      "))
+        //                 }
+        //                 this.setState({ errorMessage: response?.data })
+        //                 if (response?.data == "Cannot update address to not serviceable area") {
+        //                     this.setState({ errorMessageBanner: true })
+        //                     await this.setState({ loading: false })
+        //                 }
+        //             }
+        //         })
+        //     } else {
+        //         await this.props.addNewCustomerAddress(payload, async (response, status) => {
+        //             if (status) {
+        //                 // Alert.alert(JSON.stringify(response, null, "   "))
+
+        //                 let location = {
+        //                     "id": response?.data?.id,
+        //                     "addressLine_1": response?.data?.addressLine_1,
+        //                     "pincode": response?.data?.pincode,
+        //                     "isActive": true,
+        //                     "landmark": response?.data?.landMark,
+        //                     "lat": response?.data?.lat,
+        //                     "lon": response?.data?.lon,
+        //                     "recepientMobileNumber": response?.data?.recepientMobileNumber,
+        //                     "recepientName": response?.data?.recepientName,
+        //                     "saveAs": response?.data?.saveAs
+        //                 }
+
+        //                 this.props.addLocation(location)
+        //                 this.props.addHomeScreenLocation({
+        //                     "addressLine_1": response?.data?.addressLine_1,
+        //                     "pincode": response?.data?.pincode,
+        //                     "lat": response?.data?.lat,
+        //                     "lon": response?.data?.lon,
+        //                 })
+        //                 // await AsyncStorage.setItem("location", JSON.stringify(location));
+        //                 this.setState({ loading: false })
+        //                 if (this.state.mode === "ON_INITIAL") {
+        //                     this.props.navigation.navigate('SetAuthContext', { userLocation: location }) // if you send it as null it wont navigate
+        //                 } else {
+        //                     this.props.navigation.goBack()
+        //                     this.props.getAllUserAddress(async (response, status) => { })
+        //                 }
+        //             } else {
+        //                 if (__DEV__) {
+        //                     alert(JSON.stringify(response?.data, null, "      "))
+        //                 }
+        //                 this.setState({ errorMessage: response?.data })
+        //                 if (response?.data == "Your location is not serviceable") {
+        //                     this.setState({ errorMessageBanner: true })
+        //                 }
+        //                 // this.refs._scrollView.scrollTo(0);
+        //                 this.setState({ loading: false })
+        //             }
+        //         })
+        //     }
+
+        // }
     }
 
     onPressCheckbox = (option) => {
@@ -409,6 +424,7 @@ class MyMapView extends React.Component {
     };
 
     onPressSavedAddress = async (item) => {
+        alert("0000000000000")
         // Alert.alert(JSON.stringify(item, null, "      "))
         let payload = {
             id: item?.id,
@@ -439,7 +455,7 @@ class MyMapView extends React.Component {
 
         const { region } = this.state;
         const { children, renderMarker, markers, navigation } = this.props;
-        const { item } = this.props.route?.params;
+        const { screenmode } = this.props.route?.params
         return (
             <>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -452,26 +468,38 @@ class MyMapView extends React.Component {
                                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ fontSize: 12, color: 'white' }}>We might be not available in all the locations. We are expanding, very soon we will be delivered in all location.</Text>
                                 </View>
-                                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: "red" }} onPress={() => { this.setState({ errorMessageBanner: false }) }}>
+                                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={() => { this.setState({ errorMessageBanner: false }) }}>
                                     <AntDesignIcons name="close" color={'white'} size={18} />
                                 </TouchableOpacity>
                             </View>
                         }
                         <View style={styles.map}>
-                            <View style={{}}>
-                                <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
-                                    <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
-                                </TouchableOpacity>
-                                <View style={{ zIndex: 1, left: 45, top: 17 }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 18, color: "#242A40" }}>Add address details</Text>
+                            {!this.state.errorMessageBanner &&
+                                <View style={{}}>
+                                    {
+                                        this.state.mode == "EDIT_MAPSCREEN" ?
+                                            <>
+                                                <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
+                                                    <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
+                                                </TouchableOpacity>
+                                                <View style={{ zIndex: 1, left: 45, top: 17 }}>
+                                                    <Text style={{ fontWeight: "bold", fontSize: 18, color: "#242A40" }}>Edit Location</Text>
+                                                </View>
+                                            </>
+                                            :
+                                            <>
+                                                <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
+                                                    <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
+                                                </TouchableOpacity>
+                                                <View style={{ zIndex: 1, left: 45, top: 17 }}>
+                                                    <Text style={{ fontWeight: "bold", fontSize: 18, color: "#242A40" }}>Set delivery location</Text>
+                                                </View>
+                                            </>
+
+                                    }
                                 </View>
-                                <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
-                            </View>
+                            }
                             <MapView
-                                // pitchEnabled={false}
-                                // rotateEnabled={false}
-                                // zoomEnabled={false}
-                                scrollEnabled={false}
                                 showsUserLocation
                                 ref={map => { this.map = map }}
                                 data={markers}
@@ -491,45 +519,55 @@ class MyMapView extends React.Component {
                                     <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>Order will be delivered here</Text>
                                     <Text style={{ color: 'white', fontSize: 12 }}>Place the pin accurately on the map</Text>
                                 </View> */}
-                                <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: -125, width: 345, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -55, marginBottom: -28 }}>
-                                    <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
-                                    {this.state.address ?
-                                        <>
-                                            <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14 }}>{this.state.address}</Text>
-                                        </>
-                                        :
+                                {this.state.addressLoading ?
+                                    <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: -125, width: 345, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -55, marginBottom: -28 }}>
+                                        <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
                                         <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating...</Text>
-                                    }
-                                </View>
+                                    </View>
+                                    :
+                                    <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: -125, width: 345, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -55, marginBottom: -28 }}>
+                                        {this.state.address ?
+                                            <>
+                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
+                                                <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14 }}>{this.state.address}</Text>
+                                            </>
+                                            :
+                                            <>
+                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
+                                                <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating...</Text>
+                                            </>
+                                        }
+                                    </View>
+                                }
                                 <LottieView
                                     style={styles.marker}
                                     source={require("../../assets/animations/favoriteDoctorHeart.json")}
                                     autoPlay
                                 />
                             </View>
-                            <TouchableOpacity onPress={() => navigation.navigate('MapConfirmLocation', { fromScreen: "EDIT_MAPSCREEN", item: item })} style={styles.editonmap} activeOpacity={0.6}>
-                                <View style={{ flexDirection: "row" }}>
-                                    <View style={{}}>
-                                        <Image
-                                            style={{ width: 26, height: 26, }}
-                                            source={require('../../assets/png/locationIcon.png')}
-                                        />
-                                    </View>
-                                    <View style={{}}>
-                                        <Text style={{ textAlign: "justify" }}>Edit on map</Text>
-                                    </View>
-                                    <View style={{}}>
-                                        <Icon name="chevron-forward-outline" style={{ fontSize: 24, color: "gray", }}></Icon>
-                                    </View>
-
-
-                                </View>
-                            </TouchableOpacity>
-                            {/* <TouchableOpacity onPress={() => this.getCurrentPosition()} style={styles.getcurrentlocation} activeOpacity={0.6}>
+                            <TouchableOpacity onPress={() => this.getCurrentPosition()} style={styles.getcurrentlocation} activeOpacity={0.6}>
                                 <Icon name='gps-fixed' type="MaterialIcons" style={{ color: '#979197', fontSize: 20 }} />
-                            </TouchableOpacity> */}
+                            </TouchableOpacity>
                         </View>
-                        <View style={{ width: "100%", height: 3, overflow: "hidden" }}>
+                        {
+                            this.state.movetoadjust && this.state.addressLoading == false ?
+                                <>
+                                    <View style={{
+                                        bottom: '12%',
+                                        left: '25%',
+                                        position: 'absolute',
+                                        zIndex: 1
+                                    }}>
+                                        <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: 0, width: 200, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', }}>
+                                            <Text style={{ color: '#ffffff', fontSize: 14, letterSpacing: 0.2 }}>Move the pin to adjust</Text>
+                                        </View>
+                                    </View>
+
+                                </>
+                                :
+                                null
+                        }
+                        <View style={{ width: "100%", height: 5, overflow: "hidden" }}>
                             {this.state.addressLoading ?
                                 <LottieView
                                     style={{ width: "100%", }}
@@ -540,28 +578,28 @@ class MyMapView extends React.Component {
                                 null
                             }
                         </View>
-                        <ScrollView
+                        {/* <ScrollView
                             // ref='_scrollView' 
                             contentContainerStyle={{ zIndex: 1 }}
-                            showsVerticalScrollIndicator={true}>
-                            {/* {this.state.gpsEnabled ?
-                                <View style={{ backgroundColor: '#6B98DE' }}>
-                                    <View style={{ flexDirection: 'row', padding: 10 }}>
-                                        <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                            <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#ffffff' }} />
-                                        </View>
-                                        <View style={{ flex: 1, justifyContent: 'center' }}>
-                                            <Text style={{ fontSize: 14, color: '#ffffff', fontWeight: 'bold' }}>Unable to get location</Text>
-                                            <Text style={{ fontSize: 12, color: "#ffffff" }}>Turning on Location ensures accurate and hassle-free delivery</Text>
-                                        </View>
-                                        <TouchableOpacity onPress={() => this.onPressTurnOn()} style={{ height: 30, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', margin: 10, borderRadius: 5 }}>
-                                            <Text style={{ fontSize: 14, color: '#6B98DE', marginHorizontal: 10, fontWeight: 'bold' }}>TURN ON</Text>
-                                        </TouchableOpacity>
+                            showsVerticalScrollIndicator={true}> */}
+                        {this.state.gpsEnabled ?
+                            <View style={{ backgroundColor: '#6B98DE', position: "absolute", bottom: 140 }}>
+                                <View style={{ flexDirection: 'row', padding: 10 }}>
+                                    <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                        <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#ffffff' }} />
                                     </View>
+                                    <View style={{ width: ("60%") }}>
+                                        <Text style={{ fontSize: 14, color: '#ffffff', fontWeight: 'bold', }}>Unable to get location</Text>
+                                        <Text style={{ fontSize: 12, color: "#ffffff" }}>Turning on Location ensures accurate and hassle-free delivery</Text>
+                                    </View>
+                                    <TouchableOpacity onPress={() => this.onPressTurnOn()} style={{ height: 30, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', margin: 10, borderRadius: 5 }}>
+                                        <Text style={{ fontSize: 14, color: '#6B98DE', marginHorizontal: 10, fontWeight: 'bold' }}>TURN ON</Text>
+                                    </TouchableOpacity>
                                 </View>
-                                : null} */}
-                            <View style={{ flex: 1, width: "90%", alignSelf: 'center' }}>
-                                {/* <View style={{ flexDirection: 'row' }}>
+                            </View>
+                            : null}
+                        {/* <View style={{ flex: 1, width: "90%", alignSelf: 'center' }}> */}
+                        {/* <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1, justifyContent: 'center' }}>
                                         <Text style={{ color: "#727272", fontSize: 12 }}>Your current location</Text>
                                     </View>
@@ -569,7 +607,7 @@ class MyMapView extends React.Component {
                                         <Text style={{ color: Theme.Colors.primary }}>Change</Text>
                                     </TouchableOpacity>
                                 </View> */}
-                                {/* {this.state.addressLoading ?
+                        {/* {this.state.addressLoading ?
                                     <View style={{ flexDirection: "row" }}>
                                         <Image
                                             style={{ width: 30, height: 30, marginLeft: -5 }}
@@ -586,11 +624,11 @@ class MyMapView extends React.Component {
                                         <Text style={{ fontSize: 16 }}>{this.state.address} </Text>
                                     </View>
                                 } */}
-                                {/* <View style={{ borderRadius: 5, borderColor: "#ECE1D6", paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#FFFCF5', borderWidth: 1, marginTop: 10 }}>
+                        {/* <View style={{ borderRadius: 5, borderColor: "#ECE1D6", paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#FFFCF5', borderWidth: 1, marginTop: 10 }}>
                                     <Text style={{ color: '#8e6847', fontSize: 14 }}>A detailed address will help our delivery executive reach your doorstep easily</Text>
                                 </View> */}
-                                {/* <Text style={{ color: "red", fontSize: 12, marginTop: 5, fontWeight: 'bold' }}>{this.state.errorMessage} </Text> */}
-                                {/* <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
+                        {/* <Text style={{ color: "red", fontSize: 12, marginTop: 5, fontWeight: 'bold' }}>{this.state.errorMessage} </Text> */}
+                        {/* <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
                             <View style={{ flexDirection: 'row', justifyContent: "space-around", marginTop: 5, }}>
                                 <TouchableOpacity onPress={() => this.onPressDeliverFor('self')} style={{ justifyContent: 'center', borderColor: this.state.deliverFor == "self" ? Theme.Colors.primary : "#EFEFEF", borderWidth: 2, borderRadius: 6, justifyContent: 'center', alignItems: 'center', width: "40%", padding: 15 }}>
                                     <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Self</Text>
@@ -600,9 +638,8 @@ class MyMapView extends React.Component {
                                     <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Others</Text>
                                 </TouchableOpacity>
                             </View> */}
-                                <>
-                                    <View style={{ marginTop: 10 }}>
-                                        {/* <Text style={{ color: "#727272", fontSize: 12 }}>Name</Text> */}
+                        <>
+                            {/* <View style={{ marginTop: 10 }}>
                                         <TextInput
                                             style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                             onChangeText={text => this.setState({
@@ -618,8 +655,8 @@ class MyMapView extends React.Component {
                                         {this.state.nameErrorText ?
                                             <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.nameErrorText} </Text>
                                             : undefined}
-                                    </View>
-                                    <View style={{ marginTop: 10 }}>
+                                    </View> */}
+                            {/* <View style={{ marginTop: 10 }}>
                                         <Text style={{ color: "#727272", fontSize: 12 }}>Mobile Number</Text>
                                         <View style={{ borderBottomColor: '#D8D8D8', flexDirection: 'row', borderBottomWidth: 1 }}>
                                             <View style={{ justifyContent: 'center' }}>
@@ -641,9 +678,9 @@ class MyMapView extends React.Component {
                                                     }}
                                                 />
                                             </View>
-                                        </View>
+                                        </View> */}
 
-                                        {/* <TextInput
+                            {/* <TextInput
                                             style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                             onChangeText={text => this.setState({
                                                 mobileNumber: text
@@ -656,12 +693,12 @@ class MyMapView extends React.Component {
                                                 this.setState({ mobileNumberErrorText: "" })
                                             }}
                                         /> */}
-                                        {this.state.mobileNumberErrorText ?
+                            {/* {this.state.mobileNumberErrorText ?
                                             <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.mobileNumberErrorText} </Text>
                                             : undefined}
-                                    </View>
-                                </>
-                                {/* <View style={{ marginTop: 10 }}>
+                                    </View> */}
+                        </>
+                        {/* <View style={{ marginTop: 10 }}>
                                     <Text style={{ color: "#727272", fontSize: 12 }}>Alternate Mobile Number</Text>
                                     <View style={{ borderBottomColor: '#D8D8D8', flexDirection: 'row', borderBottomWidth: 1 }}>
                                         <View style={{ justifyContent: 'center' }}>
@@ -682,8 +719,7 @@ class MyMapView extends React.Component {
                                         </View>
                                     </View>
                                 </View> */}
-                                <View style={{ marginTop: 10 }}>
-                                    {/* <Text style={{ color: "#727272", fontSize: 12 }}>House No/ Flat No/Floor/Building</Text> */}
+                        {/* <View style={{ marginTop: 10 }}>
                                     <TextInput
                                         style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                         onChangeText={text => this.setState({
@@ -693,9 +729,8 @@ class MyMapView extends React.Component {
                                         placeholderTextColor="#727272"
                                         value={this.state.houseNumber}
                                     />
-                                </View>
-                                <View style={{ marginTop: 10 }}>
-                                    {/* <Text style={{ color: "#727272", fontSize: 12 }}>Landmark</Text> */}
+                                </View> */}
+                        {/* <View style={{ marginTop: 10 }}>
                                     <TextInput
                                         style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                         onChangeText={text => this.setState({
@@ -705,8 +740,8 @@ class MyMapView extends React.Component {
                                         placeholderTextColor="#727272"
                                         value={this.state.landMark}
                                     />
-                                </View>
-                                {/* <View style={{ marginTop: 10 }}>
+                                </View> */}
+                        {/* <View style={{ marginTop: 10 }}>
                                     <TextInput
                                         style={{ height: 40, borderColor: this.state.errorMessageBanner ? 'red' : '#D8D8D8', borderBottomWidth: 1 }}
                                         onChangeText={text => this.setState({
@@ -718,12 +753,11 @@ class MyMapView extends React.Component {
                                         onTouchStart={() => this.setState({ errorMessageBanner: false })}
                                     />
                                 </View> */}
-                                <View style={{ marginTop: 10 }}>
+                        {/* <View style={{ marginTop: 10 }}>
                                     <Text style={{ color: "#727272", fontSize: 12 }}>Save as</Text>
                                 </View>
                                 <View style={{ flexDirection: 'row' }}>
                                     <CheckBox
-                                        // center
                                         containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
                                         title='Home'
                                         checkedIcon='dot-circle-o'
@@ -734,7 +768,6 @@ class MyMapView extends React.Component {
                                         checkedColor={Theme.Colors.primary}
                                     />
                                     <CheckBox
-                                        // center
                                         containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
                                         title='Office'
                                         checkedIcon='dot-circle-o'
@@ -745,7 +778,6 @@ class MyMapView extends React.Component {
                                         checkedColor={Theme.Colors.primary}
                                     />
                                     <CheckBox
-                                        // center
                                         containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
                                         title='Others'
                                         checkedIcon='dot-circle-o'
@@ -755,10 +787,14 @@ class MyMapView extends React.Component {
                                         onPress={() => this.onPressCheckbox('othersCheck')}
                                         checkedColor={Theme.Colors.primary}
                                     />
-                                </View>
-                            </View>
-                        </ScrollView>
-                        <Button full style={{ backgroundColor: Theme.Colors.primary, }} onPress={() => this.onSubmit()}><Text>Save & continue</Text></Button>
+                                </View> */}
+                        {/* </View> */}
+                        {/* </ScrollView> */}
+                        <View style={{ flex: 1, justifyContent: "center" }}>
+                            <Button rounded style={{ backgroundColor: Theme.Colors.primary, alignSelf: "center", width: ("90%"), justifyContent: "center" }} onPress={() => this.onSubmit()}>
+                                <Text style={{}}>Confirm Location</Text>
+                            </Button>
+                        </View>
                     </KeyboardAvoidingView>
                     {/* <SafeAreaView style={styles.footer}>
                         <Text style={styles.region}>{JSON.stringify(region, null, 2)} </Text>
@@ -894,11 +930,11 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { addNewCustomerAddress, getAllUserAddress, updateUserAddress, addLocation, addHomeScreenLocation })(MyMapView)
+export default connect(mapStateToProps, { isPincodeServiceable, addNewCustomerAddress, getAllUserAddress, updateUserAddress, addLocation, addHomeScreenLocation })(MapConfirmLocation)
 
 const styles = StyleSheet.create({
     map: {
-        height: "45%"
+        height: "90%"
     },
     // markerFixed: {
     //     left: '50%',
@@ -952,27 +988,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 10,
         right: 10
-    },
-    editonmap: {
-        backgroundColor: "white",
-        flexDirection: 'row',
-        width: 150,
-        height: 50,
-        justifyContent: "space-around",
-        alignItems: 'center',
-        borderRadius: 5,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 6,
-        },
-        shadowOpacity: 0.37,
-        shadowRadius: 7.49,
-        elevation: 12,
-        position: 'absolute',
-        bottom: 10,
-        right: 10
-
     }
 })
 

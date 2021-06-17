@@ -200,8 +200,8 @@ class AutoCompleteLocationScreen extends React.Component {
         return (
             <>
                 <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-                    <View style={{ flex: 1, width: ("95%"), alignSelf: "center", }}>
-                        <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1, }}>
+                        <View style={{ flex: 1, width: ("95%"), alignSelf: "center", }}>
                             <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', }}>
                                 <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
                             </TouchableOpacity>
@@ -212,6 +212,7 @@ class AutoCompleteLocationScreen extends React.Component {
                                 <AutoCompleteLocation
                                     style={{}}
                                     getLocation={async (data, details = null) => {
+                                        console.warn("dsataaaaaaaaaaaaaaaaa", data.description)
                                         await this.setState({
                                             region: {
                                                 latitude: details?.geometry?.location?.lat,
@@ -228,6 +229,7 @@ class AutoCompleteLocationScreen extends React.Component {
                                             longitudeDelta,
                                         }
                                         const { fromScreen, navigateTo } = this.props.route.params;
+                                        console.warn("navigateTonavigateTo", navigateTo)
                                         this.props.navigation.navigate(navigateTo, { regionalPositions: region })
                                     }}
                                     onRequestClose={() => {
@@ -278,66 +280,66 @@ class AutoCompleteLocationScreen extends React.Component {
                                     </TouchableOpacity>
                                 }
 
-                                {this.state.savedAddressLoading ?
-                                    <ActivityIndicator size={"large"} color={Theme.Colors.primary} /> :
-                                    <>
-                                        {this.state.savedAddress?.length > 0 ?
-                                            <>
-                                                <View style={{ marginTop: 8, width: ("100%"), backgroundColor: "#e8e8e8", height: 8 }}>
-                                                </View>
-                                                <Text style={{ fontWeight: 'bold', marginLeft: 8, fontSize: 14, marginBottom: 10, marginTop: 15 }}>Saved Address</Text>
-                                            </>
-                                            : undefined}
-                                        <FlatList
-                                            data={this.state.savedAddress}
-                                            renderItem={({ item }) =>
-                                                <TouchableOpacity onPress={() => { this.onPressSavedAddress(item) }} style={{ flexDirection: 'row', paddingBottom: 10, paddingTop: 5 }}>
-                                                    {/* <Text style={styles.item}
+                            </View>
+                            {this.state.savedAddressLoading ?
+                                <ActivityIndicator size={"large"} color={Theme.Colors.primary} /> :
+                                <>
+                                    {this.state.savedAddress?.length > 0 ?
+                                        <>
+                                            <View style={{ marginTop: 8, width: ("120%"), backgroundColor: "#e8e8e8", height: 8, alignSelf: "center" }}>
+                                            </View>
+                                            <Text style={{ fontWeight: 'bold', marginLeft: 8, fontSize: 14, marginBottom: 10, marginTop: 15 }}>Saved Address</Text>
+                                        </>
+                                        : undefined}
+                                    <FlatList
+                                        data={this.state.savedAddress}
+                                        renderItem={({ item }) =>
+                                            <TouchableOpacity onPress={() => { this.onPressSavedAddress(item) }} style={{ flexDirection: 'row', paddingBottom: 10, paddingTop: 5 }}>
+                                                {/* <Text style={styles.item}
                                                 //   onPress={this.getListViewItem.bind(this, item)}
                                                 >{JSON.stringify(item, null, "      ")} </Text> */}
-                                                    {item?.saveAs == "Home" &&
-                                                        <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                                            <Icon name="home" type="AntDesign" style={{ fontSize: 24, color: '#232323' }} />
-                                                        </View>
-                                                    }
-                                                    {item?.saveAs == "Office" &&
-                                                        <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                                            <Icon name="office-building" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#232323' }} />
-                                                        </View>
-                                                    }
-                                                    {item?.saveAs == "Others" &&
-                                                        <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                                            <Icon name="location-pin" type="SimpleLineIcons" style={{ fontSize: 24, color: '#232323' }} />
-                                                        </View>
-                                                    }
-                                                    <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'center' }}>
-                                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                            {item?.saveAs == "Home" &&
-                                                                <View style={{ backgroundColor: "#FEF8FC", borderWidth: 1, borderRadius: 4, borderColor: "#FCD8EC", paddingVertical: 3, marginRight: 5 }}>
-                                                                    <Text style={{ color: "#F464AD", fontSize: 12, marginHorizontal: 5 }}>Home</Text>
-                                                                </View>
-                                                            }
-                                                            {item?.saveAs == "Office" &&
-                                                                <View style={{ backgroundColor: "#FCF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#F0D4FA", paddingVertical: 3, marginRight: 5 }}>
-                                                                    <Text style={{ color: "#CD64F4", fontSize: 12, marginHorizontal: 5 }}>Office</Text>
-                                                                </View>
-                                                            }
-                                                            {item?.saveAs == "Others" &&
-                                                                <View style={{ backgroundColor: "#EDF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#BEDCFF", paddingVertical: 3, marginRight: 5 }}>
-                                                                    <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
-                                                                </View>
-                                                            }
-                                                            <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName} </Text>
-                                                        </View>
-                                                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
+                                                {item?.saveAs == "Home" &&
+                                                    <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                                        <Icon name="home" type="AntDesign" style={{ fontSize: 24, color: '#232323' }} />
                                                     </View>
-                                                </TouchableOpacity>
-                                            }
-                                            ItemSeparatorComponent={this.renderSeparator}
-                                            keyExtractor={item => item?.id.toString()}
-                                        /></>
-                                }
-                            </View>
+                                                }
+                                                {item?.saveAs == "Office" &&
+                                                    <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                                        <Icon name="office-building" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#232323' }} />
+                                                    </View>
+                                                }
+                                                {item?.saveAs == "Others" &&
+                                                    <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                                        <Icon name="location-pin" type="SimpleLineIcons" style={{ fontSize: 24, color: '#232323' }} />
+                                                    </View>
+                                                }
+                                                <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'center' }}>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                        {item?.saveAs == "Home" &&
+                                                            <View style={{ backgroundColor: "#FEF8FC", borderWidth: 1, borderRadius: 4, borderColor: "#FCD8EC", paddingVertical: 3, marginRight: 5 }}>
+                                                                <Text style={{ color: "#F464AD", fontSize: 12, marginHorizontal: 5 }}>Home</Text>
+                                                            </View>
+                                                        }
+                                                        {item?.saveAs == "Office" &&
+                                                            <View style={{ backgroundColor: "#FCF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#F0D4FA", paddingVertical: 3, marginRight: 5 }}>
+                                                                <Text style={{ color: "#CD64F4", fontSize: 12, marginHorizontal: 5 }}>Office</Text>
+                                                            </View>
+                                                        }
+                                                        {item?.saveAs == "Others" &&
+                                                            <View style={{ backgroundColor: "#EDF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#BEDCFF", paddingVertical: 3, marginRight: 5 }}>
+                                                                <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
+                                                            </View>
+                                                        }
+                                                        <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName} </Text>
+                                                    </View>
+                                                    <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        }
+                                        ItemSeparatorComponent={this.renderSeparator}
+                                        keyExtractor={item => item?.id.toString()}
+                                    /></>
+                            }
                         </View>
                     </View>
                     {/* <ScrollView contentContainerStyle={{ backgroundColor: 'red', marginTop: 50, flex: 1 }}>
