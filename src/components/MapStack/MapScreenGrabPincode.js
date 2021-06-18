@@ -474,7 +474,11 @@ class MapScreenGrabPincode extends React.Component {
                                 </View> */}
                         {/* </View> */}
                         {/* </ScrollView> */}
-                        <Button full style={{ backgroundColor: Theme.Colors.primary, marginTop: 10 }} onPress={() => this.onSubmit()}><Text style={{ textTransform: 'capitalize' }}>Confirm Location</Text></Button>
+                        <View style={{ flex: 1, justifyContent: "center", marginBottom: 10 }}>
+                            <Button rounded style={{ backgroundColor: Theme.Colors.primary, alignSelf: "center", width: ("90%"), justifyContent: "center" }} onPress={() => this.onSubmit()}>
+                                <Text style={{}}>Confirm Location</Text>
+                            </Button>
+                        </View>
                     </KeyboardAvoidingView>
                     {/* <SafeAreaView style={styles.footer}>
                         <Text style={styles.region}>{JSON.stringify(region, null, 2)} </Text>

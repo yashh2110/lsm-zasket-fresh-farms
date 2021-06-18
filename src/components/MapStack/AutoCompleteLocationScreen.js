@@ -120,6 +120,25 @@ class AutoCompleteLocationScreen extends React.Component {
                     }
                 })
             }
+        } else if (fromScreen == "AddNew_SCREEN") {
+            if (this.props.isAuthenticated) {
+                await this.setState({ savedAddressLoading: true, })
+                await this.props.getAllUserAddress(async (response, status) => {
+                    this.setState({ savedAddressLoading: false })
+                    if (status) {
+                        let newArray = []
+                        await response?.data?.forEach((el, index) => {
+                            if (el?.isActive) newArray.push(el)
+                        })
+                        // Alert.alert(JSON.stringify(response, null, "   "))
+                        this.setState({ savedAddress: newArray })
+
+                    } else {
+                        // Alert.alert(JSON.stringify(response?.data, null, "   "))
+                        this.setState({ savedAddressLoading: false })
+                    }
+                })
+            }
         }
     }
     onPressTurnOn = () => {
@@ -133,7 +152,7 @@ class AutoCompleteLocationScreen extends React.Component {
         })
     }
     getCurrentPosition() {
-        const { fromScreen, navigateTo } = this.props.route.params;
+        const { fromScreen, navigateTo, mode, backToCardScreen, backToCheckoutScreen, backToAddressScreen } = this.props.route.params;
         try {
             CheckPermissions((status) => {
                 if (status) {
@@ -146,7 +165,7 @@ class AutoCompleteLocationScreen extends React.Component {
                                 latitudeDelta,
                                 longitudeDelta,
                             };
-                            this.props.navigation.navigate(navigateTo, { regionalPositions: region })
+                            this.props.navigation.navigate(navigateTo, { regionalPositions: region, fromScreen: fromScreen, backToCardScreen: backToCardScreen, backToCheckoutScreen: backToCheckoutScreen, backToAddressScreen: backToAddressScreen })
                         },
                         (error) => {
                             console.warn(error)
@@ -172,26 +191,51 @@ class AutoCompleteLocationScreen extends React.Component {
 
     onPressSavedAddress = async (item) => {
         // Alert.alert(JSON.stringify(item, null, "      "))
-        let payload = {
-            id: item?.id,
-            addressLine_1: item?.addressLine_1,
-            lat: item?.lat,
-            lon: item?.lon,
-            recepientName: item?.recepientName,
-            recepientMobileNumber: item?.recepientMobileNumber,
-            landMark: item?.landMark,
-            saveAs: item?.saveAs,
-            pincode: item?.pincode
+        const { fromScreen, navigateTo, mode, } = this.props.route.params;
+        if (fromScreen == "AddNew_SCREEN") {
+            let payload = {
+                id: item?.id,
+                addressLine_1: item?.addressLine_1,
+                lat: item?.lat,
+                lon: item?.lon,
+                recepientName: item?.recepientName,
+                recepientMobileNumber: item?.recepientMobileNumber,
+                landMark: item?.landMark,
+                saveAs: item?.saveAs,
+                pincode: item?.pincode
+            }
+            this.props.addLocation(payload)
+            this.props.addHomeScreenLocation({
+                addressLine_1: item?.addressLine_1,
+                lat: item?.lat,
+                lon: item?.lon,
+                pincode: item?.pincode
+            })
+            const { fromScreen, navigateTo, mode, backToCardScreen, backToCheckoutScreen } = this.props.route.params;
+            this.props.navigation.navigate('MapScreen', { fromScreen: fromScreen, item: item, backToCardScreen: backToCardScreen, backToCheckoutScreen: backToCheckoutScreen })
+
+        } else {
+            let payload = {
+                id: item?.id,
+                addressLine_1: item?.addressLine_1,
+                lat: item?.lat,
+                lon: item?.lon,
+                recepientName: item?.recepientName,
+                recepientMobileNumber: item?.recepientMobileNumber,
+                landMark: item?.landMark,
+                saveAs: item?.saveAs,
+                pincode: item?.pincode
+            }
+            this.props.addLocation(payload)
+            this.props.addHomeScreenLocation({
+                addressLine_1: item?.addressLine_1,
+                lat: item?.lat,
+                lon: item?.lon,
+                pincode: item?.pincode
+            })
+            const { fromScreen, navigateTo } = this.props.route.params;
+            this.props.navigation.dispatch(StackActions.popToTop());
         }
-        this.props.addLocation(payload)
-        this.props.addHomeScreenLocation({
-            addressLine_1: item?.addressLine_1,
-            lat: item?.lat,
-            lon: item?.lon,
-            pincode: item?.pincode
-        })
-        const { fromScreen, navigateTo } = this.props.route.params;
-        this.props.navigation.dispatch(StackActions.popToTop());
 
 
     }
@@ -208,9 +252,9 @@ class AutoCompleteLocationScreen extends React.Component {
                             <View style={{ marginTop: 10 }}>
                                 <Text style={{ fontWeight: "bold" }}>Search for your location</Text>
                             </View>
-                            <View style={{ marginTop: ("4%") }}>
+                            <View style={{ position: 'relative', height: 65, }}>
                                 <AutoCompleteLocation
-                                    style={{}}
+                                    style={{ container: { positition: 'absolute', height: 50 } }}
                                     getLocation={async (data, details = null) => {
                                         console.warn("dsataaaaaaaaaaaaaaaaa", data.description)
                                         await this.setState({
@@ -228,9 +272,9 @@ class AutoCompleteLocationScreen extends React.Component {
                                             latitudeDelta,
                                             longitudeDelta,
                                         }
-                                        const { fromScreen, navigateTo } = this.props.route.params;
-                                        console.warn("navigateTonavigateTo", navigateTo)
-                                        this.props.navigation.navigate(navigateTo, { regionalPositions: region })
+                                        const { fromScreen, navigateTo, mode, backToCardScreen, backToCheckoutScreen, backToAddressScreen } = this.props.route.params;
+                                        console.warn("navigateTonavigateTo", mode)
+                                        this.props.navigation.navigate(navigateTo, { regionalPositions: region, fromScreen: fromScreen, backToCardScreen: backToCardScreen, backToCheckoutScreen: backToCheckoutScreen, backToAddressScreen: backToAddressScreen })
                                     }}
                                     onRequestClose={() => {
                                         this.props.navigation.goBack()
@@ -241,7 +285,7 @@ class AutoCompleteLocationScreen extends React.Component {
                                     <Icon name="search" style={{ fontSize: 22, color: "gray", }} />
                                 </View>
                             </View>
-                            <View style={{ marginTop: 80 }}>
+                            <View style={{ zIndex: -1, flex: 1 }}>
                                 <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                                     <View
                                         style={{ height: 0.7, width: "46%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, }}
@@ -279,67 +323,67 @@ class AutoCompleteLocationScreen extends React.Component {
                                         </View>
                                     </TouchableOpacity>
                                 }
-
-                            </View>
-                            {this.state.savedAddressLoading ?
-                                <ActivityIndicator size={"large"} color={Theme.Colors.primary} /> :
-                                <>
-                                    {this.state.savedAddress?.length > 0 ?
-                                        <>
-                                            <View style={{ marginTop: 8, width: ("120%"), backgroundColor: "#e8e8e8", height: 8, alignSelf: "center" }}>
-                                            </View>
-                                            <Text style={{ fontWeight: 'bold', marginLeft: 8, fontSize: 14, marginBottom: 10, marginTop: 15 }}>Saved Address</Text>
-                                        </>
-                                        : undefined}
-                                    <FlatList
-                                        data={this.state.savedAddress}
-                                        renderItem={({ item }) =>
-                                            <TouchableOpacity onPress={() => { this.onPressSavedAddress(item) }} style={{ flexDirection: 'row', paddingBottom: 10, paddingTop: 5 }}>
-                                                {/* <Text style={styles.item}
+                                {this.state.savedAddressLoading ?
+                                    <ActivityIndicator size={"large"} color={Theme.Colors.primary} /> :
+                                    <>
+                                        {this.state.savedAddress?.length > 0 ?
+                                            <>
+                                                <View style={{ marginTop: 8, width: ("120%"), backgroundColor: "#e8e8e8", height: 8, alignSelf: "center" }}>
+                                                </View>
+                                                <Text style={{ fontWeight: 'bold', marginLeft: 8, fontSize: 14, marginBottom: 10, marginTop: 15 }}>Saved Address</Text>
+                                            </>
+                                            : undefined}
+                                        <FlatList
+                                            data={this.state.savedAddress}
+                                            renderItem={({ item }) =>
+                                                <TouchableOpacity onPress={() => { this.onPressSavedAddress(item) }} style={{ flexDirection: 'row', paddingBottom: 10, paddingTop: 5 }}>
+                                                    {/* <Text style={styles.item}
                                                 //   onPress={this.getListViewItem.bind(this, item)}
                                                 >{JSON.stringify(item, null, "      ")} </Text> */}
-                                                {item?.saveAs == "Home" &&
-                                                    <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                                        <Icon name="home" type="AntDesign" style={{ fontSize: 24, color: '#232323' }} />
+                                                    {item?.saveAs == "Home" &&
+                                                        <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                                            <Icon name="home" type="AntDesign" style={{ fontSize: 24, color: '#232323' }} />
+                                                        </View>
+                                                    }
+                                                    {item?.saveAs == "Office" &&
+                                                        <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                                            <Icon name="office-building" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#232323' }} />
+                                                        </View>
+                                                    }
+                                                    {item?.saveAs == "Others" &&
+                                                        <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
+                                                            <Icon name="location-pin" type="SimpleLineIcons" style={{ fontSize: 24, color: '#232323' }} />
+                                                        </View>
+                                                    }
+                                                    <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'center' }}>
+                                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                            {item?.saveAs == "Home" &&
+                                                                <View style={{ backgroundColor: "#FEF8FC", borderWidth: 1, borderRadius: 4, borderColor: "#FCD8EC", paddingVertical: 3, marginRight: 5 }}>
+                                                                    <Text style={{ color: "#F464AD", fontSize: 12, marginHorizontal: 5 }}>Home</Text>
+                                                                </View>
+                                                            }
+                                                            {item?.saveAs == "Office" &&
+                                                                <View style={{ backgroundColor: "#FCF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#F0D4FA", paddingVertical: 3, marginRight: 5 }}>
+                                                                    <Text style={{ color: "#CD64F4", fontSize: 12, marginHorizontal: 5 }}>Office</Text>
+                                                                </View>
+                                                            }
+                                                            {item?.saveAs == "Others" &&
+                                                                <View style={{ backgroundColor: "#EDF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#BEDCFF", paddingVertical: 3, marginRight: 5 }}>
+                                                                    <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
+                                                                </View>
+                                                            }
+                                                            <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName} </Text>
+                                                        </View>
+                                                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
                                                     </View>
-                                                }
-                                                {item?.saveAs == "Office" &&
-                                                    <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                                        <Icon name="office-building" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#232323' }} />
-                                                    </View>
-                                                }
-                                                {item?.saveAs == "Others" &&
-                                                    <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
-                                                        <Icon name="location-pin" type="SimpleLineIcons" style={{ fontSize: 24, color: '#232323' }} />
-                                                    </View>
-                                                }
-                                                <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'center' }}>
-                                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                        {item?.saveAs == "Home" &&
-                                                            <View style={{ backgroundColor: "#FEF8FC", borderWidth: 1, borderRadius: 4, borderColor: "#FCD8EC", paddingVertical: 3, marginRight: 5 }}>
-                                                                <Text style={{ color: "#F464AD", fontSize: 12, marginHorizontal: 5 }}>Home</Text>
-                                                            </View>
-                                                        }
-                                                        {item?.saveAs == "Office" &&
-                                                            <View style={{ backgroundColor: "#FCF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#F0D4FA", paddingVertical: 3, marginRight: 5 }}>
-                                                                <Text style={{ color: "#CD64F4", fontSize: 12, marginHorizontal: 5 }}>Office</Text>
-                                                            </View>
-                                                        }
-                                                        {item?.saveAs == "Others" &&
-                                                            <View style={{ backgroundColor: "#EDF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#BEDCFF", paddingVertical: 3, marginRight: 5 }}>
-                                                                <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
-                                                            </View>
-                                                        }
-                                                        <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName} </Text>
-                                                    </View>
-                                                    <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
-                                                </View>
-                                            </TouchableOpacity>
-                                        }
-                                        ItemSeparatorComponent={this.renderSeparator}
-                                        keyExtractor={item => item?.id.toString()}
-                                    /></>
-                            }
+                                                </TouchableOpacity>
+                                            }
+                                            ItemSeparatorComponent={this.renderSeparator}
+                                            keyExtractor={item => item?.id.toString()}
+                                        /></>
+                                }
+
+                            </View>
                         </View>
                     </View>
                     {/* <ScrollView contentContainerStyle={{ backgroundColor: 'red', marginTop: 50, flex: 1 }}>

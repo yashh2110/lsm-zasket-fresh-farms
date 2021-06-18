@@ -66,7 +66,9 @@ class MyMapView extends React.Component {
         errorMessage: "",
         errorMessageBanner: false,
         addressId: "",
-        gpsEnabled: false
+        gpsEnabled: false,
+        movetoadjust: false,
+        scrollEnable: false
     };
 
 
@@ -93,11 +95,14 @@ class MyMapView extends React.Component {
                 this.setState({ gpsEnabled: true })
             }
         }, false)
-        const { fromScreen, regionalPositions } = this.props.route?.params;
-        console.warn("regionalPositionsregionalPositions", regionalPositions)
+        const { fromScreen, regionalPositions, backToCardScreen } = this.props.route?.params;
         await this.setState({ mode: fromScreen })
+        if (this.state.mode == "EDIT_SCREEN") {
+            await this.setState({ scrollEnable: false })
+        } else {
+            await this.setState({ scrollEnable: true })
+        }
         if (fromScreen == "EDIT_SCREEN" && regionalPositions == null) {
-            // alert("Aaaaaaaaa")
             await this.setState({ modalVisible: false })
             const { item } = this.props.route?.params;
             // alert(JSON.stringify(item, null, "        "))
@@ -203,7 +208,7 @@ class MyMapView extends React.Component {
     };
 
     getCurrentLocation = async () => {
-        await this.setState({ addressLoading: true, errorMessage: "" })
+        await this.setState({ addressLoading: true, errorMessage: "", movetoadjust: true })
         fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + this.state.region.latitude + ',' + this.state.region.longitude + '&key=' + MapApiKey)
             .then((response) => {
                 response.json().then(async (json) => {
@@ -215,7 +220,7 @@ class MyMapView extends React.Component {
                 });
             }).catch(async (err) => {
                 console.warn(err)
-                await this.setState({ addressLoading: false })
+                await this.setState({ addressLoading: false, movetoadjust: false })
             })
     }
 
@@ -290,7 +295,7 @@ class MyMapView extends React.Component {
                 "recepientName": this.state.name,
                 "saveAs": this.state.saveAs
             }
-            console.warn("this.state.mobileNumber", this.state.mobileNumber)
+            // console.warn(payload)
             const { fromScreen } = this.props.route?.params;
             await this.setState({ mode: fromScreen })
             if (fromScreen == "EDIT_SCREEN") {
@@ -313,6 +318,7 @@ class MyMapView extends React.Component {
             } else {
                 await this.props.addNewCustomerAddress(payload, async (response, status) => {
                     if (status) {
+                        const { fromScreen, regionalPositions, backToCardScreen, backToCheckoutScreen, backToAddressScreen } = this.props.route?.params;
                         // Alert.alert(JSON.stringify(response, null, "   "))
 
                         let location = {
@@ -339,7 +345,15 @@ class MyMapView extends React.Component {
                         this.setState({ loading: false })
                         if (this.state.mode === "ON_INITIAL") {
                             this.props.navigation.navigate('SetAuthContext', { userLocation: location }) // if you send it as null it wont navigate
-                        } else {
+                        } else if (backToCardScreen == "CartScreen") {
+                            this.props.navigation.navigate('CartScreen')
+                        } else if (backToCheckoutScreen == "CheckoutScreen") {
+                            this.props.navigation.navigate('CheckoutScreen')
+                        } else if (backToAddressScreen == "ManageAddressScreen") {
+                            this.props.navigation.navigate('ManageAddressScreen')
+
+                        }
+                        else {
                             this.props.navigation.goBack()
                             this.props.getAllUserAddress(async (response, status) => { })
                         }
@@ -349,7 +363,7 @@ class MyMapView extends React.Component {
                         }
                         this.setState({ errorMessage: response?.data })
                         if (response?.data == "Your location is not serviceable") {
-                            this.setState({ errorMessageBanner: true })
+                            this.setState({ errorMessageBanner: true, mode: "EDIT_SCREEN" })
                         }
                         // this.refs._scrollView.scrollTo(0);
                         this.setState({ loading: false })
@@ -358,6 +372,14 @@ class MyMapView extends React.Component {
             }
 
         }
+    }
+
+    OnConfirmLocation = async () => {
+        await this.setState({ mode: "EDIT_SCREEN", scrollEnable: false, errorMessageBanner: false })
+    }
+
+    OnPressEditOnmap = async () => {
+        await this.setState({ mode: "AddNew_SCREEN", scrollEnable: true, errorMessageBanner: false })
     }
 
     onPressCheckbox = (option) => {
@@ -435,8 +457,9 @@ class MyMapView extends React.Component {
         }
     }
 
-    render() {
 
+    render() {
+        const { fromScreen, regionalPositions } = this.props.route?.params;
         const { region } = this.state;
         const { children, renderMarker, markers, navigation } = this.props;
         const { item } = this.props.route?.params;
@@ -452,26 +475,41 @@ class MyMapView extends React.Component {
                                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ fontSize: 12, color: 'white' }}>We might be not available in all the locations. We are expanding, very soon we will be delivered in all location.</Text>
                                 </View>
-                                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: "red" }} onPress={() => { this.setState({ errorMessageBanner: false }) }}>
+                                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={() => { this.setState({ errorMessageBanner: false }) }}>
                                     <AntDesignIcons name="close" color={'white'} size={18} />
                                 </TouchableOpacity>
                             </View>
                         }
-                        <View style={styles.map}>
-                            <View style={{}}>
-                                <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
-                                    <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
-                                </TouchableOpacity>
-                                <View style={{ zIndex: 1, left: 45, top: 17 }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 18, color: "#242A40" }}>Add address details</Text>
+                        <View style={[styles.map, this.state.mode == "EDIT_SCREEN" ? { height: ("50%") } : null]}>
+                            {!this.state.errorMessageBanner &&
+                                <View style={{}}>
+                                    {
+                                        this.state.mode == "EDIT_SCREEN" ?
+                                            <>
+                                                <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
+                                                    <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
+                                                </TouchableOpacity>
+                                                <View style={{ zIndex: 1, left: 45, top: 17 }}>
+                                                    <Text style={{ fontWeight: "bold", fontSize: 18, color: "#242A40" }}>Add address details</Text>
+                                                </View>
+                                            </>
+                                            :
+                                            <>
+                                                <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
+                                                    <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
+                                                </TouchableOpacity>
+                                                <View style={{ zIndex: 1, left: 45, top: 17 }}>
+                                                    <Text style={{ fontWeight: "bold", fontSize: 18, color: "#242A40" }}>Add Location</Text>
+                                                </View>
+                                            </>
+                                    }
                                 </View>
-                                <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
-                            </View>
+                            }
                             <MapView
                                 // pitchEnabled={false}
                                 // rotateEnabled={false}
                                 // zoomEnabled={false}
-                                scrollEnabled={false}
+                                scrollEnabled={this.state.scrollEnable}
                                 showsUserLocation
                                 ref={map => { this.map = map }}
                                 data={markers}
@@ -491,44 +529,80 @@ class MyMapView extends React.Component {
                                     <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>Order will be delivered here</Text>
                                     <Text style={{ color: 'white', fontSize: 12 }}>Place the pin accurately on the map</Text>
                                 </View> */}
-                                <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: -125, width: 345, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -55, marginBottom: -28 }}>
-                                    <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
-                                    {this.state.address ?
-                                        <>
-                                            <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14 }}>{this.state.address}</Text>
-                                        </>
-                                        :
+                                {this.state.addressLoading ?
+                                    <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: -125, width: 345, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -55, marginBottom: -28 }}>
+                                        <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
                                         <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating...</Text>
-                                    }
-                                </View>
+                                    </View>
+                                    :
+                                    <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: -125, width: 345, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -55, marginBottom: -28 }}>
+                                        {this.state.address ?
+                                            <>
+                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
+                                                <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14 }}>{this.state.address}</Text>
+                                            </>
+                                            :
+                                            <>
+                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
+                                                <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating...</Text>
+                                            </>
+                                        }
+                                    </View>
+                                }
                                 <LottieView
                                     style={styles.marker}
                                     source={require("../../assets/animations/favoriteDoctorHeart.json")}
                                     autoPlay
                                 />
                             </View>
-                            <TouchableOpacity onPress={() => navigation.navigate('MapConfirmLocation', { fromScreen: "EDIT_MAPSCREEN", item: item })} style={styles.editonmap} activeOpacity={0.6}>
-                                <View style={{ flexDirection: "row" }}>
-                                    <View style={{}}>
-                                        <Image
-                                            style={{ width: 26, height: 26, }}
-                                            source={require('../../assets/png/locationIcon.png')}
-                                        />
-                                    </View>
-                                    <View style={{}}>
-                                        <Text style={{ textAlign: "justify" }}>Edit on map</Text>
-                                    </View>
-                                    <View style={{}}>
-                                        <Icon name="chevron-forward-outline" style={{ fontSize: 24, color: "gray", }}></Icon>
-                                    </View>
+                            {
+                                this.state.mode == "EDIT_SCREEN" ?
+                                    <TouchableOpacity onPress={() => this.OnPressEditOnmap()} style={styles.editonmap} activeOpacity={0.6}>
+                                        <View style={{ flexDirection: "row" }}>
+                                            <View style={{}}>
+                                                <Image
+                                                    style={{ width: 26, height: 26, }}
+                                                    source={require('../../assets/png/locationIcon.png')}
+                                                />
+                                            </View>
+                                            <View style={{}}>
+                                                <Text style={{ textAlign: "justify" }}>Edit on map</Text>
+                                            </View>
+                                            <View style={{}}>
+                                                <Icon name="chevron-forward-outline" style={{ fontSize: 24, color: "gray", }}></Icon>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                    :
+                                    <TouchableOpacity onPress={() => this.getCurrentPosition()} style={styles.getcurrentlocation} activeOpacity={0.6}>
+                                        <Icon name='gps-fixed' type="MaterialIcons" style={{ color: '#979197', fontSize: 20 }} />
+                                    </TouchableOpacity>
 
-
-                                </View>
-                            </TouchableOpacity>
-                            {/* <TouchableOpacity onPress={() => this.getCurrentPosition()} style={styles.getcurrentlocation} activeOpacity={0.6}>
-                                <Icon name='gps-fixed' type="MaterialIcons" style={{ color: '#979197', fontSize: 20 }} />
-                            </TouchableOpacity> */}
+                            }
                         </View>
+                        {
+                            this.state.mode == "AddNew_SCREEN" &&
+                            <>
+                                {
+                                    this.state.movetoadjust && this.state.addressLoading == false ?
+                                        <>
+                                            <View style={{
+                                                bottom: '12%',
+                                                left: '22%',
+                                                position: 'absolute',
+                                                zIndex: 1
+                                            }}>
+                                                <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: 0, width: 200, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', }}>
+                                                    <Text style={{ color: '#ffffff', fontSize: 14, letterSpacing: 0.2 }}>Move the pin to adjust</Text>
+                                                </View>
+                                            </View>
+
+                                        </>
+                                        :
+                                        null
+                                }
+                            </>
+                        }
                         <View style={{ width: "100%", height: 3, overflow: "hidden" }}>
                             {this.state.addressLoading ?
                                 <LottieView
@@ -540,11 +614,14 @@ class MyMapView extends React.Component {
                                 null
                             }
                         </View>
-                        <ScrollView
-                            // ref='_scrollView' 
-                            contentContainerStyle={{ zIndex: 1 }}
-                            showsVerticalScrollIndicator={true}>
-                            {/* {this.state.gpsEnabled ?
+
+                        {
+                            this.state.mode == "EDIT_SCREEN" &&
+                            <ScrollView
+                                // ref='_scrollView' 
+                                contentContainerStyle={{ zIndex: 1 }}
+                                showsVerticalScrollIndicator={true}>
+                                {/* {this.state.gpsEnabled ?
                                 <View style={{ backgroundColor: '#6B98DE' }}>
                                     <View style={{ flexDirection: 'row', padding: 10 }}>
                                         <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}>
@@ -560,8 +637,9 @@ class MyMapView extends React.Component {
                                     </View>
                                 </View>
                                 : null} */}
-                            <View style={{ flex: 1, width: "90%", alignSelf: 'center' }}>
-                                {/* <View style={{ flexDirection: 'row' }}>
+
+                                <View style={{ flex: 1, width: "90%", alignSelf: 'center' }}>
+                                    {/* <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1, justifyContent: 'center' }}>
                                         <Text style={{ color: "#727272", fontSize: 12 }}>Your current location</Text>
                                     </View>
@@ -569,7 +647,7 @@ class MyMapView extends React.Component {
                                         <Text style={{ color: Theme.Colors.primary }}>Change</Text>
                                     </TouchableOpacity>
                                 </View> */}
-                                {/* {this.state.addressLoading ?
+                                    {/* {this.state.addressLoading ?
                                     <View style={{ flexDirection: "row" }}>
                                         <Image
                                             style={{ width: 30, height: 30, marginLeft: -5 }}
@@ -586,11 +664,11 @@ class MyMapView extends React.Component {
                                         <Text style={{ fontSize: 16 }}>{this.state.address} </Text>
                                     </View>
                                 } */}
-                                {/* <View style={{ borderRadius: 5, borderColor: "#ECE1D6", paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#FFFCF5', borderWidth: 1, marginTop: 10 }}>
+                                    {/* <View style={{ borderRadius: 5, borderColor: "#ECE1D6", paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#FFFCF5', borderWidth: 1, marginTop: 10 }}>
                                     <Text style={{ color: '#8e6847', fontSize: 14 }}>A detailed address will help our delivery executive reach your doorstep easily</Text>
                                 </View> */}
-                                {/* <Text style={{ color: "red", fontSize: 12, marginTop: 5, fontWeight: 'bold' }}>{this.state.errorMessage} </Text> */}
-                                {/* <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
+                                    {/* <Text style={{ color: "red", fontSize: 12, marginTop: 5, fontWeight: 'bold' }}>{this.state.errorMessage} </Text> */}
+                                    {/* <Text style={{ marginTop: 20, fontSize: 14, fontWeight: 'bold' }}>Delivering for?</Text>
                             <View style={{ flexDirection: 'row', justifyContent: "space-around", marginTop: 5, }}>
                                 <TouchableOpacity onPress={() => this.onPressDeliverFor('self')} style={{ justifyContent: 'center', borderColor: this.state.deliverFor == "self" ? Theme.Colors.primary : "#EFEFEF", borderWidth: 2, borderRadius: 6, justifyContent: 'center', alignItems: 'center', width: "40%", padding: 15 }}>
                                     <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Self</Text>
@@ -600,50 +678,74 @@ class MyMapView extends React.Component {
                                     <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Others</Text>
                                 </TouchableOpacity>
                             </View> */}
-                                <>
-                                    <View style={{ marginTop: 10 }}>
-                                        {/* <Text style={{ color: "#727272", fontSize: 12 }}>Name</Text> */}
-                                        <TextInput
-                                            style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
-                                            onChangeText={text => this.setState({
-                                                name: text
-                                            })}
-                                            placeholder="Name"
-                                            placeholderTextColor="#727272"
-                                            value={this.state.name}
-                                            onTouchStart={() => {
-                                                this.setState({ nameErrorText: "" })
-                                            }}
-                                        />
-                                        {this.state.nameErrorText ?
-                                            <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.nameErrorText} </Text>
-                                            : undefined}
-                                    </View>
-                                    <View style={{ marginTop: 10 }}>
-                                        <Text style={{ color: "#727272", fontSize: 12 }}>Mobile Number</Text>
-                                        <View style={{ borderBottomColor: '#D8D8D8', flexDirection: 'row', borderBottomWidth: 1 }}>
-                                            <View style={{ justifyContent: 'center' }}>
-                                                <Text style={{ fontSize: 16 }}>+91</Text>
-                                            </View>
-                                            <View style={{ backgroundColor: "grey", width: 0.5, margin: 13 }} />
-                                            <View style={{ flex: 1 }}>
-                                                <TextInput
-                                                    style={{ height: 40, }}
-                                                    onChangeText={text => this.setState({
-                                                        mobileNumber: text
-                                                    })}
-                                                    placeholder="Mobile Number"
-                                                    placeholderTextColor="#727272"
-                                                    value={this.state.mobileNumber}
-                                                    keyboardType={"number-pad"}
-                                                    onTouchStart={() => {
-                                                        this.setState({ mobileNumberErrorText: "" })
-                                                    }}
-                                                />
-                                            </View>
+                                    <>
+                                        <View style={{ marginTop: 10 }}>
+                                            {/* <Text style={{ color: "#727272", fontSize: 12 }}>Name</Text> */}
+                                            <TextInput
+                                                style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
+                                                onChangeText={text => this.setState({
+                                                    name: text
+                                                })}
+                                                placeholder="Name"
+                                                placeholderTextColor="#727272"
+                                                value={this.state.name}
+                                                onTouchStart={() => {
+                                                    this.setState({ nameErrorText: "" })
+                                                }}
+                                            />
+                                            {this.state.nameErrorText ?
+                                                <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.nameErrorText} </Text>
+                                                : undefined}
                                         </View>
+                                        <View style={{ marginTop: 8 }}>
+                                            {/* <Text style={{ color: "#727272", fontSize: 12 }}>House No/ Flat No/Floor/Building</Text> */}
+                                            <TextInput
+                                                style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
+                                                onChangeText={text => this.setState({
+                                                    houseNumber: text
+                                                })}
+                                                placeholder="Flat / Floor / Building Name"
+                                                placeholderTextColor="#727272"
+                                                value={this.state.houseNumber}
+                                            />
+                                        </View>
+                                        <View style={{ marginTop: 8 }}>
+                                            {/* <Text style={{ color: "#727272", fontSize: 12 }}>Landmark</Text> */}
+                                            <TextInput
+                                                style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
+                                                onChangeText={text => this.setState({
+                                                    landMark: text
+                                                })}
+                                                placeholder="Landmark"
+                                                placeholderTextColor="#727272"
+                                                value={this.state.landMark}
+                                            />
+                                        </View>
+                                        <View style={{ marginTop: 8 }}>
+                                            <Text style={{ color: "#727272", fontSize: 12 }}>Mobile Number</Text>
+                                            <View style={{ borderBottomColor: '#D8D8D8', flexDirection: 'row', borderBottomWidth: 1 }}>
+                                                <View style={{ justifyContent: 'center' }}>
+                                                    <Text style={{ fontSize: 16 }}>+91</Text>
+                                                </View>
+                                                <View style={{ backgroundColor: "grey", width: 0.5, margin: 13 }} />
+                                                <View style={{ flex: 1 }}>
+                                                    <TextInput
+                                                        style={{ height: 40, }}
+                                                        onChangeText={text => this.setState({
+                                                            mobileNumber: text
+                                                        })}
+                                                        placeholder="Mobile Number"
+                                                        placeholderTextColor="#727272"
+                                                        value={this.state.mobileNumber}
+                                                        keyboardType={"number-pad"}
+                                                        onTouchStart={() => {
+                                                            this.setState({ mobileNumberErrorText: "" })
+                                                        }}
+                                                    />
+                                                </View>
+                                            </View>
 
-                                        {/* <TextInput
+                                            {/* <TextInput
                                             style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
                                             onChangeText={text => this.setState({
                                                 mobileNumber: text
@@ -656,12 +758,12 @@ class MyMapView extends React.Component {
                                                 this.setState({ mobileNumberErrorText: "" })
                                             }}
                                         /> */}
-                                        {this.state.mobileNumberErrorText ?
-                                            <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.mobileNumberErrorText} </Text>
-                                            : undefined}
-                                    </View>
-                                </>
-                                {/* <View style={{ marginTop: 10 }}>
+                                            {this.state.mobileNumberErrorText ?
+                                                <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.mobileNumberErrorText} </Text>
+                                                : undefined}
+                                        </View>
+                                    </>
+                                    {/* <View style={{ marginTop: 8 }}>
                                     <Text style={{ color: "#727272", fontSize: 12 }}>Alternate Mobile Number</Text>
                                     <View style={{ borderBottomColor: '#D8D8D8', flexDirection: 'row', borderBottomWidth: 1 }}>
                                         <View style={{ justifyContent: 'center' }}>
@@ -682,31 +784,9 @@ class MyMapView extends React.Component {
                                         </View>
                                     </View>
                                 </View> */}
-                                <View style={{ marginTop: 10 }}>
-                                    {/* <Text style={{ color: "#727272", fontSize: 12 }}>House No/ Flat No/Floor/Building</Text> */}
-                                    <TextInput
-                                        style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
-                                        onChangeText={text => this.setState({
-                                            houseNumber: text
-                                        })}
-                                        placeholder="Flat / Floor / Building Name"
-                                        placeholderTextColor="#727272"
-                                        value={this.state.houseNumber}
-                                    />
-                                </View>
-                                <View style={{ marginTop: 10 }}>
-                                    {/* <Text style={{ color: "#727272", fontSize: 12 }}>Landmark</Text> */}
-                                    <TextInput
-                                        style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1 }}
-                                        onChangeText={text => this.setState({
-                                            landMark: text
-                                        })}
-                                        placeholder="Landmark"
-                                        placeholderTextColor="#727272"
-                                        value={this.state.landMark}
-                                    />
-                                </View>
-                                {/* <View style={{ marginTop: 10 }}>
+
+
+                                    {/* <View style={{ marginTop: 8 }}>
                                     <TextInput
                                         style={{ height: 40, borderColor: this.state.errorMessageBanner ? 'red' : '#D8D8D8', borderBottomWidth: 1 }}
                                         onChangeText={text => this.setState({
@@ -718,47 +798,60 @@ class MyMapView extends React.Component {
                                         onTouchStart={() => this.setState({ errorMessageBanner: false })}
                                     />
                                 </View> */}
-                                <View style={{ marginTop: 10 }}>
-                                    <Text style={{ color: "#727272", fontSize: 12 }}>Save as</Text>
+                                    <View style={{ marginTop: 8 }}>
+                                        <Text style={{ color: "#727272", fontSize: 12 }}>Save as</Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <CheckBox
+                                            // center
+                                            containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
+                                            title='Home'
+                                            checkedIcon='dot-circle-o'
+                                            textStyle={{ fontSize: 13 }}
+                                            uncheckedIcon='circle-o'
+                                            checked={this.state.homeCheck}
+                                            onPress={() => this.onPressCheckbox('homeCheck')}
+                                            checkedColor={Theme.Colors.primary}
+                                        />
+                                        <CheckBox
+                                            // center
+                                            containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
+                                            title='Office'
+                                            checkedIcon='dot-circle-o'
+                                            uncheckedIcon='circle-o'
+                                            textStyle={{ fontSize: 13 }}
+                                            checked={this.state.officeCheck}
+                                            onPress={() => this.onPressCheckbox('officeCheck')}
+                                            checkedColor={Theme.Colors.primary}
+                                        />
+                                        <CheckBox
+                                            // center
+                                            containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
+                                            title='Others'
+                                            checkedIcon='dot-circle-o'
+                                            uncheckedIcon='circle-o'
+                                            textStyle={{ fontSize: 13 }}
+                                            checked={this.state.othersCheck}
+                                            onPress={() => this.onPressCheckbox('othersCheck')}
+                                            checkedColor={Theme.Colors.primary}
+                                        />
+                                    </View>
                                 </View>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <CheckBox
-                                        // center
-                                        containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
-                                        title='Home'
-                                        checkedIcon='dot-circle-o'
-                                        textStyle={{ fontSize: 13 }}
-                                        uncheckedIcon='circle-o'
-                                        checked={this.state.homeCheck}
-                                        onPress={() => this.onPressCheckbox('homeCheck')}
-                                        checkedColor={Theme.Colors.primary}
-                                    />
-                                    <CheckBox
-                                        // center
-                                        containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
-                                        title='Office'
-                                        checkedIcon='dot-circle-o'
-                                        uncheckedIcon='circle-o'
-                                        textStyle={{ fontSize: 13 }}
-                                        checked={this.state.officeCheck}
-                                        onPress={() => this.onPressCheckbox('officeCheck')}
-                                        checkedColor={Theme.Colors.primary}
-                                    />
-                                    <CheckBox
-                                        // center
-                                        containerStyle={{ backgroundColor: "transparent", borderWidth: 0, width: 90 }}
-                                        title='Others'
-                                        checkedIcon='dot-circle-o'
-                                        uncheckedIcon='circle-o'
-                                        textStyle={{ fontSize: 13 }}
-                                        checked={this.state.othersCheck}
-                                        onPress={() => this.onPressCheckbox('othersCheck')}
-                                        checkedColor={Theme.Colors.primary}
-                                    />
-                                </View>
-                            </View>
-                        </ScrollView>
-                        <Button full style={{ backgroundColor: Theme.Colors.primary, }} onPress={() => this.onSubmit()}><Text>Save & continue</Text></Button>
+                            </ScrollView>
+                        }
+                        <View style={{ flex: 1, justifyContent: "center", marginBottom: 10 }}>
+                            {this.state.mode == "EDIT_SCREEN" ?
+                                <Button rounded style={{ backgroundColor: Theme.Colors.primary, alignSelf: "center", width: ("90%"), justifyContent: "center" }} onPress={() => this.onSubmit()}>
+                                    <Text style={{}}>Save Address</Text>
+                                </Button>
+                                :
+                                <Button rounded style={{ backgroundColor: Theme.Colors.primary, alignSelf: "center", width: ("90%"), justifyContent: "center" }} onPress={() => this.OnConfirmLocation()}>
+                                    <Text style={{}}>Confirm Location</Text>
+                                </Button>
+
+                            }
+                        </View>
+                        {/* <Button full style={{ backgroundColor: Theme.Colors.primary, }} onPress={() => this.onSubmit()}><Text>Save & continue</Text></Button> */}
                     </KeyboardAvoidingView>
                     {/* <SafeAreaView style={styles.footer}>
                         <Text style={styles.region}>{JSON.stringify(region, null, 2)} </Text>
@@ -898,7 +991,7 @@ export default connect(mapStateToProps, { addNewCustomerAddress, getAllUserAddre
 
 const styles = StyleSheet.create({
     map: {
-        height: "45%"
+        height: "90%"
     },
     // markerFixed: {
     //     left: '50%',

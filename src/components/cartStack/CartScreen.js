@@ -170,7 +170,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
         if (newArray?.length > 0) {
             setAddressModalVisible(true)
         } else {
-            navigation.navigate('MapScreen', { fromScreen: "CartScreen" })
+            navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreen", fromScreen: "AddNew_SCREEN", backToCardScreen: "CartScreen", })
         }
     }
     // const cartIssue = (option) => {

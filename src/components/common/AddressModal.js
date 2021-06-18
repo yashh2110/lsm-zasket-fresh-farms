@@ -122,7 +122,7 @@ const AddressModal = ({ item, navigation, navigateTo, homeScreenLocation, addLoc
                 </ScrollView>
                 <TouchableOpacity onPress={() => {
                     if (navigateTo == "MapScreen") {
-                        navigation.navigate('MapScreen', { fromScreen: "AddressModal" })
+                        navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreen", fromScreen: "AddNew_SCREEN", backToCardScreen: "CartScreen", backToCheckoutScreen: "CheckoutScreen" })
                     } else {
                         navigation.navigate('AutoCompleteLocationScreen', { fromScreen: 'AddressModal', navigateTo: navigateTo })
                     }

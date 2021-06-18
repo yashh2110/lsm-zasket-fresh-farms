@@ -16,7 +16,6 @@ import ProductDetailScreen from "../components/ProductScreens/ProductDetailScree
 import ProductListScreen from "../components/ProductScreens/ProductListScreen"
 import MapScreen from "../components/MapStack/MapScreen"
 import MapScreenGrabPincode from "../components/MapStack/MapScreenGrabPincode"
-import MapConfirmLocation from "../components/MapStack/MapConfirmLocation"
 import AccountScreen from "../components/AccountStack/AccountScreen"
 import SupportScreen from "../components/AccountStack/SupportScreen"
 import CancelOrderScreen from "../components/AccountStack/CancelOrderScreen"
@@ -340,11 +339,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                     component={MapScreen}
                     options={{ title: 'MapScreen' }}
                 />
-                <Stack.Screen
-                    name="MapConfirmLocation"
-                    component={MapConfirmLocation}
-                    options={{ title: 'MapConfirmLocation' }}
-                />
+
                 <Stack.Screen
                     name="MapScreenGrabPincode"
                     component={MapScreenGrabPincode}
@@ -424,7 +419,8 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                                     <Stack.Screen name="MapStack" component={MapStack} options={{ cardStyleInterpolator: forFade }} />
                                     <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ title: 'Home Page' }} />
                                     <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
-                                    <Stack.Screen name="MapConfirmLocation" component={MapConfirmLocation} options={{ cardStyleInterpolator: forFade }} />
+                                    <Stack.Screen name="CartScreen" component={CartScreen} options={{ cardStyleInterpolator: forFade }} />
+                                    <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} options={{ cardStyleInterpolator: forFade }} />
                                     <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
                                     <Stack.Screen name="AccessPermissionScreen" component={AccessPermissionScreen} options={{ cardStyleInterpolator: forFade }} />
                                     <Stack.Screen name="SetDeliveryLocationScreen" component={SetDeliveryLocationScreen} options={{ cardStyleInterpolator: forFade }} />

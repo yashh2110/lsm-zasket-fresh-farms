@@ -54,7 +54,7 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
     }
 
     const onPressAddNewAddress = () => {
-        navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapConfirmLocation" })
+        navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreen", fromScreen: "AddNew_SCREEN", backToAddressScreen: "ManageAddressScreen" })
         // navigation.navigate('MapScreen', { fromScreen: "ManageAddressScreen" })
     }
 

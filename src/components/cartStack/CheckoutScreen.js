@@ -192,7 +192,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
         if (newArray?.length > 0) {
             setAddressModalVisible(true)
         } else {
-            navigation.navigate('MapScreen', { fromScreen: "CartScreen" })
+            navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreen", fromScreen: "AddNew_SCREEN", backToCheckoutScreen: "CheckoutScreen" })
         }
     }
     const onPressContinue = async () => {
