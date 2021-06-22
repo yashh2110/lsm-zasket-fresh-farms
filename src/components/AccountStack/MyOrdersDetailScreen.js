@@ -206,12 +206,12 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                                         <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
                                     </View>
                                 }
-                                <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: 'bold', }}>Deliver to {
+                                {/* <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: 'bold', }}>Deliver to {
                                     ((item?.associatedAddress?.recepientName)?.length > 13) ?
                                         (((item?.associatedAddress?.recepientName).substring(0, 13 - 3)) + '...') :
                                         item?.associatedAddress?.recepientName
                                 }
-                                </Text>
+                                </Text> */}
                             </View>
                             <Text style={{ color: '#727272' }}>{item?.associatedAddress?.recepientMobileNumber} </Text>
                         </View>

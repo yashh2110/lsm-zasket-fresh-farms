@@ -457,11 +457,11 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
                                         <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
                                     </View>
                                 }
-                                <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Deliver to {
+                                {/* <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Deliver to {
                                     ((userLocation?.recepientName).length > 13) ?
                                         (((userLocation?.recepientName).substring(0, 13 - 3)) + '...') :
                                         userLocation?.recepientName
-                                } </Text>
+                                } </Text> */}
                             </View>
                             <TouchableOpacity onPress={() => { onPressSelectAddress() }} style={{}}>
                                 <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Change</Text>
@@ -578,8 +578,17 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
                             <View style={{ flex: 1, flexDirection: 'row', borderStyle: 'dashed', borderTopRightRadius: 4, borderBottomRightRadius: 4, backgroundColor: "#FAFAFA", alignItems: "center", borderWidth: 1.5, borderColor: '#E3E3E3', zIndex: 0, marginLeft: -1 }}>
                                 <Text style={{ fontSize: 15, marginLeft: 10, flex: 1 }}>Apply Coupon Code</Text>
 
-                                <View style={{ justifyContent: 'center', alignItems: 'center', height: 40 }}>
-                                    <Icon name="chevron-small-right" type="Entypo" style={[{ color: 'black', fontSize: 26 }]} />
+                                <View style={{ justifyContent: "space-around", alignItems: 'center', height: 40, flexDirection: "row", width: 60 }}>
+                                    {
+                                        availableCouponList?.length > 0 &&
+                                        <>
+                                            <View style={{ height: 20, borderRadius: 9, backgroundColor: "red", justifyContent: "center", alignItems: "center" }}>
+                                                <Text style={{ color: "white", marginHorizontal: 6.2 }}>{availableCouponList?.length}</Text>
+                                            </View>
+                                        </>
+
+                                    }
+                                    <Icon name="chevron-small-right" type="Entypo" style={[{ color: 'black', fontSize: 30 }]} />
                                 </View>
 
                             </View>

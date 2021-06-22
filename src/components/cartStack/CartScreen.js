@@ -211,12 +211,12 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                                                     <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
                                                 </View>
                                             }
-                                            <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: 'bold', }}>Deliver to {
+                                            {/* <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: 'bold', }}>Deliver to {
                                                 ((userLocation?.recepientName).length > 13) ?
                                                     (((userLocation?.recepientName).substring(0, 13 - 3)) + '...') :
                                                     userLocation?.recepientName
                                             }
-                                            </Text>
+                                            </Text> */}
                                         </View>
                                         <TouchableOpacity onPress={() => { onPressSelectAddress() }} style={{}}>
                                             <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Change</Text>

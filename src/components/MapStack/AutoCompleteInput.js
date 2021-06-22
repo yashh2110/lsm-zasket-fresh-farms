@@ -12,11 +12,12 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
   }, [defaultValue])
   return (
     <GooglePlacesAutocomplete
+
       ref={ref => { someRef = ref }}
       // placeholder='Search'
       minLength={2} // minimum length of text to search
       autoFocus={true}
-      placeholder="Address search e.g. Niligiri's HSR"
+      placeholder="Search for Area, street name..."
       // styles={[commonStyle.fullHeight, commonStyle.greenBg]}
       // textInputContainer={[commonStyle.fullHeight, commonStyle.greenBg]}
       returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
@@ -49,20 +50,24 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
           backgroundColor: '#ffffff',
           height: 60,
         },
+        // container: {
+        //   backgroundColor: 'blue',
+        //   height:60
+        // },
 
         textInput: {
-          // shadowColor: "#000",
-          // shadowOffset: {
-          //   width: 0,
-          //   height: 3,
-          // },
-          // shadowOpacity: 0.27,
-          // shadowRadius: 4.65,
-          // elevation: 6,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 3,
+          },
+          shadowOpacity: 0.27,
+          shadowRadius: 4.65,
+          elevation: 6,
           height: 50,
-          borderRadius: 25,
+          // borderRadius: 25,
           paddingLeft: 45,
-          backgroundColor: "#F3F3F5"
+
         },
         predefinedPlacesDescription: {
           color: "black",
@@ -80,7 +85,7 @@ const AutoCompleteLocation = ({ getLocation, defaultValue, styles, regions, onRe
         textInputContainer: {
           borderTopWidth: 0,
           borderBottomWidth: 0,
-          backgroundColor: "#ffffff"
+          backgroundColor: "#F8F8F8"
         },
       }}
       // currentLocation={true}

@@ -141,7 +141,7 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
                                                     <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
                                                 </View>
                                             }
-                                            <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName}  </Text>
+                                            {/* <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName}  </Text> */}
                                         </View>
                                         <Text style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
                                     </View>
@@ -168,7 +168,7 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
                                 loop
                             />
                             {/* // </Draggable>  */}
-                            <Animatable.Text animation="pulse" easing="ease-in" duration={1500} iterationCount="infinite" style={{ fontSize: 20, marginTop: 50, color: '#474747' }}>No data found</Animatable.Text>
+                            <Animatable.Text animation="pulse" easing="ease-in" duration={1500} iterationCount="infinite" style={{ fontSize: 20, marginTop: 50, color: '#474747' }}>You have no locations saved yet</Animatable.Text>
                         </View>
                     }
                     keyExtractor={item => item?.id.toString()}
