@@ -116,7 +116,7 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
                         }
                         {(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0) == 0 ?
                             undefined :
-                            <Text style={{ fontSize: 15, color: Theme.Colors.primary, marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
+                            <Text style={{ fontSize: 15, color: "#49c32c", marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
                         }
                     </View>
                     <Text style={{ color: '#909090', }}>{item?.itemSubName} </Text>

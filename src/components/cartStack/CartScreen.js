@@ -182,7 +182,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
             <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false} refreshControl={
                 <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
             }>
-                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")} </Text> */}
+                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(userLocation, null, "                   ")} </Text> */}
                 {cartItems.length > 0 ?
                     <>
                         {userLocation?.lat ?
@@ -222,7 +222,26 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                                             <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Change</Text>
                                         </TouchableOpacity>
                                     </View>
-                                    <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1} </Text>
+                                    <View style={{ marginTop: 5, flexDirection: "row" }}>
+                                        {
+                                            userLocation?.houseNo ?
+                                                <>
+                                                    <Text style={{ color: "#909090", fontSize: 13, marginRight: 5 }}>{userLocation?.houseNo}</Text>
+                                                </>
+                                                :
+                                                undefined
+                                        }
+
+                                        {
+                                            userLocation?.landmark ?
+                                                <>
+                                                    <Text style={{ color: "#909090", fontSize: 13, }}>{userLocation?.landmark}</Text>
+                                                </>
+                                                :
+                                                undefined
+                                        }
+                                    </View>
+                                    <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, }}>{userLocation?.addressLine_1} </Text>
                                 </View>
                             </View>
                             : undefined
@@ -303,7 +322,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                             />
                         </View>
                         <View style={{ backgroundColor: 'white', marginTop: 10, padding: 10, paddingHorizontal: 15 }}>
-                            <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
+                            <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} items)</Text></Text>
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                                 <Text style={{ color: '#727272' }}>Item Total</Text>
                                 <Text style={{}}>₹ {(totalCartValue).toFixed(2)} </Text>

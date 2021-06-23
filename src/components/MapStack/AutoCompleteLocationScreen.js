@@ -190,7 +190,8 @@ class AutoCompleteLocationScreen extends React.Component {
     };
 
     onPressSavedAddress = async (item) => {
-        // Alert.alert(JSON.stringify(item, null, "      "))
+        // alert(JSON.stringify(item, null, "      "))
+        // return
         const { fromScreen, navigateTo, mode, } = this.props.route.params;
         if (fromScreen == "AddNew_SCREEN") {
             let payload = {
@@ -200,9 +201,10 @@ class AutoCompleteLocationScreen extends React.Component {
                 lon: item?.lon,
                 recepientName: item?.recepientName,
                 recepientMobileNumber: item?.recepientMobileNumber,
-                landMark: item?.landMark,
+                landmark: item?.landmark,
                 saveAs: item?.saveAs,
-                pincode: item?.pincode
+                pincode: item?.pincode,
+                houseNo: item?.houseNo,
             }
             this.props.addLocation(payload)
             this.props.addHomeScreenLocation({
@@ -211,8 +213,8 @@ class AutoCompleteLocationScreen extends React.Component {
                 lon: item?.lon,
                 pincode: item?.pincode
             })
-            const { fromScreen, navigateTo, mode, backToCardScreen, backToCheckoutScreen } = this.props.route.params;
-            this.props.navigation.navigate('MapScreen', { fromScreen: fromScreen, item: item, backToCardScreen: backToCardScreen, backToCheckoutScreen: backToCheckoutScreen })
+            const { fromScreen, navigateTo, mode, backToCardScreen, backToCheckoutScreen, backToAddressScreen } = this.props.route.params;
+            this.props.navigation.navigate('MapScreen', { fromScreen: fromScreen, item: item, backToCardScreen: backToCardScreen, backToCheckoutScreen: backToCheckoutScreen, backToAddressScreen: backToAddressScreen })
 
         } else {
             let payload = {
@@ -222,9 +224,10 @@ class AutoCompleteLocationScreen extends React.Component {
                 lon: item?.lon,
                 recepientName: item?.recepientName,
                 recepientMobileNumber: item?.recepientMobileNumber,
-                landMark: item?.landMark,
+                landmark: item?.landmark,
                 saveAs: item?.saveAs,
-                pincode: item?.pincode
+                pincode: item?.pincode,
+                houseNo: item?.houseNo,
             }
             this.props.addLocation(payload)
             this.props.addHomeScreenLocation({
@@ -243,10 +246,10 @@ class AutoCompleteLocationScreen extends React.Component {
     render() {
         return (
             <>
-                <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
                     <View style={{ height: 70, backgroundColor: "white", flexDirection: "row", alignItems: "center" }}>
-                        <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ width: 75, height: 60, justifyContent: "center", alignItems: "center", marginRight: 5 }}>
-                            <Icon name="chevron-small-left" type="Entypo" style={[{ fontSize: 34, color: "black", }]} />
+                        <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ width: 65, height: 60, justifyContent: "center", alignItems: "center", marginRight: 5, }}>
+                            <Icon name="chevron-small-left" type="Entypo" style={[{ fontSize: 32, color: "black", marginRight: 20 }]} />
                         </TouchableOpacity>
                         {/* <View style={{ width: 75, height: 60, justifyContent: "center", alignItems: "center" }}>
                                 <Icon name="chevron-small-left" type="Entypo" style={[{ fontSize: 32, color: "black", }]} />
@@ -263,8 +266,8 @@ class AutoCompleteLocationScreen extends React.Component {
                                 </Text>
                         </View>
                     </View>
-                    <View style={{ flex: 1, }}>
-                        <View style={{ flex: 1, width: ("100%"), alignSelf: "center", backgroundColor: "#F8F8F8", }}>
+                    <View style={{ flex: 1, alignSelf: "center", backgroundColor: "#F8F8F8", width: ("93%"), }}>
+                        <View style={{ backgroundColor: "#F8F8F8", flex: 1, }}>
 
                             {/* <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', }}>
                                 <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
@@ -305,14 +308,14 @@ class AutoCompleteLocationScreen extends React.Component {
                                     <Icon name="search" style={{ fontSize: 22, color: "gray", }} />
                                 </View>
                             </View>
-                            <View style={{ zIndex: -1, flex: 1, marginTop: 15 }}>
+                            <View style={{ zIndex: -1, flex: 1, marginTop: 8 }}>
                                 <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", }}>
                                     <View
-                                        style={{ height: 2, width: "10%", alignSelf: 'center', backgroundColor: '#d6cfcf', marginTop: 5, }}
+                                        style={{ height: 2, width: "10%", alignSelf: 'center', backgroundColor: '#eaeaec', marginTop: 5, }}
                                     />
-                                    <Text style={{ marginLeft: 15, marginRight: 15, color: "gray", fontSize: 14, fontWeight: "bold" }}>OR</Text>
+                                    <Text style={{ marginLeft: 15, marginRight: 15, color: "#727272", fontSize: 14, }}>OR</Text>
                                     <View
-                                        style={{ height: 2, width: "10%", alignSelf: 'center', backgroundColor: '#d6cfcf', marginTop: 5, }}
+                                        style={{ height: 2, width: "10%", alignSelf: 'center', backgroundColor: '#eaeaec', marginTop: 5, }}
                                     />
                                 </View>
                                 {this.state.gpsEnabled ?
@@ -333,12 +336,16 @@ class AutoCompleteLocationScreen extends React.Component {
                                     :
                                     <TouchableOpacity onPress={() => {
                                         this.getCurrentPosition()
-                                    }} style={{ flexDirection: 'row', width: ("90%"), backgroundColor: "#FFFFFF", alignSelf: "center", borderRadius: 30, justifyContent: "center", marginTop: 30 }}>
+                                    }} style={{ flexDirection: 'row', width: ("95%"), backgroundColor: "#FFFFFF", alignSelf: "center", borderRadius: 30, justifyContent: "center", marginTop: 25 }}>
                                         <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', marginLeft: -10 }}>
-                                            <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 18, color: "red" }} />
+                                            <Image
+                                                style={{ width: 20, height: 20, }}
+                                                resizeMode={"contain"}
+                                                source={require('../../assets/png/location.png')}
+                                            />
                                         </View>
                                         <View style={{ justifyContent: 'center', }}>
-                                            <Text style={{ fontSize: 18, color: "red" }}>Use Current Location</Text>
+                                            <Text style={{ fontSize: 18, color: "#e1171e" }}>Use Current Location</Text>
                                         </View>
                                     </TouchableOpacity>
                                 }
@@ -348,7 +355,7 @@ class AutoCompleteLocationScreen extends React.Component {
                                         {this.state.savedAddress?.length > 0 ?
                                             <>
 
-                                                <Text style={{ fontWeight: 'bold', marginLeft: 8, fontSize: 16, marginBottom: 10, marginTop: 15 }}>Saved Address</Text>
+                                                <Text style={{ fontWeight: 'bold', marginLeft: 8, fontSize: 16, marginBottom: 15, marginTop: 25 }}>Saved Address</Text>
                                             </>
                                             : undefined}
                                         <FlatList
@@ -387,13 +394,13 @@ class AutoCompleteLocationScreen extends React.Component {
                                                                 //     <Text style={{ color: "#F464AD", fontSize: 12, marginHorizontal: 5 }}>Home</Text>
                                                                 // </View>
                                                                 <View style={{}}>
-                                                                    <Text style={{ color: "black", fontSize: 14, fontWeight: "bold" }}>Home</Text>
+                                                                    <Text style={{ color: "black", fontSize: 15, fontWeight: "bold" }}>Home</Text>
                                                                 </View>
 
                                                             }
                                                             {item?.saveAs == "Office" &&
                                                                 <View style={{}}>
-                                                                    <Text style={{ color: "black", fontSize: 14, fontWeight: "bold" }}>Office</Text>
+                                                                    <Text style={{ color: "black", fontSize: 15, fontWeight: "bold" }}>Office</Text>
                                                                 </View>
                                                                 // <View style={{ backgroundColor: "#FCF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#F0D4FA", paddingVertical: 3,  }}>
                                                                 //     <Text style={{ color: "#CD64F4", fontSize: 12, marginHorizontal: 5 }}>Office</Text>
@@ -401,7 +408,7 @@ class AutoCompleteLocationScreen extends React.Component {
                                                             }
                                                             {item?.saveAs == "Others" &&
                                                                 <View style={{}}>
-                                                                    <Text style={{ color: "black", fontSize: 14, fontWeight: "bold" }}>Others</Text>
+                                                                    <Text style={{ color: "black", fontSize: 15, fontWeight: "bold" }}>Others</Text>
                                                                 </View>
                                                                 // <View style={{ backgroundColor: "#EDF5FF", borderWidth: 1, borderRadius: 4, borderColor: "#BEDCFF", paddingVertical: 3, marginRight: 5 }}>
                                                                 //     <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
@@ -409,7 +416,26 @@ class AutoCompleteLocationScreen extends React.Component {
                                                             }
                                                             {/* <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName} </Text> */}
                                                         </View>
-                                                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
+                                                        <View style={{ marginTop: 5, flexDirection: "row" }}>
+                                                            {
+                                                                item?.houseNo ?
+                                                                    <>
+                                                                        <Text style={{ color: "#909090", fontSize: 13, marginRight: 5 }}>{item?.houseNo}</Text>
+                                                                    </>
+                                                                    :
+                                                                    undefined
+                                                            }
+
+                                                            {
+                                                                item?.landmark ?
+                                                                    <>
+                                                                        <Text style={{ color: "#909090", fontSize: 13, }}>{item?.landmark}</Text>
+                                                                    </>
+                                                                    :
+                                                                    undefined
+                                                            }
+                                                        </View>
+                                                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, }}>{item?.addressLine_1} </Text>
                                                     </View>
                                                 </TouchableOpacity>
                                             }

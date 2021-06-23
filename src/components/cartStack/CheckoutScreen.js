@@ -467,7 +467,26 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
                                 <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Change</Text>
                             </TouchableOpacity>
                         </View>
-                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{userLocation?.addressLine_1} </Text>
+                        <View style={{ marginTop: 5, flexDirection: "row" }}>
+                            {
+                                userLocation?.houseNo ?
+                                    <>
+                                        <Text style={{ color: "#909090", fontSize: 13, marginRight: 5 }}>{userLocation?.houseNo}</Text>
+                                    </>
+                                    :
+                                    undefined
+                            }
+
+                            {
+                                userLocation?.landmark ?
+                                    <>
+                                        <Text style={{ color: "#909090", fontSize: 13, }}>{userLocation?.landmark}</Text>
+                                    </>
+                                    :
+                                    undefined
+                            }
+                        </View>
+                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, }}>{userLocation?.addressLine_1} </Text>
                     </View>
                 </View>
 
@@ -582,8 +601,8 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
                                     {
                                         availableCouponList?.length > 0 &&
                                         <>
-                                            <View style={{ height: 20, borderRadius: 9, backgroundColor: "red", justifyContent: "center", alignItems: "center" }}>
-                                                <Text style={{ color: "white", marginHorizontal: 6.2 }}>{availableCouponList?.length}</Text>
+                                            <View style={{ minHeight: 19, minWidth: 19, backgroundColor: "#e1171e", justifyContent: "center", alignItems: "center", borderRadius: 10 }}>
+                                                <Text style={{ color: "white", fontSize: 12 }}>{availableCouponList?.length}</Text>
                                             </View>
                                         </>
 
@@ -634,7 +653,7 @@ const CheckoutScreen = ({ route, navigation, cartItems, allUserAddress, offerDet
                     </View> :
                     null}
                 <View style={{ backgroundColor: 'white', marginTop: 10, padding: 10, paddingHorizontal: 15 }}>
-                    <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} item)</Text></Text>
+                    <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} items)</Text></Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                         <Text style={{ color: '#727272' }}>Item Total</Text>
                         <Text style={{}}>₹ {(totalCartValue)?.toFixed(2)} </Text>

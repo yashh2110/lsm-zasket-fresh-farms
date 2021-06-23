@@ -301,7 +301,8 @@ class MyMapView extends React.Component {
             if (fromScreen == "EDIT_SCREEN") {
                 await this.props.updateUserAddress(this.state.addressId, payload, async (response, status) => {
                     if (status) {
-                        // alert()
+                        // alert(JSON.stringify(payload, null, "       "))
+                        this.props.addLocation(payload)
                         this.props.getAllUserAddress(async (response, status) => { })
                         this.props.navigation.goBack()
                     } else {
@@ -319,19 +320,20 @@ class MyMapView extends React.Component {
                 await this.props.addNewCustomerAddress(payload, async (response, status) => {
                     if (status) {
                         const { fromScreen, regionalPositions, backToCardScreen, backToCheckoutScreen, backToAddressScreen } = this.props.route?.params;
-                        // Alert.alert(JSON.stringify(response, null, "   "))
-
+                        // alert(JSON.stringify(response.data, null, "       "))
                         let location = {
                             "id": response?.data?.id,
                             "addressLine_1": response?.data?.addressLine_1,
                             "pincode": response?.data?.pincode,
                             "isActive": true,
-                            "landmark": response?.data?.landMark,
+                            "landmark": response?.data?.landmark,
                             "lat": response?.data?.lat,
                             "lon": response?.data?.lon,
                             "recepientMobileNumber": response?.data?.recepientMobileNumber,
                             "recepientName": response?.data?.recepientName,
-                            "saveAs": response?.data?.saveAs
+                            "saveAs": response?.data?.saveAs,
+                            "houseNo": response?.data?.houseNo
+
                         }
 
                         this.props.addLocation(location)
@@ -1048,9 +1050,28 @@ class MyMapView extends React.Component {
                                                                         <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
                                                                     </View>
                                                                 }
-                                                                <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName} </Text>
+                                                                {/* <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName} </Text> */}
                                                             </View>
-                                                            <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
+                                                            <View style={{ marginTop: 5, flexDirection: "row" }}>
+                                                                {
+                                                                    item?.houseNo ?
+                                                                        <>
+                                                                            <Text style={{ color: "#909090", fontSize: 13, marginRight: 5 }}>{item?.houseNo}</Text>
+                                                                        </>
+                                                                        :
+                                                                        undefined
+                                                                }
+
+                                                                {
+                                                                    item?.landmark ?
+                                                                        <>
+                                                                            <Text style={{ color: "#909090", fontSize: 13, }}>{item?.landmark}</Text>
+                                                                        </>
+                                                                        :
+                                                                        undefined
+                                                                }
+                                                            </View>
+                                                            <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, }}>{item?.addressLine_1} </Text>
                                                         </View>
                                                     </TouchableOpacity>
                                                 }

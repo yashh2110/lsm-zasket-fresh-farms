@@ -5,14 +5,16 @@ const initialState = {
     lon: "",
     recepientName: "",
     recepientMobileNumber: "",
-    landMark: "",
+    landmark: "",
     saveAs: "",
     pincode: "",
-    isActive: ""
+    isActive: "",
+    houseNo: ""
 }
 
 const location = (state = initialState, action) => {
     const { type, payload } = action
+    // alert(JSON.stringify(payload, null, "                   "))
     switch (type) {
         case ADD_LOCATION:
             return {
@@ -23,10 +25,11 @@ const location = (state = initialState, action) => {
                 lon: payload?.lon ? payload?.lon : "",
                 recepientName: payload?.recepientName ? payload?.recepientName : "",
                 recepientMobileNumber: payload?.recepientMobileNumber ? payload?.recepientMobileNumber : "",
-                landMark: payload?.landMark ? payload?.landMark : "",
+                landmark: payload?.landmark ? payload?.landmark : "",
                 saveAs: payload?.saveAs ? payload?.saveAs : "",
                 pincode: payload?.pincode ? payload?.pincode : "",
                 isActive: payload?.isActive ? payload?.isActive : "",
+                houseNo: payload?.houseNo ? payload?.houseNo : ""
             }
         // case DELETE_LOCATION:
         //     return {

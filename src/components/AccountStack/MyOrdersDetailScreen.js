@@ -181,7 +181,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                     </View>
                 </View>
                 <View style={{ backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
-                    <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Deliver Address</Text>
+                    <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Delivery Address</Text>
                     <View style={{ backgroundColor: 'white', flexDirection: 'row', }}>
                         <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center' }}>
                             <Image
@@ -216,7 +216,26 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                             <Text style={{ color: '#727272' }}>{item?.associatedAddress?.recepientMobileNumber} </Text>
                         </View>
                     </View>
-                    <Text style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.associatedAddress?.addressLine_1} </Text>
+                    <View style={{ marginTop: 5, flexDirection: "row" }}>
+                        {
+                            item?.associatedAddress?.houseNo ?
+                                <>
+                                    <Text style={{ color: "#909090", fontSize: 13, marginRight: 5 }}>{item?.associatedAddress?.houseNo}</Text>
+                                </>
+                                :
+                                undefined
+                        }
+
+                        {
+                            item?.associatedAddress?.landmark ?
+                                <>
+                                    <Text style={{ color: "#909090", fontSize: 13, }}>{item?.associatedAddress?.landmark}</Text>
+                                </>
+                                :
+                                undefined
+                        }
+                    </View>
+                    <Text style={{ color: "#909090", fontSize: 13, }}>{item?.associatedAddress?.addressLine_1} </Text>
                 </View>
                 <View style={{ backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
                     <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Payment Details </Text>
@@ -235,7 +254,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                 </View>
 
                 <View style={{ backgroundColor: 'white', marginTop: 10, padding: 10, paddingHorizontal: 15 }}>
-                    <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({item?.items?.length} item)</Text></Text>
+                    <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({item?.items?.length} items)</Text></Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                         <Text style={{ color: '#727272' }}>Item Total</Text>
                         <Text style={{}}>₹ {(item?.totalPrice)?.toFixed(2)} </Text>
@@ -258,7 +277,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                         <>
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
-                                <Text style={{ color: '#35B332' }}>Coupon Discount ({item?.applied_offer?.offerCode})</Text>
+                                <Text style={{ color: '#35B332' }}>Coupon Discount ({item?.applied_offer?.offerCode ? item?.applied_offer?.offerCode : 0})</Text>
                                 {(item?.totalPrice - item?.offerPrice)?.toFixed(2) == 0 ?
                                     null
                                     :

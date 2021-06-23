@@ -31,7 +31,8 @@ const AddressModal = ({ item, navigation, navigateTo, homeScreenLocation, addLoc
     }, [allUserAddress])
 
     const onPressSavedAddress = async (item) => {
-        // Alert.alert(JSON.stringify(item, null, "      "))
+        // alert(JSON.stringify(item, null, "      "))
+        // return
         let payload = {
             id: item?.id,
             addressLine_1: item?.addressLine_1 ? item?.addressLine_1 : "",
@@ -39,9 +40,11 @@ const AddressModal = ({ item, navigation, navigateTo, homeScreenLocation, addLoc
             lon: item?.lon,
             recepientName: item?.recepientName,
             recepientMobileNumber: item?.recepientMobileNumber,
-            landMark: item?.landMark,
+            landmark: item?.landmark,
             saveAs: item?.saveAs,
-            pincode: item?.pincode
+            pincode: item?.pincode,
+            houseNo: item?.houseNo,
+
         }
         addLocation(payload)
         addHomeScreenLocation({
@@ -109,9 +112,27 @@ const AddressModal = ({ item, navigation, navigateTo, homeScreenLocation, addLoc
                                                     <Text style={{ color: "#64A6F4", fontSize: 12, marginHorizontal: 5 }}>Others</Text>
                                                 </View>
                                             }
-                                            <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName} </Text>
                                         </View>
-                                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
+                                        <View style={{ marginTop: 5, flexDirection: "row" }}>
+                                            {
+                                                item?.houseNo ?
+                                                    <>
+                                                        <Text style={{ color: "#909090", fontSize: 13, marginRight: 5 }}>{item?.houseNo}</Text>
+                                                    </>
+                                                    :
+                                                    undefined
+                                            }
+
+                                            {
+                                                item?.landmark ?
+                                                    <>
+                                                        <Text style={{ color: "#909090", fontSize: 13, }}>{item?.landmark}</Text>
+                                                    </>
+                                                    :
+                                                    undefined
+                                            }
+                                        </View>
+                                        <Text numberOfLines={2} style={{ color: "#909090", fontSize: 13, }}>{item?.addressLine_1} </Text>
                                     </View>
                                 </TouchableOpacity>
                             }

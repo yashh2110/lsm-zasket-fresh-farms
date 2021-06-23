@@ -107,8 +107,8 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
                             <View style={{ paddingBottom: 10, paddingTop: 5 }}>
                                 <View style={{ flexDirection: 'row' }}>
                                     {/* <Text style={styles.item}
-                                     //   onPress={getListViewItem.bind(this, item)}
-                                     >{JSON.stringify(item, null, "      ")} </Text> */}
+                                    //   onPress={getListViewItem.bind(this, item)}
+                                    >{JSON.stringify(item, null, "      ")} </Text> */}
                                     {item?.saveAs == "Home" &&
                                         <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
                                             <Icon name="home" type="AntDesign" style={{ fontSize: 24, color: '#232323' }} />
@@ -143,7 +143,26 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
                                             }
                                             {/* <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName}  </Text> */}
                                         </View>
-                                        <Text style={{ color: "#909090", fontSize: 13, marginTop: 5 }}>{item?.addressLine_1} </Text>
+                                        <View style={{ marginTop: 5, flexDirection: "row" }}>
+                                            {
+                                                item?.houseNo ?
+                                                    <>
+                                                        <Text style={{ color: "#909090", fontSize: 13, marginRight: 5 }}>{item?.houseNo}</Text>
+                                                    </>
+                                                    :
+                                                    undefined
+                                            }
+
+                                            {
+                                                item?.landmark ?
+                                                    <>
+                                                        <Text style={{ color: "#909090", fontSize: 13, }}>{item?.landmark}</Text>
+                                                    </>
+                                                    :
+                                                    undefined
+                                            }
+                                        </View>
+                                        <Text style={{ color: "#909090", fontSize: 13, }}>{item?.addressLine_1} </Text>
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: "#EAEAEC", marginTop: 5, paddingTop: 10 }}>
@@ -158,19 +177,19 @@ const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddre
                             </View>
                         </View>
                     }
-                    ListEmptyComponent={() =>
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
-                            {/* <Draggable> */}
-                            <LottieView
-                                style={{ width: 200, height: 220, marginVertical: 55 }}
-                                source={require("../../assets/animations/sadSearch.json")}
-                                autoPlay
-                                loop
-                            />
-                            {/* // </Draggable>  */}
-                            <Animatable.Text animation="pulse" easing="ease-in" duration={1500} iterationCount="infinite" style={{ fontSize: 20, marginTop: 50, color: '#474747' }}>You have no locations saved yet</Animatable.Text>
-                        </View>
-                    }
+                    // ListEmptyComponent={() =>
+                    //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
+                    //         {/* <Draggable> */}
+                    //         <LottieView
+                    //             style={{ width: 200, height: 220, marginVertical: 55 }}
+                    //             source={require("../../assets/animations/sadSearch.json")}
+                    //             autoPlay
+                    //             loop
+                    //         />
+                    //         {/* // </Draggable>  */}
+                    //         <Animatable.Text animation="pulse" easing="ease-in" duration={1500} iterationCount="infinite" style={{ fontSize: 20, marginTop: 50, color: '#474747' }}>You have no locations saved yet</Animatable.Text>
+                    //     </View>
+                    // }
                     keyExtractor={item => item?.id.toString()}
                 />
             </ScrollView>
