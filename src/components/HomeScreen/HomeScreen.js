@@ -348,6 +348,7 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                 <View style={{ height: 160, justifyContent: 'center', alignItems: 'center', marginTop: 5, }}>
                     {bannerImages?.length > 0 ?
                         <Swiper
+
                             autoplay={true}
                             showsHorizontalScrollIndicator={false}
                             showsVerticalScrollIndicator={false}
@@ -362,50 +363,57 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                                     <>
                                         <Image
                                             style={{
-                                                height: "100%", width: "100%",
-                                                // alignSelf: 'center',
-                                                // borderRadius: 5, 
-                                                // marginRight: bannerImages.length - 1 == index ? 0 : 15 
+                                                height: "100%",
+                                                width: "95%",
+                                                alignSelf: "center",
+                                                borderRadius: 8,
+                                                // marginRight: bannerImages.length - 1 == index ? 0 : 15
                                             }}
-                                            // resizeMode={"stretch"}
                                             source={{ uri: el?.imagePath }}
                                         />
                                     </>
                                 )
                             })}
-                            {/* <Image
-                            style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center' }}
-                            // resizeMode={"stretch"}
-                            source={require('../../assets/png/HomeScreenBanner1.png')}
-                        />
-                        <Image
-                            style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center' }}
-                            // resizeMode={"stretch"}
-                            source={require('../../assets/png/HomeScreenBanner2.png')}
-                        /> */}
+
                         </Swiper>
                         : undefined}
                 </View>
-                {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 5 }}>
-                    {bannerImages?.map((el, index) => {
-                        return (
-                            <>
-                                <Image
-                                    style={{ height: 140, width: 330, borderRadius: 5, alignSelf: 'center', marginRight: bannerImages.length - 1 == index ? 0 : 15 }}
-                                    // resizeMode={"stretch"}
-                                    source={{ uri: el?.imagePath }}
-                                />
-                            </>
-                        )
-                    })}
-                </ScrollView> */}
+                {/* <View style={{ width: ("100%"), marginRight: 30 }}>
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 5 }}>
+                        {bannerImages?.map((el, index) => {
+                            return (
+                                <>
+                                    <Image
+                                        style={{ height: 150, marginLeft: 7, width: 352, borderRadius: 10, borderRightWidth: 50, alignSelf: 'center', marginRight: bannerImages.length - 1 == index ? 0 : 8 }}
+                                        source={{ uri: el?.imagePath }}
+                                    />
+                                </>
+                            )
+                        })}
+                    </ScrollView> */}
+
+                {/* <View style={{ justifyContent: "center", alignItems: "center", flexDirection: "row", }}>
+                        {bannerImages?.map((el, index) => {
+                            return (
+                                <>
+
+                                    <View style={{ width: 10, height: 10, backgroundColor: "#e6e6e6", marginRight: 10, borderRadius: 5 }}>
+                                    </View>
+
+                                    <View style={{ width: 10, height: 10, backgroundColor: "#505d68", marginRight: 10, borderRadius: 5 }}>
+                                    </View>
+                                </>
+                            )
+                        })}
+                    </View> */}
+                {/* </View> */}
                 <Image
                     style={{
-                        borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', height: 125, width: "110%",
+                        borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', height: 125, width: "112%",
                         // aspectRatio:3
                     }}
                     resizeMode={"cover"}
-                    source={require('../../assets/png/HomeScreenFreeDelivery.png')}
+                    source={require('../../assets/png/HomeFreeDelivery.png')}
                 />
                 <View style={{ flexDirection: 'row', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', padding: 5, marginTop: -10 }}>
                     <FlatList

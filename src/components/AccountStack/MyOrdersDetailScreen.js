@@ -315,18 +315,20 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                                 <View style={[{ padding: 10, flex: 1 }]}>
                                     <Text numberOfLines={2} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.item?.itemName} </Text>
                                     <Text style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.item?.itemSubName} </Text>
-                                    {item?.paymentState == "REFUNDED" && item?.state == "RETURNED" ?
+                                    {item?.state == "RETURNED" ?
                                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
                                             <View style={{ backgroundColor: '#F4F4F4', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 2 }}>
                                                 <Text style={{ fontSize: 12, color: '#E1171E' }}>Returned</Text>
                                             </View>
                                         </View>
-                                        : item?.paymentState == "REFUNDED" ?
+                                        : item?.state == "PARTIALLY_RETURNED" ?
                                             <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
                                                 <View style={{ backgroundColor: '#F4F4F4', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 2 }}>
-                                                    <Text style={{ fontSize: 12, color: '#E1171E' }}>Refunded</Text>
+                                                    <Text style={{ fontSize: 12, color: '#E1171E' }}>Partially Returned</Text>
                                                 </View>
-                                            </View> : null
+                                            </View>
+                                            :
+                                            null
                                     }
                                     <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'flex-end', flexDirection: 'row', }}>
                                         <Text style={{ fontSize: 14, color: '#909090', }}>Quantity: {item?.quantity} </Text>

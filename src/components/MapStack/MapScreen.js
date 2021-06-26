@@ -302,7 +302,7 @@ class MyMapView extends React.Component {
                 await this.props.updateUserAddress(this.state.addressId, payload, async (response, status) => {
                     if (status) {
                         // alert(JSON.stringify(payload, null, "       "))
-                        this.props.addLocation(payload)
+                        // this.props.addLocation(payload)
                         this.props.getAllUserAddress(async (response, status) => { })
                         this.props.navigation.goBack()
                     } else {
