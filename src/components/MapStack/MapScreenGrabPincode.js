@@ -320,11 +320,11 @@ class MapScreenGrabPincode extends React.Component {
                             </View>}
                         <View style={styles.map}>
                             {!this.state.errorMessageBanner &&
-                                <View style={{}}>
-                                    <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
-                                        <Icon name="arrow-back" style={{ fontSize: 28, color: "gray", }} />
-                                    </TouchableOpacity>
-                                    <View style={{ zIndex: 1, left: 45, top: 17 }}>
+                            <View style={{ zIndex: 1, height: 60, backgroundColor: "white" }}>
+                            <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
+                            <Icon name="chevron-small-left" type="Entypo" style={[{ fontSize: 32, color: "black", }]} />                                   
+                             </TouchableOpacity>
+                                    <View style={{ zIndex: 1, left: 45, top: 18 }}>
                                         <Text style={{ fontWeight: "bold", fontSize: 18, color: "#242A40" }}>Set delivery location</Text>
                                     </View>
                                 </View>
