@@ -408,7 +408,7 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                 {/* </View> */}
                 <Image
                     style={{
-                        borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', width: "112.5%",height: 200,
+                        borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', height: 125, width: "112.5%",
                         // aspectRatio:3
                     }}
                     resizeMode={"cover"}
