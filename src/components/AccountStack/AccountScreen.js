@@ -159,7 +159,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
         }
         try {
             const result = await Share.share({
-                message: "Hi there! We've been using the Zasket App and find it really useful. It's for ordering Fruits & Vegetables online and provides \"Lifetime free delivery\" at \"Least prices\". " + appUrl,
+                message: "Hi there! We've been using the Zasket App and find it really useful. It's for ordering Groceries online and provides \"Lifetime free delivery\" at \"Least prices\". " + appUrl,
             });
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
