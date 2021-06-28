@@ -98,7 +98,7 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
                         }
                         {(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0) == 0 ?
                             undefined :
-                            <Text style={{ fontSize: 14, marginLeft: 10, color: "#49c32c", }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
+                            <Text style={{ fontSize: 14, color: "#49c32c", marginLeft: 10, fontWeight: "bold" }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
                         }
                     </View>
                     <Text numberOfLines={1} style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.itemSubName} </Text>

@@ -268,7 +268,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                         <>
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
-                                <Text style={{ color: '#727272' }}>Return/Refund Total</Text>
+                                <Text style={{ color: '#727272' }}>Total Refunded Amount</Text>
                                 <Text style={{}}>₹ {item?.refundedAmount}</Text>
                             </View>
                         </>

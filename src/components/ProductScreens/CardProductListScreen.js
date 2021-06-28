@@ -97,7 +97,7 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                         }
                         {(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0) == 0 ?
                             undefined :
-                            <Text style={{ fontSize: 15, color: "#49c32c", marginLeft: 10 }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
+                            <Text style={{ fontSize: 14, color: "#49c32c", marginLeft: 10, fontWeight: "bold" }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
                         }
                     </View>
                     {item?.onDemand == false && (item?.availableQuantity < 1) &&

@@ -348,7 +348,6 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                 <View style={{ height: 160, justifyContent: 'center', alignItems: 'center', marginTop: 5, }}>
                     {bannerImages?.length > 0 ?
                         <Swiper
-
                             autoplay={true}
                             showsHorizontalScrollIndicator={false}
                             showsVerticalScrollIndicator={false}
@@ -356,15 +355,15 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                             removeClippedSubviews={false}
                             activeDotColor={"#ffffff"}
                             dotStyle={{ bottom: -10, height: 6, width: 6 }}
-                            activeDotStyle={{ bottom: -10, height: 6, width: 8 }}
-                        >
+                            activeDotStyle={{ bottom: -10, height: 6, width: 8 }}>
                             {bannerImages?.map((el, index) => {
                                 return (
                                     <>
                                         <Image
+                                            resizeMode='contain'
                                             style={{
                                                 height: "100%",
-                                                width: "95%",
+                                                width: "96.5%",
                                                 alignSelf: "center",
                                                 borderRadius: 8,
                                                 // marginRight: bannerImages.length - 1 == index ? 0 : 15
@@ -409,7 +408,7 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                 {/* </View> */}
                 <Image
                     style={{
-                        borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', height: 125, width: "112%",
+                        borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', height: 125, width: "112.5%",
                         // aspectRatio:3
                     }}
                     resizeMode={"cover"}
