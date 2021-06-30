@@ -32,6 +32,10 @@ import AccessPermissionScreen from '../components/MapStack/AccessPermissionScree
 import CartScreen from '../components/cartStack/CartScreen';
 import CheckoutScreen from '../components/cartStack/CheckoutScreen';
 import PaymentSuccessScreen from '../components/cartStack/PaymentSuccessScreen';
+import MyWallet from '../components/AccountStack/MyWalletScreen';
+import WalletSuccessScreen from '../components/AccountStack/WalletSuccessScreen'
+import TransactionHistory from '../components/AccountStack/TransactionHistory';
+import AddMoney from '../components/AccountStack/AddMoney'
 import SearchScreen from '../components/SearchStack/SearchScreen';
 import AsyncStorage from '@react-native-community/async-storage';
 import { ActivityIndicator } from 'react-native';
@@ -322,6 +326,25 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                     name="MyOrders"
                     component={MyOrders}
                 />
+                <Stack.Screen
+                    name="MyWallet"
+                    component={MyWallet}
+                />
+
+                <Stack.Screen
+                    name="TransactionHistory"
+                    component={TransactionHistory}
+                />
+                <Stack.Screen
+                    name="AddMoney"
+                    component={AddMoney}
+                />
+                <Stack.Screen
+                    name="WalletSuccessScreen"
+                    component={WalletSuccessScreen}
+                />
+
+
                 <Stack.Screen
                     name="MyOrdersDetailScreen"
                     component={MyOrdersDetailScreen}

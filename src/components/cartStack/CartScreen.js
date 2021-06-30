@@ -27,6 +27,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
     const [addressModalVisible, setAddressModalVisible] = useState(false)
     const [isCartIssue, setIsCartIssue] = useState(false)
     useEffect(() => {
+        console.log("cartItemscartItemscartItems", cartItems)
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
                 return sum + (item.discountedPrice * item.count);

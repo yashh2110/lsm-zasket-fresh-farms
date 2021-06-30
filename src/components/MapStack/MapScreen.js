@@ -936,7 +936,7 @@ class MyMapView extends React.Component {
                         <View style={{ flex: 1, justifyContent: "center", marginBottom: 10 }}>
                             {this.state.mode == "EDIT_SCREEN" ?
                                 <Button rounded style={{ backgroundColor: Theme.Colors.primary, alignSelf: "center", width: ("90%"), justifyContent: "center", marginBottom: 10 }} onPress={() => this.onSubmit()}>
-                                    <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2 }}>Save & continue</Text>
+                                    <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2 }}>Save & confgjfgtinue</Text>
                                 </Button>
                                 :
                                 <Button rounded style={{ backgroundColor: Theme.Colors.primary, alignSelf: "center", width: ("90%"), justifyContent: "center" }} onPress={() => this.OnConfirmLocation()}>

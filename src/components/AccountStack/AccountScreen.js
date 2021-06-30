@@ -229,6 +229,15 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                     </View>
                 </TouchableOpacity>
 
+                <TouchableOpacity onPress={() => { navigation.navigate('MyWallet') }} style={{ paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
+                    <View style={{ flex: 1, }}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>My Wallet</Text>
+                    </View>
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
+                    </View>
+                </TouchableOpacity>
+
                 <TouchableOpacity onPress={() => { navigation.navigate('ManageAddressScreen') }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 1, }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Manage Addresses</Text>
