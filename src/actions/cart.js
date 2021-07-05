@@ -79,7 +79,8 @@ export const addOrder = (payload, callback) => async dispatch => {
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
         // alert(JSON.stringify(userDetails, null, "     "))
-        const res = await axiosinstance.post(`/v2/customers/${customerId}/orders`, payload)
+        const res = await axiosinstance.post(`/v3/customers/${customerId}/orders`, payload)
+        // sdvfjsdhvfushyvdfusdvyh v2 - v3
         callback(res, true)
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))

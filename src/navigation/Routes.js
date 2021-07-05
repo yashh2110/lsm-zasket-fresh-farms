@@ -454,6 +454,11 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                                         component={PaymentSuccessScreenOrderDetail}
                                         options={{ cardStyleInterpolator: forFade }}
                                     />
+                                    <Stack.Screen
+                                        name="WalletSuccessScreen"
+                                        component={WalletSuccessScreen}
+                                        options={{ cardStyleInterpolator: forFade }}
+                                    />
                                 </>
                             )}
                         <Stack.Screen name="AuthRoute" component={AuthRoute} />

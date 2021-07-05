@@ -411,8 +411,8 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                             </View>
                             :
                             totalCartValue < config?.freeDeliveryMinOrder ?
-                                <View style={{ flex: 1.2, backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
-                                    <Text style={{ color: 'white', fontSize: 14 }}>Add ₹{config?.freeDeliveryMinOrder - totalCartValue} more to order</Text>
+                                <View style={{ backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center", padding: 20 }}>
+                                    <Text style={{ color: 'white', fontSize: 14 }}>Add ₹ more to order</Text>
                                 </View>
                                 :
                                 <TouchableOpacity onPress={() => { navigation.navigate('Checkout', { offerPrice: offerPrice, selectedOffer: selectedOffer }) }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>

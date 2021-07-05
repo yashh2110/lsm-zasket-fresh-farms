@@ -9,18 +9,8 @@ import InAppReview from "react-native-in-app-review";
 
 const WalletSuccessScreen = ({ navigation, route }) => {
 
-    // useEffect(() => {
-    //     const initialFunction = async () => {
-    //         try {
-    //             const isAvailable = await InAppReview.isAvailable();
-    //             if (!isAvailable) {
-    //                 return;
-    //             }
-    //             InAppReview.RequestInAppReview();
-    //         } catch (e) { }
-    //     }
-    //     initialFunction()
-    // }, [])
+    useEffect(() => {
+    }, [])
 
     const onShare = async () => {
         let appUrl
@@ -47,34 +37,52 @@ const WalletSuccessScreen = ({ navigation, route }) => {
             // alert(error.message);
         }
     };
+    const { amount } = route?.params;
+
     return (
+
         <>
-            <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
+
+            <View style={{ flex: 1, backgroundColor: "white" }}>
+                <TouchableOpacity
+                    onPress={() => { navigation.navigate('MyWallet', { reload: 0 }) }}
+                    style={{ width: 70, justifyContent: 'center', alignItems: 'center', }}
+                >
+                    <>
+                        <Icon name="chevron-small-left" type="Entypo" style={[{ color: 'black', fontSize: 40 }]} />
+                    </>
+                </TouchableOpacity>
+
                 {/* <LottieView
                 style={{ width: 100, height: 100 }}
                 source={require("../../assets/animations/success.json")}
                 autoPlay={true}
                 loop={false}
             /> */}
-                <Image
-                    style={{ width: 100, height: 100, }}
-                    resizeMode={"contain"}
-                    source={require('../../assets/png/tickGreen.png')}
-                />
-                <Text style={{ color: "#449005", fontSize: 20, fontWeight: 'bold', marginTop: 20, letterSpacing: 0.1 }}>₹ 600 added to your</Text>
-                <View style={{ flexDirection: "row", marginTop: 10 }}>
+                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
                     <Image
-                        style={{ width: 100, height: 30, }}
-                        resizeMode="contain"
-                        source={require('../../assets/png/logo.png')}
+                        style={{ width: 100, height: 100, }}
+                        resizeMode={"contain"}
+                        source={require('../../assets/png/tickGreen.png')}
                     />
-                    <View style={{ justifyContent: "flex-end", alignItems: "center", }}>
-                        <Text style={{ fontSize: 18, color: "#0f0f0f" }}>Wallet</Text>
+                    <Text style={{ color: "#449005", fontSize: 21, fontWeight: 'bold', marginTop: 20, letterSpacing: 0.4 }}>₹ {amount} added to your</Text>
+                    <View style={{ flexDirection: "row", marginTop: 8, justifyContent: "center", alignItems: "center" }}>
+                        <View style={{ flexDirection: "row" }}>
+                            <Image
+                                style={{ width: 122, height: 38, }}
+                                resizeMode="contain"
+                                source={require('../../assets/png/logo.png')}
+                            />
+                            <View style={{ justifyContent: "flex-end", alignItems: "center", }}>
+                                <Text style={{ fontSize: 20, color: "#0f0f0f", letterSpacing: 0.2 }}>Wallet</Text>
+                            </View>
+                        </View>
                     </View>
-                </View>
-                <View style={{ width: "60%", marginTop: 20 }}>
-                    <Text style={{ fontSize: 12, color: "#727272", textAlign: "center" }}>You can use this money to buy vegetables </Text>
-                    <Text style={{ fontSize: 12, color: "#727272", textAlign: "center" }}>& groceries in zasket app</Text>
+                    <View style={{ width: "60%", marginTop: 25 }}>
+                        <Text style={{ fontSize: 12, color: "#727272", textAlign: "center", letterSpacing: 0.1 }}>You can use this money to buy vegetables </Text>
+                        <Text style={{ fontSize: 12, color: "#727272", textAlign: "center", letterSpacing: 0.1 }}>& groceries in zasket app</Text>
+                    </View>
+
                 </View>
             </View>
 
