@@ -90,7 +90,7 @@ const MyWallet = ({ route, navigation, getCreditTransactions }) => {
                     {
                         transactionsHistory.length ?
                             <>
-                                <View style={{ alignSelf: "center", width: ("90%"), marginTop: 10, height: 50 }}>
+                                <View style={{ alignSelf: "center", width: ("90%"), marginTop: 8, height: 50 }}>
                                     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                         <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 16 }}>Transaction History</Text>
                                         <TouchableOpacity onPress={() => { navigation.navigate('TransactionHistory', { transactionsHistory: transactionsHistory }) }} style={{ width: 70, height: 35, }}>
@@ -108,9 +108,9 @@ const MyWallet = ({ route, navigation, getCreditTransactions }) => {
                         renderItem={({ item }) =>
                             <View style={{ alignSelf: "center", width: ("90%"), marginBottom: 10 }}>
                                 <View style={{ marginTop: "3%" }}>
-                                    <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 14.5 }}>{item.header}</Text>
-                                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                        <Text style={{ color: "#909090", fontSize: 12.5 }}>Payment Oder ID : {item.orderID}</Text>
+                                    <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 14.5 }}>Paid for order</Text>
+                                    <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 3 }}>
+                                        <Text style={{ color: "#909090", fontSize: 12.5 }}>Payment Oder ID : #7654567-890</Text>
                                         {
                                             item.transactionType == "CREDIT" ?
                                                 <>
@@ -122,17 +122,22 @@ const MyWallet = ({ route, navigation, getCreditTransactions }) => {
 
                                         }
                                     </View>
-                                    <View style={{ flexDirection: "row", marginTop: 5 }}>
+                                    <View style={{ flexDirection: "row", marginTop: 3 }}>
                                         <View style={{ flexDirection: "row", width: ("44%"), justifyContent: "space-around", marginLeft: -5, }}>
                                             <Text style={{ color: "#909090", fontSize: 12.5 }}>{moment(item.customerCredit.createdAt).format("DD MMM YYYY")}</Text>
                                             <View style={{ height: 6, width: 6, borderRadius: 3, backgroundColor: "#c2c2c2", alignSelf: "center" }}></View>
                                             <Text style={{ color: "#909090", fontSize: 12.5 }}>{moment(item.customerCredit.createdAt, "HH:mm:ss").format("LT")}</Text>
                                         </View>
-                                        <View style={{ flexDirection: "row", width: ("45%"), justifyContent: "space-around" }}>
-                                            <View style={{ height: 6, width: 6, borderRadius: 3, backgroundColor: "#c2c2c2", alignSelf: "center" }}></View>
-                                            <Text style={{ color: "#e1171e", fontSize: 12.5 }}>Expires on 12 Oct 2020</Text>
-                                        </View>
+                                        {
+                                            (item.customerCredit.isLifeTimeValidity == false && item.customerCredit.isExpired == false) &&
+                                            <>
+                                                <View style={{ flexDirection: "row", width: ("45%"), justifyContent: "space-around" }}>
+                                                    <View style={{ height: 6, width: 6, borderRadius: 3, backgroundColor: "#c2c2c2", alignSelf: "center" }}></View>
+                                                    <Text style={{ color: "#e1171e", fontSize: 12.5 }}>Expires on {moment(item.customerCredit.expiredAt).format("DD MMM YYYY")}</Text>
+                                                </View>
 
+                                            </>
+                                        }
                                     </View>
 
                                 </View>

@@ -65,9 +65,9 @@ const TransactionHistory = ({ route, navigation }) => {
                         renderItem={({ item }) =>
                             <View style={{ alignSelf: "center", width: ("90%"), marginBottom: 10 }}>
                                 <View style={{ marginTop: "3%" }}>
-                                    <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 14.5 }}>{item.header}</Text>
-                                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                        <Text style={{ color: "#909090", fontSize: 12.5 }}>Payment Oder ID : {item.orderID}</Text>
+                                    <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 14.5 }}>Paid for order</Text>
+                                    <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 3 }}>
+                                        <Text style={{ color: "#909090", fontSize: 12.5 }}>Payment Oder ID : #7654567-890</Text>
                                         {
                                             item.transactionType == "CREDIT" ?
                                                 <>
@@ -79,7 +79,7 @@ const TransactionHistory = ({ route, navigation }) => {
 
                                         }
                                     </View>
-                                    <View style={{ flexDirection: "row", marginTop: 5 }}>
+                                    <View style={{ flexDirection: "row", marginTop: 3 }}>
                                         <View style={{ flexDirection: "row", width: ("44%"), justifyContent: "space-around", marginLeft: -5, }}>
                                             <Text style={{ color: "#909090", fontSize: 12.5 }}>{moment(item.customerCredit.createdAt).format("DD MMM YYYY")}</Text>
                                             <View style={{ height: 6, width: 6, borderRadius: 3, backgroundColor: "#c2c2c2", alignSelf: "center" }}></View>
