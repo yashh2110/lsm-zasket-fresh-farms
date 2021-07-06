@@ -10,6 +10,9 @@ import CustomHeader from "../common/CustomHeader";
 import call from 'react-native-phone-call';
 import { getCreditTransactions } from "../../actions/wallet";
 import moment from 'moment'
+import Loader from '../common/Loader';
+import { EventRegister } from 'react-native-event-listeners'
+
 
 
 const MyWallet = ({ route, navigation, getCreditTransactions }) => {
@@ -18,21 +21,34 @@ const MyWallet = ({ route, navigation, getCreditTransactions }) => {
     const [creditBalance, SetCreditBalance] = useState(0)
 
     useEffect(() => {
-        // console.warn("reloadreloadreload", reload)
-        // if (reload) {
+        let listener = EventRegister.addEventListener('successWallet', async (data) => {
+            console.warn("datadatadata", data)
+            initialFunction()
+        })
         initialFunction()
-        // }
+        return () => {
+            // alert("failll")
+            EventRegister.removeEventListener('successWallet');
+        };
     }, [])
 
 
     const initialFunction = async () => {
+        setLoading(true)
         // const { reload } = route?.params;
         // alert(reload)
         getCreditTransactions(async (res, status) => {
             if (status) {
+                // alert(JSON.stringify(res?.data, null, "       "))
                 SetTransactionsHistory(res.data)
+                // SetTransactionsHistory([])
                 SetCreditBalance(res.data[0]?.customer?.creditBalance)
+                setLoading(false)
+
             } else {
+                setLoading(false)
+                transactionsHistory([])
+
 
             }
         })
@@ -71,14 +87,22 @@ const MyWallet = ({ route, navigation, getCreditTransactions }) => {
                 <View style={{ flex: 1, backgroundColor: 'white', }} showsVerticalScrollIndicator={false}>
                     <View style={{ backgroundColor: '#f4f4f4', justifyContent: "center", alignItems: "center", marginTop: 15, padding: 5 }}>
                     </View>
-                    <View style={{ alignSelf: "center", width: ("90%"), marginTop: 10, height: 40 }}>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                            <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 16 }}>Transaction History</Text>
-                            <TouchableOpacity onPress={() => { navigation.navigate('TransactionHistory') }} style={{ width: 65, height: 30 }}>
-                                <Text style={{ color: "#2d87c9", fontSize: 14, fontWeight: "bold", textAlign: "center" }}>View All</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                    {
+                        transactionsHistory.length ?
+                            <>
+                                <View style={{ alignSelf: "center", width: ("90%"), marginTop: 10, height: 50 }}>
+                                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                        <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 16 }}>Transaction History</Text>
+                                        <TouchableOpacity onPress={() => { navigation.navigate('TransactionHistory', { transactionsHistory: transactionsHistory }) }} style={{ width: 70, height: 35, }}>
+                                            <Text style={{ color: "#2d87c9", fontSize: 14, fontWeight: "bold", textAlign: "center", }}>View All</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+
+                            </>
+                            : undefined
+                    }
+
                     <FlatList
                         data={transactionsHistory}
                         renderItem={({ item }) =>
@@ -119,29 +143,11 @@ const MyWallet = ({ route, navigation, getCreditTransactions }) => {
                                 style={{ height: 0.7, width: "90%", alignSelf: 'center', backgroundColor: '#EAEAEC', }}
                             />
                         )}
-                    // keyExtractor={item => item?.id.toString()}
                     />
-                    {/* <View style={{ alignSelf: "center", width: ("90%"), marginTop: 10 }}>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                            <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 16 }}>Transaction History</Text>
-                            <Text style={{ color: "#2d87c9", fontSize: 14, fontWeight: "bold" }}>View All</Text>
-                        </View>
-                        <View style={{ marginTop: "4%" }}>
-                            <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 14 }}>Paid for order</Text>
-                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                <Text style={{ color: "#909090", fontSize: 12 }}>Payment Oder ID : #7654567-890</Text>
-                                <Text style={{ color: "#f78e24", fontSize: 12 }}>- 200</Text>
-                            </View>
-                            <View style={{ flexDirection: "row", width: ("50%"), justifyContent: "space-around", marginLeft: -8 }}>
-                                <Text style={{ color: "#909090", fontSize: 12 }}>01 Oct 2020</Text>
-                                <View style={{ height: 6, width: 6, borderRadius: 3, backgroundColor: "#c2c2c2", alignSelf: "center" }}></View>
-                                <Text style={{ color: "#909090", fontSize: 12 }}>06:00 PM</Text>
-                            </View>
-                        </View>
-                    </View> */}
-
                 </View>
             </View>
+            {loading ?
+                <Loader /> : undefined}
         </View>
     );
 }

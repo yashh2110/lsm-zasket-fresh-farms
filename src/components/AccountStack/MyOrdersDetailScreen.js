@@ -35,6 +35,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
         setLoading(true)
         getOrderDetails(order_id, async (response, status) => {
             if (status) {
+                // alert(JSON.stringify(response.data, null, "        "))
                 setItem(response?.data)
                 const yesterday = new Date(response?.data?.slotStartTime)
                 yesterday.setDate(yesterday.getDate() - 1)
@@ -62,6 +63,8 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
         payOrder(item?.id, async (res, status) => {
             setLoading(false)
             if (status) {
+                // console.warn(JSON.stringify(options, null, "        "))
+                // alert(JSON.stringify(res, null, "        "))
                 let userDetails = await AsyncStorage.getItem('userDetails');
                 let parsedUserDetails = await JSON.parse(userDetails);
                 var options = {

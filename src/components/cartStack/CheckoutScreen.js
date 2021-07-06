@@ -52,7 +52,8 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
     const [discountedPrice, setDiscountedPrice] = useState(0)
     const [count, setCount] = useState(0)
     const [disableCheck, setDisableCheck] = useState(true)
-
+    const [buttonHandle, SetButtonHandle] = useState(false)
+    const [walletAmountBalance, SetwalletAmountBalance] = useState(0)
     // const { offerPrice, selectedOffer } = route.params;
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("PREPAID")
 
@@ -86,41 +87,40 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                     // alert(JSON.stringify(res?.data?.customerDetails, null, "       "))
                     // alert(JSON.stringify(res?.data?.customerDetails?.creditBalance, null, "       "))
                     await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
-                    SetCreditBalance(res?.data?.customerDetails?.creditBalance)
-                    setWalletAmount(res?.data?.customerDetails?.creditBalance)
+
+
+
                     if (res?.data?.customerDetails?.creditBalance <= 0) {
                         // alert("111111111111111")
                         setWalletCheck(false)
                         setDisableCheck(false)
 
                     }
+                    // alert(res?.data?.customerDetails?.creditBalance)
                     let total = cartItems.reduce(function (sum, item) {
                         // alert(JSON.stringify(item, null, "       "))
                         setDiscountedPrice(item.discountedPrice)
                         setCount(item.count)
-                        return sum + ((item.discountedPrice * item.count) - res?.data?.customerDetails?.creditBalance);
+                        return sum + (item.discountedPrice * item.count);
                     }, 0);
-                    setTotalAmountPay(total)
-                    alert(total)
-                    // alert(res?.data?.customerDetails?.creditBalance <= total)
-                    // if (res?.data?.customerDetails?.creditBalance <= total) {
-                    //     setSelectedPaymentMethod("COD")
-                    // }
-
-
-                    if (res?.data?.customerDetails?.creditBalance <= total || Math.sign(total) == -1) {
-                        setSelectedPaymentMethod("COD")
+                    if (total <= res?.data?.customerDetails?.creditBalance) {
+                        SetwalletAmountBalance(total)
+                    } else {
+                        SetwalletAmountBalance(res?.data?.customerDetails?.creditBalance)
                     }
+                    SetCreditBalance(res?.data?.customerDetails?.creditBalance)
 
-                    // if (res?.data?.customerDetails?.creditBalance >= total) {
-                    //     alert("aaaaaaaaaaa")
-                    //     setSelectedPaymentMethod("COD")
-                    // }
+                    setWalletAmount(res?.data?.customerDetails?.creditBalance)
+                    let totalPayAmount = total - res?.data?.customerDetails?.creditBalance
+                    // alert(totalPayAmount)
+                    setTotalAmountPay(totalPayAmount < 0 ? 0 : totalPayAmount)
+                    // alert(totalAmountPay)
 
-
-                    // alert(selectedPaymentMethod)
-
-                    // setTotalCartValueRef(total)
+                    if ((totalPayAmount == 0) || Math.sign(totalPayAmount) == -1) {
+                        SetButtonHandle(true)
+                        // alert("asdjfgbuy")
+                        // setSelectedPaymentMethod("PREPAIDZEROTOTAL")
+                    }
                     setloadinggg(false)
                 } else {
                     setloadinggg(false)
@@ -310,23 +310,26 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
             "nextDayBuffer": nextDayBuffer,
             "offerId": selectedOffer?.offer?.id > 0 ? selectedOffer?.offer?.id : undefined,
             "itemTotalValue": totalCartValue,
-            "couponDiscount": 0,
-            "walletAmount": creditBalance,
+            "couponDiscount": (savedValue + ((offerPrice > 0) ? (totalCartValue - offerPrice) : 0)),
+            "walletAmount": walletAmountBalance,
             "totalPayableAmount": totalAmountPay,
-            "useWallet": creditBalance ? true : false
+            "useWallet": walletCheck ? true : false
             // "slotEndHours": slot?.endHours,
             // "slotStartHours": slot?.startHours,
             // "totalPrice": totalCartValue,
             // "marketPrice": marketPrice,
             // "offerPrice": offerPrice > 0 ? offerPrice : undefined,
         }
-        // alert(JSON.stringify(payload, null, "     "))
-        // return
         if (option === "COD") {
             let codPayload = {
                 ...payload,
                 "paymentMethod": "COD"
             }
+
+            // setLoading(false)
+            // alert(JSON.stringify(codPayload, null, "     "))
+            // return
+
             addOrder(codPayload, async (res, status) => {
                 console.log("addOrderaddOrderaddOrder", codPayload)
                 console.warn(JSON.stringify(res, null, "     "))
@@ -358,6 +361,12 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                 ...payload,
                 "paymentMethod": "PREPAID"
             }
+
+            // setLoading(false)
+            // console.warn("buttonHandlebuttonHandlebuttonHandle", buttonHandle)
+            // alert(JSON.stringify(prepaidPayload, null, "     "))
+            // return
+
             addOrder(prepaidPayload, async (res, status) => {
                 setLoading(false)
                 if (status) {
@@ -365,45 +374,70 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                     // alert(JSON.stringify(res.data.paymentOrderId, null, "     "))
                     // return
                     // return
+
                     if (res?.data?.canBeOrdered == true) {
-                        setPaymentSelectionActionScreen(false)
-                        let userDetails = await AsyncStorage.getItem('userDetails');
-                        let parsedUserDetails = await JSON.parse(userDetails);
-                        var options = {
-                            description: 'Select the payment method',
-                            image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
-                            currency: 'INR',
-                            key: config?.razorpayApiKey,
-                            amount: totalAmountPay,
-                            name: 'Zasket',
-                            order_id: res?.data?.paymentOrderId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
-                            prefill: {
-                                email: parsedUserDetails?.customerDetails?.userEmail,
-                                contact: parsedUserDetails?.customerDetails?.userMobileNumber,
-                                name: parsedUserDetails?.customerDetails?.name
-                            },
-                            theme: { color: Theme.Colors.primary }
-                        }
-                        // console.warn(JSON.stringify(options, null, "        "))
-                        RazorpayCheckout.open(options).then(async (data) => {
-                            // handle success
-                            // alert(`Success: ${data.razorpay_payment_id}`);
-                            onClearCart()
-                            await AsyncStorage.removeItem('appliedCoupon')
-                            navigation.pop()
-                            AppEventsLogger.logPurchase(500.00, "INR", { param: "value" });
-                            navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
-                            // navigation.navigate('AccountStack', { screen: 'MyOrders' })
-                        }).catch((error) => {
-                            // handle failure
-                            // alert(`Error: ${error.code} | ${error.description}`);
-                            Toast.show({
-                                text: "Payment failed",
-                                buttonText: "Okay",
-                                type: "danger",
-                                buttonStyle: { backgroundColor: "#a52f2b" }
+                        if (buttonHandle == true) {
+                            if (status) {
+                                setPaymentSelectionActionScreen(false)
+                                onClearCart()
+                                await AsyncStorage.removeItem('appliedCoupon')
+                                navigation.pop()
+                                AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
+                                navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                            } else {
+                                if (__DEV__) {
+                                    alert(JSON.stringify(res?.response))
+                                }
+                                if (res?.response?.data?.description) {
+                                    Toast.show({
+                                        text: res?.response?.data?.description,
+                                        type: "danger",
+                                        duration: 3000,
+                                        buttonStyle: { backgroundColor: "#a52f2b" }
+                                    })
+                                }
+                            }
+                        } else {
+                            setPaymentSelectionActionScreen(false)
+                            let userDetails = await AsyncStorage.getItem('userDetails');
+                            let parsedUserDetails = await JSON.parse(userDetails);
+                            var options = {
+                                description: 'Select the payment method',
+                                image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
+                                currency: 'INR',
+                                key: config?.razorpayApiKey,
+                                amount: totalAmountPay,
+                                name: 'Zasket',
+                                order_id: res?.data?.paymentOrderId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+                                prefill: {
+                                    email: parsedUserDetails?.customerDetails?.userEmail,
+                                    contact: parsedUserDetails?.customerDetails?.userMobileNumber,
+                                    name: parsedUserDetails?.customerDetails?.name
+                                },
+                                theme: { color: Theme.Colors.primary }
+                            }
+                            // console.warn(JSON.stringify(options, null, "        "))
+                            RazorpayCheckout.open(options).then(async (data) => {
+                                // handle success
+                                // alert(`Success: ${data.razorpay_payment_id}`);
+                                onClearCart()
+                                await AsyncStorage.removeItem('appliedCoupon')
+                                navigation.pop()
+                                AppEventsLogger.logPurchase(500.00, "INR", { param: "value" });
+                                navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                                // navigation.navigate('AccountStack', { screen: 'MyOrders' })
+                            }).catch((error) => {
+                                // handle failure
+                                // alert(`Error: ${error.code} | ${error.description}`);
+                                Toast.show({
+                                    text: "Payment failed",
+                                    buttonText: "Okay",
+                                    type: "danger",
+                                    buttonStyle: { backgroundColor: "#a52f2b" }
+                                })
                             })
-                        })
+
+                        }
 
 
                     } else {
@@ -545,14 +579,23 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
             setWalletCheck(false)
             let total = cartItems.reduce(function (sum, item) {
                 // alert(JSON.stringify(item, null, "       "))
-                return sum + ((discountedPrice * count) - 0);
+                setDiscountedPrice(item.discountedPrice)
+                setCount(item.count)
+                return sum + (item.discountedPrice * item.count);
             }, 0);
-            setTotalAmountPay(total)
-            if (walletAmount <= total || Math.sign(total) == -1) {
-                setSelectedPaymentMethod("COD")
-            } else {
-                setSelectedPaymentMethod("PREPAID")
-            }
+            let totalPayAmount = total
+            setTotalAmountPay(totalPayAmount < 0 ? 0 : totalPayAmount)
+            // if ((totalPayAmount == 0) || Math.sign(totalPayAmount) == -1) {
+            SetButtonHandle(false)
+            // alert("asdjfgbuy")
+            // setSelectedPaymentMethod("PREPAIDZEROTOTAL")
+            // }
+            // if (total <= walletAmount) {
+            //     SetwalletAmountBalance(total)
+            // } else {
+            SetwalletAmountBalance(0)
+            // }
+
         } else {
             // alert(walletAmount)
             console.warn("11111111")
@@ -560,21 +603,31 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
             setWalletCheck(true)
             let total = cartItems.reduce(function (sum, item) {
                 // alert(JSON.stringify(item, null, "       "))
-                return sum + ((discountedPrice * count) - walletAmount);
+                setDiscountedPrice(item.discountedPrice)
+                setCount(item.count)
+                return sum + (item.discountedPrice * item.count);
             }, 0);
-            setTotalAmountPay(total)
-            if (walletAmount <= total || Math.sign(total) == -1) {
-                setSelectedPaymentMethod("COD")
+            let totalPayAmount = total - walletAmount
+            setTotalAmountPay(totalPayAmount < 0 ? 0 : totalPayAmount)
+            if ((totalPayAmount == 0) || Math.sign(totalPayAmount) == -1) {
+                SetButtonHandle(true)
+                // alert("asdjfgbuy")
+                // setSelectedPaymentMethod("PREPAIDZEROTOTAL")
             } else {
-                setSelectedPaymentMethod("PREPAID")
+                SetButtonHandle(false)
             }
+            if (total <= walletAmount) {
+                SetwalletAmountBalance(total)
+            } else {
+                SetwalletAmountBalance(walletAmount)
+            }
+
         }
 
     }
     return (
         <>
             <View style={{ flex: 1, backgroundColor: 'white' }}>
-                <Text>{selectedPaymentMethod}</Text>
                 <CustomHeader navigation={navigation} title={"Checkout"} showSearch={false} />
                 <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false}>
                     {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")} </Text> */}
@@ -764,28 +817,30 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                     {config?.enableCOD ?
                         <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15 }}>
                             <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Select payment method </Text>
-                            <TouchableOpacity activeOpacity={0.8} style={{
-                                flexDirection: 'row', backgroundColor: "white", borderRadius: 5, alignItems: "center", padding: 10, marginTop: 10, borderWidth: 1, borderColor: '#EFEFEF'
-                            }} onPress={() => {
-                                setSelectedPaymentMethod("PREPAID")
-                            }}>
-                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Radio style={{ width: 20 }} selected={selectedPaymentMethod == "PREPAID" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedPaymentMethod("PREPAID") }} />
-                                </View>
-                                <View style={{ marginLeft: 10, flexDirection: 'row', flex: 1 }}>
-                                    <View style={{ flex: 1 }}>
-                                        <Text style={{ color: 'black', fontSize: 14, fontWeight: "bold" }}>Make Online Payment </Text>
-                                        <Text style={{ color: '#727272', fontSize: 12, fontWeight: null }}>Preferred payment due to covid </Text>
+                            <>
+                                <TouchableOpacity activeOpacity={0.8} style={{
+                                    flexDirection: 'row', backgroundColor: "white", borderRadius: 5, alignItems: "center", padding: 10, marginTop: 10, borderWidth: 1, borderColor: '#EFEFEF'
+                                }} onPress={() => {
+                                    setSelectedPaymentMethod("PREPAID")
+                                }}>
+                                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                        <Radio style={{ width: 20 }} selected={selectedPaymentMethod == "PREPAID" ? true : false} color={Theme.Colors.primary} selectedColor={Theme.Colors.primary} onPress={() => { setSelectedPaymentMethod("PREPAID") }} />
                                     </View>
-                                    <View style={{}}>
-                                        <Image
-                                            style={{ alignSelf: 'flex-end', width: 80, height: 30, }}
-                                            resizeMode="contain"
-                                            source={require('../../assets/png/paymentImages.png')}
-                                        />
+                                    <View style={{ marginLeft: 10, flexDirection: 'row', flex: 1 }}>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={{ color: 'black', fontSize: 14, fontWeight: "bold" }}>Make Online Payment </Text>
+                                            <Text style={{ color: '#727272', fontSize: 12, fontWeight: null }}>Preferred payment due to covid </Text>
+                                        </View>
+                                        <View style={{}}>
+                                            <Image
+                                                style={{ alignSelf: 'flex-end', width: 80, height: 30, marginLeft: -5 }}
+                                                resizeMode="contain"
+                                                source={require('../../assets/png/paymentImages.png')}
+                                            />
+                                        </View>
                                     </View>
-                                </View>
-                            </TouchableOpacity>
+                                </TouchableOpacity>
+                            </>
                             <TouchableOpacity activeOpacity={0.8} style={{
                                 flexDirection: 'row', backgroundColor: "white", borderRadius: 5, alignItems: "center", padding: 10, marginTop: 10, marginBottom: 10, minHeight: 50, borderWidth: 1, borderColor: '#EFEFEF'
                             }} onPress={() => { setSelectedPaymentMethod("COD") }}>
@@ -808,13 +863,25 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                                     uncheckedIcon='check-square'
                                     onPress={() => onPressCheckbox()}
                                     checked={walletCheck}
-                                    checkedColor={Theme.Colors.primary}
+                                    checkedColor={Theme.Colors.primary}DisableCheckbox
                                 /> */}
                                 <CheckBox
-                                    containerStyle={{ backgroundColor: "white", borderWidth: 0, width: 0, height: 0, marginLeft: -10 }}
-                                    checkedIcon='check-square'
+                                    containerStyle={{ backgroundColor: "white", borderWidth: 0, width: 0, height: 0, marginLeft: -8 }}
+                                    checkedIcon={
+                                        <Image
+                                            style={{ width: 20, height: 20, }}
+                                            resizeMode="contain"
+                                            source={require('../../assets/png/checkedCheckbox.png')}
+                                        />
+                                    }
                                     textStyle={{ fontSize: 5 }}
-                                    uncheckedIcon='check-square'
+                                    uncheckedIcon={
+                                        <Image
+                                            style={{ width: 20, height: 20, }}
+                                            resizeMode="contain"
+                                            source={require('../../assets/png/DisableCheckbox.png')}
+                                        />
+                                    }
                                     checked={walletCheck}
                                     onPress={() => onPressCheckbox()}
                                     // disabled={false}
@@ -878,7 +945,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                         <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 5 }} />
                         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                             <Text style={{ color: '#727272' }}>Zasket wallet</Text>
-                            <Text style={{}}>₹ {(creditBalance)?.toFixed(2)} </Text>
+                            <Text style={{}}>₹ {(walletAmountBalance)?.toFixed(2)} </Text>
                         </View>
                         <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>

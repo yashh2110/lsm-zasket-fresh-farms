@@ -6,6 +6,7 @@ import LottieView from 'lottie-react-native';
 import Theme from '../../styles/Theme';
 import moment from 'moment'
 import InAppReview from "react-native-in-app-review";
+import { EventRegister } from 'react-native-event-listeners'
 
 const WalletSuccessScreen = ({ navigation, route }) => {
 
@@ -38,6 +39,12 @@ const WalletSuccessScreen = ({ navigation, route }) => {
         }
     };
     const { amount } = route?.params;
+    const navigate = async () => {
+
+        navigation.goBack()
+        EventRegister.emit('successWallet', 'it works!!!')
+
+    }
 
     return (
 
@@ -45,7 +52,7 @@ const WalletSuccessScreen = ({ navigation, route }) => {
 
             <View style={{ flex: 1, backgroundColor: "white" }}>
                 <TouchableOpacity
-                    onPress={() => { navigation.navigate('MyWallet', { reload: 0 }) }}
+                    onPress={() => { navigate() }}
                     style={{ width: 70, justifyContent: 'center', alignItems: 'center', }}
                 >
                     <>

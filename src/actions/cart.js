@@ -72,25 +72,7 @@ export const getV2DeliverySlots = (numOfDays, lat, lon, callback) => async dispa
     }
 }
 
-//v2AddOrder
-export const addOrder = (payload, callback) => async dispatch => {
-    try {
-        let userDetails = await AsyncStorage.getItem('userDetails');
-        let parsedUserDetails = await JSON.parse(userDetails);
-        let customerId = await parsedUserDetails?.customerDetails?.id
-        // alert(JSON.stringify(userDetails, null, "     "))
-        const res = await axiosinstance.post(`/v3/customers/${customerId}/orders`, payload)
-        // sdvfjsdhvfushyvdfusdvyh v2 - v3
-        callback(res, true)
-    } catch (err) {
-        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
-        callback(err, false)
-        Sentry.captureException(err);
-        if (__DEV__) {
-            // alert(JSON.stringify(err.response, null, "     "))
-        }
-    }
-}
+
 
 
 
@@ -130,6 +112,26 @@ export const payOrder = (order_id, callback) => async dispatch => {
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
+    }
+}
+
+//v2AddOrder
+export const addOrder = (payload, callback) => async dispatch => {
+    try {
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customerId = await parsedUserDetails?.customerDetails?.id
+        // alert(JSON.stringify(userDetails, null, "     "))
+        const res = await axiosinstance.post(`/v3/customers/${customerId}/orders`, payload)
+        // sdvfjsdhvfushyvdfusdvyh v2 - v3
+        callback(res, true)
+    } catch (err) {
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+        Sentry.captureException(err);
+        if (__DEV__) {
+            // alert(JSON.stringify(err.response, null, "     "))
+        }
     }
 }
 
