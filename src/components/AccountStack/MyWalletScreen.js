@@ -71,16 +71,19 @@ const MyWallet = ({ route, navigation, getCreditTransactions }) => {
                     </View>
                     <View style={{ marginTop: 15 }}>
                         <Text style={{ color: "#727272", fontSize: 14 }}>Available Balance</Text>
-                        <Text style={{ textAlign: "center", marginTop: 5, fontWeight: "bold", fontSize: 20 }}>₹ {creditBalance}</Text>
+                        <Text style={{ textAlign: "center", marginTop: 5, fontWeight: "bold", fontSize: 20 }}>₹ {creditBalance ? creditBalance : 0}</Text>
                     </View>
                 </View>
                 <View style={{ justifyContent: "center", backgroundColor: 'white' }}>
-                    <Button rounded style={{ backgroundColor: "#e1171e", alignSelf: "center", width: ("90%"), justifyContent: "center", marginBottom: 10, marginTop: 6 }} onPress={() => { navigation.navigate('AddMoney', { creditBalance: creditBalance }) }}>
+                    {/* <Button rounded style={{ backgroundColor: "#e1171e", alignSelf: "center", width: ("90%"), justifyContent: "center", marginBottom: 10, marginTop: 6 }} onPress={() => { navigation.navigate('AddMoney', { creditBalance: creditBalance }) }}>
                         <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2, color: "#ffffff" }}><Text style={{ fontSize: 18, color: "#ffffff" }}>+</Text> Add Money</Text>
-                    </Button>
+                    </Button> */}
+                    <TouchableOpacity style={{ height: 48, backgroundColor: "#e1171e", alignSelf: "center", width: ("90%"), justifyContent: "center", marginBottom: 10, marginTop: 6, borderRadius: 30 }} onPress={() => { navigation.navigate('AddMoney', { creditBalance: creditBalance }) }}>
+                        <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2, color: "#ffffff", textAlign: "center" }}><Text style={{ fontSize: 18, color: "#ffffff" }}>+</Text> Add Money</Text>
+                    </TouchableOpacity>
                     <View style={{ width: ("90%"), backgroundColor: "#f4f4f4", alignSelf: "center", marginTop: 10, borderRadius: 8, padding: 14 }}>
                         <Text style={{ fontSize: 12, color: "#727272", }}>*This money can only be used to buy vegetables & groceries.</Text>
-                        <Text style={{ fontSize: 12, color: "#727272", }}>We will automatically deduct the amount corresponding to your order from your “wallet”.  At the time of checkout until you run out of credit.</Text>
+                        <Text style={{ fontSize: 12, color: "#727272", marginVertical: 10 }}>We will automatically deduct the amount corresponding to your order from your “wallet”.  At the time of checkout until you run out of credit.</Text>
                         <Text style={{ fontSize: 12, color: "#727272", }}>Your basket wallet also get credited automatically when zasket issues a cashbback, return of items credit etc.</Text>
                     </View>
                 </View>

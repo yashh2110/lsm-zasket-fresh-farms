@@ -84,13 +84,47 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
                                             minHeight: 100,
                                             width: "31%",
                                         }} activeOpacity={0.5} onPress={() => { setSearchTerm(item?.categoryName) }}>
-                                            <View style={{ backgroundColor: '#F7F7F7', borderRadius: 6, padding: 10, borderColor: '#EDEDED', borderWidth: 1, justifyContent: 'center' }}>
-                                                <Image
-                                                    style={{ aspectRatio: 1.3 }}
-                                                    resizeMode="contain"
-                                                    source={item?.categoryImage ?
-                                                        { uri: item?.categoryImage } : require('../../assets/png/default.png')}
-                                                />
+                                            <View style={{ backgroundColor: '#F7F7F7', borderRadius: 6, borderColor: '#EDEDED', borderWidth: 1, }}>
+                                                {
+                                                    item.categoryTag ?
+                                                        <>
+                                                            <View style={{
+                                                                height: 18, width: ("58%"), backgroundColor: "#7eb517", borderTopRightRadius: 6, borderBottomLeftRadius: 6, alignSelf: "flex-end",
+                                                                shadowColor: "#000",
+                                                                shadowOffset: {
+                                                                    width: 0,
+                                                                    height: 1,
+                                                                },
+                                                                shadowOpacity: 0.18,
+                                                                shadowRadius: 1.00,
+                                                                elevation: 0.8,
+                                                                marginRight: -1,
+                                                                marginTop: -1,
+                                                                justifyContent: "center"
+                                                            }}>
+                                                                <Text style={{ fontSize: 9, textAlign: "center", color: "#f7f7f7", fontWeight: 'bold' }}>Upto {item.categoryTag}</Text>
+
+                                                            </View>
+
+                                                        </>
+                                                        :
+                                                        <View style={{
+                                                            height: 18, width: ("58%"),
+                                                        }}>
+                                                        </View>
+                                                }
+                                                {/* <View style={[styles.categoriesCard, item.categories ? { padding: 9, marginTop: -5 } : undefined]}> */}
+
+                                                <View style={{ padding: 10, marginTop: -8 }}>
+                                                    <Image
+                                                        style={{ aspectRatio: 1.3 }}
+                                                        // source={require('../../assets/png/HomeScreenVegetable.png')}
+                                                        resizeMode="contain"
+                                                        source={item?.categoryImage ?
+                                                            { uri: item?.categoryImage } : require('../../assets/png/default.png')}
+                                                    />
+
+                                                </View>
                                             </View>
                                             <Text style={{ alignSelf: 'center', textAlign: 'center', marginVertical: 5, fontWeight: 'bold', fontSize: 13 }}>{item?.categoryDisplayName}</Text>
                                         </TouchableOpacity>

@@ -1,8 +1,7 @@
 import axiosinstance from '../axios/service/api';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Alert } from 'react-native';
-
-export const addMoneyWallet = async (Amount, callback) => {
+export const addMoneyWallet = (Amount, callback) => async dispatch => {
     try {
         console.warn("AmountAmount", Amount)
         let userDetails = await AsyncStorage.getItem('userDetails');
@@ -22,8 +21,8 @@ export const addMoneyWallet = async (Amount, callback) => {
         // Alert.alert(JSON.stringify(err.response.data, null, "     "))
     }
 }
-
-export const getCreditTransactions = async (callback) => {
+export const getCreditTransactions = (callback) => async dispatch => {
+    // export const getCreditTransactions = async (callback) => {
     try {
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
@@ -34,7 +33,7 @@ export const getCreditTransactions = async (callback) => {
         // alert(res)
         callback(res, true)
     } catch (err) {
-        alert("asgufiyagsuify")
+        // alert("asgufiyagsuify")
         // alert("errrrrrrrrrrrrr")
         callback(err, false)
         // if (__DEV__) {

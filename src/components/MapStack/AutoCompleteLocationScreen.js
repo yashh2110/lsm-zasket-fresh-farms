@@ -345,7 +345,7 @@ class AutoCompleteLocationScreen extends React.Component {
                                             />
                                         </View>
                                         <View style={{ justifyContent: 'center', }}>
-                                            <Text style={{ fontSize: 18, color: "#e1171e" }}>Use Current Location</Text>
+                                            <Text style={{ fontSize: 18, color: "#e1171e", fontWeight: "bold" }}>Use Current Location</Text>
                                         </View>
                                     </TouchableOpacity>
                                 }

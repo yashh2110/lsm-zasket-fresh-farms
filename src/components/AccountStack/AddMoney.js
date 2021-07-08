@@ -162,29 +162,27 @@ const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clear
                         {
 
                             disabled ?
-                                <Button disabled={false} rounded style={{ backgroundColor: "#e1171e", alignSelf: "center", width: ("90%"), justifyContent: "center", marginBottom: 10, marginTop: 6 }} onPress={() => { AddMoney() }}>
-                                    <View style={{ width: 100, flexDirection: "row" }}>
-                                        <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2, color: "#ffffff" }}>Proceed</Text>
+                                <TouchableOpacity style={{ height: 48, backgroundColor: "#e1171e", alignSelf: "center", width: ("90%"), justifyContent: "center", marginBottom: 10, marginTop: 6, borderRadius: 30 }} onPress={() => { AddMoney() }}>
+                                    <View style={{ flexDirection: "row", justifyContent: "space-between", width: "27%", alignSelf: "center" }}>
+                                        <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2, color: "#ffffff", textAlign: "center" }}><Text style={{ fontSize: 18, color: "#ffffff" }}></Text>Proceed</Text>
                                         <View style={{ justifyContent: 'center', alignItems: 'center', marginLeft: -5 }}>
                                             <Icon name="chevron-small-right" type="Entypo" style={[{ color: '#ffffff', fontSize: 24, }]} />
                                         </View>
                                     </View>
-                                </Button>
-
+                                </TouchableOpacity>
                                 :
-
-                                <Button rounded style={{ backgroundColor: "#F5B0B2", alignSelf: "center", width: ("90%"), justifyContent: "center", marginBottom: 10, marginTop: 6 }} onPress={() => { }}>
-                                    <View style={{ width: 100, flexDirection: "row" }}>
-                                        <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2, color: "#ffffff" }}>Proceed</Text>
+                                <TouchableOpacity disabled={true} style={{ height: 48, backgroundColor: "#F5B0B2", alignSelf: "center", width: ("90%"), justifyContent: "center", marginBottom: 10, marginTop: 6, borderRadius: 30 }} onPress={() => { }}>
+                                    <View style={{ flexDirection: "row", justifyContent: "space-between", width: "27%", alignSelf: "center" }}>
+                                        <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2, color: "#ffffff", textAlign: "center" }}><Text style={{ fontSize: 18, color: "#ffffff" }}></Text>Proceed</Text>
                                         <View style={{ justifyContent: 'center', alignItems: 'center', marginLeft: -5 }}>
                                             <Icon name="chevron-small-right" type="Entypo" style={[{ color: '#ffffff', fontSize: 24, }]} />
                                         </View>
                                     </View>
-                                </Button>
+                                </TouchableOpacity>
 
                         }
                         {/* <View style={{ width: "90%", alignSelf: "center" }}> */}
-                        <Text style={{ fontSize: 12, color: "#727272", textAlign: "center", marginTop: 10 }}>*Paying through zasket wallet will get extra discounts</Text>
+                        {/* <Text style={{ fontSize: 12, color: "#727272", textAlign: "center", marginTop: 10 }}>*Paying through zasket wallet will get extra discounts</Text> */}
                         {/* </View> */}
                     </View>
                 </View>
