@@ -12,8 +12,11 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
     const [loadingCount, setLoadingCount] = useState(false)
 
     useEffect(() => {
+
+        // alert(JSON.stringify(cartItems, null, "      "))
         let filteredItems = cartItems.filter(element => element?.id == item?.id);
         if (filteredItems.length == 1) {
+            // alert(filteredItems[0].count)
             setAddButton(false)
             setCount(filteredItems[0].count)
             setLoadingCount(false)
@@ -68,23 +71,55 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                 <View style={{
                     backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
                 }} onPress={() => { }}>
-                    {/* <Text>{JSON.stringify(item?.itemImages[0]?.mediumImagePath, null, "         ")} </Text> */}
-                    <Image
-                        resizeMode="contain"
-                        style={{ height: 130, width: 120, borderRadius: 5, }}
-                        source={item?.itemImages[0]?.mediumImagePath ?
-                            { uri: item?.itemImages[0]?.mediumImagePath } : require('../../assets/png/default.png')}
-                    // style={{ height: 130, borderRadius: 5, width: 100 }}
-                    // source={require('../../assets/png/verticalImage.jpg')}
-                    />
-                    {item?.discountedPrice == 1 &&
+
+                    {item?.discountedPrice == 1 ?
                         <View style={[styles.offerButton, {}]}>
                             <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
                                 <Icon name="brightness-percent" type="MaterialCommunityIcons" style={{ fontSize: 12, color: '#ffffff' }} />
                                 <Text style={{ color: "#ffffff", fontWeight: 'bold', fontSize: 11 }}>  OFFER </Text>
                             </View>
                         </View>
+                        :
+                        // (((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100) == 5 ?
+                        (((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0) == 0 ?
+                            <View style={{
+                                height: 18, width: ("58%"),
+                            }}>
+                            </View>
+                            :
+                            <>
+                                <View style={{
+                                    height: 18, width: ("58%"), backgroundColor: "#7eb517", borderTopLeftRadius: 6, borderBottomRightRadius: 6, alignSelf: "flex-start",
+                                    shadowColor: "#000",
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 1,
+                                    },
+                                    shadowOpacity: 0.18,
+                                    shadowRadius: 1.00,
+                                    elevation: 0.8,
+                                    marginRight: -1,
+                                    marginTop: -1,
+                                    justifyContent: "center"
+                                }}>
+                                    <Text style={{ fontSize: 9, textAlign: "center", color: "#f7f7f7", fontWeight: 'bold' }}>{(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0)}% off</Text>
+
+                                </View>
+                            </>
+                        // undefined
+
+
                     }
+                    {/* <Text>{JSON.stringify(item?.itemImages[0]?.mediumImagePath, null, "         ")} </Text> */}
+                    <Image
+                        resizeMode="contain"
+                        style={{ height: 110, width: 120, borderRadius: 5, }}
+                        source={item?.itemImages[0]?.mediumImagePath ?
+                            { uri: item?.itemImages[0]?.mediumImagePath } : require('../../assets/png/default.png')}
+                    />
+
+
+
                 </View>
                 <View style={[{ padding: 10, flex: 1 }]}>
                     <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
