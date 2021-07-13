@@ -111,22 +111,26 @@ const MyWallet = ({ route, navigation, getCreditTransactions }) => {
                         renderItem={({ item }) =>
                             <View style={{ alignSelf: "center", width: ("90%"), marginBottom: 10 }}>
                                 <View style={{ marginTop: "3%" }}>
-                                    <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 14.5 }}>Paid for order</Text>
-                                    <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 3 }}>
-                                        <Text style={{ color: "#909090", fontSize: 12.5 }}>Payment Oder ID : #7654567-890</Text>
-                                        {
-                                            item.transactionType == "CREDIT" ?
-                                                <>
-                                                    <Text style={{ color: "#49c32c", fontSize: 12.5 }}>+ {item.customerCredit?.credit}</Text>
+                                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                        <View style={{ width: '80%', }}>
+                                            <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 14.5 }}>{item.heading}</Text>
+                                            <Text style={{ color: "#909090", fontSize: 12.5 }}>{item.subHeading}</Text>
+                                        </View>
+                                        <View style={{ alignItems: "center", justifyContent: "flex-end" }}>
+                                            {
+                                                item.transactionType == "CREDIT" ?
+                                                    <>
+                                                        <Text style={{ color: "#49c32c", fontSize: 12.5 }}>+ {item.customerCredit?.credit}</Text>
 
-                                                </>
-                                                :
-                                                <Text style={{ color: "#f78e24", fontSize: 12.5 }}>- {item.customerCredit?.credit}</Text>
+                                                    </>
+                                                    :
+                                                    <Text style={{ color: "#f78e24", fontSize: 12.5 }}>- {item.customerCredit?.credit}</Text>
 
-                                        }
+                                            }
+                                        </View>
                                     </View>
                                     <View style={{ flexDirection: "row", marginTop: 3 }}>
-                                        <View style={{ flexDirection: "row", width: ("44%"), justifyContent: "space-around", marginLeft: -5, }}>
+                                        <View style={{ flexDirection: "row", width: ("44%"), justifyContent: "space-around", marginLeft: -7, }}>
                                             <Text style={{ color: "#909090", fontSize: 12.5 }}>{moment(item.customerCredit.createdAt).format("DD MMM YYYY")}</Text>
                                             <View style={{ height: 6, width: 6, borderRadius: 3, backgroundColor: "#c2c2c2", alignSelf: "center" }}></View>
                                             <Text style={{ color: "#909090", fontSize: 12.5 }}>{moment(item.customerCredit.createdAt, "HH:mm:ss").format("LT")}</Text>

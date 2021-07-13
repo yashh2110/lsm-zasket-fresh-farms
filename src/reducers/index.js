@@ -5,6 +5,7 @@ import home from './home'
 import cart from './cart'
 import config from './config'
 import location from './location'
+import wallet from './wallet'
 import homeScreenLocation from './homeScreenLocation'
 import AsyncStorage from '@react-native-community/async-storage'
 import { CLEAR_REDUX_PERSIST } from '../actions/types'
@@ -17,7 +18,9 @@ const appReducer = combineReducers({
     cart: cart,
     location: location,
     homeScreenLocation: homeScreenLocation,
-    config: config
+    config: config,
+    wallet: wallet
+
 })
 
 const rootReducer = (state, action) => {

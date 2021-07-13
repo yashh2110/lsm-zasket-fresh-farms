@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, Image, Linking, FlatList, TextInput } from 'react-native';
-import { Icon, Button } from 'native-base'
+import { Icon, Toast } from 'native-base'
 import Modal from 'react-native-modal';
 import Theme from "../../styles/Theme";
 import { ScrollView } from "react-native-gesture-handler";
@@ -9,13 +9,13 @@ import { ActivityIndicator } from "react-native";
 import CustomHeader from "../common/CustomHeader";
 import call from 'react-native-phone-call';
 import { getCustomerDetails } from "../../actions/home";
-import { addMoneyWallet } from "../../actions/wallet";
+import { addMoneyWallet, paymentConfirm, rejectPaymentByAPI } from "../../actions/wallet";
 import { clearCart } from '../../actions/cart'
 import RazorpayCheckout from 'react-native-razorpay';
 import AsyncStorage from '@react-native-community/async-storage';
 
 
-const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clearCart, config }) => {
+const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clearCart, config, paymentConfirm, rejectPaymentByAPI }) => {
     const [loading, setLoading] = useState(false)
     const [datas, setDatas] = useState([])
     const [amount, setAmount] = useState("₹")
@@ -53,11 +53,13 @@ const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clear
         try {
             await addMoneyWallet(sub, async (response, status) => {
                 if (status) {
-                    // alert(JSON.stringify(response.data, null, "     "))
+                    // alert(JSON.stringify(response, null, "     "))
                     // await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
                     setLoading(false)
                     let userDetails = await AsyncStorage.getItem('userDetails');
                     let parsedUserDetails = await JSON.parse(userDetails);
+                    // alert(JSON.stringify(parsedUserDetails, null, "     "))
+
                     var options = {
                         description: 'Select the payment method',
                         image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
@@ -76,16 +78,58 @@ const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clear
                     // console.warn(JSON.stringify(options, null, "        "))
                     RazorpayCheckout.open(options).then(async (data) => {
                         // handle success
-                        // alert(`Success: ${data.razorpay_payment_id}`);
+                        console.log("aaaaaaaaaaaaaa", JSON.stringify(data, null, "      "))
+                        // alert(JSON.stringify(data, null, "      "));
                         // onClearCart()
                         // await AsyncStorage.removeItem('appliedCoupon')
-                        navigation.pop()
                         // AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
                         // navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
-                        navigation.navigate('WalletSuccessScreen', { "amount": sub })
+                        let paymentInfo = {
+                            "paymentType": "WALLET",
+                            "razorpayPaymentId": data.razorpay_payment_id,
+                            "razorpaySignature": data.razorpay_signature,
+                            "zasketPaymentOrderId": response?.data?.paymentResponseId
+                        }
+                        paymentConfirm(paymentInfo, (res, status) => {
+                            if (status) {
+                                // alert(JSON.stringify(res))
+                                navigation.pop()
+                                navigation.navigate('WalletSuccessScreen', { "amount": sub })
+                                // navigation.goBack()
+                            } else {
+                                Toast.show({
+                                    text: "Payment failed",
+                                    buttonText: "Okay",
+                                    type: "danger",
+                                    buttonStyle: { backgroundColor: "#a52f2b" }
+                                })
+
+                            }
+                        })
                     }).catch((error) => {
-                        // handle failure
-                        // alert(`Error: ${error.code} | ${error.description}`);
+                        let paymentInfo = {
+                            "paymentType": "WALLET",
+                            "zasketPaymentOrderId": response?.data?.paymentResponseId
+                        }
+                        rejectPaymentByAPI(paymentInfo, (res, status) => {
+                            if (status) {
+                                // alert(JSON.stringify(res))
+                                // navigation.goBack()
+                                Toast.show({
+                                    text: "Payment failed",
+                                    buttonText: "Okay",
+                                    type: "danger",
+                                    buttonStyle: { backgroundColor: "#a52f2b" }
+                                })
+                            } else {
+                                Toast.show({
+                                    text: "Payment failed",
+                                    buttonText: "Okay",
+                                    type: "danger",
+                                    buttonStyle: { backgroundColor: "#a52f2b" }
+                                })
+                            }
+                        })
                         Toast.show({
                             text: "Payment failed",
                             buttonText: "Okay",
@@ -200,4 +244,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { getCustomerDetails, addMoneyWallet, clearCart })(AddMoney)
+export default connect(mapStateToProps, { getCustomerDetails, addMoneyWallet, clearCart, paymentConfirm, rejectPaymentByAPI })(AddMoney)

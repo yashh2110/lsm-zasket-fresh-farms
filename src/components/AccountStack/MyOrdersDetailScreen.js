@@ -15,13 +15,16 @@ import AsyncStorage from "@react-native-community/async-storage";
 import RazorpayCheckout from 'react-native-razorpay';
 import { AppEventsLogger } from "react-native-fbsdk";
 import { Radio, Toast, Root, Container, Content } from 'native-base';
-const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payOrder }) => {
+import { paymentConfirm, rejectPaymentByAPI } from "../../actions/wallet";
+
+const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payOrder, paymentConfirm, rejectPaymentByAPI }) => {
     const { order_id } = route?.params;
     // const order_id = 514
     const [item, setItem] = useState({})
     const [loading, setLoading] = useState(false)
     const [refresh, setRefresh] = useState(false)
     const [showCancelButton, setShowCancelButton] = useState(true)
+    const [finalPrice, setFinalPrice] = useState("")
     useEffect(() => {
         initialFunction()
     }, [])
@@ -35,8 +38,10 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
         setLoading(true)
         getOrderDetails(order_id, async (response, status) => {
             if (status) {
+                console.log("sssssss", JSON.stringify(response.data, null, "        "))
                 // alert(JSON.stringify(response.data, null, "        "))
                 setItem(response?.data)
+                setFinalPrice(response?.data?.finalPrice)
                 const yesterday = new Date(response?.data?.slotStartTime)
                 yesterday.setDate(yesterday.getDate() - 1)
                 var d1 = new Date();
@@ -72,7 +77,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                     image: 'https://d26w0wnuoojc4r.cloudfront.net/zasket_logo_3x.png',
                     currency: 'INR',
                     key: config?.razorpayApiKey,
-                    amount: item?.payableAmount,
+                    amount: item?.finalPrice,
                     name: 'Zasket',
                     order_id: res?.data?.paymentResponseId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
                     prefill: {
@@ -82,21 +87,55 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                     },
                     theme: { color: Theme.Colors.primary }
                 }
-                // console.warn(JSON.stringify(options, null, "        "))
+                console.warn(JSON.stringify(options, null, "        "))
                 RazorpayCheckout.open(options).then(async (data) => {
                     // handle success
                     // alert(`Success: ${data.razorpay_payment_id}`);
-                    initialFunction()
-                    AppEventsLogger.logPurchase(item?.payableAmount, "INR", { param: "value" });
-                    navigation.navigate('PaymentSuccessScreenOrderDetail')
+                    let paymentInfo = {
+                        "paymentType": "ORDER",
+                        "razorpayPaymentId": data.razorpay_payment_id,
+                        "razorpaySignature": data.razorpay_signature,
+                        "zasketPaymentOrderId": res?.data?.paymentResponseId
+                    }
+                    paymentConfirm(paymentInfo, (res, status) => {
+                        if (status) {
+                            initialFunction()
+                            AppEventsLogger.logPurchase(item?.finalPrice, "INR", { param: "value" });
+                            navigation.navigate('PaymentSuccessScreenOrderDetail')
+                        } else {
+                            Toast.show({
+                                text: "Payment failed",
+                                buttonText: "Okay",
+                                type: "danger",
+                                buttonStyle: { backgroundColor: "#a52f2b" }
+                            })
+
+                        }
+                    })
                 }).catch((error) => {
                     // handle failure
                     // alert(`Error: ${error.code} | ${error.description}`);
-                    Toast.show({
-                        text: "Payment failed",
-                        buttonText: "Okay",
-                        type: "danger",
-                        buttonStyle: { backgroundColor: "#a52f2b" }
+                    let paymentInfo = {
+                        "paymentType": "ORDER",
+                        "zasketPaymentOrderId": res?.data?.paymentResponseId
+                    }
+                    rejectPaymentByAPI(paymentInfo, (res, status) => {
+                        if (status) {
+                            Toast.show({
+                                text: "Payment failed",
+                                buttonText: "Okay",
+                                type: "danger",
+                                buttonStyle: { backgroundColor: "#a52f2b" }
+                            })
+
+                        } else {
+                            Toast.show({
+                                text: "Payment failed",
+                                buttonText: "Okay",
+                                type: "danger",
+                                buttonStyle: { backgroundColor: "#a52f2b" }
+                            })
+                        }
                     })
                 })
             } else {
@@ -118,6 +157,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
     const onRefresh = () => {
         // setRefresh(true)
         initialFunction()
+
     }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -291,8 +331,23 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                         : undefined}
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
-                        <Text style={{ fontWeight: 'bold' }}>Total Amount </Text>
-                        <Text style={{ fontWeight: 'bold' }}>₹ {(item?.payableAmount)} </Text>
+                        <Text style={{ color: '#727272' }}>Zasket wallet </Text>
+                        {
+                            item?.creditUsed == 0
+                                ?
+                                <Text style={{}}>₹ 0</Text>
+                                :
+                                <Text style={{}}>₹ - {(item?.creditUsed)} </Text>
+                        }
+                    </View>
+                    {/* <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 }}>
+                        <Text style={{ color: '#727272' }}>Credit/Debit card </Text>
+                        <Text style={{}}>₹ {(item?.finalPrice)} </Text>
+                    </View> */}
+                    <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, marginBottom: 10 }} />
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
+                        <Text style={{ fontWeight: 'bold' }}>Total Payable Amount </Text>
+                        <Text style={{ fontWeight: 'bold' }}>₹ {(item?.finalPrice)} </Text>
                     </View>
                 </View>
 
@@ -335,7 +390,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                                     }
                                     <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'flex-end', flexDirection: 'row', }}>
                                         <Text style={{ fontSize: 14, color: '#909090', }}>Quantity: {item?.quantity} </Text>
-                                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.totalPrice} </Text>
+                                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹ {item?.totalPrice} </Text>
                                     </View>
                                 </View>
                             </View>
@@ -354,7 +409,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                 item?.orderState == "DELIVERED" || item?.orderState == "CANCELLED" || item?.orderState == "RETURNED" || item?.paymentState == "PAID" || item?.paymentState == "REFUNDED" ? null :
                     <View View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'space-between', }}>
                         <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {item?.payableAmount} </Text>
+                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {item?.finalPrice ? item?.finalPrice : 0} </Text>
                             <View style={{}}>
                                 <Text style={{ color: "#2D87C9" }}>Total Amount </Text>
                             </View>
@@ -382,7 +437,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { getOrderDetails, payOrder })(MyOrdersDetailScreen)
+export default connect(mapStateToProps, { getOrderDetails, payOrder, paymentConfirm, rejectPaymentByAPI })(MyOrdersDetailScreen)
 
 const styles = StyleSheet.create({
 

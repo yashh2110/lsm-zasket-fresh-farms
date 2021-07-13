@@ -14,10 +14,11 @@ import { onLogout } from '../../actions/auth'
 import { AuthContext } from "../../navigation/Routes";
 import { getCreditTransactions } from "../../actions/wallet";
 import Loader from '../common/Loader';
+import { EventRegister } from 'react-native-event-listeners'
 
 
 
-const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigation, onLogout, getCreditTransactions }) => {
+const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigation, onLogout, getCreditTransactions, walletbalance }) => {
     const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
     const [loading, setLoading] = useState(false)
     const [userDetails, setUserDetails] = useState({})
@@ -28,31 +29,27 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
     const [creditBalance, SetCreditBalance] = useState(0)
 
     useEffect(() => {
+        // alert(walletbalance)
         initialFunction()
         // initialFunctions()
     }, [isVisible])
 
-    const initialFunction = async () => {
-        setLoading(true)
-
-        // let userDetails = await AsyncStorage.getItem('userDetails');
-        // let parsedUserDetails = await JSON.parse(userDetails);
-        // setUserDetails(parsedUserDetails)
-        getCustomerDetails(async (res, status) => {
-            if (status) {
-                // alert(JSON.stringify(res?.data, null, "       "))
-                setUserDetails(res?.data)
-                await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
-                setRefresh(false)
-                setLoading(false)
-
-            } else {
-                setUserDetails({})
-                setRefresh(false)
-                setLoading(false)
-
-            }
+    useEffect(() => {
+        initialFunctions()
+        let listener = EventRegister.addEventListener('successWallet', async (data) => {
+            console.warn("datadatadata", data)
+            initialFunctions()
         })
+        return () => {
+            // alert("failll")
+            EventRegister.removeEventListener('successWallet');
+        };
+    }, [])
+
+    const initialFunctions = async () => {
+        setLoading(true)
+        // alert(JSON.stringify(walletbalance, null, "       "))
+        // SetCreditBalance(walletbalance.auth.userDetails.customerDetails.creditBalance)
         getCreditTransactions((res, status) => {
             if (status) {
                 // alert(res.data[0]?.customer?.creditBalance)
@@ -67,10 +64,35 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
 
     }
 
+    const initialFunction = async () => {
+        setLoading(true)
+        // alert(JSON.stringify(walletbalance.auth.userDetails.customerDetails.creditBalance, null, "       "))
+        // let userDetails = await AsyncStorage.getItem('userDetails');
+        // let parsedUserDetails = await JSON.parse(userDetails);
+        // setUserDetails(parsedUserDetails)
+        getCustomerDetails(async (res, status) => {
+            // alert("asdkfhiu")
+            if (status) {
+                // alert(JSON.stringify(res?.data, null, "       "))
+                setUserDetails(res?.data)
+                await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
+                setRefresh(false)
+                setLoading(false)
+
+            } else {
+                setUserDetails({})
+                setRefresh(false)
+                setLoading(false)
+
+            }
+        })
+    }
+
 
     const onRefresh = () => {
         setRefresh(true)
         initialFunction()
+        initialFunctions()
     }
 
 
@@ -274,9 +296,6 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                         </View>
                     </TouchableOpacity>
 
-
-
-
                     <TouchableOpacity onPress={() => { navigation.navigate('ManageAddressScreen') }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                         <View style={{ flex: 1, }}>
                             <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Manage Addresses</Text>
@@ -389,6 +408,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
+    walletbalance: state
+
 
 })
 

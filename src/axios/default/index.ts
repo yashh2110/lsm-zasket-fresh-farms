@@ -6,6 +6,8 @@ export class AxiosDefaultsManager {
     // }
 
     setAuthorizationHeader(sessionId: string) {
+        console.log("sesionId", sessionId)
         axiosinstance.defaults.headers['session-id'] = sessionId
     }
+
 }

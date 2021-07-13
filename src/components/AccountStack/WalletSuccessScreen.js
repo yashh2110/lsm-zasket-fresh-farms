@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { TouchableOpacity, StyleSheet, View, FlatList, Share, Image } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, FlatList, Share, Image, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { Icon, Button, Text } from 'native-base';
 import LottieView from 'lottie-react-native';
@@ -11,7 +11,12 @@ import { EventRegister } from 'react-native-event-listeners'
 const WalletSuccessScreen = ({ navigation, route }) => {
 
     useEffect(() => {
-    }, [])
+        // const handler = BackHandler.addEventListener(
+        //     'hardwareBackPress',
+        //     handleValidateClose
+        // );
+        // return () => handler.remove();
+    }, []);
 
     const onShare = async () => {
         let appUrl
@@ -40,7 +45,6 @@ const WalletSuccessScreen = ({ navigation, route }) => {
     };
     const { amount } = route?.params;
     const navigate = async () => {
-
         navigation.goBack()
         EventRegister.emit('successWallet', 'it works!!!')
 

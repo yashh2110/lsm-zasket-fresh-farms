@@ -19,10 +19,12 @@ import { AppEventsLogger } from "react-native-fbsdk";
 import FeatherIcons from "react-native-vector-icons/Feather"
 import { getV2Config } from '../../actions/home';
 import { getCustomerDetails } from "../../actions/home";
-import { CheckBox } from 'react-native-elements'
+import { CheckBox } from 'react-native-elements';
+import { paymentConfirm, rejectPaymentByAPI } from "../../actions/wallet";
 
 
-const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allUserAddress, offerDetails, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer, getAvailableOffers }) => {
+
+const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allUserAddress, offerDetails, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer, getAvailableOffers, paymentConfirm, rejectPaymentByAPI }) => {
     const scrollViewRef = useRef();
     const [coupon, setCoupon] = useState("")
     const [totalCartValue, setTotalCartValue] = useState(0)
@@ -418,22 +420,57 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                             }
                             // console.warn(JSON.stringify(options, null, "        "))
                             RazorpayCheckout.open(options).then(async (data) => {
+                                // alert("passsssss")
                                 // handle success
                                 // alert(`Success: ${data.razorpay_payment_id}`);
-                                onClearCart()
-                                await AsyncStorage.removeItem('appliedCoupon')
-                                navigation.pop()
-                                AppEventsLogger.logPurchase(500.00, "INR", { param: "value" });
-                                navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+
+                                let paymentInfo = {
+                                    "paymentType": "ORDER",
+                                    "razorpayPaymentId": data.razorpay_payment_id,
+                                    "razorpaySignature": data.razorpay_signature,
+                                    "zasketPaymentOrderId": res?.data?.paymentOrderId
+                                }
+                                paymentConfirm(paymentInfo, (res, status) => {
+                                    if (status) {
+                                        onClearCart()
+                                        AsyncStorage.removeItem('appliedCoupon')
+                                        navigation.pop()
+                                        AppEventsLogger.logPurchase(500.00, "INR", { param: "value" });
+                                        navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                                    } else {
+                                        Toast.show({
+                                            text: "Payment failed",
+                                            buttonText: "Okay",
+                                            type: "danger",
+                                            buttonStyle: { backgroundColor: "#a52f2b" }
+                                        })
+
+                                    }
+                                })
                                 // navigation.navigate('AccountStack', { screen: 'MyOrders' })
                             }).catch((error) => {
-                                // handle failure
-                                // alert(`Error: ${error.code} | ${error.description}`);
-                                Toast.show({
-                                    text: "Payment failed",
-                                    buttonText: "Okay",
-                                    type: "danger",
-                                    buttonStyle: { backgroundColor: "#a52f2b" }
+                                // alert("failllllllllll")
+                                let paymentInfo = {
+                                    "paymentType": "ORDER",
+                                    "zasketPaymentOrderId": res?.data?.paymentOrderId
+                                }
+                                rejectPaymentByAPI(paymentInfo, (res, status) => {
+                                    if (status) {
+                                        Toast.show({
+                                            text: "Payment failed",
+                                            buttonText: "Okay",
+                                            type: "danger",
+                                            buttonStyle: { backgroundColor: "#a52f2b" }
+                                        })
+
+                                    } else {
+                                        Toast.show({
+                                            text: "Payment failed",
+                                            buttonText: "Okay",
+                                            type: "danger",
+                                            buttonStyle: { backgroundColor: "#a52f2b" }
+                                        })
+                                    }
                                 })
                             })
 
@@ -1251,7 +1288,7 @@ const mapStateToProps = (state) => ({
     userLocation: state.location,
 })
 
-export default connect(mapStateToProps, { getCustomerDetails, clearCart, getV2DeliverySlots, addOrder, applyOffer, getAvailableOffers, })(CheckoutScreen)
+export default connect(mapStateToProps, { getCustomerDetails, clearCart, getV2DeliverySlots, addOrder, applyOffer, getAvailableOffers, paymentConfirm, rejectPaymentByAPI })(CheckoutScreen)
 
 const styles = StyleSheet.create({
     button: {
