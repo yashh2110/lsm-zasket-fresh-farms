@@ -172,7 +172,7 @@ class MapScreenGrabPincode extends React.Component {
                                 .then((response) => {
                                     response.json().then(async (json) => {
                                         let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                                        await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                                        await this.setLocation(json?.results?.[1]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
                                     });
                                 }).catch((err) => {
                                     console.warn(err)
@@ -212,7 +212,7 @@ class MapScreenGrabPincode extends React.Component {
                     // console.warn(json)
                     let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
                     // alert(JSON.stringify(json?.results?.[1]?.address_components?.find(el => el.types.find(o => o == "political")), null, "  "))
-                    await this.setLocation(json?.results?.[0]?.formatted_address, this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
+                    await this.setLocation(json?.results?.[1]?.formatted_address, this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
                     await this.setState({ addressLoading: false, })
                 });
             }).catch(async (err) => {
@@ -320,10 +320,10 @@ class MapScreenGrabPincode extends React.Component {
                             </View>}
                         <View style={styles.map}>
                             {!this.state.errorMessageBanner &&
-                            <View style={{ zIndex: 1, height: 60, backgroundColor: "white" }}>
-                            <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
-                            <Icon name="chevron-small-left" type="Entypo" style={[{ fontSize: 32, color: "black", }]} />                                   
-                             </TouchableOpacity>
+                                <View style={{ zIndex: 1, height: 60, backgroundColor: "white" }}>
+                                    <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, justifyContent: 'center', position: "absolute", zIndex: 1, left: 10, top: 10 }}>
+                                        <Icon name="chevron-small-left" type="Entypo" style={[{ fontSize: 32, color: "black", }]} />
+                                    </TouchableOpacity>
                                     <View style={{ zIndex: 1, left: 45, top: 18 }}>
                                         <Text style={{ fontWeight: "bold", fontSize: 18, color: "#242A40" }}>Set delivery location</Text>
                                     </View>

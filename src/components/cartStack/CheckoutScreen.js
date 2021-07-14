@@ -21,6 +21,7 @@ import { getV2Config } from '../../actions/home';
 import { getCustomerDetails } from "../../actions/home";
 import { CheckBox } from 'react-native-elements';
 import { paymentConfirm, rejectPaymentByAPI } from "../../actions/wallet";
+import { EventRegister } from 'react-native-event-listeners'
 
 
 
@@ -353,6 +354,8 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                     navigation.pop()
                     AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
                     navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, slotTime: slotTime })
+                    EventRegister.emit('successWallet', 'it works!!!')
+
                 } else {
                     if (__DEV__) {
                         alert(JSON.stringify(res?.response))
@@ -396,6 +399,8 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                                 navigation.pop()
                                 AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
                                 navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, slotTime: slotTime })
+                                EventRegister.emit('successWallet', 'it works!!!')
+
                             } else {
                                 if (__DEV__) {
                                     alert(JSON.stringify(res?.response))

@@ -29,12 +29,12 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
     const [creditBalance, SetCreditBalance] = useState(0)
 
     useEffect(() => {
-        // alert(walletbalance)
         initialFunction()
         // initialFunctions()
     }, [isVisible])
 
     useEffect(() => {
+        // alert(JSON.stringify(walletbalance.auth.userDetails.customerDetails.creditBalance, null, "       "))
         initialFunctions()
         let listener = EventRegister.addEventListener('successWallet', async (data) => {
             console.warn("datadatadata", data)

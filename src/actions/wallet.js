@@ -4,6 +4,8 @@ import { Alert } from 'react-native';
 import {
     GETCREDIT_TRANSACTIONS
 } from './types';
+import { EventRegister } from 'react-native-event-listeners'
+
 export const addMoneyWallet = (Amount, callback) => async dispatch => {
     try {
         console.warn("AmountAmount", Amount)
@@ -67,6 +69,8 @@ export const paymentConfirm = (payload, callback) => async dispatch => {
         const res = await axiosinstance.post(`/customers/${customerId}/payments/confirm`, payload)
         console.log("sucess", JSON.stringify(res, null, "     "))
         callback(res, true)
+        EventRegister.emit('successWallet', 'it works!!!')
+
         // dispatch(getCreditTransactions((res, status) => { }))
 
     } catch (err) {

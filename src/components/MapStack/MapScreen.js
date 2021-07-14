@@ -175,6 +175,8 @@ class MyMapView extends React.Component {
                             fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
                                 .then((response) => {
                                     response.json().then(async (json) => {
+                                        alert(JSON.stringify(json?.results?.[0], null, "      "))
+                                        // console.warn("aaaa", json?.results?.[0]?.formatted_address);
                                         let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
                                         await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
                                     });
@@ -214,8 +216,11 @@ class MyMapView extends React.Component {
                 response.json().then(async (json) => {
                     // console.warn(json)
                     let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                    // alert(JSON.stringify(postal_code, null, "  "))
-                    await this.setLocation(json?.results?.[0]?.formatted_address, this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
+                    // alert(JSON.stringify(json?.results?.[0], null, "  "))
+                    let sub = json?.results?.[0]?.address_components?.[0].long_name
+                    // console.log(json?.results?.[0]?.formatted_address.replace(sub, ""));
+                    let address = json?.results?.[0]?.formatted_address.replace(sub + ",", "")
+                    await this.setLocation(json?.results?.[1]?.formatted_address, this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
                     await this.setState({ addressLoading: false })
                 });
             }).catch(async (err) => {

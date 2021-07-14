@@ -46,7 +46,6 @@ const WalletSuccessScreen = ({ navigation, route }) => {
     const { amount } = route?.params;
     const navigate = async () => {
         navigation.goBack()
-        EventRegister.emit('successWallet', 'it works!!!')
 
     }
 
