@@ -90,8 +90,8 @@ const WalletSuccessScreen = ({ navigation, route }) => {
                         </View>
                     </View>
                     <View style={{ width: "60%", marginTop: 25 }}>
-                        <Text style={{ fontSize: 12, color: "#727272", textAlign: "center", letterSpacing: 0.1 }}>You can use this money to buy vegetables </Text>
-                        <Text style={{ fontSize: 12, color: "#727272", textAlign: "center", letterSpacing: 0.1 }}>& groceries in zasket app</Text>
+                        <Text style={{ fontSize: 12, color: "#727272", textAlign: "center", letterSpacing: 0.1 }}>You can use this to buy groceries in app </Text>
+                        {/* <Text style={{ fontSize: 12, color: "#727272", textAlign: "center", letterSpacing: 0.1 }}>& groceries in zasket app</Text> */}
                     </View>
 
                 </View>

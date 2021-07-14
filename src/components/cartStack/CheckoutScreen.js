@@ -30,6 +30,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
     const [totalCartValue, setTotalCartValue] = useState(0)
     const [loading, setLoading] = useState(false)
     const [nextDayBuffer, setNextDayBuffer] = useState(undefined)
+    const [slotTime, setslotTime] = useState(undefined)
     const [savedValue, setSavedValue] = useState(0)
     const [marketPrice, setMarketPrice] = useState(0)
     const [slotsArray, setSlotsArray] = useState([])
@@ -176,9 +177,9 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
     }, [totalCartValue])
 
     useEffect(() => {
-        // alert(JSON.stringify(userLocation, null, "    "))
         getV2DeliverySlots(4, userLocation?.lat, userLocation?.lon, (res, status) => {
             if (status) {
+                // alert(JSON.stringify(res?.data, null, "    "))
                 setSlotsArray(res?.data)
             } else {
                 setSlotsArray([])
@@ -192,6 +193,8 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
         for (var i = 0; i < slotsArray?.length; i++) {
             if (slotsArray[i]?.availableOrdersCount > 0) {
                 setNextDayBuffer(slotsArray[i]?.nextDayBuffer)
+                setslotTime(slotsArray[i]?.description)
+                // alert(slotsArray[i]?.nextDayBuffer)
                 break;
             }
         }
@@ -219,6 +222,8 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
             for (var i = 0; i < newArray?.length; i++) {
                 if (newArray[i]?.availableOrdersCount > 0) {
                     setNextDayBuffer(newArray[i]?.nextDayBuffer)
+                    setslotTime(slotsArray[i]?.description)
+
                     break;
                 }
             }
@@ -248,6 +253,8 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
             for (var i = 0; i < newArray?.length; i++) {
                 if (newArray[i]?.availableOrdersCount > 0) {
                     setNextDayBuffer(newArray[i]?.nextDayBuffer)
+                    setslotTime(slotsArray[i]?.description)
+
                     break;
                 }
             }
@@ -260,6 +267,9 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
 
     const onPressSlot = (option) => {
         setNextDayBuffer(option)
+        setslotTime(slotsArray[option]?.description)
+        alert(slotsArray[option]?.description)
+
     }
 
     const onPressMakePayment = async () => {
@@ -342,7 +352,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                     await AsyncStorage.removeItem('appliedCoupon')
                     navigation.pop()
                     AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
-                    navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                    navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, slotTime: slotTime })
                 } else {
                     if (__DEV__) {
                         alert(JSON.stringify(res?.response))
@@ -385,7 +395,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                                 await AsyncStorage.removeItem('appliedCoupon')
                                 navigation.pop()
                                 AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
-                                navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                                navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, slotTime: slotTime })
                             } else {
                                 if (__DEV__) {
                                     alert(JSON.stringify(res?.response))
@@ -436,7 +446,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                                         AsyncStorage.removeItem('appliedCoupon')
                                         navigation.pop()
                                         AppEventsLogger.logPurchase(500.00, "INR", { param: "value" });
-                                        navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer })
+                                        navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, slotTime: slotTime })
                                     } else {
                                         Toast.show({
                                             text: "Payment failed",
@@ -475,8 +485,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                             })
 
                         }
-
-
                     } else {
                         Toast.show({
                             text: res?.data?.comment,
@@ -852,7 +860,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                         </TouchableOpacity>
                     }
                     {config?.enableCOD ?
-                        <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15 }}>
+                        <View style={{ backgroundColor: 'white', marginTop: 10, paddingHorizontal: 15, paddingVertical: 12 }}>
                             <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Select payment method </Text>
                             <>
                                 <TouchableOpacity activeOpacity={0.8} style={{
@@ -927,7 +935,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                                 />
                                 <View style={{ marginLeft: 11, flexDirection: 'row', flex: 1 }}>
                                     <View style={{ flex: 1 }}>
-                                        <Text style={{ color: 'black', fontSize: 14, fontWeight: "bold" }}>Use Zasket wallet Money </Text>
+                                        <Text style={{ color: 'black', fontSize: 14, fontWeight: "bold" }}>Use Zasket Wallet Money </Text>
                                         <Text style={{ color: '#727272', fontSize: 12, fontWeight: null }}>Available balance : ₹ {creditBalance} </Text>
                                     </View>
                                 </View>
