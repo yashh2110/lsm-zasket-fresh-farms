@@ -42,6 +42,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
         })
         return () => {
             // alert("failll")
+            listener = false
             EventRegister.removeEventListener('successWallet');
         };
     }, [])

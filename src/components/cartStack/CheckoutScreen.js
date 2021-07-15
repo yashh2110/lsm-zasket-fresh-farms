@@ -62,7 +62,16 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("PREPAID")
 
     const totalCartValueRef = useRef(totalCartValue);
-
+    useEffect(() => {
+        let listener = EventRegister.addEventListener('successWallet', async (data) => {
+            console.warn("datadatadata", data)
+            initialFunction()
+        })
+        return () => {
+            listener = false
+            EventRegister.removeEventListener('successWallet');
+        };
+    }, [])
     const setTotalCartValueRef = newText => {
         console.warn("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", newText)
         totalCartValueRef.current = newText;
@@ -71,29 +80,17 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
 
     useEffect(() => {
         initialFunction()
-    }, [])
+    }, [cartItems])
 
     const initialFunction = async () => {
-        console.warn("1111111111")
-        // let userDetails = await AsyncStorage.getItem('userDetails');
-        // let parsedUserDetails = await JSON.parse(userDetails);
-        // setUserDetails(parsedUserDetails)
-
-    }
-
-    useEffect(() => {
-        console.warn("222222222222")
-
         if (cartItems.length > 0) {
             setloadinggg(true)
             getCustomerDetails(async (res, status) => {
                 if (status) {
+                    setWalletCheck(true)
                     // alert(JSON.stringify(res?.data?.customerDetails, null, "       "))
                     // alert(JSON.stringify(res?.data?.customerDetails?.creditBalance, null, "       "))
                     await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
-
-
-
                     if (res?.data?.customerDetails?.creditBalance <= 0) {
                         // alert("111111111111111")
                         setWalletCheck(false)
@@ -158,7 +155,12 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
             setSavedValue(0)
             setloadinggg(false)
         }
-    }, [cartItems])
+
+    }
+
+
+
+
 
     useEffect(() => {
         if (totalCartValue > 0) {
@@ -269,7 +271,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
     const onPressSlot = (option) => {
         setNextDayBuffer(option)
         setslotTime(slotsArray[option]?.description)
-        alert(slotsArray[option]?.description)
+        // alert(slotsArray[option]?.description)
 
     }
 
