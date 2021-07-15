@@ -317,7 +317,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                     <TouchableOpacity onPress={() => { onShare() }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                         <View style={{ flex: 1, }}>
                             <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Share app </Text>
-                            <Text style={{ color: '#909090', fontSize: 12 }}>With your Friends Now! </Text>
+                            <Text style={{ color: '#909090', fontSize: 12 }}>With Your Friends Now! </Text>
                         </View>
                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                             <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />

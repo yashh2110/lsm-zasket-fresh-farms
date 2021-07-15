@@ -65,7 +65,7 @@ const PaymentSuccessScreenOrderDetail = ({ navigation, route }) => {
             </View>
             <View style={{ flex: 1.5, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ fontSize: 14, color: "#727272", marginTop: 50, textAlign: "center", marginHorizontal: 20 }}>If you like the app experience share it
-                    with your Family & Friends Now! </Text>
+                    with your Friends Now! </Text>
                 <Button full style={{ marginVertical: 20, backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => {
                     onShare()
                 }}><Image
