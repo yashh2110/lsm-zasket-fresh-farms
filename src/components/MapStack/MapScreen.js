@@ -68,7 +68,8 @@ class MyMapView extends React.Component {
         addressId: "",
         gpsEnabled: false,
         movetoadjust: false,
-        scrollEnable: false
+        scrollEnable: false,
+        addressResult: []
     };
 
 
@@ -175,10 +176,19 @@ class MyMapView extends React.Component {
                             fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + position.coords.latitude + ',' + position.coords.longitude + '&key=' + MapApiKey)
                                 .then((response) => {
                                     response.json().then(async (json) => {
-                                        alert(JSON.stringify(json?.results?.[0], null, "      "))
+                                        // alert(JSON.stringify(json?.results?.[0], null, "      "))
                                         // console.warn("aaaa", json?.results?.[0]?.formatted_address);
                                         let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                                        await this.setLocation(json?.results?.[0]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                                        let address_components = json?.results?.[0].address_components
+                                        let value = address_components.filter(product => product.types.some(item => (item === 'sublocality_level_2' || item === 'locality' || item === 'administrative_area_level_2' || item === 'administrative_area_level_1' || item === 'postal_code' || item === 'country')));
+                                        await this.setState({ addressResult: value })
+                                        console.log("addressResultaddressResultaddressResult", addressResult)
+                                        let address = this.state.addressResult.map((el, index) => {
+                                            return (
+                                                el.long_name
+                                            )
+                                        })
+                                        await this.setLocation(address.toString(), position.coords.latitude, position.coords.longitude, postal_code?.long_name)
                                     });
                                 }).catch((err) => {
                                     console.warn(err)
@@ -214,13 +224,18 @@ class MyMapView extends React.Component {
         fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + this.state.region.latitude + ',' + this.state.region.longitude + '&key=' + MapApiKey)
             .then((response) => {
                 response.json().then(async (json) => {
-                    // console.warn(json)
                     let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                    // alert(JSON.stringify(json?.results?.[0], null, "  "))
-                    let sub = json?.results?.[0]?.address_components?.[0].long_name
-                    // console.log(json?.results?.[0]?.formatted_address.replace(sub, ""));
-                    let address = json?.results?.[0]?.formatted_address.replace(sub + ",", "")
-                    await this.setLocation(json?.results?.[1]?.formatted_address, this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
+                    let address_components = json?.results?.[0].address_components
+                    let value = address_components.filter(product => product.types.some(item => (item === 'sublocality_level_2' || item === 'locality' || item === 'administrative_area_level_2' || item === 'administrative_area_level_1' || item === 'postal_code' || item === 'country')));
+                    await this.setState({ addressResult: value })
+                    let address = this.state.addressResult.map((el, index) => {
+                        return (
+                            el.long_name
+                        )
+                    })
+                    console.log("addressaddress", address)
+                    // alert(JSON.stringify(json?.results?.[0]?.address_components?.[2].long_name,json?.results?.[0]?.address_components?.[2].long_name, null, "  "))
+                    await this.setLocation(address.toString(), this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
                     await this.setState({ addressLoading: false })
                 });
             }).catch(async (err) => {
@@ -300,7 +315,7 @@ class MyMapView extends React.Component {
                 "recepientName": this.state.name,
                 "saveAs": this.state.saveAs
             }
-            // console.warn(payload)
+            console.log("lasttttttttttttt", payload)
             const { fromScreen } = this.props.route?.params;
             await this.setState({ mode: fromScreen })
             if (fromScreen == "EDIT_SCREEN") {
@@ -397,7 +412,7 @@ class MyMapView extends React.Component {
             "recepientName": this.state.name,
             "saveAs": this.state.saveAs
         }
-        // console.warn(payload)
+        console.log("payloadddddddddd", payload)
         const { fromScreen } = this.props.route?.params;
         if (fromScreen == "EDIT_SCREEN") {
             await this.props.updateUserAddress(this.state.addressId, payload, async (response, status) => {
@@ -449,7 +464,6 @@ class MyMapView extends React.Component {
                     await this.setState({ mode: "EDIT_SCREEN", scrollEnable: false, errorMessageBanner: false })
 
                 } else {
-
                     if (__DEV__) {
                         alert(JSON.stringify(response?.data, null, "      "))
                     }
@@ -611,6 +625,7 @@ class MyMapView extends React.Component {
                                 {children && children || null}
                             </MapView>
                             <View style={styles.markerFixed}>
+
                                 {/* <Image style={styles.marker} source={marker} /> */}
                                 {/* <View style={{ backgroundColor: 'black', alignSelf: 'center', marginLeft: -50, width: 215, padding: 5, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -40, marginBottom: -15 }}>
                                     <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>Order will be delivered here</Text>
@@ -626,7 +641,18 @@ class MyMapView extends React.Component {
                                         {this.state.address ?
                                             <>
                                                 <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 13, letterSpacing: 0.2 }}>Selected location</Text>
-                                                <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14 }}>{this.state.address}</Text>
+                                                <View style={{ flexDirection: "row", width: "90%", alignSelf: "center", flex: 1, flexWrap: "wrap" }}>
+                                                    {
+                                                        this.state.addressResult.map((el, index) => {
+                                                            return (
+                                                                <View style={{ flexDirection: "row", }}>
+                                                                    <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14, marginHorizontal: 2 }}>{(index ? ', ' : '') + el.long_name}</Text>
+                                                                </View>
+                                                            )
+                                                        })
+                                                    }
+                                                </View>
+                                                {/* <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14 }}>{this.state.address}</Text> */}
                                             </>
                                             :
                                             <>
@@ -636,6 +662,7 @@ class MyMapView extends React.Component {
                                         }
                                     </View>
                                 }
+
                                 {
                                     this.state.mode == "EDIT_SCREEN" ?
                                         <>
@@ -941,7 +968,7 @@ class MyMapView extends React.Component {
                         <View style={{ flex: 1, justifyContent: "center", marginBottom: 10 }}>
                             {this.state.mode == "EDIT_SCREEN" ?
                                 <Button rounded style={{ backgroundColor: Theme.Colors.primary, alignSelf: "center", width: ("90%"), justifyContent: "center", marginBottom: 10 }} onPress={() => this.onSubmit()}>
-                                    <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2 }}>Save & confgjfgtinue</Text>
+                                    <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2 }}>Save & continue</Text>
                                 </Button>
                                 :
                                 <Button rounded style={{ backgroundColor: Theme.Colors.primary, alignSelf: "center", width: ("90%"), justifyContent: "center" }} onPress={() => this.OnConfirmLocation()}>

@@ -71,7 +71,8 @@ class MapScreenGrabPincode extends React.Component {
         addressId: "",
         pincodeAvailable: false,
         gpsEnabled: false,
-        movetoadjust: false
+        movetoadjust: false,
+        addressResult: []
     };
 
 
@@ -93,6 +94,7 @@ class MapScreenGrabPincode extends React.Component {
     }
 
     async initialFunction() {
+        console.log("homeScreenLocationhomeScreenLocation", this.props.homeScreenLocation)
         CheckGpsState((status) => {
             if (status) {
                 this.setState({ gpsEnabled: false })
@@ -172,7 +174,16 @@ class MapScreenGrabPincode extends React.Component {
                                 .then((response) => {
                                     response.json().then(async (json) => {
                                         let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
-                                        await this.setLocation(json?.results?.[1]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                                        let address_components = json?.results?.[0].address_components
+                                        console.log("address_componentsaddress_componentsaddress_components", address_components)
+                                        let value = address_components.filter(product => product.types.some(item => (item === 'sublocality_level_2' || item === 'locality' || item === 'administrative_area_level_2' || item === 'administrative_area_level_1' || item === 'postal_code' || item === 'country')));
+                                        await this.setState({ addressResult: value })
+                                        let address = this.state.addressResult.map((el, index) => {
+                                            return (
+                                                el.long_name
+                                            )
+                                        })
+                                        await this.setLocation(address.toString(), position.coords.latitude, position.coords.longitude, postal_code?.long_name)
                                     });
                                 }).catch((err) => {
                                     console.warn(err)
@@ -211,8 +222,16 @@ class MapScreenGrabPincode extends React.Component {
                 response.json().then(async (json) => {
                     // console.warn(json)
                     let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                    let address_components = json?.results?.[0].address_components
+                    let value = address_components.filter(product => product.types.some(item => (item === 'sublocality_level_2' || item === 'locality' || item === 'administrative_area_level_2' || item === 'administrative_area_level_1' || item === 'postal_code' || item === 'country')));
+                    await this.setState({ addressResult: value })
+                    let address = this.state.addressResult.map((el, index) => {
+                        return (
+                            el.long_name
+                        )
+                    })
                     // alert(JSON.stringify(json?.results?.[1]?.address_components?.find(el => el.types.find(o => o == "political")), null, "  "))
-                    await this.setLocation(json?.results?.[1]?.formatted_address, this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
+                    await this.setLocation(address.toString(), this.state.region.latitude, this.state.region.longitude, postal_code?.long_name)
                     await this.setState({ addressLoading: false, })
                 });
             }).catch(async (err) => {
@@ -359,7 +378,17 @@ class MapScreenGrabPincode extends React.Component {
                                         {this.state.address ?
                                             <>
                                                 <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
-                                                <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14 }}>{this.state.address}</Text>
+                                                <View style={{ flexDirection: "row", width: "90%", alignSelf: "center", flex: 1, flexWrap: "wrap" }}>
+                                                    {
+                                                        this.state.addressResult.map((el, index) => {
+                                                            return (
+                                                                <View style={{ flexDirection: "row", }}>
+                                                                    <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14, marginHorizontal: 2 }}>{(index ? ', ' : '') + el.long_name}</Text>
+                                                                </View>
+                                                            )
+                                                        })
+                                                    }
+                                                </View>
                                             </>
                                             :
                                             <>

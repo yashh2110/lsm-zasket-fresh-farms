@@ -34,7 +34,6 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
     const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
 
     useEffect(() => {
-        // alert(JSON.stringify(categories, null, "      "))
 
         const onReceived = (notification) => {
             console.log("Notification received: ", notification);
@@ -106,6 +105,7 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
     const [addressModalVisible, setAddressModalVisible] = useState(false)
     const [deliveryLocationModalVisible, setDeliveryLocationModalVisible] = useState(false)
     const [isHomeScreenLocationAvailable, setIsHomeScreenLocationAvailable] = useState(false)
+    const [addressResult, setAddressResult] = useState([])
     useEffect(() => {
         initialFunction()
         checkForHomescreenLocationAddress()
@@ -243,13 +243,22 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                     .then((response) => {
                         response.json().then(async (json) => {
                             let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
+                            let address_components = json?.results?.[0].address_components
+                            let value = address_components.filter(product => product.types.some(item => (item === 'sublocality_level_2' || item === 'locality' || item === 'administrative_area_level_2' || item === 'administrative_area_level_1' || item === 'postal_code' || item === 'country')));
+                            await setAddressResult(value)
+                            console.log("addressResultaddressResultaddressResult", addressResult)
+                            let address = addressResult.map((el, index) => {
+                                return (
+                                    el.long_name
+                                )
+                            })
                             addHomeScreenLocation({
-                                addressLine_1: json?.results?.[1]?.formatted_address,
+                                addressLine_1: address.toString(),
                                 pincode: postal_code?.long_name,
                                 lat: position.coords.latitude,
                                 lon: position.coords.longitude
                             })
-                            // await this.setLocation(json?.results?.[1]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                            // await this.setLocation(json?.results?.[2]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
                             isPincodeServiceable(position.coords.latitude, position.coords.longitude, (res, status) => {
                                 if (status) {
                                 } else {

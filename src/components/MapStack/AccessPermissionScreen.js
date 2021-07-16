@@ -101,12 +101,12 @@ const AccessPermissionScreen = ({ navigation, darkMode, setDarkMode, login, addH
                                         response.json().then(async (json) => {
                                             let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
                                             addHomeScreenLocation({
-                                                addressLine_1: json?.results?.[1]?.formatted_address,
+                                                addressLine_1: json?.results?.[2]?.formatted_address,
                                                 pincode: postal_code?.long_name,
                                                 lat: position.coords.latitude,
                                                 lon: position.coords.longitude
                                             })
-                                            // await this.setLocation(json?.results?.[1]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
+                                            // await this.setLocation(json?.results?.[2]?.formatted_address, position.coords.latitude, position.coords.longitude, postal_code?.long_name)
                                         });
                                     }).catch((err) => {
                                         console.warn(err)
