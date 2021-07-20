@@ -180,7 +180,7 @@ class MyMapView extends React.Component {
                                         // console.warn("aaaa", json?.results?.[0]?.formatted_address);
                                         let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
                                         let address_components = json?.results?.[0].address_components
-                                        let value = address_components.filter(product => product.types.some(item => (item === 'sublocality_level_2' || item === 'locality' || item === 'administrative_area_level_2' || item === 'administrative_area_level_1' || item === 'postal_code' || item === 'country')));
+                                        let value = address_components.filter(product => product.types.some(item => (item === 'route' || item === 'sublocality_level_1' || item === 'sublocality_level_2' || item === 'locality' || item === 'administrative_area_level_2' || item === 'administrative_area_level_1' || item === 'postal_code' || item === 'country')));
                                         await this.setState({ addressResult: value })
                                         console.log("addressResultaddressResultaddressResult", addressResult)
                                         let address = this.state.addressResult.map((el, index) => {
@@ -226,7 +226,7 @@ class MyMapView extends React.Component {
                 response.json().then(async (json) => {
                     let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
                     let address_components = json?.results?.[0].address_components
-                    let value = address_components.filter(product => product.types.some(item => (item === 'sublocality_level_2' || item === 'locality' || item === 'administrative_area_level_2' || item === 'administrative_area_level_1' || item === 'postal_code' || item === 'country')));
+                    let value = address_components.filter(product => product.types.some(item => (item === 'route' || item === 'sublocality_level_1' || item === 'sublocality_level_2' || item === 'locality' || item === 'administrative_area_level_2' || item === 'administrative_area_level_1' || item === 'postal_code' || item === 'country')));
                     await this.setState({ addressResult: value })
                     let address = this.state.addressResult.map((el, index) => {
                         return (
@@ -646,7 +646,7 @@ class MyMapView extends React.Component {
                                                         this.state.addressResult.map((el, index) => {
                                                             return (
                                                                 <View style={{ flexDirection: "row", }}>
-                                                                    <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14, marginHorizontal: 2 }}>{(index ? ', ' : '') + el.long_name}</Text>
+                                                                    <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14, }}>{(index ? ', ' : '') + el.long_name}</Text>
                                                                 </View>
                                                             )
                                                         })

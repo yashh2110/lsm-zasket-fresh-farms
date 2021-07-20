@@ -170,7 +170,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                     {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
                     <View style={{ flex: 1, flexDirection: 'row' }}>
                         <View style={{ flex: 1 }}>
-                            <Text style={{ fontWeight: 'bold' }}>Vegetables & Fruits</Text>
+                            <Text style={{ fontWeight: 'bold' }}>Groceries</Text>
                         </View>
                     </View>
                     <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>

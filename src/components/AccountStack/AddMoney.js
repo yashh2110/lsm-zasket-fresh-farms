@@ -78,7 +78,6 @@ const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clear
                     // console.warn(JSON.stringify(options, null, "        "))
                     RazorpayCheckout.open(options).then(async (data) => {
                         // handle success
-                        console.log("aaaaaaaaaaaaaa", JSON.stringify(data, null, "      "))
                         // alert(JSON.stringify(data, null, "      "));
                         // onClearCart()
                         // await AsyncStorage.removeItem('appliedCoupon')
@@ -113,6 +112,7 @@ const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clear
                         }
                         rejectPaymentByAPI(paymentInfo, (res, status) => {
                             if (status) {
+
                                 // alert(JSON.stringify(res))
                                 // navigation.goBack()
                                 Toast.show({

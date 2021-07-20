@@ -1,18 +1,21 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList } from 'react-native';
 import Theme from '../../styles/Theme';
-import { updateCartItemsApi } from '../../actions/cart'
+import { updateCartItemsApi, getBillingDetails } from '../../actions/cart'
 import { connect } from 'react-redux';
 import { Icon } from 'native-base';
 import LottieView from 'lottie-react-native';
 import FeatherIcons from "react-native-vector-icons/Feather"
+import AsyncStorage from '@react-native-community/async-storage';
 
-const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAuthenticated, }) => {
+const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAuthenticated, getOrdersBill, getBillingDetails }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(0)
     const [loadingCount, setLoadingCount] = useState(false)
 
     useEffect(() => {
+        console.log("allll", JSON.stringify(getOrdersBill, null, "      "))
+        // alert(JSON.stringify(getOrdersBill, null, "     "))
         let filteredItems = cartItems.filter(element => element?.id == item?.id);
         if (filteredItems.length == 1) {
             setAddButton(false)
@@ -23,7 +26,44 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
             setCount(0)
             setLoadingCount(false)
         }
+        initialBillingFunction()
+
     }, [cartItems])
+    const initialBillingFunction = async () => {
+        let coupons = await AsyncStorage.getItem('appliedCoupon');
+        let parsedCoupon = await JSON.parse(coupons);
+        let appliedCoupon = await parsedCoupon?.offer?.offerCode
+        let itemCreateRequests = []
+        let validateOrders = {
+            itemCreateRequests,
+            "useWallet": false,
+            "offerCode": appliedCoupon ? appliedCoupon : undefined
+
+        }
+        await cartItems?.forEach((el, index) => {
+            itemCreateRequests.push({
+                "itemId": el?.id,
+                "quantity": el?.count,
+                // "totalPrice": el?.discountedPrice * el?.count,
+                // "unitPrice": el?.discountedPrice
+            })
+        })
+        console.log("allll", JSON.stringify(validateOrders, null, "      "))
+        // alert(JSON.stringify(validateOrders, null, "      "))
+        getBillingDetails(validateOrders, async (res, status) => {
+            if (status) {
+                // alert(JSON.stringify(res.data, null, "      "))
+            } else {
+
+            }
+        })
+    }
+
+    // useEffect(() => {
+    //     alert(JSON.stringify(getOrdersBillingDetails, null, "     "))
+
+
+    // })
 
     const onAddToCart = async () => {
         if (isAuthenticated) {
@@ -31,7 +71,9 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
             updateCartItemsApi(item?.id, 1, (res, status) => {
                 setAddButton(!addButton)
                 setCount(1)
+                // initialBillingFunction()
             })
+
         } else {
             navigation.navigate("AuthRoute", { screen: 'Login' })
         }
@@ -57,6 +99,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
         setLoadingCount(true)
         updateCartItemsApi(item?.id, quantity, (res, status) => {
             // alert(JSON.stringify(res, null, "     "))
+            // initialBillingFunction()
         })
     }
 
@@ -64,8 +107,12 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
         setLoadingCount(true)
         updateCartItemsApi(item?.id, 0, (res, status) => {
             // alert(JSON.stringify(res, null, "     "))
+            // initialBillingFunction()
         })
     }
+
+
+
 
     return (
         <View style={{ flex: 1, width: "90%", alignSelf: 'center', marginVertical: 1.5, }}>
@@ -150,9 +197,9 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                         </TouchableOpacity>
                         {item?.discountedPrice == item?.actualPrice ?
                             undefined :
-                            <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹{item?.actualPrice * item?.count} </Text>
+                            <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹ {item?.actualPrice * item?.count} </Text>
                         }
-                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice * item?.count} </Text>
+                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹ {item?.discountedPrice * item?.count} </Text>
                     </View>
                 </View>
 
@@ -245,11 +292,13 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
 }
 const mapStateToProps = (state) => ({
     cartItems: state.cart.cartItems,
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    getOrdersBillingDetails: state.cart.getOrdersBillingDetails,
+
 })
 
 
-export default connect(mapStateToProps, { updateCartItemsApi })(CardCartScreen)
+export default connect(mapStateToProps, { updateCartItemsApi, getBillingDetails })(CardCartScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {

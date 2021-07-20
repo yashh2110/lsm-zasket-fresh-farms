@@ -1,6 +1,7 @@
-import { CLEAR_CART, GET_CART_ITEMS } from '../actions/types'
+import { CLEAR_CART, GET_CART_ITEMS, GET_BILLING_DETAILS } from '../actions/types'
 const initialState = {
-    cartItems: []
+    cartItems: [],
+    getOrdersBillingDetails: []
 }
 
 const cart = (state = initialState, action) => {
@@ -15,6 +16,11 @@ const cart = (state = initialState, action) => {
             return {
                 ...state,
                 cartItems: []
+            }
+        case GET_BILLING_DETAILS:
+            return {
+                ...state,
+                getOrdersBillingDetails: payload
             }
         default:
             return state

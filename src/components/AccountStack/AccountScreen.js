@@ -54,6 +54,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
         getCreditTransactions((res, status) => {
             if (status) {
                 // alert(res.data[0]?.customer?.creditBalance)
+                console.log("cred", res.data[0])
                 SetCreditBalance(res.data[0]?.customer?.creditBalance)
                 setLoading(false)
 

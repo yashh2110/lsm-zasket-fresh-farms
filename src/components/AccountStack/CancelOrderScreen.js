@@ -12,7 +12,8 @@ import Loader from "../common/Loader";
 import moment from 'moment'
 import { Radio, Toast } from 'native-base';
 import { TextInput } from "react-native";
-import { cancelOrder } from '../../actions/cart'
+import { cancelOrder } from '../../actions/cart';
+import { EventRegister } from 'react-native-event-listeners'
 let cancelReasons = [
     {
         id: 6,
@@ -78,6 +79,7 @@ const CancelOrderScreen = ({ route, navigation, cancelOrder }) => {
                         //     type: "success",
                         //     duration: 5000
                         // })
+                        EventRegister.emit('successWallet', 'it works!!!')
                         navigation.pop(2)
                         setLoading(false)
                     } else {

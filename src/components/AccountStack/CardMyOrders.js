@@ -42,7 +42,7 @@ const CardMyOrders = ({ item, navigation, cartItems, onRepeatOrder, getCartItems
             {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
-                    <Text style={{ fontWeight: 'bold' }}>Vegetables & Fruits </Text>
+                    <Text style={{ fontWeight: 'bold' }}>Groceries </Text>
                 </View>
                 <View>
                     <Text>₹ {item?.offerPrice ? item?.offerPrice : item?.totalPrice} </Text>

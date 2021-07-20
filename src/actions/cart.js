@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage'
 import { Alert } from 'react-native';
 import axiosinstance from '../axios/service/api'
-import { CLEAR_CART, GET_CART_ITEMS } from './types'
+import { CLEAR_CART, GET_CART_ITEMS, GET_BILLING_DETAILS } from './types'
 import * as Sentry from "@sentry/react-native";
 
 export const getCartItemsApi = (callback) => async dispatch => {
@@ -34,6 +34,33 @@ export const getCartItemsApi = (callback) => async dispatch => {
     }
 }
 
+
+export const getBillingDetails = (payLoad, callback) => async dispatch => {
+    // alert(JSON.stringify(payLoad, null, "     "))
+    // return
+    try {
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customer_id = await parsedUserDetails?.customerDetails?.id
+        const res = await axiosinstance.post(`${customer_id}/billing-details`, payLoad)
+        // alert(JSON.stringify(res, null, "     "))
+        dispatch({
+            type: GET_BILLING_DETAILS,
+            payload: res.data
+        })
+        callback(res, true)
+    } catch (err) {
+        // if (__DEV__) {
+        //     alert(JSON.stringify(err.response, null, "     "))
+        // }
+        callback(err, false)
+        dispatch({
+            type: GET_BILLING_DETAILS,
+            payload: []
+        })
+    }
+}
+
 export const updateCartItemsApi = (itemId, quantity, callback) => async dispatch => {
     try {
         let payload = {
@@ -46,6 +73,7 @@ export const updateCartItemsApi = (itemId, quantity, callback) => async dispatch
         // alert(JSON.stringify(userDetails, null, "     "))
         const res = await axiosinstance.post(`/${customerId}/cart-items`, payload)
         dispatch(getCartItemsApi((res, status) => { }))
+        // dispatch(getBillingDetails((res, status) => { }))
         callback(res, true)
     } catch (err) {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
@@ -185,6 +213,7 @@ export const applyOffer = (offerCode, orderAmount, callback) => async dispatch =
             "orderAmount": orderAmount
         }
         const res = await axiosinstance.post(`/v2/apply-offer`, payload)
+        // alert(JSON.stringify(res.data, null, "     "))
         await AsyncStorage.setItem('appliedCoupon', JSON.stringify(res?.data))
         callback(res, true)
     } catch (err) {

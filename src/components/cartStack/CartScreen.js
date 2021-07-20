@@ -14,7 +14,7 @@ import AddressModal from '../common/AddressModal';
 import { getAllUserAddress } from '../../actions/map'
 import FeatherIcons from "react-native-vector-icons/Feather"
 
-const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, allUserAddress, getAllUserAddress, applyOffer, getCartItemsApi, getV2Config }) => {
+const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, allUserAddress, getAllUserAddress, getOrdersBillingDetails, applyOffer, getCartItemsApi, getV2Config }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, setTotalCartValue] = useState(0)
     const [savedValue, setSavedValue] = useState(0)
@@ -26,6 +26,9 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
     const [refresh, setRefresh] = useState(false)
     const [addressModalVisible, setAddressModalVisible] = useState(false)
     const [isCartIssue, setIsCartIssue] = useState(false)
+    const [getOrdersBillings, setGetOrdersBillings] = useState({})
+    const [cartItemIssues, setCartItemIssues] = useState("")
+    const [ordersItems, setOrdersItems] = useState([])
     useEffect(() => {
         console.log("cartItemscartItemscartItems", cartItems)
         if (cartItems.length > 0) {
@@ -38,8 +41,6 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                 return sum + ((item.actualPrice - item.discountedPrice) * item.count);
             }, 0);
             setSavedValue(saved)
-
-
             for (var i = 0; i < cartItems.length; i++) {
                 if (cartItems[i]?.count > cartItems[i]?.maxAllowedQuantity) {
                     setIsCartIssue(true)
@@ -70,6 +71,48 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
         }
 
     }, [cartItems])
+
+    useEffect(() => {
+        console.log("billl", JSON.stringify(getOrdersBillingDetails, null, "     "))
+
+    }, [getOrdersBillingDetails])
+
+
+
+
+
+    // const initialBillingFunction = async () => {
+    //     if (getOrdersBillingDetails.canBeOrdered == false) {
+    //         // alert("askdjfghu")
+    //         setIsCartIssue(true)
+    //         setCartItemIssues(getOrdersBillingDetails.comment)
+
+    //     } else {
+    //         // alert("failllllllllllllll")
+    //         setIsCartIssue(false)
+    //         setCartItemIssues("")
+    //         setGetOrdersBillings(getOrdersBillingDetails)
+    //         setOrdersItems(getOrdersBillingDetails.items)
+    //         console.log("aaaaaaaa", JSON.stringify(getOrdersBillingDetails, null, "     "))
+
+    //     }
+
+    // }
+
+    // useEffect(() => {
+    //     // console.log("getOrdersBillingDetailsgetOrdersBillingDetails", JSON.stringify(getOrdersBillingDetails, null, "     "))
+    //     // alert(JSON.stringify(getOrdersBillingDetails, null, "     "))
+    //     if (getOrdersBillingDetails.canBeOrdered == false) {
+    //         alert("askdjfghu")
+    //         setIsCartIssue(true)
+    //         setCartItemIssues(getOrdersBillingDetails.comment)
+    //     } else {
+    //         setGetOrdersBillings(getOrdersBillingDetails)
+    //         setOrdersItems(getOrdersBillingDetails.items)
+    //         console.log("aaaaaaaa", JSON.stringify(getOrdersBillingDetails, null, "     "))
+    //     }
+
+    // }, [getOrdersBillingDetails])
 
     const initialFunction = () => {
         getCartItemsApi((res, status) => {
@@ -326,35 +369,35 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                             <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} items)</Text></Text>
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                                 <Text style={{ color: '#727272' }}>Item Total</Text>
-                                <Text style={{}}>₹ {(totalCartValue).toFixed(2)} </Text>
+                                <Text style={{}}>₹ {(getOrdersBillingDetails?.discountedPrice).toFixed(2)} </Text>
                             </View>
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ color: '#727272' }}>Delivery Charges</Text>
-                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Free </Text>
+                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{getOrdersBillingDetails?.deliveryCharges > 0 ? getOrdersBillingDetails?.deliveryCharges : "Free"} </Text>
                             </View>
-                            {offerPrice > 0 ?
+                            {getOrdersBillingDetails?.couponDiscount > 0 ?
                                 <>
                                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                         <Text style={{ color: '#35B332' }}>Coupon Discount</Text>
-                                        <Text style={{ color: "#35B332", }}>- ₹{(totalCartValue - offerPrice).toFixed(2)} </Text>
+                                        <Text style={{ color: "#35B332", }}>- ₹ {(getOrdersBillingDetails?.couponDiscount).toFixed(2)} </Text>
                                     </View>
                                 </>
                                 : undefined}
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ fontWeight: 'bold' }}>Total Amount </Text>
-                                <Text style={{ fontWeight: 'bold' }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
+                                <Text style={{ fontWeight: 'bold' }}>₹ {(getOrdersBillingDetails?.offerPrice).toFixed(2)} </Text>
                             </View>
                             {totalCartValue < config?.freeDeliveryMinOrder ?
                                 <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: Theme.Colors.primary, alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#FDEFEF", alignItems: "center" }}>
-                                    <Text style={{ color: Theme.Colors.primary }}>Minimum order of ₹{config?.freeDeliveryMinOrder} is mandatory to proceed </Text>
+                                    <Text style={{ color: Theme.Colors.primary }}>Minimum order of ₹ {config?.freeDeliveryMinOrder} is mandatory to proceed </Text>
                                 </View>
                                 :
                                 savedValue > 0 ?
                                     <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: "#C2E2A9", alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center" }}>
-                                        <Text style={{ color: "#60B11F" }}>😊 You have saved ₹{(savedValue + ((offerPrice > 0) ? (totalCartValue - offerPrice) : 0)).toFixed(2)} in this purchase</Text>
+                                        <Text style={{ color: "#60B11F" }}>😊 You have saved ₹ {(savedValue + ((offerPrice > 0) ? (totalCartValue - offerPrice) : 0)).toFixed(2)} in this purchase</Text>
                                     </View>
                                     : undefined
                             }
@@ -388,18 +431,24 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                     <Text>clearCart</Text>
                 </TouchableOpacity> */}
             </ScrollView>
-            {isCartIssue &&
-                <View style={{ height: 55, width: "100%", backgroundColor: '#FDEFEF', flexDirection: 'row', justifyContent: 'center' }}>
-                    <View style={{ flex: 1, paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>
-                        <FeatherIcons name="info" color={'#E1271E'} size={18} />
-                        <Text style={{ color: "#E1271E", fontWeight: 'bold' }}> Please resolve cart item issues to continue. </Text>
-                    </View>
-                </View>
+            {
+                cartItems.length > 0 ?
+                    getOrdersBillingDetails.canBeOrdered == false ?
+                        <View style={{ width: "100%", backgroundColor: '#FDEFEF', flexDirection: 'row', justifyContent: 'center', alignItems: "center" }}>
+                            <View style={{ paddingLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: "center", width: "80%", marginVertical: 15 }}>
+                                <FeatherIcons name="info" color={'#E1271E'} size={18} />
+                                <Text style={{ color: "#E1271E", fontWeight: 'bold', textAlign: "center" }}> {getOrdersBillingDetails?.comment} </Text>
+                            </View>
+                        </View>
+                        :
+                        undefined
+                    :
+                    undefined
             }
             {cartItems.length > 0 ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice : totalCartValue).toFixed(2)} </Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(getOrdersBillingDetails?.offerPrice).toFixed(2)} </Text>
                         <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
                             <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
                         </TouchableOpacity>
@@ -412,7 +461,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                             :
                             totalCartValue < config?.freeDeliveryMinOrder ?
                                 <View style={{ backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center", padding: 20 }}>
-                                    <Text style={{ color: 'white', fontSize: 14 }}>Add ₹ more to order</Text>
+                                    <Text style={{ color: 'white', fontSize: 14 }}>Add ₹ {config?.freeDeliveryMinOrder - totalCartValue} more to order</Text>
                                 </View>
                                 :
                                 <TouchableOpacity onPress={() => { navigation.navigate('Checkout', { offerPrice: offerPrice, selectedOffer: selectedOffer }) }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
@@ -443,6 +492,8 @@ const mapStateToProps = (state) => ({
     userLocation: state.location,
     config: state.config.config,
     allUserAddress: state.auth.allUserAddress,
+    getOrdersBillingDetails: state.cart.getOrdersBillingDetails,
+
 })
 
 export default connect(mapStateToProps, { clearCart, getAllOffers, applyOffer, getCartItemsApi, getV2Config, getAllUserAddress })(CartScreen)

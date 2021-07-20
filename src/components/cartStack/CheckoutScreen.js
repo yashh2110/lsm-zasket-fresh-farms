@@ -12,7 +12,7 @@ import moment from 'moment'
 import { Radio, Toast, Root, Container, Content } from 'native-base';
 import RazorpayCheckout from 'react-native-razorpay';
 import Modal from 'react-native-modal';
-import { applyOffer, getAvailableOffers, } from '../../actions/cart'
+import { applyOffer, getAvailableOffers, getBillingDetails } from '../../actions/cart'
 import Loader from '../common/Loader';
 import AddressModal from '../common/AddressModal';
 import { AppEventsLogger } from "react-native-fbsdk";
@@ -25,7 +25,7 @@ import { EventRegister } from 'react-native-event-listeners'
 
 
 
-const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allUserAddress, offerDetails, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer, getAvailableOffers, paymentConfirm, rejectPaymentByAPI }) => {
+const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetails, cartItems, getOrdersBillingDetails, allUserAddress, offerDetails, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer, getAvailableOffers, paymentConfirm, rejectPaymentByAPI }) => {
     const scrollViewRef = useRef();
     const [coupon, setCoupon] = useState("")
     const [totalCartValue, setTotalCartValue] = useState(0)
@@ -41,6 +41,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
     const [couponLoading, setCouponLoading] = useState(false)
     const [selectedOffer, setSelectedOffer] = useState({})
     const [offerPrice, setOfferPrice] = useState(0)
+    const [creditOfferPrice, setcreditOfferPrice] = useState(0)
     const [proceedPaymentMethod, setProceedPaymentMethod] = useState(false)
     const [addressModalVisible, setAddressModalVisible] = useState(false)
     const [couponModalVisible, setCouponModalVisible] = useState(false)
@@ -58,8 +59,8 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
     const [disableCheck, setDisableCheck] = useState(true)
     const [buttonHandle, SetButtonHandle] = useState(false)
     const [walletAmountBalance, SetwalletAmountBalance] = useState(0)
-    // const { offerPrice, selectedOffer } = route.params;
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("PREPAID")
+    const [OfferCode, setOfferCode] = useState("")
 
     const totalCartValueRef = useRef(totalCartValue);
     useEffect(() => {
@@ -82,12 +83,33 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
         initialFunction()
     }, [cartItems])
 
+    useEffect(() => {
+        if (getOrdersBillingDetails?.finalPrice == 0) {
+            SetButtonHandle(true)
+        } else {
+            SetButtonHandle(false)
+
+        }
+    }, [getOrdersBillingDetails])
+
+    // useEffect(() => {
+    //     console.log("aaaaaaaaaaaaaaaaaa", JSON.stringify(getOrdersBillingDetails, null, "     "))
+    //     // alert(JSON.stringify(getOrdersBillingDetails, null, "     "))
+
+    // })
+
     const initialFunction = async () => {
         if (cartItems.length > 0) {
             setloadinggg(true)
+            let coupons = await AsyncStorage.getItem('appliedCoupon');
+            let parsedCoupon = await JSON.parse(coupons);
+            let appliedCoupon = await parsedCoupon?.offer?.offerCode
+            initialBillingFunction(walletCheck, appliedCoupon)
             getCustomerDetails(async (res, status) => {
                 if (status) {
                     setWalletCheck(true)
+                    // alert(getOrdersBillingDetails?.creditUsed)
+                    console.log("cu", JSON.stringify(res?.data?.customerDetails, null, "       "))
                     // alert(JSON.stringify(res?.data?.customerDetails, null, "       "))
                     // alert(JSON.stringify(res?.data?.customerDetails?.creditBalance, null, "       "))
                     await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
@@ -97,6 +119,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                         setDisableCheck(false)
 
                     }
+                    SetCreditBalance(res?.data?.customerDetails?.creditBalance)
                     // alert(res?.data?.customerDetails?.creditBalance)
                     let total = cartItems.reduce(function (sum, item) {
                         // alert(JSON.stringify(item, null, "       "))
@@ -104,23 +127,11 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                         setCount(item.count)
                         return sum + (item.discountedPrice * item.count);
                     }, 0);
-                    if (total <= res?.data?.customerDetails?.creditBalance) {
-                        SetwalletAmountBalance(total)
-                    } else {
-                        SetwalletAmountBalance(res?.data?.customerDetails?.creditBalance)
-                    }
-                    SetCreditBalance(res?.data?.customerDetails?.creditBalance)
-
-                    setWalletAmount(res?.data?.customerDetails?.creditBalance)
-                    let totalPayAmount = total - res?.data?.customerDetails?.creditBalance
-                    // alert(totalPayAmount)
-                    setTotalAmountPay(totalPayAmount < 0 ? 0 : totalPayAmount)
-                    // alert(totalAmountPay)
-
-                    if ((totalPayAmount == 0) || Math.sign(totalPayAmount) == -1) {
+                    if (getOrdersBillingDetails?.finalPrice == 0) {
                         SetButtonHandle(true)
-                        // alert("asdjfgbuy")
-                        // setSelectedPaymentMethod("PREPAIDZEROTOTAL")
+                    } else {
+                        SetButtonHandle(false)
+
                     }
                     setloadinggg(false)
                 } else {
@@ -156,6 +167,38 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
             setloadinggg(false)
         }
 
+    }
+
+    const initialBillingFunction = async (wallet, offerCode) => {
+        console.log("walletwallet", wallet)
+        console.log("offeroffer", offerCode)
+        let itemCreateRequests = []
+        let validateOrders = {
+            itemCreateRequests,
+            "useWallet": wallet,
+            "offerCode": offerCode ? offerCode : undefined
+
+        }
+        await cartItems?.forEach((el, index) => {
+            itemCreateRequests.push({
+                "itemId": el?.id,
+                "quantity": el?.count,
+                // "totalPrice": el?.discountedPrice * el?.count,
+                // "unitPrice": el?.discountedPrice
+            })
+        })
+        console.log("allll", JSON.stringify(validateOrders, null, "      "))
+
+        // alert(JSON.stringify(validateOrders, null, "      "))
+        getBillingDetails(validateOrders, async (res, status) => {
+            if (status) {
+                // alert(JSON.stringify(res.data, null, "      "))
+                console.log("aaaaaaaaaaaaaaaaaa", JSON.stringify(getOrdersBillingDetails, null, "     "))
+
+            } else {
+
+            }
+        })
     }
 
 
@@ -324,10 +367,10 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
             "itemCreateRequests": itemCreateRequests,
             "nextDayBuffer": nextDayBuffer,
             "offerId": selectedOffer?.offer?.id > 0 ? selectedOffer?.offer?.id : undefined,
-            "itemTotalValue": totalCartValue,
+            "itemTotalValue": getOrdersBillingDetails?.discountedPrice,
             "couponDiscount": (savedValue + ((offerPrice > 0) ? (totalCartValue - offerPrice) : 0)),
-            "walletAmount": walletAmountBalance,
-            "totalPayableAmount": totalAmountPay,
+            "walletAmount": getOrdersBillingDetails?.creditUsed,
+            "totalPayableAmount": getOrdersBillingDetails?.finalPrice,
             "useWallet": walletCheck ? true : false
             // "slotEndHours": slot?.endHours,
             // "slotStartHours": slot?.startHours,
@@ -340,13 +383,14 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                 ...payload,
                 "paymentMethod": "COD"
             }
-
+            // console.log("addOrderaddOrderaddOrder", codPayload)
             // setLoading(false)
-            // alert(JSON.stringify(codPayload, null, "     "))
+            // // alert(JSON.stringify(codPayload, null, "     "))
             // return
 
             addOrder(codPayload, async (res, status) => {
                 console.log("addOrderaddOrderaddOrder", codPayload)
+                // return
                 console.warn(JSON.stringify(res, null, "     "))
                 setLoading(false)
                 if (status) {
@@ -359,9 +403,9 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                     EventRegister.emit('successWallet', 'it works!!!')
 
                 } else {
-                    if (__DEV__) {
-                        alert(JSON.stringify(res?.response))
-                    }
+                    // if (__DEV__) {
+                    //     alert(JSON.stringify(res?.response))
+                    // }
                     if (res?.response?.data?.description) {
                         Toast.show({
                             text: res?.response?.data?.description,
@@ -378,18 +422,19 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                 ...payload,
                 "paymentMethod": "PREPAID"
             }
-
-            // setLoading(false)
+            // console.log("addOrderaddOrderaddOrder", prepaidPayload)
+            setLoading(false)
             // console.warn("buttonHandlebuttonHandlebuttonHandle", buttonHandle)
             // alert(JSON.stringify(prepaidPayload, null, "     "))
+            // alert(buttonHandle)
             // return
 
             addOrder(prepaidPayload, async (res, status) => {
                 setLoading(false)
                 if (status) {
-                    // console.log("aaaaaaaaaaa", JSON.stringify(res.data, null, "     "))
+                    console.log("aaaaaaaaaaa", JSON.stringify(res.data, null, "     "))
                     // alert(JSON.stringify(res.data.paymentOrderId, null, "     "))
-                    // return
+
                     // return
 
                     if (res?.data?.canBeOrdered == true) {
@@ -404,9 +449,9 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                                 EventRegister.emit('successWallet', 'it works!!!')
 
                             } else {
-                                if (__DEV__) {
-                                    alert(JSON.stringify(res?.response))
-                                }
+                                // if (__DEV__) {
+                                //     alert(JSON.stringify(res?.response))
+                                // }
                                 if (res?.response?.data?.description) {
                                     Toast.show({
                                         text: res?.response?.data?.description,
@@ -564,7 +609,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
         let couponValue = option ? option : coupon
         let cartValue = optionalTotalCartValue ? optionalTotalCartValue : totalCartValue
         // console.warn(couponValue + "         " + cartValue)
-        applyOffer(couponValue, cartValue, (res, status) => {
+        applyOffer(couponValue, cartValue, async (res, status) => {
             if (status) {
                 setCouponLoading(false)
                 // alert(JSON.stringify(res?.data, null, "     "))
@@ -577,14 +622,15 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                     setOfferPrice(res?.data?.offerPrice)
                     // alert(JSON.stringify(res?.data, null, "     "))
                     setSelectedOffer(res?.data)
-                    // Toast.show({
-                    //     text: res?.data?.comments,
-                    //     buttonText: "Okay",
-                    //     type: "success",
-                    //     duration: 3000
-                    // })
                     setCouponModalVisible(false)
                     setCouponLoading(false)
+                    let coupons = await AsyncStorage.getItem('appliedCoupon');
+                    let parsedCoupon = await JSON.parse(coupons);
+                    let appliedCoupon = await parsedCoupon?.offer?.offerCode
+                    setOfferCode(appliedCoupon)
+                    initialBillingFunction(walletCheck, appliedCoupon)
+
+
                 } else {
                     // alert(res?.data?.comments)
                     removeOffer()
@@ -616,71 +662,51 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
     }
     const removeOffer = async () => {
         setOfferPrice(0)
+        setOfferCode("")
         setCoupon("")
         setSelectedOffer([])
         await AsyncStorage.removeItem('appliedCoupon')
+        initialBillingFunction(walletCheck, "")
+
     }
+
+
     const onPressCheckbox = async () => {
-        // alert("aaaaaaaaaaaaaaa")
-        // setWalletCheck(!walletCheck)
-        // alert(walletCheck)
-        // return
+        console.warn("OfferCodeOfferCode", OfferCode)
         if (walletCheck == true) {
-            console.warn("2222222222")
-            SetCreditBalance(0)
+            // let coupons = await AsyncStorage.getItem('appliedCoupon');
+            // let parsedCoupon = await JSON.parse(coupons);
+            // let appliedCoupon = await parsedCoupon?.offer?.offerCode
+            await initialBillingFunction(false, OfferCode)
             setWalletCheck(false)
-            let total = cartItems.reduce(function (sum, item) {
-                // alert(JSON.stringify(item, null, "       "))
-                setDiscountedPrice(item.discountedPrice)
-                setCount(item.count)
-                return sum + (item.discountedPrice * item.count);
-            }, 0);
-            let totalPayAmount = total
-            setTotalAmountPay(totalPayAmount < 0 ? 0 : totalPayAmount)
-            // if ((totalPayAmount == 0) || Math.sign(totalPayAmount) == -1) {
-            SetButtonHandle(false)
-            // alert("asdjfgbuy")
-            // setSelectedPaymentMethod("PREPAIDZEROTOTAL")
-            // }
-            // if (total <= walletAmount) {
-            //     SetwalletAmountBalance(total)
+            // if (getOrdersBillingDetails?.finalPrice == 0) {
+            //     SetButtonHandle(true)
             // } else {
-            SetwalletAmountBalance(0)
+            //     SetButtonHandle(false)
+
             // }
 
         } else {
-            // alert(walletAmount)
-            console.warn("11111111")
-            SetCreditBalance(walletAmount)
+            // let coupons = await AsyncStorage.getItem('appliedCoupon');
+            // let parsedCoupon = await JSON.parse(coupons);
+            // let appliedCoupon = await parsedCoupon?.offer?.offerCode
+            await initialBillingFunction(true, OfferCode)
             setWalletCheck(true)
-            let total = cartItems.reduce(function (sum, item) {
-                // alert(JSON.stringify(item, null, "       "))
-                setDiscountedPrice(item.discountedPrice)
-                setCount(item.count)
-                return sum + (item.discountedPrice * item.count);
-            }, 0);
-            let totalPayAmount = total - walletAmount
-            setTotalAmountPay(totalPayAmount < 0 ? 0 : totalPayAmount)
-            if ((totalPayAmount == 0) || Math.sign(totalPayAmount) == -1) {
-                SetButtonHandle(true)
-                // alert("asdjfgbuy")
-                // setSelectedPaymentMethod("PREPAIDZEROTOTAL")
-            } else {
-                SetButtonHandle(false)
-            }
-            if (total <= walletAmount) {
-                SetwalletAmountBalance(total)
-            } else {
-                SetwalletAmountBalance(walletAmount)
-            }
+            // if (getOrdersBillingDetails?.finalPrice == 0) {
+            //     SetButtonHandle(true)
+            // } else {
+            //     SetButtonHandle(false)
+
+            // }
 
         }
-
     }
     return (
         <>
             <View style={{ flex: 1, backgroundColor: 'white' }}>
+                {/* <Text>{getOrdersBillingDetails?.finalPrice}</Text> */}
                 <CustomHeader navigation={navigation} title={"Checkout"} showSearch={false} />
+                {/* <Text>{getOrdersBillingDetails?.discountedPrice}</Text> */}
                 <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false}>
                     {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")} </Text> */}
 
@@ -978,31 +1004,31 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                         <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} items)</Text></Text>
                         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                             <Text style={{ color: '#727272' }}>Item Total</Text>
-                            <Text style={{}}>₹ {(totalCartValue)?.toFixed(2)} </Text>
+                            <Text style={{}}>₹ {(getOrdersBillingDetails?.discountedPrice)?.toFixed(2)} </Text>
                         </View>
                         <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                             <Text style={{ color: '#727272' }}>Delivery Charges</Text>
-                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Free </Text>
+                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{getOrdersBillingDetails?.deliveryCharges > 0 ? getOrdersBillingDetails?.deliveryCharges : "Free"} </Text>
                         </View>
-                        {offerPrice > 0 ?
+                        {getOrdersBillingDetails?.couponDiscount > 0 ?
                             <>
                                 <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                     <Text style={{ color: '#35B332' }}>Coupon Discount</Text>
-                                    <Text style={{ color: "#35B332", }}>- ₹{(totalCartValue - offerPrice).toFixed(2)} </Text>
+                                    <Text style={{ color: "#35B332", }}>- ₹ {(getOrdersBillingDetails?.couponDiscount).toFixed(2)} </Text>
                                 </View>
                             </>
                             : undefined}
                         <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 5 }} />
                         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                             <Text style={{ color: '#727272' }}>Zasket wallet</Text>
-                            <Text style={{}}>₹ {(walletAmountBalance)?.toFixed(2)} </Text>
+                            <Text style={{}}>₹ {(getOrdersBillingDetails?.creditUsed)?.toFixed(2)} </Text>
                         </View>
                         <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                             <Text style={{ fontWeight: 'bold' }}>Total Amount </Text>
-                            <Text style={{ fontWeight: 'bold' }}>₹ {(offerPrice > 0 ? offerPrice - creditBalance : totalAmountPay).toFixed(2)} </Text>
+                            <Text style={{ fontWeight: 'bold' }}>₹ {(getOrdersBillingDetails?.finalPrice).toFixed(2)} </Text>
                         </View>
                         {savedValue > 0 ?
                             <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: "#C2E2A9", alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center" }}>
@@ -1017,7 +1043,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, cartItems, allU
                     cartItems?.length > 0 ?
                         <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                             <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                                <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(offerPrice > 0 ? offerPrice - creditBalance : totalAmountPay).toFixed(2)} </Text>
+                                <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(getOrdersBillingDetails?.finalPrice).toFixed(2)} </Text>
                                 <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
                                     <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
                                 </TouchableOpacity>
@@ -1301,9 +1327,11 @@ const mapStateToProps = (state) => ({
     config: state.config.config,
     allUserAddress: state.auth.allUserAddress,
     userLocation: state.location,
+    getOrdersBillingDetails: state.cart.getOrdersBillingDetails,
+
 })
 
-export default connect(mapStateToProps, { getCustomerDetails, clearCart, getV2DeliverySlots, addOrder, applyOffer, getAvailableOffers, paymentConfirm, rejectPaymentByAPI })(CheckoutScreen)
+export default connect(mapStateToProps, { getBillingDetails, getCustomerDetails, clearCart, getV2DeliverySlots, addOrder, applyOffer, getAvailableOffers, paymentConfirm, rejectPaymentByAPI })(CheckoutScreen)
 
 const styles = StyleSheet.create({
     button: {

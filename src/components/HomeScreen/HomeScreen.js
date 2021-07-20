@@ -5,6 +5,7 @@ import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
 import Theme from '../../styles/Theme';
 import { getAllCategories, isPincodeServiceable, getCustomerDetails, getAllBanners, addCustomerDeviceDetails } from '../../actions/home'
+import { getBillingDetails } from '../../actions/cart'
 import { onLogout } from '../../actions/auth'
 import { connect } from 'react-redux';
 import CategorySectionListItem from './CategorySectionListItem';
@@ -30,7 +31,7 @@ import Modal from 'react-native-modal';
 import SetDeliveryLocationModal from '../common/SetDeliveryLocationModal'
 import { EventRegister } from 'react-native-event-listeners'
 
-const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
+const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
     const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
 
     useEffect(() => {
@@ -148,6 +149,41 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
         }
     }, [isAuthenticated])
 
+    useEffect(() => {
+
+        // initialBillingFunction()
+    }, [])
+
+    const initialBillingFunction = async () => {
+        let itemCreateRequests = []
+        let validateOrders = {
+            itemCreateRequests,
+            "useWallet": false
+
+        }
+        await cartItems?.forEach((el, index) => {
+            itemCreateRequests.push({
+                "itemId": el?.id,
+                "quantity": el?.count,
+                // "totalPrice": el?.discountedPrice * el?.count,
+                // "unitPrice": el?.discountedPrice
+            })
+        })
+        // console.log("allll", JSON.stringify(validateOrder, null, "      "))
+        // alert(JSON.stringify(validateOrder, null, "      "))
+        getBillingDetails(validateOrders, async (res, status) => {
+            if (status) {
+                // alert(JSON.stringify(res.data, null, "      "))
+                setLoading(false)
+                setRefresh(false)
+            } else {
+                setRefresh(false)
+                setLoading(false)
+            }
+        })
+    }
+
+
     const initialFunction = () => {
         getAllCategories((res, status) => {
             if (status) {
@@ -244,9 +280,9 @@ const HomeScreen = ({ homeScreenLocation, addHomeScreenLocation, getAllCategorie
                         response.json().then(async (json) => {
                             let postal_code = json?.results?.[0]?.address_components?.find(o => JSON.stringify(o.types) == JSON.stringify(["postal_code"]));
                             let address_components = json?.results?.[0].address_components
-                            let value = address_components.filter(product => product.types.some(item => (item === 'sublocality_level_2' || item === 'locality' || item === 'administrative_area_level_2' || item === 'administrative_area_level_1' || item === 'postal_code' || item === 'country')));
+                            let value = address_components.filter(product => product.types.some(item => (item === 'route' || item === 'sublocality_level_1' || item === 'sublocality_level_2' || item === 'locality' || item === 'administrative_area_level_2' || item === 'administrative_area_level_1' || item === 'postal_code' || item === 'country')));
                             await setAddressResult(value)
-                            console.log("addressResultaddressResultaddressResult", addressResult)
+                            // console.log("addressResultaddressResultaddressResult", addressResult)
                             let address = addressResult.map((el, index) => {
                                 return (
                                     el.long_name
@@ -570,10 +606,11 @@ const mapStateToProps = (state) => ({
     homeScreenLocation: state.homeScreenLocation,
     isAuthenticated: state.auth.isAuthenticated,
     allUserAddress: state.auth.allUserAddress,
+    cartItems: state.cart.cartItems,
 })
 
 
-export default connect(mapStateToProps, { getAllCategories, getAllUserAddress, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation, getCartItemsApi, addCustomerDeviceDetails })(HomeScreen)
+export default connect(mapStateToProps, { getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation, getCartItemsApi, addCustomerDeviceDetails })(HomeScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {
