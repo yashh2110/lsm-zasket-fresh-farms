@@ -406,7 +406,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                 {/* <Text Text style={{ marginBottom: 16 }}> {JSON.stringify(item, null, "       ")} </Text> */}
             </ScrollView >
             {item?.paymentMethod == "COD" ?
-                item?.orderState == "DELIVERED" || item?.orderState == "CANCELLED" || item?.orderState == "RETURNED" || item?.paymentState == "PAID" || item?.paymentState == "REFUNDED" ? null :
+                item?.orderState == "DELIVERED" || item?.orderState == "CANCELLED" || item?.orderState == "RETURNED" || item?.paymentState == "PAID" || item?.paymentState == "REFUNDED" || item?.finalPrice == 0 ? null :
                     <View View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'space-between', }}>
                         <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
                             <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {item?.finalPrice ? item?.finalPrice : 0} </Text>
@@ -414,11 +414,13 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                                 <Text style={{ color: "#2D87C9" }}>Total Amount </Text>
                             </View>
                         </View>
+
                         <View style={{ height: 55, width: 150, backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                             <TouchableOpacity onPress={() => { onPressPayNow() }} style={{ flex: 1, backgroundColor: Theme.Colors.primary, margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
                                 <Text style={{ color: 'white', fontSize: 17 }}>Pay Now <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>
                             </TouchableOpacity>
                         </View>
+
                     </View>
                 : null
             }
