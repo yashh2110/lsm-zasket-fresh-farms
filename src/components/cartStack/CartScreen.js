@@ -30,7 +30,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
     const [cartItemIssues, setCartItemIssues] = useState("")
     const [ordersItems, setOrdersItems] = useState([])
     useEffect(() => {
-        console.log("cartItemscartItemscartItems", cartItems)
+        console.log("cartItemscartItemscartItems", JSON.stringify(cartItems, null, "     "))
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
                 return sum + (item.discountedPrice * item.count);
@@ -226,6 +226,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
             <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false} refreshControl={
                 <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
             }>
+                {/* <Text>{getOrdersBillingDetails?.discountedPrice}</Text> */}
                 {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(userLocation, null, "                   ")} </Text> */}
                 {cartItems.length > 0 ?
                     <>
@@ -369,35 +370,36 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                             <Text style={{ fontSize: 15 }}><Text style={{ fontWeight: 'bold' }}>Bill Details</Text> <Text style={{ color: '#727272', fontSize: 14, }}>({cartItems?.length} items)</Text></Text>
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                                 <Text style={{ color: '#727272' }}>Item Total</Text>
-                                <Text style={{}}>₹ {(getOrdersBillingDetails?.discountedPrice).toFixed(2)} </Text>
+                                <Text style={{}}>₹ {(getOrdersBillingDetails?.discountedPrice ? getOrdersBillingDetails?.discountedPrice : 0).toFixed(2)} </Text>
                             </View>
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ color: '#727272' }}>Delivery Charges</Text>
                                 <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{getOrdersBillingDetails?.deliveryCharges > 0 ? getOrdersBillingDetails?.deliveryCharges : "Free"} </Text>
                             </View>
-                            {getOrdersBillingDetails?.couponDiscount > 0 ?
+                            {/* {getOrdersBillingDetails?.offer?.displayName ?
                                 <>
                                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                         <Text style={{ color: '#35B332' }}>Coupon Discount</Text>
-                                        <Text style={{ color: "#35B332", }}>- ₹ {(getOrdersBillingDetails?.couponDiscount).toFixed(2)} </Text>
+                                        <Text style={{ color: "#35B332", }}>- ₹ {(getOrdersBillingDetails?.couponDiscount ? getOrdersBillingDetails?.couponDiscount : 0).toFixed(2)} </Text>
                                     </View>
                                 </>
-                                : undefined}
+                                : undefined} */}
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ fontWeight: 'bold' }}>Total Amount </Text>
-                                <Text style={{ fontWeight: 'bold' }}>₹ {(getOrdersBillingDetails?.offerPrice).toFixed(2)} </Text>
+                                <Text style={{ fontWeight: 'bold' }}>₹ {(getOrdersBillingDetails?.offerPrice ? getOrdersBillingDetails?.offerPrice : 0).toFixed(2)} </Text>
                             </View>
-                            {totalCartValue < config?.freeDeliveryMinOrder ?
-                                <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: Theme.Colors.primary, alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#FDEFEF", alignItems: "center" }}>
-                                    <Text style={{ color: Theme.Colors.primary }}>Minimum order of ₹ {config?.freeDeliveryMinOrder} is mandatory to proceed </Text>
-                                </View>
-                                :
-                                savedValue > 0 ?
-                                    <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: "#C2E2A9", alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center" }}>
-                                        <Text style={{ color: "#60B11F" }}>😊 You have saved ₹ {(savedValue + ((offerPrice > 0) ? (totalCartValue - offerPrice) : 0)).toFixed(2)} in this purchase</Text>
+                            {
+                                (getOrdersBillingDetails.canBeOrdered == true && getOrdersBillingDetails.comment) ?
+                                    // <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: "#C2E2A9", alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center", marginVertical: 25 }}>
+                                    //     <Text style={{ color: "#60B11F" }}>😊 {getOrdersBillingDetails?.comment}jkdsfbskjdfgbklsdjfgbklsadjfgbklsadjfgblksdjfgbklsdjbgskjldfbgkljsdfbkgljsdfbkgljsfdbgkljsdfbkljgbsdfkljgbsdklfjgbskldfj</Text>
+                                    // </View>
+                                    <View style={{ width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: "#C2E2A9", alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center", marginVertical: 25 }}>
+                                        <View style={{ paddingLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: "center", width: "90%", marginVertical: 15 }}>
+                                            <Text style={{ color: "#60B11F", textAlign: "center" }}>😊 {getOrdersBillingDetails?.comment} </Text>
+                                        </View>
                                     </View>
                                     : undefined
                             }
@@ -433,9 +435,9 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
             </ScrollView>
             {
                 cartItems.length > 0 ?
-                    getOrdersBillingDetails.canBeOrdered == false ?
+                    (getOrdersBillingDetails.canBeOrdered == false && getOrdersBillingDetails.comment) ?
                         <View style={{ width: "100%", backgroundColor: '#FDEFEF', flexDirection: 'row', justifyContent: 'center', alignItems: "center" }}>
-                            <View style={{ paddingLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: "center", width: "80%", marginVertical: 15 }}>
+                            <View style={{ paddingLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: "center", width: "90%", marginVertical: 15 }}>
                                 <FeatherIcons name="info" color={'#E1271E'} size={18} />
                                 <Text style={{ color: "#E1271E", fontWeight: 'bold', textAlign: "center" }}> {getOrdersBillingDetails?.comment} </Text>
                             </View>
@@ -448,13 +450,14 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
             {cartItems.length > 0 ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(getOrdersBillingDetails?.offerPrice).toFixed(2)} </Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(getOrdersBillingDetails?.offerPrice ? getOrdersBillingDetails?.offerPrice : 0).toFixed(2)} </Text>
                         <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
                             <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
                         </TouchableOpacity>
                     </View>
                     {userLocation?.lat ?
-                        isCartIssue ?
+                        // false
+                        (getOrdersBillingDetails.canBeOrdered == false && getOrdersBillingDetails.comment) ?
                             <View style={{ flex: 1.2, backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
                                 <Text style={{ color: 'white', fontSize: 14 }}>Continue</Text>
                             </View>

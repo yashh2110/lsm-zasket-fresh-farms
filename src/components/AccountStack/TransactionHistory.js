@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, Image, Linking, FlatList } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, Image, Linking, FlatList, RefreshControl, ScrollView } from 'react-native';
 import { Icon, Button } from 'native-base'
 import Modal from 'react-native-modal';
 import Theme from "../../styles/Theme";
-import { ScrollView } from "react-native-gesture-handler";
+// import { ScrollView } from "react-native-gesture-handler";
 import { connect } from 'react-redux';
 import { ActivityIndicator } from "react-native";
 import CustomHeader from "../common/CustomHeader";
@@ -12,9 +12,10 @@ import moment from 'moment'
 import Loader from '../common/Loader';
 
 const TransactionHistory = ({ route, navigation }) => {
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [transactionsHistorys, setTransactionsHistory] = useState([])
     const { transactionsHistory } = route?.params;
+    const [refresh, setRefresh] = useState(false)
 
     useEffect(() => {
         setLoading(true)
@@ -26,10 +27,16 @@ const TransactionHistory = ({ route, navigation }) => {
 
     const initialFunction = async () => {
         setLoading(true)
-
         setTransactionsHistory(transactionsHistory)
         setLoading(false)
+        setRefresh(false)
 
+    }
+
+    const onRefresh = () => {
+        setRefresh(true)
+        setLoading(true)
+        initialFunction()
     }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -56,7 +63,9 @@ const TransactionHistory = ({ route, navigation }) => {
                     />
                 </TouchableOpacity> */}
             </View>
-            <View style={{ flex: 1, backgroundColor: '#f4f4f4' }} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} refreshControl={
+                <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+            }>
                 <View style={{ flex: 1, backgroundColor: 'white', }} showsVerticalScrollIndicator={false}>
                     <View style={{ backgroundColor: '#f4f4f4', justifyContent: "center", alignItems: "center", marginTop: 5, padding: 5 }}>
                     </View>
@@ -67,34 +76,34 @@ const TransactionHistory = ({ route, navigation }) => {
                                 <View style={{ marginTop: "3%" }}>
                                     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                         <View style={{ width: '80%', }}>
-                                            <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 14.5 }}>{item.heading}</Text>
-                                            <Text style={{ color: "#909090", fontSize: 12.5 }}>{item.subHeading}</Text>
+                                            <Text style={{ fontWeight: "bold", color: "#000000", fontSize: 14.5 }}>{item.heading} </Text>
+                                            <Text style={{ color: "#909090", fontSize: 12.5 }}>{item.subHeading} </Text>
                                         </View>
                                         <View style={{ alignItems: "center", justifyContent: "flex-end" }}>
                                             {
                                                 item.transactionType == "CREDIT" ?
                                                     <>
-                                                        <Text style={{ color: "#49c32c", fontSize: 12.5 }}>+ {item.transactionAmount}</Text>
+                                                        <Text style={{ color: "#49c32c", fontSize: 12.5 }}>+ {item.transactionAmount} </Text>
 
                                                     </>
                                                     :
-                                                    <Text style={{ color: "#f78e24", fontSize: 12.5 }}>- {item.transactionAmount}</Text>
+                                                    <Text style={{ color: "#f78e24", fontSize: 12.5 }}>- {item.transactionAmount} </Text>
 
                                             }
                                         </View>
                                     </View>
                                     <View style={{ flexDirection: "row", marginTop: 3 }}>
                                         <View style={{ flexDirection: "row", width: ("44%"), justifyContent: "space-around", marginLeft: -5, }}>
-                                            <Text style={{ color: "#909090", fontSize: 12.5 }}>{moment(item.createdAt).format("DD MMM YYYY")}</Text>
+                                            <Text style={{ color: "#909090", fontSize: 12.5 }}>{moment(item.createdAt).format("DD MMM YYYY")} </Text>
                                             <View style={{ height: 6, width: 6, borderRadius: 3, backgroundColor: "#c2c2c2", alignSelf: "center" }}></View>
-                                            <Text style={{ color: "#909090", fontSize: 12.5 }}>{moment(item.createdAt).format("LT")}</Text>
+                                            <Text style={{ color: "#909090", fontSize: 12.5 }}>{moment(item.createdAt).format("LT")} </Text>
                                         </View>
                                         {
                                             (item.customerCredit.isLifeTimeValidity == false && item.customerCredit.isExpired == false) &&
                                             <>
                                                 <View style={{ flexDirection: "row", width: ("45%"), justifyContent: "space-around" }}>
                                                     <View style={{ height: 6, width: 6, borderRadius: 3, backgroundColor: "#c2c2c2", alignSelf: "center" }}></View>
-                                                    <Text style={{ color: "#e1171e", fontSize: 12.5 }}>Expires on {moment(item.customerCredit.expiredAt).format("DD MMM YYYY")}</Text>
+                                                    <Text style={{ color: "#e1171e", fontSize: 12.5 }}>Expires on {moment(item.customerCredit.expiredAt).format("DD MMM YYYY")} </Text>
                                                 </View>
 
                                             </>
@@ -115,7 +124,7 @@ const TransactionHistory = ({ route, navigation }) => {
 
 
                 </View>
-            </View>
+            </ScrollView>
             {loading ?
                 <Loader /> : undefined}
         </View>

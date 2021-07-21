@@ -325,8 +325,8 @@ class AutoCompleteLocationScreen extends React.Component {
                                                 <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#ffffff' }} />
                                             </View>
                                             <View style={{ flex: 1, justifyContent: 'center' }}>
-                                                <Text style={{ fontSize: 14, color: '#ffffff', fontWeight: 'bold' }}>Unable to get location</Text>
-                                                <Text style={{ fontSize: 12, color: "#ffffff" }}>Turning on Location ensures accurate and hassle-free delivery</Text>
+                                                <Text style={{ fontSize: 14, color: '#ffffff', fontWeight: 'bold' }}>Unable to get location </Text>
+                                                <Text style={{ fontSize: 12, color: "#ffffff" }}>Turning on Location ensures accurate and hassle-free delivery </Text>
                                             </View>
                                             <TouchableOpacity onPress={() => this.onPressTurnOn()} style={{ height: 30, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', margin: 10, borderRadius: 5 }}>
                                                 <Text style={{ fontSize: 14, color: '#6B98DE', marginHorizontal: 10, fontWeight: 'bold' }}>TURN ON</Text>
@@ -345,7 +345,7 @@ class AutoCompleteLocationScreen extends React.Component {
                                             />
                                         </View>
                                         <View style={{ justifyContent: 'center', }}>
-                                            <Text style={{ fontSize: 18, color: "#e1171e", fontWeight: "bold" }}>Use Current Location</Text>
+                                            <Text style={{ fontSize: 18, color: "#e1171e", fontWeight: "bold" }}>Use Current Location </Text>
                                         </View>
                                     </TouchableOpacity>
                                 }
@@ -355,7 +355,7 @@ class AutoCompleteLocationScreen extends React.Component {
                                         {this.state.savedAddress?.length > 0 ?
                                             <>
 
-                                                <Text style={{ fontWeight: 'bold', marginLeft: 8, fontSize: 16, marginBottom: 15, marginTop: 25 }}>Saved Address</Text>
+                                                <Text style={{ fontWeight: 'bold', marginLeft: 8, fontSize: 16, marginBottom: 15, marginTop: 25 }}>Saved Address </Text>
                                             </>
                                             : undefined}
                                         <FlatList
@@ -420,7 +420,7 @@ class AutoCompleteLocationScreen extends React.Component {
                                                             {
                                                                 item?.houseNo ?
                                                                     <>
-                                                                        <Text style={{ color: "#909090", fontSize: 13, marginRight: 5 }}>{item?.houseNo}</Text>
+                                                                        <Text style={{ color: "#909090", fontSize: 13, marginRight: 5 }}>{item?.houseNo} </Text>
                                                                     </>
                                                                     :
                                                                     undefined
@@ -429,7 +429,7 @@ class AutoCompleteLocationScreen extends React.Component {
                                                             {
                                                                 item?.landmark ?
                                                                     <>
-                                                                        <Text style={{ color: "#909090", fontSize: 13, }}>{item?.landmark}</Text>
+                                                                        <Text style={{ color: "#909090", fontSize: 13, }}>{item?.landmark} </Text>
                                                                     </>
                                                                     :
                                                                     undefined

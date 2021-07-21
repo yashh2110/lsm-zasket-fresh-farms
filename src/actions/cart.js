@@ -9,12 +9,16 @@ export const getCartItemsApi = (callback) => async dispatch => {
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
-        const res = await axiosinstance.get(`/${customerId}/cart-items`)
+        const res = await axiosinstance.get(`/v2/${customerId}/cart-items`)
+        // alert(JSON.stringify(res.data, null, "     "))
         let newArray = []
         res?.data?.forEach((el, index) => {
             newArray.push({
                 ...el.item,
-                count: el.quantity
+                count: el.quantity,
+                comment: el.comment,
+                valid: el.valid
+
             })
         })
         dispatch({
@@ -37,6 +41,7 @@ export const getCartItemsApi = (callback) => async dispatch => {
 
 export const getBillingDetails = (payLoad, callback) => async dispatch => {
     // alert(JSON.stringify(payLoad, null, "     "))
+    console.log("payyyyyyyyyyyy", JSON.stringify(payLoad, null, "     "))
     // return
     try {
         let userDetails = await AsyncStorage.getItem('userDetails');

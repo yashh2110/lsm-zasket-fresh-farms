@@ -633,31 +633,31 @@ class MyMapView extends React.Component {
                                 </View> */}
                                 {this.state.addressLoading ?
                                     <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: -125, width: 345, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -55, marginBottom: -28 }}>
-                                        <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 13, letterSpacing: 0.2 }}>Selected location</Text>
-                                        <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating...</Text>
+                                        <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 13, letterSpacing: 0.2 }}>Selected location </Text>
+                                        <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating... </Text>
                                     </View>
                                     :
                                     <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: -125, width: 345, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -55, marginBottom: -28 }}>
                                         {this.state.address ?
                                             <>
-                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 13, letterSpacing: 0.2 }}>Selected location</Text>
+                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 13, letterSpacing: 0.2 }}>Selected location </Text>
                                                 <View style={{ flexDirection: "row", width: "90%", alignSelf: "center", flex: 1, flexWrap: "wrap" }}>
                                                     {
                                                         this.state.addressResult.map((el, index) => {
                                                             return (
                                                                 <View style={{ flexDirection: "row", }}>
-                                                                    <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14, }}>{(index ? ', ' : '') + el.long_name}</Text>
+                                                                    <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14, }}>{(index ? ', ' : '') + el.long_name} </Text>
                                                                 </View>
                                                             )
                                                         })
                                                     }
                                                 </View>
-                                                {/* <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14 }}>{this.state.address}</Text> */}
+                                                {/* <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14 }}>{this.state.address} </Text> */}
                                             </>
                                             :
                                             <>
-                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 13, letterSpacing: 0.2 }}>Selected location</Text>
-                                                <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating...</Text>
+                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 13, letterSpacing: 0.2 }}>Selected location </Text>
+                                                <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating... </Text>
                                             </>
                                         }
                                     </View>
@@ -826,7 +826,7 @@ class MyMapView extends React.Component {
                                             <Text style={{ color: "#727272", fontSize: 12 }}>Phone Number</Text>
                                             <View style={{ borderBottomColor: '#D8D8D8', flexDirection: 'row', borderBottomWidth: 1 }}>
                                                 <View style={{ justifyContent: 'center' }}>
-                                                    <Text style={{ fontSize: 16 }}>+91</Text>
+                                                    <Text style={{ fontSize: 16 }}>+91 </Text>
                                                 </View>
                                                 <View style={{ backgroundColor: "grey", width: 0.5, margin: 13 }} />
                                                 <View style={{ flex: 1 }}>
@@ -864,7 +864,7 @@ class MyMapView extends React.Component {
                                                 : undefined}
                                         </View>
                                         <View style={{ marginTop: 8 }}>
-                                            <Text style={{ color: "#727272", fontSize: 12, }}>House No / Flat No / Floor /Building</Text>
+                                            <Text style={{ color: "#727272", fontSize: 12, }}>House No / Flat No / Floor /Building </Text>
                                             <TextInput
                                                 style={{ height: 40, borderColor: '#D8D8D8', borderBottomWidth: 1, color: "black", fontWeight: "bold" }}
                                                 onChangeText={text => this.setState({
@@ -925,7 +925,7 @@ class MyMapView extends React.Component {
                                     />
                                 </View> */}
                                     <View style={{ marginTop: 10 }}>
-                                        <Text style={{ color: "#727272", fontSize: 14, fontWeight: "bold" }}>Save as</Text>
+                                        <Text style={{ color: "#727272", fontSize: 14, fontWeight: "bold" }}>Save as </Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
                                         <CheckBox
@@ -968,11 +968,11 @@ class MyMapView extends React.Component {
                         <View style={{ flex: 1, justifyContent: "center", marginBottom: 10 }}>
                             {this.state.mode == "EDIT_SCREEN" ?
                                 <Button rounded style={{ backgroundColor: Theme.Colors.primary, alignSelf: "center", width: ("90%"), justifyContent: "center", marginBottom: 10 }} onPress={() => this.onSubmit()}>
-                                    <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2 }}>Save & continue</Text>
+                                    <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2 }}>Save & continue </Text>
                                 </Button>
                                 :
                                 <Button rounded style={{ backgroundColor: Theme.Colors.primary, alignSelf: "center", width: ("90%"), justifyContent: "center" }} onPress={() => this.OnConfirmLocation()}>
-                                    <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2 }}>Confirm Location</Text>
+                                    <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2 }}>Confirm Location </Text>
                                 </Button>
 
                             }
@@ -1029,8 +1029,8 @@ class MyMapView extends React.Component {
                                             <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#232323' }} />
                                         </View>
                                         <View style={{ flex: 1, justifyContent: 'center' }}>
-                                            <Text style={{ fontSize: 14, }}>Current Location</Text>
-                                            <Text style={{ fontSize: 12, color: "#727272" }}>Using GPS</Text>
+                                            <Text style={{ fontSize: 14, }}>Current Location </Text>
+                                            <Text style={{ fontSize: 12, color: "#727272" }}>Using GPS </Text>
                                         </View>
                                     </TouchableOpacity>
                                     <View
@@ -1041,7 +1041,7 @@ class MyMapView extends React.Component {
                                         <ActivityIndicator size={"large"} color={Theme.Colors.primary} /> :
                                         <>
                                             {this.state.savedAddress?.length > 0 ?
-                                                <Text style={{ fontWeight: 'bold', marginLeft: 10, fontSize: 14, marginBottom: 10 }}>Saved Address</Text>
+                                                <Text style={{ fontWeight: 'bold', marginLeft: 10, fontSize: 14, marginBottom: 10 }}>Saved Address </Text>
                                                 : undefined}
                                             <FlatList
                                                 data={this.state.savedAddress}
@@ -1049,7 +1049,7 @@ class MyMapView extends React.Component {
                                                     <TouchableOpacity onPress={() => { this.onPressSavedAddress(item) }} style={{ flexDirection: 'row', paddingBottom: 10, paddingTop: 5 }}>
                                                         {/* <Text style={styles.item}
                                                 //   onPress={this.getListViewItem.bind(this, item)}
-                                                >{JSON.stringify(item, null, "      ")} </Text> */}
+                                                >{JSON.stringify(item, null, "      ")}  </Text> */}
                                                         {item?.saveAs == "Home" &&
                                                             <View style={{ width: 40, height: 50, justifyContent: 'center', alignItems: 'center', }}>
                                                                 <Icon name="home" type="AntDesign" style={{ fontSize: 24, color: '#232323' }} />

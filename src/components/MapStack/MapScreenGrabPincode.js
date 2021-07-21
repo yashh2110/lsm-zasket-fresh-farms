@@ -333,7 +333,7 @@ class MapScreenGrabPincode extends React.Component {
                                     <FeatherIcons name="info" color={'white'} size={18} />
                                 </View>
                                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ fontSize: 12, color: 'white' }}>We might be not available in all the locations. We are expanding, very soon we will be delivered in all location.</Text>
+                                    <Text style={{ fontSize: 12, color: 'white' }}>We might be not available in all the locations. We are expanding, very soon we will be delivered in all location. </Text>
                                 </View>
                                 <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={() => { this.setState({ errorMessageBanner: false }) }}>
                                     <AntDesignIcons name="close" color={'white'} size={18} />
@@ -346,7 +346,7 @@ class MapScreenGrabPincode extends React.Component {
                                         <Icon name="chevron-small-left" type="Entypo" style={[{ fontSize: 32, color: "black", }]} />
                                     </TouchableOpacity>
                                     <View style={{ zIndex: 1, left: 45, top: 18 }}>
-                                        <Text style={{ fontWeight: "bold", fontSize: 18, color: "#242A40" }}>Set delivery location</Text>
+                                        <Text style={{ fontWeight: "bold", fontSize: 18, color: "#242A40" }}>Set delivery location </Text>
                                     </View>
                                 </View>
                             }
@@ -372,20 +372,20 @@ class MapScreenGrabPincode extends React.Component {
                                 </View> */}
                                 {this.state.addressLoading ?
                                     <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: -125, width: 345, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -55, marginBottom: -28 }}>
-                                        <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
+                                        <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION </Text>
                                         <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating...</Text>
                                     </View>
                                     :
                                     <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: -125, width: 345, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: -55, marginBottom: -28 }}>
                                         {this.state.address ?
                                             <>
-                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
+                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION </Text>
                                                 <View style={{ flexDirection: "row", width: "90%", alignSelf: "center", flex: 1, flexWrap: "wrap" }}>
                                                     {
                                                         this.state.addressResult.map((el, index) => {
                                                             return (
                                                                 <View style={{ flexDirection: "row", }}>
-                                                                    <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14, }}>{(index ? ',  ' : '') + el.long_name}</Text>
+                                                                    <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14, }}>{(index ? ',  ' : '') + el.long_name} </Text>
                                                                 </View>
                                                             )
                                                         })
@@ -394,8 +394,8 @@ class MapScreenGrabPincode extends React.Component {
                                             </>
                                             :
                                             <>
-                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION</Text>
-                                                <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating...</Text>
+                                                <Text style={{ color: '#9BA2BC', fontWeight: 'bold', fontSize: 12, letterSpacing: 0.2 }}>SELECTED LOCATION </Text>
+                                                <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>Locating... </Text>
                                             </>
                                         }
                                     </View>
@@ -420,7 +420,7 @@ class MapScreenGrabPincode extends React.Component {
                                         zIndex: 1
                                     }}>
                                         <View style={{ backgroundColor: '#202741', alignSelf: 'center', marginLeft: 0, width: 200, padding: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', }}>
-                                            <Text style={{ color: '#ffffff', fontSize: 14, letterSpacing: 0.2 }}>Move the pin to adjust</Text>
+                                            <Text style={{ color: '#ffffff', fontSize: 14, letterSpacing: 0.2 }}>Move the pin to adjust </Text>
                                         </View>
                                     </View>
 
@@ -450,11 +450,11 @@ class MapScreenGrabPincode extends React.Component {
                                         <Icon name="crosshairs-gps" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#ffffff' }} />
                                     </View>
                                     <View style={{ width: ("60%") }}>
-                                        <Text style={{ fontSize: 14, color: '#ffffff', fontWeight: 'bold', }}>Unable to get location</Text>
-                                        <Text style={{ fontSize: 12, color: "#ffffff" }}>Turning on Location ensures accurate and hassle-free delivery</Text>
+                                        <Text style={{ fontSize: 14, color: '#ffffff', fontWeight: 'bold', }}>Unable to get location </Text>
+                                        <Text style={{ fontSize: 12, color: "#ffffff" }}>Turning on Location ensures accurate and hassle-free delivery </Text>
                                     </View>
                                     <TouchableOpacity onPress={() => this.onPressTurnOn()} style={{ height: 30, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', margin: 10, borderRadius: 5 }}>
-                                        <Text style={{ fontSize: 14, color: '#6B98DE', marginHorizontal: 10, fontWeight: 'bold' }}>TURN ON</Text>
+                                        <Text style={{ fontSize: 14, color: '#6B98DE', marginHorizontal: 10, fontWeight: 'bold' }}>TURN ON </Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

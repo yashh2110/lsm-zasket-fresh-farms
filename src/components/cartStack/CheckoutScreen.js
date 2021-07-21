@@ -74,7 +74,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
         };
     }, [])
     const setTotalCartValueRef = newText => {
-        console.warn("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", newText)
+
         totalCartValueRef.current = newText;
         setTotalCartValue(newText);
     };
@@ -174,7 +174,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
         console.log("offeroffer", offerCode)
         let itemCreateRequests = []
         let validateOrders = {
-            itemCreateRequests,
+            // itemCreateRequests,
             "useWallet": wallet,
             "offerCode": offerCode ? offerCode : undefined
 
@@ -368,15 +368,10 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
             "nextDayBuffer": nextDayBuffer,
             "offerId": selectedOffer?.offer?.id > 0 ? selectedOffer?.offer?.id : undefined,
             "itemTotalValue": getOrdersBillingDetails?.discountedPrice,
-            "couponDiscount": (savedValue + ((offerPrice > 0) ? (totalCartValue - offerPrice) : 0)),
+            "couponDiscount": getOrdersBillingDetails?.couponDiscount,
             "walletAmount": getOrdersBillingDetails?.creditUsed,
             "totalPayableAmount": getOrdersBillingDetails?.finalPrice,
             "useWallet": walletCheck ? true : false
-            // "slotEndHours": slot?.endHours,
-            // "slotStartHours": slot?.startHours,
-            // "totalPrice": totalCartValue,
-            // "marketPrice": marketPrice,
-            // "offerPrice": offerPrice > 0 ? offerPrice : undefined,
         }
         if (option === "COD") {
             let codPayload = {
@@ -385,7 +380,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
             }
             // console.log("addOrderaddOrderaddOrder", codPayload)
             // setLoading(false)
-            // // alert(JSON.stringify(codPayload, null, "     "))
+            // // // alert(JSON.stringify(codPayload, null, "     "))
             // return
 
             addOrder(codPayload, async (res, status) => {
@@ -423,7 +418,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                 "paymentMethod": "PREPAID"
             }
             // console.log("addOrderaddOrderaddOrder", prepaidPayload)
-            setLoading(false)
+            // setLoading(false)
             // console.warn("buttonHandlebuttonHandlebuttonHandle", buttonHandle)
             // alert(JSON.stringify(prepaidPayload, null, "     "))
             // alert(buttonHandle)
@@ -679,6 +674,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
             // let appliedCoupon = await parsedCoupon?.offer?.offerCode
             await initialBillingFunction(false, OfferCode)
             setWalletCheck(false)
+
             // if (getOrdersBillingDetails?.finalPrice == 0) {
             //     SetButtonHandle(true)
             // } else {
@@ -692,6 +688,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
             // let appliedCoupon = await parsedCoupon?.offer?.offerCode
             await initialBillingFunction(true, OfferCode)
             setWalletCheck(true)
+
             // if (getOrdersBillingDetails?.finalPrice == 0) {
             //     SetButtonHandle(true)
             // } else {
@@ -1011,7 +1008,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                             <Text style={{ color: '#727272' }}>Delivery Charges</Text>
                             <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{getOrdersBillingDetails?.deliveryCharges > 0 ? getOrdersBillingDetails?.deliveryCharges : "Free"} </Text>
                         </View>
-                        {getOrdersBillingDetails?.couponDiscount > 0 ?
+                        {getOrdersBillingDetails?.offer?.displayName ?
                             <>
                                 <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
@@ -1030,11 +1027,18 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                             <Text style={{ fontWeight: 'bold' }}>Total Amount </Text>
                             <Text style={{ fontWeight: 'bold' }}>₹ {(getOrdersBillingDetails?.finalPrice).toFixed(2)} </Text>
                         </View>
-                        {savedValue > 0 ?
-                            <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: "#C2E2A9", alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center" }}>
-                                <Text style={{ color: "#60B11F" }}>😊 You have saved ₹{(savedValue + ((offerPrice > 0) ? (totalCartValue - offerPrice) : 0)).toFixed(2)} in this purchase</Text>
-                            </View>
-                            : undefined}
+                        {
+                            (getOrdersBillingDetails.canBeOrdered == true && getOrdersBillingDetails.comment) ?
+                                // <View style={{ height: 40, width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: "#C2E2A9", alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center", marginVertical: 25 }}>
+                                //     <Text style={{ color: "#60B11F" }}>😊 {getOrdersBillingDetails?.comment}jkdsfbskjdfgbklsdjfgbklsadjfgbklsadjfgblksdjfgbklsdjbgskjldfbgkljsdfbkgljsdfbkgljsfdbgkljsdfbkljgbsdfkljgbsdklfjgbskldfj</Text>
+                                // </View>
+                                <View style={{ width: "100%", flexDirection: 'column', justifyContent: 'center', borderColor: "#C2E2A9", alignSelf: 'center', marginTop: 20, borderStyle: 'dashed', borderWidth: 1.5, borderRadius: 4, backgroundColor: "#F1FAEA", alignItems: "center", marginVertical: 25 }}>
+                                    <View style={{ paddingLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: "center", width: "90%", marginVertical: 15 }}>
+                                        <Text style={{ color: "#60B11F", textAlign: "center" }}>😊 {getOrdersBillingDetails?.comment} </Text>
+                                    </View>
+                                </View>
+                                : undefined
+                        }
                     </View>
 
                 </ScrollView>

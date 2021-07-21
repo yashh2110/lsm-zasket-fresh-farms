@@ -182,16 +182,16 @@ const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clear
                                 source={require('../../assets/png/logo.png')}
                             />
                             <View style={{ justifyContent: "flex-end", alignItems: "center", }}>
-                                <Text style={{ fontSize: 22, color: "#0f0f0f" }}>Wallet</Text>
+                                <Text style={{ fontSize: 22, color: "#0f0f0f" }}>Wallet </Text>
                             </View>
 
                         </View>
                         <View style={{ marginTop: 12, flexDirection: "row", alignItems: "center" }}>
-                            <Text style={{ color: "#727272", fontSize: 12, marginRight: 10 }}>Available Balance</Text>
-                            <Text style={{ textAlign: "center", fontWeight: "bold", fontSize: 15 }}>₹ {creditBalance ? creditBalance : 0}</Text>
+                            <Text style={{ color: "#727272", fontSize: 12, marginRight: 10 }}>Available Balance </Text>
+                            <Text style={{ textAlign: "center", fontWeight: "bold", fontSize: 15 }}>₹ {creditBalance ? creditBalance : 0} </Text>
                         </View>
                         <View style={{ marginTop: ("12%"), }}>
-                            <Text style={{ color: "#727272", fontSize: 12, }}>Enter Amount</Text>
+                            <Text style={{ color: "#727272", fontSize: 12, }}>Enter Amount </Text>
                             <TextInput
                                 style={{ height: 40, fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#D8D8D8', }}
                                 // onChangeText={text => setAmount(text)}
@@ -208,7 +208,7 @@ const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clear
                             disabled ?
                                 <TouchableOpacity style={{ height: 48, backgroundColor: "#e1171e", alignSelf: "center", width: ("90%"), justifyContent: "center", marginBottom: 10, marginTop: 6, borderRadius: 30 }} onPress={() => { AddMoney() }}>
                                     <View style={{ flexDirection: "row", justifyContent: "space-between", width: "27%", alignSelf: "center" }}>
-                                        <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2, color: "#ffffff", textAlign: "center" }}><Text style={{ fontSize: 18, color: "#ffffff" }}></Text>Proceed</Text>
+                                        <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2, color: "#ffffff", textAlign: "center" }}><Text style={{ fontSize: 18, color: "#ffffff" }}></Text>Proceed </Text>
                                         <View style={{ justifyContent: 'center', alignItems: 'center', marginLeft: -5 }}>
                                             <Icon name="chevron-small-right" type="Entypo" style={[{ color: '#ffffff', fontSize: 24, }]} />
                                         </View>
@@ -217,7 +217,7 @@ const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clear
                                 :
                                 <TouchableOpacity disabled={true} style={{ height: 48, backgroundColor: "#F5B0B2", alignSelf: "center", width: ("90%"), justifyContent: "center", marginBottom: 10, marginTop: 6, borderRadius: 30 }} onPress={() => { }}>
                                     <View style={{ flexDirection: "row", justifyContent: "space-between", width: "27%", alignSelf: "center" }}>
-                                        <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2, color: "#ffffff", textAlign: "center" }}><Text style={{ fontSize: 18, color: "#ffffff" }}></Text>Proceed</Text>
+                                        <Text style={{ textTransform: "capitalize", fontWeight: "bold", fontSize: 16, letterSpacing: 0.2, color: "#ffffff", textAlign: "center" }}><Text style={{ fontSize: 18, color: "#ffffff" }}></Text>Proceed </Text>
                                         <View style={{ justifyContent: 'center', alignItems: 'center', marginLeft: -5 }}>
                                             <Icon name="chevron-small-right" type="Entypo" style={[{ color: '#ffffff', fontSize: 24, }]} />
                                         </View>

@@ -153,7 +153,7 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
                         <Icon name="search" style={{ fontSize: 24 }} color="#727272" />
                     </View>
                     <View style={{ flex: 1, }}>
-                        <TextInput selectionColor={Theme.Colors.primary} placeholder={'Search for Vegetables, fruits…'} style={{}} value={searchTerm} onChangeText={(text) => setSearchTerm(text)} />
+                        <TextInput selectionColor={Theme.Colors.primary} placeholder={'Search for groceries'} style={{}} value={searchTerm} onChangeText={(text) => setSearchTerm(text)} />
                     </View>
                     <TouchableOpacity onPress={() => { clearFunction() }} style={{ paddingHorizontal: 5, }}>
                         <Icons name="close-circle" type="MaterialCommunityIcons" style={{ fontSize: 24, color: '#e2e2e2' }} />

@@ -75,7 +75,7 @@ const WalletSuccessScreen = ({ navigation, route }) => {
                         resizeMode={"contain"}
                         source={require('../../assets/png/tickGreen.png')}
                     />
-                    <Text style={{ color: "#449005", fontSize: 21, fontWeight: 'bold', marginTop: 20, letterSpacing: 0.4 }}>₹ {amount} added to your</Text>
+                    <Text style={{ color: "#449005", fontSize: 21, fontWeight: 'bold', marginTop: 20, letterSpacing: 0.4 }}>₹ {amount} added to your </Text>
                     <View style={{ flexDirection: "row", marginTop: 8, justifyContent: "center", alignItems: "center" }}>
                         <View style={{ flexDirection: "row" }}>
                             <Image

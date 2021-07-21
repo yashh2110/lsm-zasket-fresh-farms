@@ -157,7 +157,7 @@ const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getB
     const initialBillingFunction = async () => {
         let itemCreateRequests = []
         let validateOrders = {
-            itemCreateRequests,
+            // itemCreateRequests,
             "useWallet": false
 
         }

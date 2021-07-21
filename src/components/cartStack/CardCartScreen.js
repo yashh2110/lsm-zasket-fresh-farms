@@ -8,13 +8,12 @@ import LottieView from 'lottie-react-native';
 import FeatherIcons from "react-native-vector-icons/Feather"
 import AsyncStorage from '@react-native-community/async-storage';
 
-const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAuthenticated, getOrdersBill, getBillingDetails }) => {
+const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAuthenticated, getOrdersBill, getBillingDetails, getOrdersBillingDetails }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(0)
     const [loadingCount, setLoadingCount] = useState(false)
 
     useEffect(() => {
-        console.log("allll", JSON.stringify(getOrdersBill, null, "      "))
         // alert(JSON.stringify(getOrdersBill, null, "     "))
         let filteredItems = cartItems.filter(element => element?.id == item?.id);
         if (filteredItems.length == 1) {
@@ -35,7 +34,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
         let appliedCoupon = await parsedCoupon?.offer?.offerCode
         let itemCreateRequests = []
         let validateOrders = {
-            itemCreateRequests,
+            // itemCreateRequests,
             "useWallet": false,
             "offerCode": appliedCoupon ? appliedCoupon : undefined
 
@@ -58,6 +57,11 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
             }
         })
     }
+
+    useEffect(() => {
+        console.log("billl", JSON.stringify(getOrdersBillingDetails, null, "     "))
+
+    }, [getOrdersBillingDetails])
 
     // useEffect(() => {
     //     alert(JSON.stringify(getOrdersBillingDetails, null, "     "))
@@ -116,7 +120,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
 
     return (
         <View style={{ flex: 1, width: "90%", alignSelf: 'center', marginVertical: 1.5, }}>
-            {item?.isActive ?
+            {item?.valid ?
                 <View
                     // onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
                     style={styles.productCard}>
@@ -266,13 +270,19 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                             <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize', opacity: 0.5 }}>₹{item?.discountedPrice * item?.count} </Text>
                         </View>
                     </View>
-                    <View style={{ flex: 1, paddingLeft: 10, flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-                        <FeatherIcons name="info" color={'#E1271E'} size={18} />
-                        <Text style={{ color: "#E1271E" }}>  This item is not available for today</Text>
-                    </View>
+                    {
+                        (item?.valid && item?.comment) ?
+                            <View style={{ flex: 1, paddingLeft: 10, flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
+                                <FeatherIcons name="info" color={'#E1271E'} size={18} />
+                                <Text style={{ color: "#E1271E" }}>{item.comment} </Text>
+                            </View>
+                            :
+                            undefined
+
+                    }
                 </>
             }
-            {count <= item?.maxAllowedQuantity ? null :
+            {/* {count <= item?.maxAllowedQuantity ? null :
                 <View style={{ flex: 1, paddingLeft: 10, flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
                     <FeatherIcons name="info" color={'#E1271E'} size={18} />
                     <Text style={{ color: "#E1271E" }}>  Maximum quantity allowed is {item?.maxAllowedQuantity} per day</Text>
@@ -285,7 +295,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                         <FeatherIcons name="info" color={'#E1271E'} size={18} />
                         <Text style={{ color: "#E1271E" }}> Only {item?.availableQuantity} left. Reduce the quantity to continue.</Text>
                     </View>
-                : null}
+                : null} */}
 
         </View>
     )

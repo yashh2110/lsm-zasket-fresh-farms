@@ -15,7 +15,6 @@ const CardMyOrders = ({ item, navigation, cartItems, onRepeatOrder, getCartItems
     const [productItem, setProductItem] = useState([])
 
     useEffect(() => {
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaa", productItem)
         setProductItem(item?.items)
     }, [item])
 
