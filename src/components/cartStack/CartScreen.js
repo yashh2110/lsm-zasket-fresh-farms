@@ -228,7 +228,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
             }>
                 {/* <Text>{getOrdersBillingDetails?.discountedPrice}</Text> */}
                 {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(userLocation, null, "                   ")} </Text> */}
-                {cartItems.length > 0 ?
+                {(cartItems.length > 0 && getOrdersBillingDetails) ?
                     <>
                         {userLocation?.lat ?
                             <View style={{ backgroundColor: 'white', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
@@ -434,7 +434,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                 </TouchableOpacity> */}
             </ScrollView>
             {
-                cartItems.length > 0 ?
+                (cartItems.length > 0 && getOrdersBillingDetails) ?
                     (getOrdersBillingDetails.canBeOrdered == false && getOrdersBillingDetails.comment) ?
                         <View style={{ width: "100%", backgroundColor: '#FDEFEF', flexDirection: 'row', justifyContent: 'center', alignItems: "center" }}>
                             <View style={{ paddingLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: "center", width: "90%", marginVertical: 15 }}>
@@ -447,7 +447,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                     :
                     undefined
             }
-            {cartItems.length > 0 ?
+            {(cartItems.length > 0 && getOrdersBillingDetails) ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(getOrdersBillingDetails?.offerPrice ? getOrdersBillingDetails?.offerPrice : 0).toFixed(2)} </Text>
