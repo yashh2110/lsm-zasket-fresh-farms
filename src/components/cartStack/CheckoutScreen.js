@@ -378,37 +378,37 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                 ...payload,
                 "paymentMethod": "COD"
             }
-            // console.log("addOrderaddOrderaddOrder", codPayload)
-            // setLoading(false)
-            // // // alert(JSON.stringify(codPayload, null, "     "))
-            // return
-
             addOrder(codPayload, async (res, status) => {
                 console.log("addOrderaddOrderaddOrder", codPayload)
                 // return
                 console.warn(JSON.stringify(res, null, "     "))
                 setLoading(false)
-                if (status) {
-                    setPaymentSelectionActionScreen(false)
-                    onClearCart()
-                    await AsyncStorage.removeItem('appliedCoupon')
-                    navigation.pop()
-                    AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
-                    navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, slotTime: slotTime })
-                    EventRegister.emit('successWallet', 'it works!!!')
-
-                } else {
-                    // if (__DEV__) {
-                    //     alert(JSON.stringify(res?.response))
-                    // }
-                    if (res?.response?.data?.description) {
-                        Toast.show({
-                            text: res?.response?.data?.description,
-                            type: "danger",
-                            duration: 3000,
-                            buttonStyle: { backgroundColor: "#a52f2b" }
-                        })
+                if (res?.data?.canBeOrdered == true) {
+                    if (status) {
+                        setPaymentSelectionActionScreen(false)
+                        onClearCart()
+                        await AsyncStorage.removeItem('appliedCoupon')
+                        navigation.pop()
+                        AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
+                        navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, slotTime: slotTime })
+                        EventRegister.emit('successWallet', 'it works!!!')
+                    } else {
+                        if (res?.response?.data?.description) {
+                            Toast.show({
+                                text: res?.response?.data?.description,
+                                type: "danger",
+                                duration: 3000,
+                                buttonStyle: { backgroundColor: "#a52f2b" }
+                            })
+                        }
                     }
+                } else {
+                    Toast.show({
+                        text: res?.data?.comment,
+                        type: "danger",
+                        duration: 3000,
+                        buttonStyle: { backgroundColor: "#a52f2b" }
+                    })
                 }
             })
         } else if (option == "PREPAID") {

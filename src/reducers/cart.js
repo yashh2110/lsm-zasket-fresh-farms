@@ -1,7 +1,7 @@
 import { CLEAR_CART, GET_CART_ITEMS, GET_BILLING_DETAILS } from '../actions/types'
 const initialState = {
     cartItems: [],
-    getOrdersBillingDetails: []
+    getOrdersBillingDetails: {}
 }
 
 const cart = (state = initialState, action) => {
