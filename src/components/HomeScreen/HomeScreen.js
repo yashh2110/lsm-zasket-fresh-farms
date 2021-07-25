@@ -149,39 +149,7 @@ const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getB
         }
     }, [isAuthenticated])
 
-    useEffect(() => {
 
-        // initialBillingFunction()
-    }, [])
-
-    const initialBillingFunction = async () => {
-        let itemCreateRequests = []
-        let validateOrders = {
-            // itemCreateRequests,
-            "useWallet": false
-
-        }
-        await cartItems?.forEach((el, index) => {
-            itemCreateRequests.push({
-                "itemId": el?.id,
-                "quantity": el?.count,
-                // "totalPrice": el?.discountedPrice * el?.count,
-                // "unitPrice": el?.discountedPrice
-            })
-        })
-        // console.log("allll", JSON.stringify(validateOrder, null, "      "))
-        // alert(JSON.stringify(validateOrder, null, "      "))
-        getBillingDetails(validateOrders, async (res, status) => {
-            if (status) {
-                // alert(JSON.stringify(res.data, null, "      "))
-                setLoading(false)
-                setRefresh(false)
-            } else {
-                setRefresh(false)
-                setLoading(false)
-            }
-        })
-    }
 
 
     const initialFunction = () => {
@@ -361,6 +329,40 @@ const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getB
         //     }
         //     InAppReview.RequestInAppReview();
         // } catch (e) { }
+    }
+    useEffect(() => {
+        if (cartItems.length > 0) {
+            initialBillingFunction()
+        }
+    }, [cartItems])
+
+    const initialBillingFunction = async () => {
+        let itemCreateRequests = []
+        let validateOrders = {
+            // itemCreateRequests,
+            "useWallet": false
+
+        }
+        await cartItems?.forEach((el, index) => {
+            itemCreateRequests.push({
+                "itemId": el?.id,
+                "quantity": el?.count,
+                // "totalPrice": el?.discountedPrice * el?.count,
+                // "unitPrice": el?.discountedPrice
+            })
+        })
+        // console.log("allll", JSON.stringify(validateOrder, null, "      "))
+        // alert(JSON.stringify(validateOrder, null, "      "))
+        getBillingDetails(validateOrders, async (res, status) => {
+            if (status) {
+                console.log("getorderssssssss", JSON.stringify(res.data, null, "      "))
+                setLoading(false)
+                setRefresh(false)
+            } else {
+                setRefresh(false)
+                setLoading(false)
+            }
+        })
     }
     return (
         <>
@@ -625,3 +627,4 @@ const styles = StyleSheet.create({
 
     }
 });
+

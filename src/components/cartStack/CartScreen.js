@@ -13,8 +13,9 @@ import { getV2Config } from '../../actions/home';
 import AddressModal from '../common/AddressModal';
 import { getAllUserAddress } from '../../actions/map'
 import FeatherIcons from "react-native-vector-icons/Feather"
+import { updateCartItemsApi, getBillingDetails } from '../../actions/cart'
 
-const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, allUserAddress, getAllUserAddress, getOrdersBillingDetails, applyOffer, getCartItemsApi, getV2Config }) => {
+const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBillingDetails, config, allUserAddress, getAllUserAddress, getOrdersBillingDetails, applyOffer, getCartItemsApi, getV2Config }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, setTotalCartValue] = useState(0)
     const [savedValue, setSavedValue] = useState(0)
@@ -63,7 +64,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                     setIsCartIssue(false)
                 }
             }
-
+            initialBillingFunction()
         } else {
             setTotalCartValue(0)
             setSavedValue(0)
@@ -72,9 +73,39 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
 
     }, [cartItems])
 
+    const initialBillingFunction = async () => {
+        let coupons = await AsyncStorage.getItem('appliedCoupon');
+        let parsedCoupon = await JSON.parse(coupons);
+        let appliedCoupon = await parsedCoupon?.offer?.offerCode
+        let itemCreateRequests = []
+        let validateOrders = {
+            // itemCreateRequests,
+            "useWallet": false,
+            "offerCode": appliedCoupon ? appliedCoupon : undefined
+
+        }
+        await cartItems?.forEach((el, index) => {
+            itemCreateRequests.push({
+                "itemId": el?.id,
+                "quantity": el?.count,
+                // "totalPrice": el?.discountedPrice * el?.count,
+                // "unitPrice": el?.discountedPrice
+            })
+        })
+        console.log("allll", JSON.stringify(validateOrders, null, "      "))
+        // alert(JSON.stringify(validateOrders, null, "      "))
+        getBillingDetails(validateOrders, async (res, status) => {
+            if (status) {
+                // alert(JSON.stringify(res.data, null, "      "))
+            } else {
+
+            }
+        })
+    }
+
     useEffect(() => {
         console.log("billl", JSON.stringify(getOrdersBillingDetails, null, "     "))
-
+        // alert(Object.keys(getOrdersBillingDetails).length)
     }, [getOrdersBillingDetails])
 
 
@@ -226,9 +257,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
             <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false} refreshControl={
                 <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
             }>
-                {/* <Text>{getOrdersBillingDetails?.discountedPrice}</Text> */}
-                {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(userLocation, null, "                   ")} </Text> */}
-                {(cartItems.length > 0 && getOrdersBillingDetails) ?
+                {(cartItems.length > 0 && (Object.keys(getOrdersBillingDetails).length > 0)) ?
                     <>
                         {userLocation?.lat ?
                             <View style={{ backgroundColor: 'white', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
@@ -433,21 +462,21 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, config, al
                     <Text>clearCart</Text>
                 </TouchableOpacity> */}
             </ScrollView>
-            {
-                (cartItems.length > 0 && getOrdersBillingDetails) ?
-                    (getOrdersBillingDetails.canBeOrdered == false && getOrdersBillingDetails.comment) ?
-                        <View style={{ width: "100%", backgroundColor: '#FDEFEF', flexDirection: 'row', justifyContent: 'center', alignItems: "center" }}>
-                            <View style={{ paddingLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: "center", width: "90%", marginVertical: 15 }}>
-                                <FeatherIcons name="info" color={'#E1271E'} size={18} />
-                                <Text style={{ color: "#E1271E", fontWeight: 'bold', textAlign: "center" }}> {getOrdersBillingDetails?.comment} </Text>
-                            </View>
+
+            {(cartItems.length > 0 && (Object.keys(getOrdersBillingDetails).length > 0)) ?
+                (getOrdersBillingDetails.canBeOrdered == false && getOrdersBillingDetails.comment) ?
+                    <View style={{ width: "100%", backgroundColor: '#FDEFEF', flexDirection: 'row', justifyContent: 'center', alignItems: "center" }}>
+                        <View style={{ paddingLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: "center", width: "90%", marginVertical: 15 }}>
+                            <FeatherIcons name="info" color={'#E1271E'} size={18} />
+                            <Text style={{ color: "#E1271E", fontWeight: 'bold', textAlign: "center" }}> {getOrdersBillingDetails?.comment} </Text>
                         </View>
-                        :
-                        undefined
+                    </View>
                     :
                     undefined
+                :
+                undefined
             }
-            {(cartItems.length > 0 && getOrdersBillingDetails) ?
+            {(cartItems.length > 0 && (Object.keys(getOrdersBillingDetails).length > 0)) ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(getOrdersBillingDetails?.offerPrice ? getOrdersBillingDetails?.offerPrice : 0).toFixed(2)} </Text>
@@ -499,7 +528,7 @@ const mapStateToProps = (state) => ({
 
 })
 
-export default connect(mapStateToProps, { clearCart, getAllOffers, applyOffer, getCartItemsApi, getV2Config, getAllUserAddress })(CartScreen)
+export default connect(mapStateToProps, { clearCart, getAllOffers, getBillingDetails, applyOffer, getCartItemsApi, getV2Config, getAllUserAddress })(CartScreen)
 
 const styles = StyleSheet.create({
     button: {

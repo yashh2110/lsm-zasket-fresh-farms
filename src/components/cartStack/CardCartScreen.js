@@ -25,8 +25,9 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
             setCount(0)
             setLoadingCount(false)
         }
-        initialBillingFunction()
-
+        if (cartItems.length > 0) {
+            initialBillingFunction()
+        }
     }, [cartItems])
     const initialBillingFunction = async () => {
         let coupons = await AsyncStorage.getItem('appliedCoupon');
