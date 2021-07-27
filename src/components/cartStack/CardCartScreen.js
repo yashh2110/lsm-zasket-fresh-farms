@@ -60,7 +60,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
     }
 
     useEffect(() => {
-        console.log("billl", JSON.stringify(getOrdersBillingDetails, null, "     "))
+        // console.log("billl", JSON.stringify(getOrdersBillingDetails, null, "     "))
 
     }, [getOrdersBillingDetails])
 
@@ -272,7 +272,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                         </View>
                     </View>
                     {
-                        (item?.valid && item?.comment) ?
+                        (item?.valid == false && item?.comment) ?
                             <View style={{ flex: 1, paddingLeft: 10, flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
                                 <FeatherIcons name="info" color={'#E1271E'} size={18} />
                                 <Text style={{ color: "#E1271E" }}>{item.comment} </Text>

@@ -385,7 +385,7 @@ class MapScreenGrabPincode extends React.Component {
                                                         this.state.addressResult.map((el, index) => {
                                                             return (
                                                                 <View style={{ flexDirection: "row", }}>
-                                                                    <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14, }}>{(index ? ',  ' : '') + el.long_name} </Text>
+                                                                    <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14, }}>{(index ? ',  ' : '') + el.long_name}</Text>
                                                                 </View>
                                                             )
                                                         })

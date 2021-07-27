@@ -496,7 +496,7 @@ const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getB
                                                         marginTop: -1,
                                                         justifyContent: "center"
                                                     }}>
-                                                        <Text style={{ fontSize: 9, textAlign: "center", color: "#f7f7f7", fontWeight: 'bold' }}>Upto {item.categoryTag}</Text>
+                                                        <Text style={{ fontSize: 9, textAlign: "center", color: "#f7f7f7", fontWeight: 'bold' }}>{item.categoryTag}</Text>
 
                                                     </View>
 

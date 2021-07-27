@@ -99,8 +99,8 @@ const MyWallet = ({ route, navigation, getCreditTransactions }) => {
                         </TouchableOpacity>
                         <View style={{ width: ("90%"), backgroundColor: "#f4f4f4", alignSelf: "center", marginTop: 10, borderRadius: 8, padding: 14 }}>
                             <Text style={{ fontSize: 12, color: "#727272", }}>*This money can only be used to buy vegetables & groceries. </Text>
-                            <Text style={{ fontSize: 12, color: "#727272", marginVertical: 10 }}>We will automatically deduct the amount corresponding to your order from your “wallet”.  At the time of checkout until you run out of credit. </Text>
-                            <Text style={{ fontSize: 12, color: "#727272", }}>Your basket wallet also get credited automatically when zasket issues a cashbback, return of items credit etc. </Text>
+                            <Text style={{ fontSize: 12, color: "#727272", marginVertical: 10 }}>We will automatically deduct the amount corresponding to your order from your “wallet”, At the time of checkout until you run out of credit. </Text>
+                            <Text style={{ fontSize: 12, color: "#727272", }}>Your zasket wallet also get credited automatically when zasket issues a cashback, return of items credit etc. </Text>
                         </View>
                     </View>
                 </ScrollView>
