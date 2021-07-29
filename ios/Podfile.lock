@@ -384,11 +384,15 @@ PODS:
   - RNSentry (2.5.2):
     - React-Core
     - Sentry (= 7.0.0)
+  - RNUxcam (5.3.4-beta.2):
+    - React-Core
+    - UXCam (~> 3.3.6)
   - RNVectorIcons (7.1.0):
     - React
   - Sentry (7.0.0):
     - Sentry/Core (= 7.0.0)
   - Sentry/Core (7.0.0)
+  - UXCam (3.3.6)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -465,6 +469,7 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
+  - RNUxcam (from `../node_modules/react-native-ux-cam`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -487,6 +492,7 @@ SPEC REPOS:
     - OpenSSL-Universal
     - razorpay-pod
     - Sentry
+    - UXCam
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -588,6 +594,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
+  RNUxcam:
+    :path: "../node_modules/react-native-ux-cam"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -659,8 +667,10 @@ SPEC CHECKSUMS:
   RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
   RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
   RNSentry: bfa1e2776c7413570e790cbbf79d2060dd0a565b
+  RNUxcam: 6bb9ff68ebcdd360e6082f12c8f4872ffd7fdd58
   RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
   Sentry: 89d26e036063b9cb9caa59b6951dd2f8277aa13b
+  UXCam: 0160e973e6ea68486916220e710b7d63fbb179d8
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
