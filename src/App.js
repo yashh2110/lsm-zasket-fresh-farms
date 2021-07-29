@@ -14,6 +14,9 @@ import { BackHandler, Platform } from 'react-native';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import * as Sentry from "@sentry/react-native";
+import RNUxcam from 'react-native-ux-cam';
+RNUxcam.optIntoSchematicRecordings(); // Add this line to enable iOS screen recordings
+RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
 const App = () => {
 
   useEffect(() => {

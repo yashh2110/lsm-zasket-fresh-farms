@@ -37,7 +37,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
         let validateOrders = {
             // itemCreateRequests,
             "useWallet": false,
-            "offerCode": appliedCoupon ? appliedCoupon : undefined
+            // "offerCode": appliedCoupon ? appliedCoupon : undefined
 
         }
         await cartItems?.forEach((el, index) => {

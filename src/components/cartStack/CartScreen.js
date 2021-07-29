@@ -81,7 +81,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
         let validateOrders = {
             // itemCreateRequests,
             "useWallet": false,
-            "offerCode": appliedCoupon ? appliedCoupon : undefined
+            // "offerCode": appliedCoupon ? appliedCoupon : undefined
 
         }
         await cartItems?.forEach((el, index) => {
