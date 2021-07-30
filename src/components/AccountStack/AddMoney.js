@@ -75,7 +75,6 @@ const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clear
                         },
                         theme: { color: Theme.Colors.primary }
                     }
-                    // console.warn(JSON.stringify(options, null, "        "))
                     RazorpayCheckout.open(options).then(async (data) => {
                         // handle success
                         // alert(JSON.stringify(data, null, "      "));
@@ -148,14 +147,12 @@ const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clear
     }
 
     const amountChange = async (text) => {
-        console.warn("aaaaaaaaaaa", text.length)
         let str1 = "₹";
         let str2 = text;
         if (text.length >= 1) {
             setAmount(text)
         } else {
             let res = str1.concat(str2)
-            console.warn("resresres", res)
             setAmount(res)
         }
         if (text.length > 1) {

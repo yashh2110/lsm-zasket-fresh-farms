@@ -30,8 +30,10 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
     const [getOrdersBillings, setGetOrdersBillings] = useState({})
     const [cartItemIssues, setCartItemIssues] = useState("")
     const [ordersItems, setOrdersItems] = useState([])
+    const [loadinggg, setloadinggg] = useState(false)
+
     useEffect(() => {
-        console.log("cartItemscartItemscartItems", JSON.stringify(cartItems, null, "     "))
+        setloadinggg(true)
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
                 return sum + (item.discountedPrice * item.count);
@@ -69,9 +71,20 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
             setTotalCartValue(0)
             setSavedValue(0)
             setIsCartIssue(false)
+            setloadinggg(false)
+
         }
 
     }, [cartItems])
+
+    useEffect(() => {
+        setloadinggg(true)
+        const unsubscribe = navigation.addListener('focus', () => {
+            initialBillingFunction()
+        });
+        return unsubscribe;
+        // Return the function to unsubscribe from the event so it gets removed on unmount
+    }, [navigation]);
 
     const initialBillingFunction = async () => {
         let coupons = await AsyncStorage.getItem('appliedCoupon');
@@ -92,7 +105,6 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
                 // "unitPrice": el?.discountedPrice
             })
         })
-        console.log("allll", JSON.stringify(validateOrders, null, "      "))
         // alert(JSON.stringify(validateOrders, null, "      "))
         getBillingDetails(validateOrders, async (res, status) => {
             if (status) {
@@ -101,12 +113,10 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
 
             }
         })
+        setloadinggg(false)
+
     }
 
-    useEffect(() => {
-        console.log("billl", JSON.stringify(getOrdersBillingDetails, null, "     "))
-        // alert(Object.keys(getOrdersBillingDetails).length)
-    }, [getOrdersBillingDetails])
 
 
 
@@ -124,14 +134,12 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
     //         setCartItemIssues("")
     //         setGetOrdersBillings(getOrdersBillingDetails)
     //         setOrdersItems(getOrdersBillingDetails.items)
-    //         console.log("aaaaaaaa", JSON.stringify(getOrdersBillingDetails, null, "     "))
 
     //     }
 
     // }
 
     // useEffect(() => {
-    //     // console.log("getOrdersBillingDetailsgetOrdersBillingDetails", JSON.stringify(getOrdersBillingDetails, null, "     "))
     //     // alert(JSON.stringify(getOrdersBillingDetails, null, "     "))
     //     if (getOrdersBillingDetails.canBeOrdered == false) {
     //         alert("askdjfghu")
@@ -140,7 +148,6 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
     //     } else {
     //         setGetOrdersBillings(getOrdersBillingDetails)
     //         setOrdersItems(getOrdersBillingDetails.items)
-    //         console.log("aaaaaaaa", JSON.stringify(getOrdersBillingDetails, null, "     "))
     //     }
 
     // }, [getOrdersBillingDetails])
@@ -188,7 +195,6 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
 
     const onPressApplyCoupon = async () => {
         setCouponLoading(true)
-        // console.warn(coupon + "         " + totalCartValue)
         applyOffer(coupon, totalCartValue, (res, status) => {
             if (status) {
                 setCouponLoading(false)
@@ -461,6 +467,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
                 >
                     <Text>clearCart</Text>
                 </TouchableOpacity> */}
+
             </ScrollView>
 
             {(cartItems.length > 0 && (Object.keys(getOrdersBillingDetails).length > 0)) ?
@@ -513,6 +520,17 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
                 setAddressModalVisible={(option) => setAddressModalVisible(option)}
                 navigation={navigation}
             />
+            {
+                loadinggg &&
+                <>
+                    <View style={[styles.loading]}>
+                    </View>
+                    <View style={{ position: 'absolute', elevation: 101, left: 0, right: 0, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <ActivityIndicator size="large" color="#ffffff" />
+                    </View>
+                </>
+            }
+
         </View>
     );
 }
@@ -537,5 +555,18 @@ const styles = StyleSheet.create({
         padding: 10,
         width: 300,
         marginTop: 16,
+    },
+    loading: {
+        // flex: 1,
+        position: 'absolute',
+        elevation: 100,
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        opacity: 0.5,
+        backgroundColor: 'black',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });

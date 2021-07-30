@@ -65,7 +65,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
     const totalCartValueRef = useRef(totalCartValue);
     useEffect(() => {
         let listener = EventRegister.addEventListener('successWallet', async (data) => {
-            console.warn("datadatadata", data)
             initialFunction()
         })
         return () => {
@@ -93,7 +92,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
     }, [getOrdersBillingDetails])
 
     // useEffect(() => {
-    //     console.log("aaaaaaaaaaaaaaaaaa", JSON.stringify(getOrdersBillingDetails, null, "     "))
     //     // alert(JSON.stringify(getOrdersBillingDetails, null, "     "))
 
     // })
@@ -109,7 +107,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                 if (status) {
                     setWalletCheck(true)
                     // alert(getOrdersBillingDetails?.creditUsed)
-                    console.log("cu", JSON.stringify(res?.data?.customerDetails, null, "       "))
                     // alert(JSON.stringify(res?.data?.customerDetails, null, "       "))
                     // alert(JSON.stringify(res?.data?.customerDetails?.creditBalance, null, "       "))
                     await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
@@ -170,8 +167,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
     }
 
     const initialBillingFunction = async (wallet, offerCode) => {
-        console.log("walletwallet", wallet)
-        console.log("offeroffer", offerCode)
         let itemCreateRequests = []
         let validateOrders = {
             // itemCreateRequests,
@@ -187,13 +182,11 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                 // "unitPrice": el?.discountedPrice
             })
         })
-        console.log("allll", JSON.stringify(validateOrders, null, "      "))
 
         // alert(JSON.stringify(validateOrders, null, "      "))
         getBillingDetails(validateOrders, async (res, status) => {
             if (status) {
                 // alert(JSON.stringify(res.data, null, "      "))
-                console.log("aaaaaaaaaaaaaaaaaa", JSON.stringify(getOrdersBillingDetails, null, "     "))
 
             } else {
 
@@ -379,9 +372,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                 "paymentMethod": "COD"
             }
             addOrder(codPayload, async (res, status) => {
-                console.log("addOrderaddOrderaddOrder", codPayload)
                 // return
-                console.warn(JSON.stringify(res, null, "     "))
                 setLoading(false)
                 if (res?.data?.canBeOrdered == true) {
                     if (status) {
@@ -417,9 +408,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                 ...payload,
                 "paymentMethod": "PREPAID"
             }
-            // console.log("addOrderaddOrderaddOrder", prepaidPayload)
             // setLoading(false)
-            // console.warn("buttonHandlebuttonHandlebuttonHandle", buttonHandle)
             // alert(JSON.stringify(prepaidPayload, null, "     "))
             // alert(buttonHandle)
             // return
@@ -427,7 +416,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
             addOrder(prepaidPayload, async (res, status) => {
                 setLoading(false)
                 if (status) {
-                    console.log("aaaaaaaaaaa", JSON.stringify(res.data, null, "     "))
                     // alert(JSON.stringify(res.data.paymentOrderId, null, "     "))
 
                     // return
@@ -475,7 +463,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                                 },
                                 theme: { color: Theme.Colors.primary }
                             }
-                            // console.warn(JSON.stringify(options, null, "        "))
                             RazorpayCheckout.open(options).then(async (data) => {
                                 // alert("passsssss")
                                 // handle success
@@ -575,7 +562,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
         const unsubscribe = navigation.addListener('focus', async () => {
             let offerDetail = await AsyncStorage.getItem('appliedCoupon');
             let parsedCouponDetails = await JSON.parse(offerDetail);
-            // console.warn(JSON.stringify(parsedCouponDetails?.offer?.offerCode))
             if (parsedCouponDetails !== null) {
                 if (parsedCouponDetails?.offer?.offerCode) {
                     onPressApplyCoupon(parsedCouponDetails?.offer?.offerCode, totalCartValueRef.current, false)
@@ -593,7 +579,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
     //             removeOffer()
     //         }
     //     } else {
-    //         console.warn('removed here')
     //         removeOffer()
     //     }
     // }, [totalCartValue])
@@ -603,7 +588,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
         setCouponLoading(true)
         let couponValue = option ? option : coupon
         let cartValue = optionalTotalCartValue ? optionalTotalCartValue : totalCartValue
-        // console.warn(couponValue + "         " + cartValue)
         applyOffer(couponValue, cartValue, async (res, status) => {
             if (status) {
                 setCouponLoading(false)
@@ -667,7 +651,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
 
 
     const onPressCheckbox = async () => {
-        console.warn("OfferCodeOfferCode", OfferCode)
         if (walletCheck == true) {
             // let coupons = await AsyncStorage.getItem('appliedCoupon');
             // let parsedCoupon = await JSON.parse(coupons);

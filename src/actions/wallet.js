@@ -8,7 +8,6 @@ import { EventRegister } from 'react-native-event-listeners'
 
 export const addMoneyWallet = (Amount, callback) => async dispatch => {
     try {
-        console.warn("AmountAmount", Amount)
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
@@ -57,17 +56,14 @@ export const getCreditTransactions = (callback) => async dispatch => {
 }
 
 export const paymentConfirm = (payload, callback) => async dispatch => {
-    console.log(JSON.stringify(payload, null, "     "))
     let userDetails = await AsyncStorage.getItem('userDetails');
     let parsedUserDetails = await JSON.parse(userDetails);
     let customerId = await parsedUserDetails?.customerDetails?.id
-    console.log("aaaa", customerId)
     try {
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
         const res = await axiosinstance.post(`/customers/${customerId}/payments/confirm`, payload)
-        console.log("sucess", JSON.stringify(res, null, "     "))
         callback(res, true)
         EventRegister.emit('successWallet', 'it works!!!')
 
@@ -80,14 +76,12 @@ export const paymentConfirm = (payload, callback) => async dispatch => {
         //     Alert.alert(JSON.stringify(err.response, null, "     "))
         // }
         // alert(JSON.stringify(err, null, "     "))
-        console.log("errorr", JSON.stringify(err, null, "     "))
     }
 }
 
 
 
 export const rejectPaymentByAPI = (payload, callback) => async dispatch => {
-    console.log(JSON.stringify(payload, null, "     "))
     try {
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
@@ -98,6 +92,5 @@ export const rejectPaymentByAPI = (payload, callback) => async dispatch => {
     } catch (err) {
         // alert("errrrrrrrrrrrrr")
         callback(err, false)
-        console.log("aaaaaaaaaaaaa", JSON.stringify(err, null, "     "))
     }
 }

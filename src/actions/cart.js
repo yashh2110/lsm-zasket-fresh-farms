@@ -41,7 +41,6 @@ export const getCartItemsApi = (callback) => async dispatch => {
 
 export const getBillingDetails = (payLoad, callback) => async dispatch => {
     // alert(JSON.stringify(payLoad, null, "     "))
-    console.log("payyyyyyyyyyyy", JSON.stringify(payLoad, null, "     "))
     // return
     try {
         let userDetails = await AsyncStorage.getItem('userDetails');
@@ -208,7 +207,6 @@ export const getAllOffers = (callback) => async dispatch => {
 //v2ApplyOffer
 export const applyOffer = (offerCode, orderAmount, callback) => async dispatch => {
     try {
-        // console.warn(JSON.stringify(offerCode + "      " + orderAmount, null, "     "))
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
@@ -233,7 +231,6 @@ export const applyOffer = (offerCode, orderAmount, callback) => async dispatch =
 //getAvailableOffers
 export const getAvailableOffers = (orderAmount, callback) => async dispatch => {
     try {
-        // console.warn(JSON.stringify(orderAmount, null, "     "))
         const res = await axiosinstance.get(`/v2/available-offers`, { params: { "order-amount": orderAmount } })
         // alert(JSON.stringify(res, null, "     "))
         callback(res, true)

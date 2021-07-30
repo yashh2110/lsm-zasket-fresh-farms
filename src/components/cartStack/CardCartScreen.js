@@ -29,6 +29,13 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
             initialBillingFunction()
         }
     }, [cartItems])
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            initialBillingFunction()
+        });
+        return unsubscribe;
+        // Return the function to unsubscribe from the event so it gets removed on unmount
+    }, [navigation]);
     const initialBillingFunction = async () => {
         let coupons = await AsyncStorage.getItem('appliedCoupon');
         let parsedCoupon = await JSON.parse(coupons);
@@ -48,7 +55,6 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                 // "unitPrice": el?.discountedPrice
             })
         })
-        console.log("allll", JSON.stringify(validateOrders, null, "      "))
         // alert(JSON.stringify(validateOrders, null, "      "))
         getBillingDetails(validateOrders, async (res, status) => {
             if (status) {
@@ -60,7 +66,6 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
     }
 
     useEffect(() => {
-        // console.log("billl", JSON.stringify(getOrdersBillingDetails, null, "     "))
 
     }, [getOrdersBillingDetails])
 
