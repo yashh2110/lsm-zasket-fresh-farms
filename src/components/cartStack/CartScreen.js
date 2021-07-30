@@ -33,7 +33,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
     const [loadinggg, setloadinggg] = useState(false)
 
     useEffect(() => {
-        setloadinggg(true)
+        // setloadinggg(true)
         if (cartItems.length > 0) {
             let total = cartItems.reduce(function (sum, item) {
                 return sum + (item.discountedPrice * item.count);
@@ -71,14 +71,14 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
             setTotalCartValue(0)
             setSavedValue(0)
             setIsCartIssue(false)
-            setloadinggg(false)
+            // setloadinggg(false)
 
         }
 
     }, [cartItems])
 
     useEffect(() => {
-        setloadinggg(true)
+        // setloadinggg(true)
         const unsubscribe = navigation.addListener('focus', () => {
             initialBillingFunction()
         });
@@ -113,7 +113,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
 
             }
         })
-        setloadinggg(false)
+        // setloadinggg(false)
 
     }
 
