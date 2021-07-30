@@ -74,7 +74,6 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
             // setloadinggg(false)
 
         }
-
     }, [cartItems])
 
     useEffect(() => {
