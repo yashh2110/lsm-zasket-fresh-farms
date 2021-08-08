@@ -22,6 +22,10 @@ import { isPincodeServiceable, } from '../../actions/home'
 import { CheckGpsState, CheckPermissions } from '../../utils/utils';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import { StackActions } from '@react-navigation/native';
+import RNUxcam from 'react-native-ux-cam';
+RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
+RNUxcam.optIntoSchematicRecordings();
+RNUxcam.tagScreenName('Search for your location');
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
 

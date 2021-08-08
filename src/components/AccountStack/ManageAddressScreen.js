@@ -10,7 +10,10 @@ import { getAllUserAddress, deleteAddress } from '../../actions/map'
 import Loader from '../common/Loader';
 import * as Animatable from 'react-native-animatable';
 import LottieView from 'lottie-react-native';
-
+import RNUxcam from 'react-native-ux-cam';
+RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
+RNUxcam.optIntoSchematicRecordings();
+RNUxcam.tagScreenName('Manage Addresses');
 const ManageAddressScreen = ({ navigation, cartItems, clearCart, getAllUserAddress, deleteAddress, userLocation }) => {
 
     const [savedAddress, setSavedAddress] = useState([])

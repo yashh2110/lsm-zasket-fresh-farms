@@ -18,7 +18,11 @@ import FeatherIcons from "react-native-vector-icons/Feather"
 import AntDesignIcons from "react-native-vector-icons/AntDesign"
 import { addHomeScreenLocation } from '../../actions/homeScreenLocation'
 import { CheckGpsState, CheckPermissions } from '../../utils/utils';
+import RNUxcam from 'react-native-ux-cam';
 
+RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
+RNUxcam.optIntoSchematicRecordings();
+RNUxcam.tagScreenName('address details');
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
 
@@ -62,6 +66,7 @@ class MyMapView extends React.Component {
         pincode: "",
         savedAddress: [],
         mobileNumberErrorText: "",
+        houseNumberErrorText: "",
         nameErrorText: "",
         errorMessage: "",
         errorMessageBanner: false,
@@ -294,6 +299,12 @@ class MyMapView extends React.Component {
             this.setState({ mobileNumberErrorText: "Mobile number is required" })
             status = false
         }
+        if (this.state.houseNumber == undefined || this.state.houseNumber == "") {
+            this.setState({ houseNumberErrorText: "House No / Flat No / Floor /Building is required" })
+            status = false
+        }
+
+
 
         return status
     }
@@ -567,7 +578,7 @@ class MyMapView extends React.Component {
         return (
             <>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS == "ios" ? "padding" : null}>
+                    <KeyboardAvoidingView style={{ flex: 1, }} behavior={Platform.OS == "ios" ? "padding" : null}>
                         {this.state.errorMessageBanner &&
                             <View style={{ width: "100%", padding: 10, backgroundColor: "#F65C65", position: 'absolute', top: 0, left: 0, zIndex: 1, flexDirection: 'row' }}>
                                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -873,7 +884,13 @@ class MyMapView extends React.Component {
                                                 placeholder="House No / Flat No / Floor /Building"
                                                 placeholderTextColor="#cccccc"
                                                 value={this.state.houseNumber}
+                                                onTouchStart={() => {
+                                                    this.setState({ houseNumberErrorText: "" })
+                                                }}
                                             />
+                                            {this.state.houseNumberErrorText ?
+                                                <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>{this.state.houseNumberErrorText} </Text>
+                                                : undefined}
                                         </View>
                                         <View style={{ marginTop: 8 }}>
                                             <Text style={{ color: "#727272", fontSize: 12, }}>Landmark</Text>

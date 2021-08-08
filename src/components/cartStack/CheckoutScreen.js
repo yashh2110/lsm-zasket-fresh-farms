@@ -22,7 +22,11 @@ import { getCustomerDetails } from "../../actions/home";
 import { CheckBox } from 'react-native-elements';
 import { paymentConfirm, rejectPaymentByAPI } from "../../actions/wallet";
 import { EventRegister } from 'react-native-event-listeners'
+import RNUxcam from 'react-native-ux-cam';
 
+RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
+RNUxcam.optIntoSchematicRecordings();
+RNUxcam.tagScreenName('Checkout');
 
 
 const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetails, cartItems, getOrdersBillingDetails, allUserAddress, offerDetails, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer, getAvailableOffers, paymentConfirm, rejectPaymentByAPI }) => {

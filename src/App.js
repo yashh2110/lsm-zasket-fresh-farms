@@ -16,8 +16,9 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import * as Sentry from "@sentry/react-native";
 import RNUxcam from 'react-native-ux-cam';
 RNUxcam.enableAdvancedGestureRecognizers = (enable) => void
-// Example
-// Set to FALSE before startWithKey to disable - Default is TRUE
+  // Example
+  // Set to FALSE before startWithKey to disable - Default is TRUE
+  RNUxcam.setAutomaticScreenNameTagging(false)
 RNUxcam.enableAdvancedGestureRecognizers(false);
 RNUxcam.optIntoSchematicRecordings(); // Add this line to enable iOS screen recordings
 RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();

@@ -11,7 +11,10 @@ import Loader from '../common/Loader';
 import { ActivityIndicator } from 'react-native';
 import Draggable from '../common/Draggable';
 import LottieView from 'lottie-react-native';
-
+import RNUxcam from 'react-native-ux-cam';
+RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
+RNUxcam.optIntoSchematicRecordings();
+RNUxcam.tagScreenName('Search by category');
 const SearchScreen = ({ navigation, searchItems, categories }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true)

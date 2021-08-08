@@ -30,7 +30,11 @@ import { getAllUserAddress } from '../../actions/map'
 import Modal from 'react-native-modal';
 import SetDeliveryLocationModal from '../common/SetDeliveryLocationModal'
 import { EventRegister } from 'react-native-event-listeners'
+import RNUxcam from 'react-native-ux-cam';
 
+RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
+RNUxcam.optIntoSchematicRecordings();
+RNUxcam.tagScreenName('homeScreen');
 const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
     const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
 

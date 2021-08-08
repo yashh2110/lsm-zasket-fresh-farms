@@ -13,7 +13,10 @@ import { addMoneyWallet, paymentConfirm, rejectPaymentByAPI } from "../../action
 import { clearCart } from '../../actions/cart'
 import RazorpayCheckout from 'react-native-razorpay';
 import AsyncStorage from '@react-native-community/async-storage';
-
+import RNUxcam from 'react-native-ux-cam';
+RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
+RNUxcam.optIntoSchematicRecordings();
+RNUxcam.tagScreenName('Add Money');
 
 const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clearCart, config, paymentConfirm, rejectPaymentByAPI }) => {
     const [loading, setLoading] = useState(false)

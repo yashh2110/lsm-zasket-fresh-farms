@@ -15,8 +15,10 @@ import { AuthContext } from "../../navigation/Routes";
 import { getCreditTransactions } from "../../actions/wallet";
 import Loader from '../common/Loader';
 import { EventRegister } from 'react-native-event-listeners'
-
-
+import RNUxcam from 'react-native-ux-cam';
+RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
+RNUxcam.optIntoSchematicRecordings();
+RNUxcam.tagScreenName('Account');
 
 const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigation, onLogout, getCreditTransactions, walletbalance }) => {
     const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);

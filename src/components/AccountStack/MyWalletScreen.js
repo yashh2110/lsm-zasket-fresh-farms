@@ -12,7 +12,10 @@ import { getCreditTransactions } from "../../actions/wallet";
 import moment from 'moment'
 import Loader from '../common/Loader';
 import { EventRegister } from 'react-native-event-listeners'
-
+import RNUxcam from 'react-native-ux-cam';
+RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
+RNUxcam.optIntoSchematicRecordings();
+RNUxcam.tagScreenName('My Wallet');
 
 
 const MyWallet = ({ route, navigation, getCreditTransactions }) => {

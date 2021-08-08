@@ -125,7 +125,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
 
 
     return (
-        <View style={{ flex: 1, width: "90%", alignSelf: 'center', marginVertical: 1.5, }}>
+        <View style={{ flex: 1, width: "94%", alignSelf: 'center', marginVertical: 1.5, }}>
             {item?.valid ?
                 <View
                     // onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
@@ -201,15 +201,26 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                         }
 
                     </View>
-                    <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', padding: 10, }}>
-                        <TouchableOpacity onPress={() => onDeleteItem()} style={{ backgroundColor: 'white', position: 'absolute', top: 10, right: 10, }}>
+                    <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', padding: 5, }}>
+                        <TouchableOpacity onPress={() => onDeleteItem()} style={{ backgroundColor: 'white', position: 'absolute', top: 0, right: 10, }}>
                             <Icon name="trash-o" type="FontAwesome" style={{ fontSize: 20 }} />
                         </TouchableOpacity>
-                        {item?.discountedPrice == item?.actualPrice ?
-                            undefined :
-                            <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10 }}>₹ {item?.actualPrice * item?.count} </Text>
-                        }
-                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹ {item?.discountedPrice * item?.count} </Text>
+                        <View style={{}}>
+                            {(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0) == 0 ?
+                                undefined :
+                                <Text style={{ fontSize: 12.5, color: "#49c32c", fontWeight: "bold" }}>You Save ₹{(((item?.actualPrice - item?.discountedPrice) * item?.count)).toFixed(0)} </Text>
+                            }
+                        </View>
+                        <View style={{}}>
+                            <View style={{}}>
+                                {item?.discountedPrice == item?.actualPrice ?
+                                    undefined :
+                                    <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', }}>₹ {item?.actualPrice * item?.count} </Text>
+                                }
+                                <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize', alignSelf: "flex-end" }}>₹ {item?.discountedPrice * item?.count} </Text>
+                            </View>
+
+                        </View>
                     </View>
                 </View>
 
@@ -239,9 +250,9 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                                     </View>
                                     :
                                     <View style={[styles.addButton, {}]}>
-                                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
-                                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', opacity: 0.5 }}>-</Text>
-                                        </View>
+                                        <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
+                                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
+                                        </TouchableOpacity>
                                         <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
                                             <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', opacity: 0.5 }}>{count} </Text>
                                         </View>
@@ -254,6 +265,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                                             </View>
                                         }
                                     </View>
+
                                 :
                                 <View style={[styles.addButton, {}]}>
                                     <LottieView
@@ -265,15 +277,26 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                             }
 
                         </View>
-                        <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', padding: 10, }}>
-                            <TouchableOpacity onPress={() => onDeleteItem()} style={{ backgroundColor: 'white', position: 'absolute', top: 0, padding: 10 }}>
-                                <Icon name="trash-o" type="FontAwesome" style={{ fontSize: 20, }} />
+                        <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', padding: 5, }}>
+                            <TouchableOpacity onPress={() => onDeleteItem()} style={{ backgroundColor: 'white', position: 'absolute', top: 0, right: 10, }}>
+                                <Icon name="trash-o" type="FontAwesome" style={{ fontSize: 20 }} />
                             </TouchableOpacity>
-                            {item?.discountedPrice == item?.actualPrice ?
-                                undefined :
-                                <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginLeft: 10, opacity: 0.5 }}>₹{item?.actualPrice * item?.count} </Text>
-                            }
-                            <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize', opacity: 0.5 }}>₹{item?.discountedPrice * item?.count} </Text>
+                            <View style={{}}>
+                                {(((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0) == 0 ?
+                                    undefined :
+                                    <Text style={{ fontSize: 12.5, color: "#49c32c", fontWeight: "bold" }}>You Save ₹{(((item?.actualPrice - item?.discountedPrice) * item?.count)).toFixed(0)} </Text>
+                                }
+                            </View>
+                            <View style={{}}>
+                                <View style={{}}>
+                                    {item?.discountedPrice == item?.actualPrice ?
+                                        undefined :
+                                        <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', }}>₹ {item?.actualPrice * item?.count} </Text>
+                                    }
+                                    <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize', alignSelf: "flex-end" }}>₹ {item?.discountedPrice * item?.count} </Text>
+                                </View>
+
+                            </View>
                         </View>
                     </View>
                     {

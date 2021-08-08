@@ -14,7 +14,10 @@ import AddressModal from '../common/AddressModal';
 import { getAllUserAddress } from '../../actions/map'
 import FeatherIcons from "react-native-vector-icons/Feather"
 import { updateCartItemsApi, getBillingDetails } from '../../actions/cart'
-
+import RNUxcam from 'react-native-ux-cam';
+RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
+RNUxcam.optIntoSchematicRecordings();
+RNUxcam.tagScreenName('Cart');
 const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBillingDetails, config, allUserAddress, getAllUserAddress, getOrdersBillingDetails, applyOffer, getCartItemsApi, getV2Config }) => {
     const scrollViewRef = useRef();
     const [totalCartValue, setTotalCartValue] = useState(0)

@@ -18,6 +18,7 @@ import { AuthContext } from "../../navigation/Routes"
 import { getV2Config } from '../../actions/home'
 import CountDown from 'react-native-countdown-component';
 import { StackActions } from '@react-navigation/native';
+import RNUxcam from 'react-native-ux-cam';
 
 const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLogin, getV2Config, verifyOtp, resendOtp, route }) => {
     const { setOnBoardKey } = React.useContext(AuthContext);
@@ -41,7 +42,12 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLo
                     if (status) {
                         getV2Config((res, status) => { })
                         setLoading(false)
+                        console.log("detailsss", JSON.stringify(response?.data, null, "          "))
                         await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
+                        let userDetails = await AsyncStorage.getItem('userDetails');
+                        let parsedUserDetails = await JSON.parse(userDetails);
+                        let customerId = await parsedUserDetails?.customerDetails?.id
+                        RNUxcam.setUserIdentity("" + customerId)
                         onLogin(response?.data)
                         if (homeScreenLocation?.lat == undefined || homeScreenLocation?.lat == "") {
                             navigation.dispatch(StackActions.popToTop());

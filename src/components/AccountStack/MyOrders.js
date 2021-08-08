@@ -10,7 +10,10 @@ import CustomHeader from "../common/CustomHeader";
 import { getCustomerOrders } from '../../actions/cart';
 import CardMyOrders from "./CardMyOrders";
 import Loader from "../common/Loader";
-
+import RNUxcam from 'react-native-ux-cam';
+RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
+RNUxcam.optIntoSchematicRecordings();
+RNUxcam.tagScreenName('My Orders');
 
 const MyOrders = ({ route, navigation, getCustomerOrders }) => {
     const [orderDetails, setOrderDetails] = useState([])
