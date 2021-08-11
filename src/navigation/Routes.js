@@ -47,6 +47,8 @@ import SetDeliveryLocationScreen from '../components/MapStack/SetDeliveryLocatio
 import AutoCompleteLocationScreen from '../components/MapStack/AutoCompleteLocationScreen'
 import SwitchNavigator from './SwitchNavigator';
 import LoadingScreen from './LoadingScreen';
+import ReferalCodeScreen from '../components/AccountStack/ReferalCodeScreen'
+
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -445,6 +447,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                                     <Stack.Screen name="CartScreen" component={CartScreen} options={{ cardStyleInterpolator: forFade }} />
                                     <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} options={{ cardStyleInterpolator: forFade }} />
                                     <Stack.Screen name="ManageAddressScreen" component={ManageAddressScreen} options={{ title: 'Manage Addresses' }} />
+                                    <Stack.Screen name="ReferalCodeScreen" component={ReferalCodeScreen} options={{ title: 'Referal Code' }} />
                                     <Stack.Screen name="AccessPermissionScreen" component={AccessPermissionScreen} options={{ cardStyleInterpolator: forFade }} />
                                     <Stack.Screen name="SetDeliveryLocationScreen" component={SetDeliveryLocationScreen} options={{ cardStyleInterpolator: forFade }} />
                                     <Stack.Screen name="MyOrdersDetailScreen" component={MyOrdersDetailScreen} options={{ cardStyleInterpolator: forFade }}
