@@ -42,7 +42,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLo
                     if (status) {
                         getV2Config((res, status) => { })
                         setLoading(false)
-                        console.log("detailsss", JSON.stringify(response?.data, null, "          "))
+                        console.log("detailssssssssssssssssss", JSON.stringify(response?.data, null, "          "))
                         await AsyncStorage.setItem('userDetails', JSON.stringify(response?.data))
                         let userDetails = await AsyncStorage.getItem('userDetails');
                         let parsedUserDetails = await JSON.parse(userDetails);

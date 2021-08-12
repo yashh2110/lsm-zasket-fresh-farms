@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, Image, Linking, FlatList, RefreshControl, Platform, Share } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, Image, Linking, FlatList, RefreshControl, Platform, Share, Clipboard } from 'react-native';
 import { Icon, Button } from 'native-base'
 import Modal from 'react-native-modal';
 import Theme from "../../styles/Theme";
@@ -13,6 +13,7 @@ import moment from 'moment'
 import Loader from '../common/Loader';
 import { EventRegister } from 'react-native-event-listeners'
 import RNUxcam from 'react-native-ux-cam';
+import AsyncStorage from '@react-native-community/async-storage';
 RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
 RNUxcam.tagScreenName('My Wallet');
@@ -20,16 +21,22 @@ RNUxcam.tagScreenName('My Wallet');
 
 const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
     const [loading, setLoading] = useState(false)
-
+    const [referal, setReferal] = useState("")
 
 
     useEffect(() => {
-
+        initialFunction()
     }, [])
 
 
     const initialFunction = async () => {
         setLoading(true)
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let referralCode = await parsedUserDetails?.customerDetails?.referralCode
+        setReferal(referralCode)
+        // alert(referralCode)
+        setLoading(false)
 
     }
 
@@ -37,16 +44,14 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
         let appUrl
         let reff = "ZASKETZ8IBJM"
         if (Platform.OS == "ios") {
-            appUrl = "https://apps.apple.com/in/app/zasket/id1541056118?referralCode=" + 'Zasket1234'
+            appUrl = "https://www.zasket.in/#download-app"
         }
         if (Platform.OS == "android") {
-            // `https://www.deeplinkdemo.com?invitedBy=${SENDER_UID}`
-            appUrl = `https://play.google.com/store/apps/details?id=com.zasket?referralCode=${reff}`
-            // appUrl = `https://www.deeplinkdemo.com`
+            appUrl = "https://www.zasket.in/#download-app"
         }
         let url =
             'whatsapp://send?text=' +
-            "Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order  with my referral code ZASKETZ8IBJM\". " + appUrl
+            `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order  with my referral code ${referal}\`. ` + appUrl
         Linking.openURL(url)
             .then((data) => {
                 console.log('WhatsApp Opened', data);
@@ -59,14 +64,14 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
     const moreShare = async () => {
         let appUrl
         if (Platform.OS == "ios") {
-            appUrl = "https://apps.apple.com/in/app/zasket/id1541056118"
+            appUrl = "https://www.zasket.in/#download-app"
         }
         if (Platform.OS == "android") {
-            appUrl = "https://play.google.com/store/apps/details?id=com.zasket"
+            appUrl = "https://www.zasket.in/#download-app"
         }
         try {
             const result = await Share.share({
-                message: "Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order  with my referral code ZASKETZ8IBJM\". " + appUrl,
+                message: `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order  with my referral code ${referal}\`. ` + appUrl,
             });
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
@@ -82,6 +87,12 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
         }
     }
 
+    const get_Text_From_Clipboard = (text) => {
+        Clipboard.setString(text)
+        // setCopied(true)
+        alert('Referal code Copied');
+    }
+
     return (
         <>
 
@@ -95,7 +106,7 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
                     <View style={{ flex: 1, backgroundColor: '#f4f4f4', }} >
                         <View style={{ flex: 1, }}>
                             <View style={{ backgroundColor: 'white', padding: 15, marginTop: 10, justifyContent: "center", alignItems: "center" }}>
-                                <View style={{ flexDirection: "row", marginTop: 5 }}>
+                                <View style={{ flexDirection: "row", marginTop: 2 }}>
                                     <Image
                                         style={{ width: 125, height: 125, }}
                                         resizeMode="contain"
@@ -117,7 +128,7 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
                                     <View style={{ flex: 1 }}>
                                         <Text style={{ fontSize: 20, color: "#E1171E", marginLeft: 20, fontWeight: 'bold', letterSpacing: 0.1 }}>ZASKET 100 </Text>
                                     </View>
-                                    <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", height: 50, width: 70, justifyContent: "space-evenly", alignItems: "center", }}>
+                                    <TouchableOpacity onPress={() => { get_Text_From_Clipboard(referal) }} style={{ flexDirection: "row", height: 50, width: 70, justifyContent: "space-evenly", alignItems: "center", }}>
                                         <View style={{
                                             height: '60%',
                                             width: 1,
@@ -161,13 +172,13 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
                                 </View> */}
                                 </View>
                             </View>
-                            <View style={{ backgroundColor: 'white', padding: 15, marginTop: 10, flex: 1 }}>
+                            <View style={{ backgroundColor: 'white', padding: 10, marginTop: 10, flex: 1 }}>
                                 <View style={{ width: "95%", alignSelf: "center", }}>
                                     <Text style={{ color: "#000000", fontSize: 15, fontWeight: "bold", letterSpacing: 0.1 }}>How it works </Text>
-                                    <Text style={{ marginVertical: 3 }}>1.  Share the referral link with your friends.</Text>
-                                    <Text style={{ marginVertical: 3 }}>2. Your friends clicks on the link or signs up through the code</Text>
-                                    <Text style={{ marginVertical: 3 }}>3. You get Rs 50 in your Zasket wallet, Rs 25 each on first & second orders placed by referee.</Text>
-                                    <Text style={{ marginVertical: 3 }}>4. Maximum of Rs 500 can be earned by referrals.</Text>
+                                    <Text style={{ marginVertical: 2 }}>1.  Share the referral link with your friends.</Text>
+                                    <Text style={{ marginVertical: 2 }}>2. Your friends clicks on the link or signs up through the code</Text>
+                                    <Text style={{ marginVertical: 2 }}>3. You get Rs 50 in your Zasket wallet, Rs 25 each on first & second orders placed by referee.</Text>
+                                    <Text style={{ marginVertical: 2 }}>4. Maximum of Rs 500 can be earned by referrals.</Text>
 
                                 </View>
 

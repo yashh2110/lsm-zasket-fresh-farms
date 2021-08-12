@@ -63,7 +63,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
             let payLoad = {
                 "name": name,
                 "otp": otp,
-                // "referralCode": referralCode.toUpperCase(),
+                "referralCode": referralCode.toUpperCase(),
                 "userEmail": email.toLowerCase(),
                 "userMobileNumber": mobileNumber
             }
@@ -194,7 +194,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                                     <Text style={{ color: 'red', fontSize: 14 }}>{emailErrorText} </Text>
                                 </>
                                 : undefined}
-                            {/* <View style={{ marginTop: "10%", borderBottomColor: "#D8D8D8", flexDirection: 'row', borderBottomWidth: 1 }}>
+                            <View style={{ marginTop: "10%", borderBottomColor: "#D8D8D8", flexDirection: 'row', borderBottomWidth: 1 }}>
                                 <View style={{ flex: 1 }}>
                                     <TextInput
                                         style={{ height: 40, }}
@@ -204,7 +204,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                                         placeholderTextColor={"#727272"}
                                     />
                                 </View>
-                            </View> */}
+                            </View>
                             {/* <View style={{ justifyContent: 'center' }}>
                                     <Icon name='mail' style={{ color: '#C3C3C3', fontSize: 20 }} />
                                 </View> */}
