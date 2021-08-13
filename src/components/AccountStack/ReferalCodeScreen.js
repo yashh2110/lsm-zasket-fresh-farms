@@ -22,10 +22,12 @@ RNUxcam.tagScreenName('My Wallet');
 const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
     const [loading, setLoading] = useState(false)
     const [referal, setReferal] = useState("")
+    const [copymessage, setCopymessage] = useState(false)
 
 
     useEffect(() => {
         initialFunction()
+
     }, [])
 
 
@@ -51,7 +53,7 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
         }
         let url =
             'whatsapp://send?text=' +
-            `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order  with my referral code ${referal}\`. ` + appUrl
+            `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order  with my referral code ${referal}\. ` + appUrl
         Linking.openURL(url)
             .then((data) => {
                 console.log('WhatsApp Opened', data);
@@ -71,7 +73,7 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
         }
         try {
             const result = await Share.share({
-                message: `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order  with my referral code ${referal}\`. ` + appUrl,
+                message: `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order  with my referral code ${referal}\. ` + appUrl,
             });
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
@@ -87,10 +89,13 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
         }
     }
 
+
     const get_Text_From_Clipboard = (text) => {
         Clipboard.setString(text)
-        // setCopied(true)
-        alert('Referal code Copied');
+        setCopymessage(true)
+        setTimeout(() => {
+            setCopymessage(false)
+        }, 4000)
     }
 
     return (
@@ -116,11 +121,11 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
                                 <View style={{ alignItems: "center", width: "65%", marginTop: 8 }}>
                                     <Text style={{ fontSize: 22, color: "#0f0f0f", fontWeight: "bold", textAlign: "center" }}>Earn ₹50 for each friend you refer </Text>
                                 </View>
-                                <View style={{ alignItems: "center", width: "75%", marginTop: 8 }}>
+                                {/* <View style={{ alignItems: "center", width: "75%", marginTop: 8 }}>
                                     <Text style={{ color: "#727272", fontSize: 14, textAlign: "center", letterSpacing: 0.1 }}>Refer your friend to Zasket and both can get Zasket cash. It’s a win - win! </Text>
-                                </View>
+                                </View> */}
                                 <View style={{ marginVertical: 10 }}>
-                                    <Text style={{ color: "#0f0f0f", fontSize: 14, textAlign: "center", fontWeight: "bold", }}>REFERAL CODE </Text>
+                                    <Text style={{ color: "#0f0f0f", fontSize: 14, textAlign: "center", fontWeight: "bold", }}>REFERRAL CODE </Text>
                                 </View>
                                 {/* <View style={{ marginTop: 15 }}>
                             </View> */}
@@ -140,7 +145,7 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{ backgroundColor: 'white', padding: 8, marginTop: 7, }}>
-                                    <Text style={{ color: "#000000", fontSize: 15, fontWeight: "bold", letterSpacing: 0.1 }}>Share your referal code via </Text>
+                                    <Text style={{ color: "#000000", fontSize: 15, fontWeight: "bold", letterSpacing: 0.1 }}>Share your referral code via </Text>
                                 </View>
                                 <View style={{ width: "90%", alignSelf: "center", flexDirection: "row", justifyContent: "space-between", marginTop: 5 }}>
                                     <TouchableOpacity onPress={() => { whatsupShare() }} style={{ width: "48%", height: 52, backgroundColor: "#1fa900", borderRadius: 25, justifyContent: "center", }}>
@@ -172,18 +177,28 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
                                 </View> */}
                                 </View>
                             </View>
-                            <View style={{ backgroundColor: 'white', padding: 10, marginTop: 10, flex: 1 }}>
+                            <View style={{ backgroundColor: 'white', padding: 15, marginTop: 10, flex: 1 }}>
                                 <View style={{ width: "95%", alignSelf: "center", }}>
                                     <Text style={{ color: "#000000", fontSize: 15, fontWeight: "bold", letterSpacing: 0.1 }}>How it works </Text>
-                                    <Text style={{ marginVertical: 2 }}>1.  Share the referral link with your friends.</Text>
-                                    <Text style={{ marginVertical: 2 }}>2. Your friends clicks on the link or signs up through the code</Text>
-                                    <Text style={{ marginVertical: 2 }}>3. You get Rs 50 in your Zasket wallet, Rs 25 each on first & second orders placed by referee.</Text>
-                                    <Text style={{ marginVertical: 2 }}>4. Maximum of Rs 500 can be earned by referrals.</Text>
-
+                                    <Text style={{ marginVertical: 3 }}>1.  Share the referral link with your friends.</Text>
+                                    <Text style={{ marginVertical: 3 }}>2. Your friends clicks on the link or signs up through the code</Text>
+                                    <Text style={{ marginVertical: 3 }}>3. You get Rs 50 in your Zasket wallet, Rs 25 each on first & second orders placed by referee.</Text>
+                                    <Text style={{ marginVertical: 3 }}>4. Maximum of Rs 500 can be earned by referrals.</Text>
+                                    {
+                                        copymessage ?
+                                            <View style={{ position: 'absolute', top: 35, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                                                <View style={{ backgroundColor: "#191919", padding: 10, borderRadius: 10 }}>
+                                                    <Text style={{ color: "#DCDCDC", letterSpacing: 0.2 }}>Coiped to Clipboard</Text>
+                                                </View>
+                                            </View>
+                                            :
+                                            undefined
+                                    }
                                 </View>
 
                             </View>
                         </View>
+
                     </View>
                 </ScrollView>
             </SafeAreaView>

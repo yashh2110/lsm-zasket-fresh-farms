@@ -309,7 +309,14 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
 
                     <TouchableOpacity onPress={() => { navigation.navigate('ReferalCodeScreen') }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                         <View style={{ flex: 1, }}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Refer & Earn</Text>
+                            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Refer & Earn</Text>
+                                <View style={{ marginLeft: 10, backgroundColor: "#1D8129", borderRadius: 10 }}>
+                                    <Text style={{ marginHorizontal: 10, fontSize: 11, color: "#ffffff" }}>₹ Get 50</Text>
+                                </View>
+                            </View>
+                            <Text style={{ color: '#909090', fontSize: 12 }}>Refer your friends to save more </Text>
+
                         </View>
                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                             <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />

@@ -41,11 +41,11 @@ RNUxcam.tagScreenName('homeScreen');
 const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
     const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
 
-    const generateLink = async (param, value) => {
-        const SENDER_UID = 'USER1234';
+    const generateLink = async () => {
         //build the link
+        const SENDER_UID = 'USER1234';
         const link = await firebase.dynamicLinks().buildShortLink({
-            link: `https://play.google.com/?${SENDER_UID}`,
+            link: `https://play.google.com/store/apps/details?id=com.zasket`,
             // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
             android: {
                 packageName: 'com.zasket',
@@ -53,51 +53,18 @@ const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getB
             domainUriPrefix: 'https://zasket.page.link',
         });
         console.log("qqqqqqqqqqwqwqwqwq", link)
-
     }
 
 
     const handleDynamicLink = link => {
-        // alert(JSON.stringify(link))
         if (link) {
-            const ID = getParameterFromUrl(link, "SENDER_UID");
-            console.warn('IDIDIDIDIDIDIDIDIDIDIDIDIDIDIDIDIDIDIDIDIDIDIDIDIDID', ID); //ID USER1234
+            alert(link)
         }
-        // // Handle dynamic link inside your own application
-        // if (link.url === 'https://invertase.io/offer') {
-        //     // ...navigate to your offers screen
-        // }
     };
-    const getParameterFromUrl = (url, parm) => {
-        alert(url)
-        var re = new RegExp(".*[?&]" + parm + "=([^&]+)(&|$)");
-        var match = url.match(re);
-        return (match ? match[1] : "");
-    }
-    const intiadlllink = async () => {
-        let url = await firebase.links().getInitialLink();
-        console.log('incoming url', url); //incoming url https://www.deeplinkdemo.com?invitedby=USER1234
-        if (url) {
-            const ID = getParameterFromUrl(url, "SENDER_UID");
-            console.log('ID', ID); //ID USER1234
-        }
-    }
+
     useEffect(() => {
         generateLink()
-        // intiadlllink()
-        // const unsubscribe = dynamicLinks().onLink(buildLink);
-
-        dynamicLinks()
-            .getInitialLink()
-            .then(link => {
-                // alert("backkk")
-                alert(link.url)
-                if (link.url) {
-                    const ID = getParameterFromUrl(link.url, "SENDER_UID");
-                    console.log('ID', ID); //ID USER1234
-                }
-
-            });
+        const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
         const unsubscribetwo = dynamicLinks().getInitialLink(handleDynamicLink);
         const onReceived = (notification) => {
             console.log("Notification received: ", notification);
@@ -128,7 +95,7 @@ const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getB
         OneSignal.addEventListener('opened', onOpened);
         OneSignal.addEventListener('ids', onIds);
         return () => {
-            // unsubscribe();
+            unsubscribe();
             OneSignal.removeEventListener('received', onReceived);
             OneSignal.removeEventListener('opened', onOpened);
             OneSignal.removeEventListener('ids', onIds);

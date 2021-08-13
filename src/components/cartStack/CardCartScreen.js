@@ -211,14 +211,14 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                                 <Text style={{ fontSize: 12.5, color: "#49c32c", fontWeight: "bold" }}>You Save ₹{(((item?.actualPrice - item?.discountedPrice) * item?.count)).toFixed(0)} </Text>
                             }
                         </View>
-                        <View style={{}}>
+                        <View style={{ flexDirection: "row", maxWidth: 100, flexWrap: "wrap" }}>
                             <View style={{}}>
                                 {item?.discountedPrice == item?.actualPrice ?
                                     undefined :
-                                    <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', }}>₹ {item?.actualPrice * item?.count} </Text>
+                                    <Text style={{ fontSize: 14, color: '#909090', textDecorationLine: 'line-through', marginHorizontal: 10 }}>₹ {item?.actualPrice * item?.count} </Text>
                                 }
-                                <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize', alignSelf: "flex-end" }}>₹ {item?.discountedPrice * item?.count} </Text>
                             </View>
+                            <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize', alignSelf: "flex-end" }}>₹ {item?.discountedPrice * item?.count} </Text>
 
                         </View>
                     </View>
@@ -287,7 +287,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
                                     <Text style={{ fontSize: 12.5, color: "#49c32c", fontWeight: "bold" }}>You Save ₹{(((item?.actualPrice - item?.discountedPrice) * item?.count)).toFixed(0)} </Text>
                                 }
                             </View>
-                            <View style={{}}>
+                            <View style={{ flexDirection: "row" }}>
                                 <View style={{}}>
                                     {item?.discountedPrice == item?.actualPrice ?
                                         undefined :
