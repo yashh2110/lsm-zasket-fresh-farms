@@ -79,7 +79,7 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
         }
         let url =
             'whatsapp://send?text=' +
-            `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order  with my referral code ${referal}\. ` + appUrl
+            `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order with my referral code ${referal}\ ` + appUrl
         Linking.openURL(url)
             .then((data) => {
                 console.log('WhatsApp Opened', data);
@@ -99,7 +99,7 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
         }
         try {
             const result = await Share.share({
-                message: `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order  with my referral code ${referal}\. ` + appUrl,
+                message: `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order with my referral code ${referal}\ ` + appUrl,
             });
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
@@ -214,7 +214,7 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
                                         copymessage ?
                                             <View style={{ position: 'absolute', top: 35, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                                                 <View style={{ backgroundColor: "#191919", padding: 10, borderRadius: 10 }}>
-                                                    <Text style={{ color: "#DCDCDC", letterSpacing: 0.2 }}>Coiped to Clipboard</Text>
+                                                    <Text style={{ color: "#DCDCDC", letterSpacing: 0.2 }}>Copied to Clipboard</Text>
                                                 </View>
                                             </View>
                                             :
