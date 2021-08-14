@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from "../../navigation/Routes"
 import { getV2Config } from '../../actions/home'
 import { StackActions } from '@react-navigation/native';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 
 const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScreenLocation, onLogin, loginWithProvider, isAuthenticated, getV2Config }) => {
 
@@ -27,7 +28,43 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
     const [nameErrorText, setNameErrorText] = useState("")
     const [loading, setLoading] = useState(false)
     const { mobileNumber, otp } = route.params;
+    useEffect(() => {
+        const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+        dynamicLinks()
+            .getInitialLink()
+            .then(link => {
+                if (link) {
+                    var regex = /[?&]([^=#]+)=([^&#]*)/g,
+                        params = {},
+                        match;
+                    while (match = regex.exec(link.url)) {
+                        params[match[1]] = match[2];
+                    }
+                    // console.log(params.referralCode)
+                    setReferralCode(params.referralCode)
+                }
+            });
 
+        return () => {
+            unsubscribe()
+        }
+    }, [])
+    const handleDynamicLink = (link) => {
+        if (link) {
+            spreatereferral(link)
+
+        }
+    };
+    const spreatereferral = (link) => {
+        var regex = /[?&]([^=#]+)=([^&#]*)/g,
+            params = {},
+            match;
+        while (match = regex.exec(link.url)) {
+            params[match[1]] = match[2];
+        }
+        // console.log(params.referralCode)
+        setReferralCode(params.referralCode)
+    }
     const validate = () => {
         let status = true
         if (email == undefined || email.trim() == "") {

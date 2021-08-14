@@ -14,6 +14,8 @@ import Loader from '../common/Loader';
 import { EventRegister } from 'react-native-event-listeners'
 import RNUxcam from 'react-native-ux-cam';
 import AsyncStorage from '@react-native-community/async-storage';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
+import firebase from '@react-native-firebase/app'
 RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
 RNUxcam.tagScreenName('My Wallet');
@@ -23,33 +25,57 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
     const [loading, setLoading] = useState(false)
     const [referal, setReferal] = useState("")
     const [copymessage, setCopymessage] = useState(false)
-
+    const [dynamicLink, setDynamicLink] = useState("")
 
     useEffect(() => {
         initialFunction()
-
     }, [])
-
-
     const initialFunction = async () => {
         setLoading(true)
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let referralCode = await parsedUserDetails?.customerDetails?.referralCode
         setReferal(referralCode)
-        // alert(referralCode)
         setLoading(false)
 
     }
+    useEffect(() => {
+        generateLink()
+
+    }, [])
+    const generateLink = async () => {
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let referralCode = await parsedUserDetails?.customerDetails?.referralCode
+        const link = await firebase.dynamicLinks().buildShortLink({
+            link: `https://zasket.page.link?referralCode=${referralCode}`,
+            // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
+            android: {
+                packageName: 'com.zasket',
+            },
+            ios: {
+                bundleId: 'com.freshleaftechnolgies.zasket',
+                appStoreId: '1541056118',
+            },
+            domainUriPrefix: 'https://zasket.page.link',
+        });
+        setDynamicLink(link)
+        console.log("qqqqqqqqqqwqwqwqwq", link)
+    }
+
+
+
+
+
 
     const whatsupShare = async () => {
         let appUrl
         let reff = "ZASKETZ8IBJM"
         if (Platform.OS == "ios") {
-            appUrl = "https://www.zasket.in/#download-app"
+            appUrl = dynamicLink
         }
         if (Platform.OS == "android") {
-            appUrl = "https://www.zasket.in/#download-app"
+            appUrl = dynamicLink
         }
         let url =
             'whatsapp://send?text=' +
@@ -66,10 +92,10 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
     const moreShare = async () => {
         let appUrl
         if (Platform.OS == "ios") {
-            appUrl = "https://www.zasket.in/#download-app"
+            appUrl = dynamicLink
         }
         if (Platform.OS == "android") {
-            appUrl = "https://www.zasket.in/#download-app"
+            appUrl = dynamicLink
         }
         try {
             const result = await Share.share({
@@ -131,7 +157,7 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
                             </View> */}
                                 <View style={{ width: "95%", alignSelf: "center", flexDirection: 'row', borderStyle: 'dashed', borderRadius: 5, backgroundColor: "#ffeaea", alignItems: "center", borderWidth: 1.5, borderColor: '#e1171e', zIndex: 0, marginLeft: -1 }}>
                                     <View style={{ flex: 1 }}>
-                                        <Text style={{ fontSize: 20, color: "#E1171E", marginLeft: 20, fontWeight: 'bold', letterSpacing: 0.1 }}>ZASKET 100 </Text>
+                                        <Text style={{ fontSize: 20, color: "#E1171E", marginLeft: 20, fontWeight: 'bold', letterSpacing: 0.1 }}>{referal} </Text>
                                     </View>
                                     <TouchableOpacity onPress={() => { get_Text_From_Clipboard(referal) }} style={{ flexDirection: "row", height: 50, width: 70, justifyContent: "space-evenly", alignItems: "center", }}>
                                         <View style={{

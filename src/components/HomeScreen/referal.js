@@ -41,29 +41,37 @@ RNUxcam.tagScreenName('homeScreen');
 const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
     const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
 
-    const generateLink = async () => {
-        //build the link
-        const SENDER_UID = 'USER1234';
-        const link = await firebase.dynamicLinks().buildShortLink({
-            link: `https://play.google.com/store/apps/details?id=com.zasket`,
-            // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
-            android: {
-                packageName: 'com.zasket',
-            },
-            domainUriPrefix: 'https://zasket.page.link',
-        });
-        console.log("qqqqqqqqqqwqwqwqwq", link)
-    }
-
-
+    // const generateLink = async () => {
+    //     //build the link
+    //     const SENDER_UID = 'USER1234';
+    //     const link = await firebase.dynamicLinks().buildShortLink({
+    //         link: `https://zasket.page.link/?${SENDER_UID}`,
+    //         // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
+    //         android: {
+    //             packageName: 'com.zasket',
+    //         },
+    //         domainUriPrefix: 'https://zasket.page.link',
+    //     });
+    //     console.log("qqqqqqqqqqwqwqwqwq", link)
+    // }
+    //     const generateLink = async () => {
+    //  const SENDER_UID = 'USER1234';
+    //         const link = `https://zasket.page.link/?invitedBy=${SENDER_UID}`;
+    //         const dynamicLinkDomain = 'https://zasket.page.link';
+    //         //call  DynamicLink constructor
+    //         const DynamicLink = new firebase.links.DynamicLink(link, dynamicLinkDomain);
+    //         //get the generatedLink
+    //         const generatedLink = await firebase.links().createDynamicLink(DynamicLink);
+    //         console.log('created link', generatedLink);
+    //     }
     const handleDynamicLink = link => {
         if (link) {
-            alert(link)
+            alert(JSON.stringify(link, null, "   "))
         }
     };
 
     useEffect(() => {
-        generateLink()
+        // generateLink()
         const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
         const unsubscribetwo = dynamicLinks().getInitialLink(handleDynamicLink);
         const onReceived = (notification) => {
