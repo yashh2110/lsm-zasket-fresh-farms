@@ -2,11 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
- <key>FirebaseDynamicLinksCustomDomains</key>
-  <array>
-    <string>https://zasket.page.link</string>
-    <string>https://zasket.page.link</string>
-  </array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -40,6 +35,11 @@
 	<string>3588521487934442</string>
 	<key>FacebookDisplayName</key>
 	<string>Zasket</string>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+	<array>
+		<string>https://zasket.page.link</string>
+		<string>https://zasket.page.link</string>
+	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
