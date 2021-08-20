@@ -59,8 +59,12 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
             },
             domainUriPrefix: 'https://zasket.page.link',
         });
+        alert(link)
         setDynamicLink(link)
         console.log("qqqqqqqqqqwqwqwqwq", link)
+        console.warn("linkd", link)
+
+        
     }
 
 

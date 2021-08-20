@@ -35,11 +35,6 @@
 	<string>3588521487934442</string>
 	<key>FacebookDisplayName</key>
 	<string>Zasket</string>
-	<key>FirebaseDynamicLinksCustomDomains</key>
-	<array>
-		<string>https://zasket.page.link</string>
-		<string>https://zasket.page.link</string>
-	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>

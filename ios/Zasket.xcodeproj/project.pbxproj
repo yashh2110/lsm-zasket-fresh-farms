@@ -53,14 +53,14 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		D75AA7902576DB1300A2E267 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
 				D75AA78C2576DB1300A2E267 /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -957,7 +957,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Zasket/Zasket.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development: Mani Deva (TZ36K99SX9)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 82P963U5A9;
@@ -972,7 +972,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.freshleaftechnolgies.zasket;
 				PRODUCT_NAME = Zasket;
-				PROVISIONING_PROFILE_SPECIFIER = "Zasket Development Provisioning profile";
+				PROVISIONING_PROFILE_SPECIFIER = "Development provisioning profile with dynamic link";
 				SWIFT_OBJC_BRIDGING_HEADER = "Zasket-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1003,7 +1003,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.freshleaftechnolgies.zasket;
 				PRODUCT_NAME = Zasket;
-				PROVISIONING_PROFILE_SPECIFIER = "Zasket App Store Provisioning profile";
+				PROVISIONING_PROFILE_SPECIFIER = "App store provisioning profile with dynamic link";
 				SWIFT_OBJC_BRIDGING_HEADER = "Zasket-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;

@@ -15,6 +15,7 @@ import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import * as Sentry from "@sentry/react-native";
 import RNUxcam from 'react-native-ux-cam';
+import firebase from '@react-native-firebase/app'
 RNUxcam.enableAdvancedGestureRecognizers = (enable) => void
   // Example
   // Set to FALSE before startWithKey to disable - Default is TRUE
@@ -27,7 +28,9 @@ const App = () => {
 
   useEffect(() => {
     // store.dispatch(loadUser())
+
     const initialFunction = async () => {
+      await firebase.initializeApp()
       if (Platform.OS == "ios") {
         PushNotificationIOS.requestPermissions()
       }
