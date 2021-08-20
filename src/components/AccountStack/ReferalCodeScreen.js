@@ -47,24 +47,23 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let referralCode = await parsedUserDetails?.customerDetails?.referralCode
-        const link = await firebase.dynamicLinks().buildShortLink({
-            link: `https://zasket.page.link?referralCode=${referralCode}`,
-            // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
-            android: {
-                packageName: 'com.zasket',
-            },
-            ios: {
-                bundleId: 'com.freshleaftechnolgies.zasket',
-                appStoreId: '1541056118',
-            },
-            domainUriPrefix: 'https://zasket.page.link',
-        });
-        alert(link)
-        setDynamicLink(link)
-        console.log("qqqqqqqqqqwqwqwqwq", link)
-        console.warn("linkd", link)
-
-        
+        try {
+            const link = await firebase.dynamicLinks().buildShortLink({
+                link: `https://zasket.page.link?referralCode=${referralCode}`,
+                // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
+                android: {
+                    packageName: 'com.zasket',
+                },
+                ios: {
+                    bundleId: 'com.freshleaftechnolgies.zasket',
+                    appStoreId: '1541056118',
+                },
+                domainUriPrefix: 'https://zasket.page.link',
+            });
+            setDynamicLink(link)
+        } catch (error) {
+            alert(error)
+        }
     }
 
 
