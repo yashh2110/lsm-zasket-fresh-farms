@@ -17,7 +17,8 @@
     "releaseBundle": "cd android && ./gradlew bundleRelease",
     "clean": "cd android && ./gradlew clean",
     "install-release": "react-native run-android --variant=release",
-    "ip": "adb shell ip -f inet addr show wlan0"
+    "ip": "adb shell ip -f inet addr show wlan0",
+    "clean-ios": "rm -rf ~/library/developer/xcode/deriveddata && rm -rf ~/.rncache && cd ios && rm -rf Pods && pod install"
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.6.2",
