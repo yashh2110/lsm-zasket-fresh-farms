@@ -61,6 +61,7 @@ const ReferalCodeScreen = ({ route, navigation, getCreditTransactions }) => {
                 domainUriPrefix: 'https://zasket.page.link',
             });
             setDynamicLink(link)
+            console.log("qqqqqqqqqqq",link)
         } catch (error) {
             alert(error)
         }

@@ -32,24 +32,25 @@ const App = () => {
     const initialFunction = async () => {
       if (Platform.OS == "ios") {
         PushNotificationIOS.requestPermissions()
+        try {
+          await firebase.initializeApp({
+            apiKey: 'AIzaSyBJwFWNxLCCk99P911k5LmuCEcsWqFtz6o',
+            appId: "1:135821146938:ios:e21478741c6b9e770a6e03",
+            databaseURL: "https://zasket-9f0ab.firebaseio.com",
+            messagingSenderId: '135821146938',
+            projectId: 'zasket-9f0ab',
+            storageBucket: 'zasket-9f0ab.appspot.com'
+          })
+        } catch (err) {
+  
+        }
       }
       let userDetails = await AsyncStorage.getItem('userDetails');
       let parsedUserDetails = await JSON.parse(userDetails);
       if (parsedUserDetails !== null) {
         store.dispatch(onLogin(parsedUserDetails))
       }
-      try {
-        await firebase.initializeApp({
-          apiKey: 'AIzaSyBJwFWNxLCCk99P911k5LmuCEcsWqFtz6o',
-          appId: "1:135821146938:ios:e21478741c6b9e770a6e03",
-          databaseURL: "https://zasket-9f0ab.firebaseio.com",
-          messagingSenderId: '135821146938',
-          projectId: 'zasket-9f0ab',
-          storageBucket: 'zasket-9f0ab.appspot.com'
-        })
-      } catch (err) {
-
-      }
+    
     }
     initialFunction()
 
