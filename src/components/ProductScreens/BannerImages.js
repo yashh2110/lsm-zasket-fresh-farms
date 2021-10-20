@@ -26,21 +26,24 @@ const BannerImages = ({ navigation, item }) => {
         setPosition(0)
     }, []);
     return (
-        <View style={{ backgroundColor: 'white' }}>
+        <View style={{ backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
             <View style={[{
                 width: "100%",
                 aspectRatio: 1.33333,
-                backgroundColor: '#F7F7F7'
+                backgroundColor: '#F7F7F7',
+                justifyContent: "center",
+                borderTopLeftRadius: 25, borderTopRightRadius: 25
+                // borderRadius: 25
             },]}>
                 {/* todo: Alignment after Implementation */}
-                {/* <Text>{JSON.stringify(item?.itemImages, null, "       ")} </Text> */}
+                {/* <Text>{JSON.stringify(item?.itemImages?.[0]?.largeImagePath, null, "       ")} </Text> */}
                 <Image
                     source={item?.itemImages?.[0]?.largeImagePath ?
                         { uri: banner ? banner : item?.itemImages?.[0]?.largeImagePath } : require('../../assets/png/default.png')}
-                    style={{ height: "100%", width: "100%" }} resizeMode="contain"
+                    style={{ height: "80%", width: "80%", alignSelf: "center", }} resizeMode="cover"
                 />
             </View>
-            {item?.itemImages?.length > 0 ?
+            {/* {item?.itemImages?.length > 0 ?
                 <ScrollView horizontal={true} contentContainerStyle={{ height: 60 }}>
                     {item?.itemImages?.map((element, index) => {
                         return (
@@ -49,14 +52,14 @@ const BannerImages = ({ navigation, item }) => {
                                     setBanner(element.largeImagePath)
                                     setPosition(index)
                                 }}>
-                                    <Image
+                                     <Image
                                         source={{ uri: element?.smallImagePath }}
                                         style={[
                                             { backgroundColor: "#F7F7F7", width: 50, height: 50, borderRadius: 4 }
                                         ]}
-                                    />
+                                    /> 
 
-                                    {position === index ? (
+                                     {position === index ? (
                                         <View style={styles.eyeOverlayContainer}>
                                             <View style={[styles.eyeOverlay, { height: "100%", width: "100%", borderRadius: 4 }]}></View>
                                             <Icon
@@ -65,13 +68,13 @@ const BannerImages = ({ navigation, item }) => {
                                                 type="material"
                                             ></Icon>
                                         </View>
-                                    ) : null}
+                                    ) : null} 
                                 </TouchableOpacity>
                             </View>
                         );
                     })}
                 </ScrollView>
-                : undefined}
+                : undefined} */}
         </View>
     );
 }

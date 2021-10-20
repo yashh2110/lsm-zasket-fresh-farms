@@ -31,15 +31,104 @@ import Modal from 'react-native-modal';
 import SetDeliveryLocationModal from '../common/SetDeliveryLocationModal'
 import { EventRegister } from 'react-native-event-listeners'
 import RNUxcam from 'react-native-ux-cam';
+import firebase from '@react-native-firebase/app'
+import Share from 'react-native-share';
+import FastImage from 'react-native-fast-image'
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 
 RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
 RNUxcam.tagScreenName('homeScreen');
-const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
+const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocation, getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
     const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
+    const [dynamicLink, setDynamicLink] = useState("")
+    const [productId, setProductId] = useState("")
+    // useEffect(() => {
+    //     // let userDetails = await AsyncStorage.getItem('ProductId');
+    //     // alert(userDetails)
+    //     getIntialFunction()
+
+    // })
+    // const getIntialFunction = async () => {
+    //     let userDetails = await AsyncStorage.getItem('ProductId');
+    //     alert(userDetails)
+
+    // }
 
     useEffect(() => {
+        const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+        dynamicLinks()
+            .getInitialLink()
+            .then(link => {
+                if (link) {
+                    var regex = /[?&]([^=#]+)=([^&#]*)/g,
+                        params = {},
+                        match;
+                    while (match = regex.exec(link.url)) {
+                        params[match[1]] = match[2];
+                    }
+                    if (params?.productDetails) {
+                        // alert(JSON.stringify(params))
+                        navigation.navigate("ProductDetailScreen", { item: params?.productDetails })
+                    }
+                }
+            });
 
+        return () => {
+            unsubscribe()
+        }
+    }, [])
+    const handleDynamicLink = (link) => {
+        if (link) {
+            spreatereferral(link)
+
+        }
+    };
+    const spreatereferral = (link) => {
+        var regex = /[?&]([^=#]+)=([^&#]*)/g,
+            params = {},
+            match;
+        while (match = regex.exec(link.url)) {
+            params[match[1]] = match[2];
+        }
+        // console.log(params.referralCode)
+        if (params?.productDetails) {
+            // alert(JSON.stringify(params))
+            navigation.navigate("ProductDetailScreen", { item: params?.productDetails })
+        }
+        // setReferralCode(params.referralCode)
+    }
+    useEffect(() => {
+        // alert(JSON.stringify(route, null, "        "))
+        generateLink()
+
+    }, [])
+    const generateLink = async () => {
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let referralCode = await parsedUserDetails?.customerDetails?.referralCode
+        try {
+            const link = await firebase.dynamicLinks().buildShortLink({
+                link: `https://zasket.page.link?banner=${'HomePage'}`,
+                // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
+                android: {
+                    packageName: 'com.zasket',
+                },
+                ios: {
+                    bundleId: 'com.freshleaftechnolgies.zasket',
+                    appStoreId: '1541056118',
+                },
+                domainUriPrefix: 'https://zasket.page.link',
+            });
+            setDynamicLink(link)
+            console.log("111111212121212121212", link)
+        } catch (error) {
+            alert(error)
+        }
+    }
+
+    useEffect(() => {
+        // alert(JSON.stringify(bannerImages, null, "       "))
         const onReceived = (notification) => {
             console.log("Notification received: ", notification);
         }
@@ -368,6 +457,40 @@ const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getB
             }
         })
     }
+    const shareBanner = (id) => {
+        alert(id)
+    }
+    const moreShare = async (imagePath, shareMessage) => {
+        // alert(shareMessage)
+        // return
+        const toDataURL = (url) => fetch(url)
+            .then(response => response.blob())
+            .then(blob => new Promise((resolve, reject) => {
+                const reader = new FileReader()
+                reader.onloadend = () => resolve(reader.result)
+                reader.onerror = reject
+                reader.readAsDataURL(blob)
+            }))
+        await toDataURL(imagePath)
+            .then(async (dataUrl) => {
+                let split = dataUrl.split("base64,")
+                // await setbase64Image(split[1])
+                let shareImage = {
+                    title: "Zasket",//string
+                    message: `${shareMessage}: ` + dynamicLink,
+                    url: `data:image/png;base64,${split[1]}`,
+                }
+                // alert(JSON.stringify(shareImage, null, "            "))
+                Share.open(shareImage)
+                    .then((res) => {
+                    })
+                    .catch((err) => {
+                    });
+            })
+    }
+    // const { productId } = route?.params;
+
+
     return (
         <>
             <ScrollView style={{ flex: 1, backgroundColor: 'white' }} showsVerticalScrollIndicator={false}
@@ -399,6 +522,7 @@ const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getB
                     </View>
                     : undefined}
                 <View style={{ height: 160, justifyContent: 'center', alignItems: 'center', marginTop: 5, }}>
+                    {/* <Text>{productId ? productId : "kwjeckw"}</Text> */}
                     {bannerImages?.length > 0 ?
                         <Swiper
                             autoplay={true}
@@ -419,10 +543,24 @@ const HomeScreen = ({ cartItems, homeScreenLocation, addHomeScreenLocation, getB
                                                 width: "96.5%",
                                                 alignSelf: "center",
                                                 borderRadius: 8,
-                                                // marginRight: bannerImages.length - 1 == index ? 0 : 15
                                             }}
                                             source={{ uri: el?.imagePath }}
                                         />
+                                        <TouchableOpacity onPress={() => moreShare(el?.imagePath, el?.shareMessage)} style={{ borderRadius: 25, backgroundColor: "#F7F7F7", position: "absolute", right: 18, bottom: 14 }}>
+                                            <View style={{ flexDirection: "row", marginHorizontal: 6, padding: 3, justifyContent: "center", alignItems: "center" }}>
+                                                <FastImage
+                                                    style={{ width: 21, height: 21 }}
+                                                    source={require('../../assets/png/share.png')}
+                                                    resizeMode={FastImage.resizeMode.contain}
+                                                />
+                                                {/* <Image
+                                                    style={{ width: 21, height: 21 }}
+                                                    resizeMode={"contain"}
+                                                    source={require('../../assets/png/share.png')}
+                                                /> */}
+                                                <Text style={{ marginHorizontal: 5, fontWeight: "bold", fontSize: 17 }}>Share</Text>
+                                            </View>
+                                        </TouchableOpacity>
                                     </>
                                 )
                             })}

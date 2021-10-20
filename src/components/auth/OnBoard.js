@@ -1,6 +1,6 @@
 import LottieView from 'lottie-react-native';
 import { Button, Text } from "native-base";
-import React from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import { Image, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
 // import Icon from 'react-native-vector-icons/Ionicons';
 import AppIntroSlider from 'react-native-app-intro-slider';
@@ -11,10 +11,59 @@ import Theme from '../../styles/Theme';
 import { Icon } from 'native-base';
 import { AuthContext } from '../../navigation/Routes';
 import { CheckGpsState, CheckPermissions } from '../../utils/utils';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 
 const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) => {
     const { setOnBoardKey } = React.useContext(AuthContext);
+    const [referralCode, setReferralCode] = useState("")
 
+    // useEffect(() => {
+    //     const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+    //     dynamicLinks()
+    //         .getInitialLink()
+    //         .then(link => {
+    //             if (link) {
+    //                 var regex = /[?&]([^=#]+)=([^&#]*)/g,
+    //                     params = {},
+    //                     match;
+    //                 while (match = regex.exec(link.url)) {
+    //                     params[match[1]] = match[2];
+    //                 }
+    //                 // alert(JSON.stringify(params))
+    //                 // console.log(params.referralCode)
+    //                 // setReferralCode(params.referralCode)
+    //                 // alert(params?.productDetails)
+    //                 // if (params.banner == "HomePage") {
+    //                 //     // alert
+    //                 //     navigation.navigate("SwitchNavigator")
+    //                 // } else if (params?.productDetails) {
+    //                 //     AsyncStorage.setItem('ProductId', "90");
+    //                 //     navigation.navigate("SwitchNavigator")
+    //                 // }
+    //                 // alert(params)
+    //             }
+    //         });
+
+    //     return () => {
+    //         unsubscribe()
+    //     }
+    // }, [])
+    // const handleDynamicLink = (link) => {
+    //     if (link) {
+    //         spreatereferral(link)
+
+    //     }
+    // };
+    // const spreatereferral = (link) => {
+    //     var regex = /[?&]([^=#]+)=([^&#]*)/g,
+    //         params = {},
+    //         match;
+    //     while (match = regex.exec(link.url)) {
+    //         params[match[1]] = match[2];
+    //     }
+    //     // console.log(params.referralCode)
+    //     setReferralCode(params.referralCode)
+    // }
     const _onDone = async () => {
         // await AsyncStorage.setItem('onBoardKey', 'onBoardKey');
         // navigation.pop()

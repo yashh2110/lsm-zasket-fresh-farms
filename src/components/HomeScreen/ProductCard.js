@@ -62,8 +62,8 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
     return (
         <View style={{ flex: 1, margin: 4, width: 160, marginBottom: 20 }}>
             {/* <Text>{JSON.stringify(item?.availableQuantity, null, "         ")} </Text> */}
-            <View
-                // onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
+            <TouchableOpacity
+                onPress={() => { navigation.navigate("ProductDetailScreen", { item: item?.id }) }}
                 style={[styles.productCard,]}>
                 <View style={{ backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', height: 120, width: 160 }} onPress={() => { }}>
                     <Image
@@ -103,7 +103,7 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
                     </View>
                     <Text numberOfLines={1} style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.itemSubName} </Text>
                 </View>
-            </View>
+            </TouchableOpacity>
             {item?.onDemand == false && (item?.availableQuantity < 1) ?
                 null
                 :

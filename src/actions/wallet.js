@@ -94,3 +94,17 @@ export const rejectPaymentByAPI = (payload, callback) => async dispatch => {
         callback(err, false)
     }
 }
+
+
+export const getLeaderBoardList = (callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.get(`/customer/referrals/leaderboard`)
+        // alert(JSON.stringify(res, null, "       "))
+        callback(res?.data, true)
+    } catch (err) {
+        // alert("errr111")
+        callback(err, false)
+    }
+}
+
+

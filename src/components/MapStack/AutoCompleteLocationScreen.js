@@ -78,6 +78,7 @@ class AutoCompleteLocationScreen extends React.Component {
 
     async componentDidMount() {
         const { fromScreen, navigateTo } = this.props.route.params;
+        alert(JSON.stringify(this.props.route, null, "      "))
         CheckPermissions((status) => {
             if (status) {
                 this.setState({ gpsEnabled: false })
@@ -267,7 +268,7 @@ class AutoCompleteLocationScreen extends React.Component {
                         <View style={{}}>
                             <Text style={{ fontSize: 18, fontWeight: "bold", color: "#000000", letterSpacing: 0.2 }}>
                                 Search for your location
-                                </Text>
+                            </Text>
                         </View>
                     </View>
                     <View style={{ flex: 1, alignSelf: "center", backgroundColor: "#F8F8F8", width: ("93%"), }}>

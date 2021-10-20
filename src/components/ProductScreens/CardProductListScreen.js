@@ -1,18 +1,127 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList, Share } from 'react-native';
 import Theme from '../../styles/Theme';
 import { updateCartItemsApi } from '../../actions/cart'
 import { connect } from 'react-redux';
 import LottieView from 'lottie-react-native';
 import { Icon } from 'native-base';
+import firebase from '@react-native-firebase/app'
+import Sharee from 'react-native-share';
 
 const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAuthenticated }) => {
     const [addButton, setAddButton] = useState(true)
     const [count, setCount] = useState(0)
     const [loadingCount, setLoadingCount] = useState(false)
-
+    const [dynamicLink, setDynamicLink] = useState("")
     useEffect(() => {
+        // alert(JSON.stringify(item?.shareInfo, null, "    "))
+        // generateLink()
 
+    }, [])
+    const generateLink = async (id) => {
+        // alert(id)
+
+    }
+
+    const moreShare = async (imageiD, image, message) => {
+        try {
+            const link = await firebase.dynamicLinks().buildShortLink({
+                link: `https://zasket.page.link?productDetails=${imageiD}`,
+                // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
+                android: {
+                    packageName: 'com.zasket',
+                },
+                ios: {
+                    bundleId: 'com.freshleaftechnolgies.zasket',
+                    appStoreId: '1541056118',
+                },
+                domainUriPrefix: 'https://zasket.page.link',
+            });
+            setDynamicLink(link)
+            const toDataURL = (url) => fetch(url)
+                .then(response => response.blob())
+                .then(blob => new Promise((resolve, reject) => {
+                    const reader = new FileReader()
+                    reader.onloadend = () => resolve(reader.result)
+                    reader.onerror = reject
+                    reader.readAsDataURL(blob)
+                }))
+            toDataURL(image)
+                .then(dataUrl => {
+                    let split = dataUrl.split("base64,")
+                    let shareImage = {
+                        title: "Zasket",//string
+                        message: `${message}: ${link}`,
+                        url: `data:image/png;base64,${split[1]}`,
+                    }
+                    Sharee.open(shareImage).catch(err => console.log(err));
+                })
+        } catch (error) {
+            // alert(error)
+        }
+    }
+
+    const whatsAppShare = async (imageiD, image, message) => {
+        // alert(JSON.stringify(imageiD, null, "   "))
+        // return
+        // return
+        try {
+            const link = await firebase.dynamicLinks().buildShortLink({
+                link: `https://zasket.page.link?productDetails=${imageiD}`,
+                // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
+                android: {
+                    packageName: 'com.zasket',
+                },
+                ios: {
+                    bundleId: 'com.freshleaftechnolgies.zasket',
+                    appStoreId: '1541056118',
+                },
+                domainUriPrefix: 'https://zasket.page.link',
+            });
+            setDynamicLink(link)
+            const toDataURL = (url) => fetch(url)
+                .then(response => response.blob())
+                .then(blob => new Promise((resolve, reject) => {
+                    const reader = new FileReader()
+                    reader.onloadend = () => resolve(reader.result)
+                    reader.onerror = reject
+                    reader.readAsDataURL(blob)
+                }))
+            toDataURL(image)
+                .then(dataUrl => {
+                    let split = dataUrl.split("base64,")
+                    const shareOptions = {
+                        title: 'Zasket',
+                        message: `${message}: ${link}`,
+                        url: `data:image/png;base64,${split[1]}`,
+                        failOnCancel: false,
+                    };
+                    try {
+                        Share.open(shareOptions);
+                    } catch (err) {
+                        moreShare(imageiD, image, message)
+                        // alert("notwhats app")
+                        // do something
+                    }
+                })
+        } catch (error) {
+            // alert(error)
+        }
+
+    }
+    const whatsupShare = async (referralCode) => {
+        // let shareOptions = {
+        //     title: "caption",//string
+        //     message: partnerCustomerReferral?.content,
+        //     url: `data:image/png;base64,${base64Image}`,
+        //     social: Share.Social.WHATSAPP, // or Share.Social.EMAIL
+        //     // whatsAppNumber: whatsapp
+        // }
+        // Share.shareSingle(shareOptions)
+        //     .then((res) => { console.log(res) })
+        //     .catch((err) => { err && console.log(err); });
+    };
+    useEffect(() => {
         // alert(JSON.stringify(cartItems, null, "      "))
         let filteredItems = cartItems.filter(element => element?.id == item?.id);
         if (filteredItems.length == 1) {
@@ -65,13 +174,12 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
 
     return (
         <View style={{ flex: 1, width: "90%", marginBottom: 5, alignSelf: 'center' }}>
-            <View
-                // onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
+            <TouchableOpacity
+                onPress={() => { navigation.navigate("ProductDetailScreen", { item: item?.id }) }}
                 style={styles.productCard}>
                 <View style={{
                     backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
                 }} onPress={() => { }}>
-
                     {item?.discountedPrice == 1 ?
                         <View style={[styles.offerButton, {}]}>
                             <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
@@ -117,12 +225,12 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                         source={item?.itemImages[0]?.mediumImagePath ?
                             { uri: item?.itemImages[0]?.mediumImagePath } : require('../../assets/png/default.png')}
                     />
-
-
-
                 </View>
                 <View style={[{ padding: 10, flex: 1 }]}>
-                    <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
+                    <View style={{}}>
+                        <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
+
+                    </View>
                     <Text style={{ fontSize: 12, color: '#909090', marginVertical: 5 }}>{item?.itemSubName} </Text>
                     <View style={{ flexDirection: 'row', marginBottom: 5 }}>
                         <Text style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>₹{item?.discountedPrice} </Text>
@@ -142,45 +250,62 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                             </View>
                         </View>
                     }
-                    {item?.onDemand == false && (item?.availableQuantity < 1) ?
-                        null
-                        : !loadingCount ?
-                            addButton ?
-                                <TouchableOpacity
-                                    onPress={() => onAddToCart()}
-                                    style={[styles.addButton, {}]}
-                                >
-                                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', padding: 5, }}>+ Add </Text>
-                                </TouchableOpacity>
-                                :
-                                <View style={[styles.addButton, {}]}>
-                                    <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
-                                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
+
+                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        {item?.onDemand == false && (item?.availableQuantity < 1) ?
+                            null
+                            : !loadingCount ?
+                                addButton ?
+                                    <TouchableOpacity
+                                        onPress={() => onAddToCart()}
+                                        style={[styles.addButton, {}]}
+                                    >
+                                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', padding: 5, }}>+ Add </Text>
                                     </TouchableOpacity>
-                                    <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
+                                    :
+                                    <View style={[styles.addButton, {}]}>
+                                        <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
+                                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>-</Text>
+                                        </TouchableOpacity>
+                                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{count} </Text>
+                                        </View>
+
+                                        {count < item?.maxAllowedQuantity ?
+                                            <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
+                                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', }}>+</Text>
+                                            </TouchableOpacity>
+                                            : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                                                <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
+                                            </View>
+                                        }
                                     </View>
 
-                                    {count < item?.maxAllowedQuantity ?
-                                        <TouchableOpacity onPress={() => onCartUpdate('INCREASE')} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, padding: 5, }}>
-                                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold', }}>+</Text>
-                                        </TouchableOpacity>
-                                        : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                                            <Text style={{ color: "#E1E1E1", fontWeight: 'bold' }}>+</Text>
-                                        </View>
-                                    }
+                                :
+                                <View style={[styles.addButton, {}]}>
+                                    <LottieView
+                                        style={{ height: 50, }}
+                                        source={require("../../assets/json/countLoading.json")}
+                                        autoPlay
+                                    />
                                 </View>
-                            :
-                            <View style={[styles.addButton, {}]}>
-                                <LottieView
-                                    style={{ height: 50, }}
-                                    source={require("../../assets/json/countLoading.json")}
-                                    autoPlay
+                        }
+                        {item?.onDemand == false && (item?.availableQuantity < 1)
+                            ?
+                            null :
+                            <TouchableOpacity onPress={() => { whatsAppShare(item?.id, item?.itemImages[0]?.mediumImagePath, item?.shareInfo) }} style={{ alignSelf: "flex-start", height: 40 }}>
+                                <Image
+                                    source={require('../../assets/png/shareicons.png')}
+                                    style={{ height: 30, width: 100, alignSelf: "flex-start" }} resizeMode="cover"
                                 />
-                            </View>
-                    }
+                            </TouchableOpacity>
+                        }
+                    </View>
+
+
+
                 </View>
-            </View>
+            </TouchableOpacity>
 
         </View>
     )
