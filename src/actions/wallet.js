@@ -98,7 +98,10 @@ export const rejectPaymentByAPI = (payload, callback) => async dispatch => {
 
 export const getLeaderBoardList = (callback) => async dispatch => {
     try {
-        const res = await axiosinstance.get(`/customer/referrals/leaderboard`)
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customer_id = await parsedUserDetails?.customerDetails?.id
+        const res = await axiosinstance.get(`/customer/referrals/leaderboard?customer_id=${customer_id}`)
         // alert(JSON.stringify(res, null, "       "))
         callback(res?.data, true)
     } catch (err) {

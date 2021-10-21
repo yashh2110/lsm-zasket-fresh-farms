@@ -14,7 +14,7 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
     const [loadingCount, setLoadingCount] = useState(false)
     const [dynamicLink, setDynamicLink] = useState("")
     useEffect(() => {
-        // alert(JSON.stringify(item?.shareInfo, null, "    "))
+        // alert(JSON.stringify(item, null, "    "))
         // generateLink()
 
     }, [])
@@ -61,66 +61,7 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
         }
     }
 
-    const whatsAppShare = async (imageiD, image, message) => {
-        // alert(JSON.stringify(imageiD, null, "   "))
-        // return
-        // return
-        try {
-            const link = await firebase.dynamicLinks().buildShortLink({
-                link: `https://zasket.page.link?productDetails=${imageiD}`,
-                // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
-                android: {
-                    packageName: 'com.zasket',
-                },
-                ios: {
-                    bundleId: 'com.freshleaftechnolgies.zasket',
-                    appStoreId: '1541056118',
-                },
-                domainUriPrefix: 'https://zasket.page.link',
-            });
-            setDynamicLink(link)
-            const toDataURL = (url) => fetch(url)
-                .then(response => response.blob())
-                .then(blob => new Promise((resolve, reject) => {
-                    const reader = new FileReader()
-                    reader.onloadend = () => resolve(reader.result)
-                    reader.onerror = reject
-                    reader.readAsDataURL(blob)
-                }))
-            toDataURL(image)
-                .then(dataUrl => {
-                    let split = dataUrl.split("base64,")
-                    const shareOptions = {
-                        title: 'Zasket',
-                        message: `${message}: ${link}`,
-                        url: `data:image/png;base64,${split[1]}`,
-                        failOnCancel: false,
-                    };
-                    try {
-                        Share.open(shareOptions);
-                    } catch (err) {
-                        moreShare(imageiD, image, message)
-                        // alert("notwhats app")
-                        // do something
-                    }
-                })
-        } catch (error) {
-            // alert(error)
-        }
 
-    }
-    const whatsupShare = async (referralCode) => {
-        // let shareOptions = {
-        //     title: "caption",//string
-        //     message: partnerCustomerReferral?.content,
-        //     url: `data:image/png;base64,${base64Image}`,
-        //     social: Share.Social.WHATSAPP, // or Share.Social.EMAIL
-        //     // whatsAppNumber: whatsapp
-        // }
-        // Share.shareSingle(shareOptions)
-        //     .then((res) => { console.log(res) })
-        //     .catch((err) => { err && console.log(err); });
-    };
     useEffect(() => {
         // alert(JSON.stringify(cartItems, null, "      "))
         let filteredItems = cartItems.filter(element => element?.id == item?.id);
@@ -293,7 +234,7 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                         {item?.onDemand == false && (item?.availableQuantity < 1)
                             ?
                             null :
-                            <TouchableOpacity onPress={() => { moreShare(item?.id, item?.itemImages[0]?.mediumImagePath, item?.shareInfo) }} style={{ alignSelf: "flex-start", height: 40, marginLeft: 4 }}>
+                            <TouchableOpacity onPress={() => { moreShare(item?.id, item?.itemImages[0]?.mediumImagePath, item?.shareInfo?.message) }} style={{ alignSelf: "flex-start", height: 40, marginLeft: 4 }}>
                                 <Image
                                     source={require('../../assets/png/shareicons.png')}
                                     style={{ height: 30, width: 92, alignSelf: "flex-start" }} resizeMode="cover"

@@ -32,40 +32,44 @@ const Referral = ({ getLeaderBoardList, route }) => {
     const [mobileNumber, setMobileNumber] = useState("")
     const [selectedTabIndex, setSelectedTabIndex] = useState(0)
     const [isVisible, setIsVisible] = useState(false)
+    const [selectedNumber, setSelectedNumber] = useState("")
+    const [appShareInfo, setAppShareInfo] = useState({})
 
 
 
 
+
+    // useEffect(() => {
+    //     // alert(JSON.stringify(route, null, "        "))
+    //     generateLink()
+
+    // }, [])
+    // const generateLink = async () => {
+    //     let userDetails = await AsyncStorage.getItem('userDetails');
+    //     let parsedUserDetails = await JSON.parse(userDetails);
+    //     let referralCode = await parsedUserDetails?.customerDetails?.referralCode
+    //     // alert(referralCode)
+    //     try {
+    //         const link = await firebase.dynamicLinks().buildShortLink({
+    //             link: `https://zasket.page.link?referralCode=${referralCode}`,
+    //             // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
+    //             android: {
+    //                 packageName: 'com.zasket',
+    //             },
+    //             ios: {
+    //                 bundleId: 'com.freshleaftechnolgies.zasket',
+    //                 appStoreId: '1541056118',
+    //             },
+    //             domainUriPrefix: 'https://zasket.page.link',
+    //         });
+    //         setDynamicLink(link)
+    //         console.log("qqqqqqqqqqq", link)
+    //     } catch (error) {
+    //         alert(error)
+    //     }
+    // }
     useEffect(() => {
-        // alert(JSON.stringify(route, null, "        "))
-        generateLink()
 
-    }, [])
-    const generateLink = async () => {
-        let userDetails = await AsyncStorage.getItem('userDetails');
-        let parsedUserDetails = await JSON.parse(userDetails);
-        let referralCode = await parsedUserDetails?.customerDetails?.referralCode
-        // alert(referralCode)
-        try {
-            const link = await firebase.dynamicLinks().buildShortLink({
-                link: `https://zasket.page.link?referralCode=${referralCode}`,
-                // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
-                android: {
-                    packageName: 'com.zasket',
-                },
-                ios: {
-                    bundleId: 'com.freshleaftechnolgies.zasket',
-                    appStoreId: '1541056118',
-                },
-                domainUriPrefix: 'https://zasket.page.link',
-            });
-            setDynamicLink(link)
-            console.log("qqqqqqqqqqq", link)
-        } catch (error) {
-            alert(error)
-        }
-    }
-    useEffect(() => {
         if (Platform.OS === 'android') {
             PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
@@ -80,7 +84,22 @@ const Referral = ({ getLeaderBoardList, route }) => {
             loadContacts();
         }
     }, []);
+    const dynamicSort = (property) => {
+        var sortOrder = 1;
 
+        if (property[0] === "-") {
+            sortOrder = -1;
+            property = property.substr(1);
+        }
+
+        return function (a, b) {
+            if (sortOrder == -1) {
+                return b[property].localeCompare(a[property]);
+            } else {
+                return a[property].localeCompare(b[property]);
+            }
+        }
+    }
     const loadContacts = () => {
         Contacts.getAll()
             .then((contacts) => {
@@ -95,14 +114,12 @@ const Referral = ({ getLeaderBoardList, route }) => {
                         )
                     )
                 );
-                let sortedArrayyy = arr.sort(function (a, b) {
-                    // console.log("aaaaa", a.displayName)
-                    return a.displayName - b.displayName;;
-                });
-                setContacts(arr)
-                // console.log("newArraynewArraynewArraynewArraynewArraynewArraynewArray", JSON.stringify(arr, null, "    "))
+                let acendeingOrder = arr.sort(dynamicSort("displayName"))
+                setContacts(acendeingOrder)
+                setLoading(false)
             })
             .catch((e) => { //handle error })
+                setLoading(false)
             })
     };
     useEffect(() => {
@@ -117,57 +134,13 @@ const Referral = ({ getLeaderBoardList, route }) => {
             if (status) {
                 // alert(JSON.stringify(res, null, "       "))
                 setReferalContent(res?.referralContent)
-                // setLeaderslist(res?.leaders)
-                setLeaderslist([
-                    {
-                        "customerId": 33,
-                        "name": "Mahesh ",
-                        "earnedAmount": 5000
-                    },
-                    {
-                        "customerId": 33,
-                        "name": "ramullll",
-                        "earnedAmount": 100
-                    },
-                    {
-                        "customerId": 33,
-                        "name": "ramuu",
-                        "earnedAmount": 2000
-                    },
-                    {
-                        "customerId": 33,
-                        "name": "kumar",
-                        "earnedAmount": 899
-                    },
-                    {
-                        "customerId": 33,
-                        "name": "raviii",
-                        "earnedAmount": 9000
-                    },
-                    {
-                        "customerId": 33,
-                        "name": "Sunkari",
-                        "earnedAmount": 160
-                    },
-                    {
-                        "customerId": 33,
-                        "name": "ujjajhhah",
-                        "earnedAmount": 145
-                    },
-                    {
-                        "customerId": 33,
-                        "name": "Harish",
-                        "earnedAmount": 8000
-                    }
-                ]
-                )
+                setLeaderslist(res?.leaders)
+                setAppShareInfo(res?.appShareInfoResponse)
+                // alert(JSON.stringify(res?.appShareInfoResponse, null, "       "))
                 setLoading(false)
                 // setRefresh(false)
             } else {
-                // alert("errrr")
                 setLoading(false)
-                // transactionsHistory([])
-                // setRefresh(false)
             }
         })
         let userDetails = await AsyncStorage.getItem('userDetails');
@@ -186,121 +159,89 @@ const Referral = ({ getLeaderBoardList, route }) => {
             setCopymessage(false)
         }, 4000)
     }
-    const moreShare = (title, description) => {
-        // const toDataURL = (url) => fetch(url)
-        //     .then(response => response.blob())
-        //     .then(blob => new Promise((resolve, reject) => {
-        //         const reader = new FileReader()
-        //         reader.onloadend = () => resolve(reader.result)
-        //         reader.onerror = reject
-        //         reader.readAsDataURL(blob)
-        //     }))
-        // toDataURL()
-        //     .then(dataUrl => {
-        //         let split = dataUrl.split("base64,")
-        //         // setbase64Image(split[1])
-
-        //     })
-        let shareImage = {
-            title: "Zasket",//string
-            message: `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order with my referral code ${referal}\ ` + dynamicLink,
-            // url: `data:image/png;base64,${split[1]}`,
-        }
-        Sharee.open(shareImage).catch(err => console.log(err));
+    const moreShare = async () => {
+        // alert(shareMessage)
+        // return
+        const toDataURL = (url) => fetch(url)
+            .then(response => response.blob())
+            .then(blob => new Promise((resolve, reject) => {
+                const reader = new FileReader()
+                reader.onloadend = () => resolve(reader.result)
+                reader.onerror = reject
+                reader.readAsDataURL(blob)
+            }))
+        await toDataURL(appShareInfo?.image)
+            .then(async (dataUrl) => {
+                let split = dataUrl.split("base64,")
+                // await setbase64Image(split[1])
+                let shareImage = {
+                    title: "Zasket",//string
+                    message: `${appShareInfo?.content}`,
+                    url: `data:image/png;base64,${split[1]}`,
+                }
+                Sharee.open(shareImage)
+                    .then((res) => {
+                    })
+                    .catch((err) => {
+                    });
+            })
     }
     const removeFromString = (string, start, charToRemove) => {
         var newString = ''
         newString = string.slice(start, charToRemove);
         return newString
     }
-    const whatsAppShares = async (number) => {
-        if (number.length == 10) {
-            let mobile = "91".concat(number);
-            console.log("asdasdasdasdasdasdasd", mobile)
-            setMobileNumber(mobile)
-        } else if (number.slice(0, 3) == "+91") {
-            var arr = Array.from(number);
+    const whatsAppShares = async () => {
+        console.log("222222222222222222222", selectedNumber)
+        // alert(number)
+        // return
+        if (selectedNumber.length == 10) {
+            let mobile = "91".concat(selectedNumber);
+            specificNumber(mobile)
+        } else if (selectedNumber.slice(0, 3) == "+91") {
+            var arr = Array.from(selectedNumber);
             var items = arr.splice(1, arr.length);
             var result = items.join('');
-            setMobileNumber(result)
+            specificNumber(result)
+
         } else {
-            setMobileNumber(number)
+            specificNumber(selectedNumber)
         }
-        const shareOptions = {
-            title: 'Zasket',
-            message: `${referalContent?.title}${referalContent?.description} ${dynamicLink}`,
-            // url: `data:image/png;base64,${split[1]}`,
-            social: Sharee.Social.WHATSAPP,
-            whatsAppNumber: mobileNumber,  // country code + phone number
-            // filename: 'test', // only for base64 file in Android
-        };
-        try {
-            Sharee.shareSingle(shareOptions).catch(err => console.log(err));
-        } catch (err) {
-            moreShare()
-            // alert("notwhats app")
-            // do something
-        }
-        // const toDataURL = (url) => fetch(url)
-        //     .then(response => response.blob())
-        //     .then(blob => new Promise((resolve, reject) => {
-        //         const reader = new FileReader()
-        //         reader.onloadend = () => resolve(reader.result)
-        //         reader.onerror = reject
-        //         reader.readAsDataURL(blob)
-        //     }))
-        // toDataURL()
-        //     .then(dataUrl => {
-        //         // let split = dataUrl.split("base64,")
-        //         const shareOptions = {
-        //             title: 'Zasket',
-        //             message: `${referalContent?.title}${referalContent?.description} ${dynamicLink}`,
-        //             // url: `data:image/png;base64,${split[1]}`,
-        //             social: Sharee.Social.WHATSAPP,
-        //             whatsAppNumber: mobileNumber,  // country code + phone number
-        //             // filename: 'test', // only for base64 file in Android
-        //         };
-        //         try {
-        //             Sharee.shareSingle(shareOptions).catch(err => console.log(err));
-        //         } catch (err) {
-        //             moreShare()
-        //             // alert("notwhats app")
-        //             // do something
-        //         }
-        //     })
     }
 
-    const whatsAppShare = async (number) => {
-        const shareOptions = {
-            title: 'Zasket',
-            message: `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order with my referral code ${referal}\ ` + dynamicLink,
-            // url: `data:image/png;base64,${split[1]}`,
-            failOnCancel: false,
-            social: Sharee.Social.WHATSAPP,
+    const specificNumber = async (mobile) => {
+        const toDataURL = (url) => fetch(url)
+            .then(response => response.blob())
+            .then(blob => new Promise((resolve, reject) => {
+                const reader = new FileReader()
+                reader.onloadend = () => resolve(reader.result)
+                reader.onerror = reject
+                reader.readAsDataURL(blob)
+            }))
+        toDataURL(appShareInfo?.image)
+            .then(dataUrl => {
+                let split = dataUrl.split("base64,")
+                const shareOptions = {
+                    title: "Zasket",//string
+                    message: `${appShareInfo?.content}`,
+                    url: `data:image/png;base64,${split[1]}`,
+                    social: Sharee.Social.WHATSAPP,
+                    whatsAppNumber: mobile,  // country code + phone number
+                    // filename: 'test', // only for base64 file in Android
+                };
+                console.log("passssdadadadadadadadadadadad,", shareOptions.whatsAppNumber)
+                try {
+                    Sharee.shareSingle(shareOptions).catch(err => console.log(err));
+                } catch (err) {
+                    // moreShare()
+                    // alert("notwhats app")
+                    // do something
+                }
+            })
+    }
 
-        };
+    const whatsAppShare = async () => {
         try {
-            Sharee.shareSingle(shareOptions).catch(err => console.log(err));
-        } catch (err) {
-            moreShare()
-            // alert("notwhats app")
-            // do something
-        }
-        return
-        try {
-            const link = await firebase.dynamicLinks().buildShortLink({
-                link: `https://zasket.page.link?productDetails=${imageiD}`,
-                // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
-                android: {
-                    packageName: 'com.zasket',
-                },
-                ios: {
-                    bundleId: 'com.freshleaftechnolgies.zasket',
-                    appStoreId: '1541056118',
-                },
-                domainUriPrefix: 'https://zasket.page.link',
-            });
-            setDynamicLink(link)
             const toDataURL = (url) => fetch(url)
                 .then(response => response.blob())
                 .then(blob => new Promise((resolve, reject) => {
@@ -309,13 +250,13 @@ const Referral = ({ getLeaderBoardList, route }) => {
                     reader.onerror = reject
                     reader.readAsDataURL(blob)
                 }))
-            toDataURL(image)
+            toDataURL(appShareInfo?.image)
                 .then(dataUrl => {
                     let split = dataUrl.split("base64,")
                     const shareOptions = {
-                        title: 'Zasket',
-                        message: `Download Zasket, the one app for all your grocery needs. Get free 500g of Tomato, Onion, Potato on your first order with my referral code ${referal}\ ` + dynamicLink,
-                        // url: `data:image/png;base64,${split[1]}`,
+                        title: "Zasket",//string
+                        message: `${appShareInfo?.content}`,
+                        url: `data:image/png;base64,${split[1]}`,
                         failOnCancel: false,
                         social: Sharee.Social.WHATSAPP,
 
@@ -335,11 +276,9 @@ const Referral = ({ getLeaderBoardList, route }) => {
 
     }
 
-    const onPressModal = () => {
-        // alert("passs")
-        // return
+    const onPressModal = async (number) => {
+        setSelectedNumber(number)
         setIsVisible(true)
-
     }
 
     const renderItemComponentList = (item) => {
@@ -366,12 +305,12 @@ const Referral = ({ getLeaderBoardList, route }) => {
                                 <Text style={{ color: "gray", fontSize: 14.5 }}>{item.number}</Text>
                             </View>
                         </View>
-                        <TouchableOpacity activeOpacity={0.6} onPress={() => onPressModal()} style={{ justifyContent: "center", width: 110, alignItems: "flex-end", }}>
-                            <TouchableOpacity activeOpacity={0.6} onPress={() => onPressModal()} style={{
+                        <TouchableOpacity activeOpacity={0.6} onPress={() => onPressModal(item.number)} style={{ justifyContent: "center", width: 110, alignItems: "flex-end" }}>
+                            <TouchableOpacity activeOpacity={0.6} onPress={() => onPressModal(item.number)} style={{
                                 backgroundColor: "white", justifyContent: "center", borderRadius: 3, flexDirection: "row", alignItems: "center", padding: 5, height: 31, marginRight: 5, width: 80, borderWidth: 0.7, borderColor: "#efefef"
                             }}>
-                                <Text onPress={() => onPressModal()} style={{ fontWeight: "bold", fontSize: 17, marginHorizontal: 6, color: "#e1171e" }}>+</Text>
-                                <Text onPress={() => onPressModal()} style={{ fontSize: 14, fontWeight: "bold", marginHorizontal: 6, letterSpacing: 0.2, color: "#e1171e" }}>Invite</Text>
+                                <Text onPress={() => onPressModal(item.number)} style={{ fontWeight: "bold", fontSize: 17, marginHorizontal: 6, color: "#e1171e" }}>+</Text>
+                                <Text onPress={() => onPressModal(item.number)} style={{ fontSize: 14, fontWeight: "bold", marginHorizontal: 6, letterSpacing: 0.2, color: "#e1171e" }}>Invite</Text>
                             </TouchableOpacity>
                         </TouchableOpacity>
                     </View>
@@ -476,10 +415,11 @@ const Referral = ({ getLeaderBoardList, route }) => {
         setSelectedTabIndex(index)
     }
 
-    const onPressWhatsUp = () => {
+    const onPressWhatsUp = (number) => {
         // alert("jhvkj")
         setIsVisible(false)
-        whatsAppShare()
+        console.log("11111111111111111", number)
+        whatsAppShares(number)
 
     }
     const onPressCopy = (text) => {
@@ -546,7 +486,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                                     </View>
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => { whatsAppShare(referalContent?.title, referalContent?.description) }} style={{ width: "48%", height: 45, borderRadius: 10, justifyContent: "center", borderColor: "#1fa900", borderWidth: 1, backgroundColor: "#1fa900", marginTop: 3 }}>
+                            <TouchableOpacity activeOpacity={0.8} onPress={() => { whatsAppShare() }} style={{ width: "48%", height: 45, borderRadius: 10, justifyContent: "center", borderColor: "#1fa900", borderWidth: 1, backgroundColor: "#1fa900", marginTop: 3 }}>
                                 <View style={{ flexDirection: "row", justifyContent: "center" }}>
                                     <View style={{ width: 22, height: 22, justifyContent: "center", alignItems: "center" }}>
                                         {/* <Image
@@ -637,7 +577,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                         <Text style={{ fontSize: 16, color: 'black', marginTop: 18, fontWeight: "bold", marginLeft: 20, letterSpacing: 0.3 }}>Invite your friends via</Text>
                     </View>
                     <View style={{ flexDirection: "row", width: "65%", marginTop: 35, marginLeft: 20, justifyContent: "space-around" }}>
-                        <TouchableOpacity onPress={() => { onPressWhatsUp() }} style={{ justifyContent: "center", alignItems: "center", width: "30%", height: 50 }}>
+                        <TouchableOpacity onPress={() => { onPressWhatsUp(selectedNumber) }} style={{ justifyContent: "center", alignItems: "center", width: "30%", height: 50 }}>
                             <View style={{ width: 30, height: 30, borderRadius: 15, justifyContent: "center", alignItems: "center", backgroundColor: "#66e228" }}>
                                 <FontAwesomeIcons name="whatsapp" color={"white"} size={20} />
                             </View>
