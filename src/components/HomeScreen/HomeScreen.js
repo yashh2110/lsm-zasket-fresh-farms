@@ -546,21 +546,24 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocatio
                                             }}
                                             source={{ uri: el?.imagePath }}
                                         />
-                                        <TouchableOpacity onPress={() => moreShare(el?.imagePath, el?.shareMessage)} style={{ borderRadius: 25, backgroundColor: "#F7F7F7", position: "absolute", right: 18, bottom: 14 }}>
-                                            <View style={{ flexDirection: "row", marginHorizontal: 6, padding: 3, justifyContent: "center", alignItems: "center" }}>
-                                                <FastImage
-                                                    style={{ width: 21, height: 21 }}
-                                                    source={require('../../assets/png/share.png')}
-                                                    resizeMode={FastImage.resizeMode.contain}
-                                                />
-                                                {/* <Image
+                                        <TouchableOpacity activeOpacity={0.9} onPress={() => moreShare(el?.imagePath, el?.shareMessage)} style={{ position: "absolute", right: 10, bottom: 2, width: 110, height: 45, justifyContent: "center", alignItems: "center" }} onPress={() => moreShare(el?.imagePath, el?.shareMessage)}>
+                                            <View style={{ borderRadius: 25, backgroundColor: "#F7F7F7", width: 80, height: 24, justifyContent: "center", alignItems: "center" }}>
+                                                <View style={{ flexDirection: "row", marginHorizontal: 1, padding: 5, justifyContent: "center", alignItems: "center", opacity: 0.8 }}>
+                                                    <FastImage
+                                                        style={{ width: 15, height: 15 }}
+                                                        source={require('../../assets/png/share.png')}
+                                                        resizeMode={FastImage.resizeMode.contain}
+                                                    />
+                                                    {/* <Image
                                                     style={{ width: 21, height: 21 }}
                                                     resizeMode={"contain"}
                                                     source={require('../../assets/png/share.png')}
                                                 /> */}
-                                                <Text style={{ marginHorizontal: 5, fontWeight: "bold", fontSize: 17 }}>Share</Text>
+                                                    <Text style={{ marginHorizontal: 2, fontWeight: "bold", fontSize: 15 }}>Share</Text>
+                                                </View>
                                             </View>
                                         </TouchableOpacity>
+
                                     </>
                                 )
                             })}

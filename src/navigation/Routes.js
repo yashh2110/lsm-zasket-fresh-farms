@@ -124,7 +124,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                 name="HomeStack"
                 component={HomeStack}
                 options={{
-                    tabBarLabel: 'Home',
+                    tabBarLabel: 'ZASKET',
                     tabBarIcon: ({ color, size }) => (
                         // <MaterialCommunityIcons name="home" color={color} size={size} />
                         Theme.Colors.primary == color ?
@@ -146,7 +146,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                 name="SearchStack"
                 component={SearchStack}
                 options={{
-                    tabBarLabel: 'Search',
+                    tabBarLabel: 'SEARCH',
                     tabBarIcon: ({ color, size }) => (
                         <FeatherIcons name="search" color={color} size={size} />
                     ),
@@ -156,7 +156,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                 name="CartStack"
                 component={CartStack}
                 options={{
-                    tabBarLabel: 'Cart',
+                    tabBarLabel: 'CART',
                     tabBarIcon: ({ color, size }) => (
                         <CartButton color={color} size={size} />
                     ),
@@ -174,7 +174,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                 name="ReferralStack"
                 component={ReferralStack}
                 options={{
-                    tabBarLabel: 'Referrals',
+                    tabBarLabel: 'REFERRALS',
                     tabBarIcon: ({ color, size }) => (
                         // <FeatherIcons name="user" color={color} size={size} />
                         Theme.Colors.primary == color ?
@@ -204,7 +204,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                 name="AccountStack"
                 component={AccountStack}
                 options={{
-                    tabBarLabel: 'Account',
+                    tabBarLabel: 'ACCOUNT',
                     tabBarIcon: ({ color, size }) => (
                         // <FeatherIcons name="user" color={color} size={size} />
                         Theme.Colors.primary == color ?

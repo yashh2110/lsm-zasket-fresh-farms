@@ -29,9 +29,9 @@ const SupportScreen = ({ navigation }) => {
         call(args).catch(console.error);
     };
     const onPressWhatsapp = () => {
-        Linking.canOpenURL("https://wa.me/message/7QWKVJGNQ4VJD1").then(supported => {
+        Linking.canOpenURL("https://wa.me/916300105949").then(supported => {
             if (supported) {
-                Linking.openURL("https://wa.me/message/7QWKVJGNQ4VJD1");
+                Linking.openURL("https://wa.me/916300105949");
             } else {
                 console.warn("Don't know how to open URI");
             }
@@ -52,7 +52,7 @@ const SupportScreen = ({ navigation }) => {
                             {/* <Text style={{ fontWeight: 'bold' }}>6300105949</Text> */}
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => callToThisNumber()} style={{ borderWidth: 1, borderColor: "#EFEFEF", borderRadius: 6, padding: 10, flexDirection: 'row', marginTop: 15 }}>
+                    {/* <TouchableOpacity onPress={() => callToThisNumber()} style={{ borderWidth: 1, borderColor: "#EFEFEF", borderRadius: 6, padding: 10, flexDirection: 'row', marginTop: 15 }}>
                         <View style={{ backgroundColor: '#FDEFEF', borderRadius: 50, width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
                             <Image
                                 style={{ width: 20, height: 20, }}
@@ -64,8 +64,7 @@ const SupportScreen = ({ navigation }) => {
                             <Text style={{ color: '#727272' }}>Call Us (10AM - 5PM) </Text>
                             <Text style={{ fontWeight: 'bold' }}>6300105949</Text>
                         </View>
-                    </TouchableOpacity>
-
+                    </TouchableOpacity> */}
                     <View style={{ borderWidth: 1, borderColor: "#EFEFEF", borderRadius: 6, padding: 10, flexDirection: 'row', marginTop: 15 }}>
                         <View style={{ backgroundColor: '#FDEFEF', borderRadius: 50, width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
                             <Image

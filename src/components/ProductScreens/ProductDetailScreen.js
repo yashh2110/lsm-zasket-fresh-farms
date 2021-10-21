@@ -230,7 +230,7 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
                         <View style={[{ paddingLeft: 10, paddingRight: 10, paddingBottom: 20, paddingTop: 10 }]}>
                             <View style={{ flexDirection: "row", justifyContent: "space-between", }}>
                                 <Text style={{ fontSize: 18, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize', width: "75%" }}>{item?.itemName} </Text>
-                                <TouchableOpacity onPress={() => { whatsAppShare(item?.id, item?.itemImages?.[0]?.largeImagePath, item?.shareInfo?.message) }} style={{ position: "absolute", right: 0 }}>
+                                <TouchableOpacity onPress={() => { moreShare(item?.id, item?.itemImages?.[0]?.largeImagePath, item?.shareInfo?.message) }} style={{ position: "absolute", right: 0 }}>
                                     <Image
                                         source={require('../../assets/png/shareicons.png')}
                                         style={{ height: 45, width: 100, }} resizeMode="cover"
@@ -255,7 +255,7 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
                     {item?.onDemand == false && (item?.availableQuantity < 1) &&
                         <View style={[styles.outOfStockButton, {}]}>
                             <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
-                                <Text style={{ color: "#909090", fontWeight: 'bold', fontSize: 20, textAlign: "center" }}>Out of stock </Text>
+                                <Text style={{ color: "#909090", fontWeight: 'bold', fontSize: 18, textAlign: "center" }}>Out of stock </Text>
                             </View>
                         </View>
                     }
@@ -263,11 +263,11 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
                         item?.onDemand == false && (item?.availableQuantity < 1) ?
                             null :
                             addButton ?
-                                <TouchableOpacity onPress={() => onAddToCart()} style={{ backgroundColor: Theme.Colors.primary, height: 50, justifyContent: "center", marginHorizontal: 20, marginBottom: 15, borderRadius: 30 }}>
+                                <TouchableOpacity onPress={() => onAddToCart()} style={{ backgroundColor: Theme.Colors.primary, height: 45, justifyContent: "center", marginHorizontal: 20, marginBottom: 15, borderRadius: 30 }}>
                                     <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: 16 }}>+  Add </Text>
                                 </TouchableOpacity>
                                 :
-                                <View style={{ backgroundColor: Theme.Colors.primary, height: 50, flexDirection: 'row', justifyContent: 'space-evenly', marginHorizontal: 20, marginBottom: 15, borderRadius: 30 }}>
+                                <View style={{ backgroundColor: Theme.Colors.primary, height: 45, flexDirection: 'row', justifyContent: 'space-evenly', marginHorizontal: 20, marginBottom: 15, borderRadius: 30 }}>
                                     <TouchableOpacity onPress={() => onCartUpdate('DECREASE')} style={{ width: 35, height: 35, backgroundColor: "#B90E14", borderRadius: 4, justifyContent: 'center', alignSelf: 'center' }}>
                                         <Text style={{ alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: 20 }}>-</Text>
                                     </TouchableOpacity>
@@ -308,7 +308,7 @@ export default connect(mapStateToProps, { getItem, updateCartItemsApi })(Product
 
 const styles = StyleSheet.create({
     outOfStockButton: {
-        height: 28,
+        // height: 28,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -326,8 +326,8 @@ const styles = StyleSheet.create({
         zIndex: 1,
         alignSelf: "center",
         borderRadius: 10,
-        height: 50,
-        marginBottom: 10
+        height: 40,
+        marginBottom: 20
         // position: 'absolute',
     },
 });

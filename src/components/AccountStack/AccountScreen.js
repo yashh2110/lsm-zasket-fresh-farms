@@ -307,7 +307,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => { navigation.navigate('ReferalCodeScreen') }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
+                    {/* <TouchableOpacity onPress={() => { navigation.navigate('ReferalCodeScreen') }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                         <View style={{ flex: 1, }}>
                             <View style={{ flexDirection: "row", alignItems: "center" }}>
                                 <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Refer & Earn</Text>
@@ -321,7 +321,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                             <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
                         </View>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
 
                     <TouchableOpacity onPress={() => { navigation.navigate('SupportScreen') }} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                         <View style={{ flex: 1, }}>

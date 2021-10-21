@@ -251,7 +251,7 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                         </View>
                     }
 
-                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                    <View style={{ flexDirection: "row", }}>
                         {item?.onDemand == false && (item?.availableQuantity < 1) ?
                             null
                             : !loadingCount ?
@@ -293,10 +293,10 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                         {item?.onDemand == false && (item?.availableQuantity < 1)
                             ?
                             null :
-                            <TouchableOpacity onPress={() => { whatsAppShare(item?.id, item?.itemImages[0]?.mediumImagePath, item?.shareInfo) }} style={{ alignSelf: "flex-start", height: 40 }}>
+                            <TouchableOpacity onPress={() => { moreShare(item?.id, item?.itemImages[0]?.mediumImagePath, item?.shareInfo) }} style={{ alignSelf: "flex-start", height: 40, marginLeft: 4 }}>
                                 <Image
                                     source={require('../../assets/png/shareicons.png')}
-                                    style={{ height: 30, width: 100, alignSelf: "flex-start" }} resizeMode="cover"
+                                    style={{ height: 30, width: 92, alignSelf: "flex-start" }} resizeMode="cover"
                                 />
                             </TouchableOpacity>
                         }
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
         elevation: 2,
         backgroundColor: 'white',
         flexDirection: 'row',
-        width: 100,
+        width: 80,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 4,
