@@ -81,9 +81,30 @@ const Referral = ({ getLeaderBoardList, route }) => {
             }
             );
         } else {
-            loadContacts();
+            loadIOSContacts();
         }
     }, []);
+    const loadIOSContacts = async () => {
+        Contacts.getAll()
+            .then((contacts) => {
+                // alert(JSON.stringify(contacts, null, "   "))
+                var arr = [];
+                contacts.forEach(elements =>
+                    elements?.phoneNumbers?.forEach(element =>
+                        arr.push(
+                            {
+                                displayName: elements.givenName,
+                                number: element.number
+                            }
+                        )
+                    )
+                );
+                let acendeingOrder = arr.sort(dynamicSort("displayName"))
+                setContacts(acendeingOrder)
+            })
+            .catch((e) => { //handle error })
+            })
+    };
     const dynamicSort = (property) => {
         var sortOrder = 1;
 
@@ -100,9 +121,10 @@ const Referral = ({ getLeaderBoardList, route }) => {
             }
         }
     }
-    const loadContacts = () => {
+    const loadContacts = async () => {
         Contacts.getAll()
             .then((contacts) => {
+                // alert(JSON.stringify(contacts, null, "   "))
                 var arr = [];
                 contacts.forEach(elements =>
                     elements?.phoneNumbers?.forEach(element =>
@@ -116,10 +138,8 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 );
                 let acendeingOrder = arr.sort(dynamicSort("displayName"))
                 setContacts(acendeingOrder)
-                setLoading(false)
             })
             .catch((e) => { //handle error })
-                setLoading(false)
             })
     };
     useEffect(() => {
@@ -415,12 +435,46 @@ const Referral = ({ getLeaderBoardList, route }) => {
         setSelectedTabIndex(index)
     }
 
-    const onPressWhatsUp = (number) => {
+    const onPressWhatsUp = (whatsAppNumber) => {
         // alert("jhvkj")
         setIsVisible(false)
-        console.log("11111111111111111", number)
-        whatsAppShares(number)
+        let number = whatsAppNumber.replace(/[^\d]/g, '');
+        if (number.length == 10) {
+            let mobileNumber = "91".concat(number);
+            modifiedNumber(mobileNumber)
+        } else {
+            let mobileNumber = number
+            modifiedNumber(mobileNumber)
+        }
+        return
+        // whatsAppShares(number)
 
+    }
+    const modifiedNumber = (number) => {
+        // console.log("numbernumbernumber", number)
+        // return
+        const toDataURL = (url) => fetch(url)
+            .then(response => response.blob())
+            .then(blob => new Promise((resolve, reject) => {
+                const reader = new FileReader()
+                reader.onloadend = () => resolve(reader.result)
+                reader.onerror = reject
+                reader.readAsDataURL(blob)
+            }))
+        toDataURL(appShareInfo?.image)
+            .then(dataUrl => {
+                let split = dataUrl.split("base64,")
+                // setbase64Image(split[1])
+                const shareOptions = {
+                    title: "Zasket",//string
+                    message: `${appShareInfo?.content}`,
+                    url: `data:image/png;base64,${split[1]}`,
+                    failOnCancel: false,
+                    social: Sharee.Social.WHATSAPP,
+                    whatsAppNumber: number,  // country code + phone number
+                };
+                Sharee.shareSingle(shareOptions);
+            })
     }
     const onPressCopy = (text) => {
         setIsVisible(false)
@@ -444,7 +498,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
         <>
             <View style={styles.container}>
                 <View style={{}}>
-                    <LinearGradient colors={['#ec3c3c', '#ed873c',]} start={{ x: 0.9, y: 0.6 }}
+                    <LinearGradient colors={['#ec3c3c', '#ed873c',]} start={{ x: 0.9, y: 0.4 }}
                         style={{ padding: 10, paddingTop: 10, paddingBottom: 25 }}
                     >
                         <View style={{ flexDirection: "row", paddingTop: 10 }}>
@@ -474,7 +528,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                         <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20, }}>
                             <View style={{ borderRadius: 10, width: "50%", alignSelf: "center", flexDirection: 'row', borderStyle: 'dashed', borderRadius: 10, backgroundColor: "white", alignItems: "center", borderWidth: 2, borderColor: '#d8ad00', zIndex: 0, marginLeft: -1 }}>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={{ fontSize: 16.5, color: "#d8ad00", marginLeft: 10, fontWeight: 'bold', }}>{referal} </Text>
+                                    <Text style={{ fontSize: 16, color: "#d8ad00", marginLeft: 10, fontWeight: 'bold', }}>{referal} </Text>
                                 </View>
                                 <TouchableOpacity activeOpacity={0.8} onPress={() => { get_Text_From_Clipboard(referal) }} style={{ flexDirection: "row", height: 45, width: 35, justifyContent: "space-evenly", alignItems: "center", }}>
                                     <View style={{}}>
@@ -507,7 +561,13 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 <LinearGradient
                     colors={['#ed873c', '#ec3c3c']}
                     style={{ height: 46, opacity: 0.9, zIndex: -1 }}
-                    start={{ x: 0.4, y: 0.8 }}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0.5, y: 0 }}
+                    locations={[0.1, 0.9]}
+                // <LinearGradient colors={['#d14343', '#ed873c',]} start={{ x: 0.9, y: 0.1 }}
+                // colors={['#ed873c', '#ec3c3c']}
+                // style={{ height: 46, opacity: 0.9, zIndex: -1 }}
+                // start={{ x: 0.4, y: 0.8 }}
                 // start={{ x: 0.1, y: 0.9 }}
                 // start={{ x: 0, y: 0 }}
                 // end={{ x: 0.5, y: 0 }}
