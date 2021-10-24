@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, FlatList, Clipboard, PermissionsAndroid, ActivityIndicator, Share, SafeAreaView } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, Alert, Linking, FlatList, Clipboard, PermissionsAndroid, ActivityIndicator, Share, SafeAreaView, Platform } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { ScrollableTab, Tab, Tabs, Icon } from "native-base";
 import Theme from '../../styles/Theme';
@@ -14,12 +14,13 @@ import Loader from '../common/Loader';
 import Modal from 'react-native-modal';
 import FeatherIcons from "react-native-vector-icons/Feather"
 import FontAwesomeIcons from "react-native-vector-icons/FontAwesome5"
+import { request, PERMISSIONS, RESULTS, check } from 'react-native-permissions';
 
 
 
 
 const Referral = ({ getLeaderBoardList, route }) => {
-    let [contacts, setContacts] = useState([]);
+    const [contacts, setContacts] = useState([]);
     const [titleText, setTitleText] = useState("Bird's Nest");
     const bodyText = "This is not really a bird nest.";
     const [loading, setLoading] = useState(false)
@@ -34,56 +35,95 @@ const Referral = ({ getLeaderBoardList, route }) => {
     const [isVisible, setIsVisible] = useState(false)
     const [selectedNumber, setSelectedNumber] = useState("")
     const [appShareInfo, setAppShareInfo] = useState({})
+    const [permissionStatus, setpermissionStatus] = useState(false)
 
 
 
 
 
-    // useEffect(() => {
-    //     // alert(JSON.stringify(route, null, "        "))
-    //     generateLink()
 
-    // }, [])
-    // const generateLink = async () => {
-    //     let userDetails = await AsyncStorage.getItem('userDetails');
-    //     let parsedUserDetails = await JSON.parse(userDetails);
-    //     let referralCode = await parsedUserDetails?.customerDetails?.referralCode
-    //     // alert(referralCode)
-    //     try {
-    //         const link = await firebase.dynamicLinks().buildShortLink({
-    //             link: `https://zasket.page.link?referralCode=${referralCode}`,
-    //             // link: `https://play.google.com/store/apps/details?id=com.zasket/?${SENDER_UID}`,
-    //             android: {
-    //                 packageName: 'com.zasket',
-    //             },
-    //             ios: {
-    //                 bundleId: 'com.freshleaftechnolgies.zasket',
-    //                 appStoreId: '1541056118',
-    //             },
-    //             domainUriPrefix: 'https://zasket.page.link',
-    //         });
-    //         setDynamicLink(link)
-    //         console.log("qqqqqqqqqqq", link)
-    //     } catch (error) {
-    //         alert(error)
-    //     }
-    // }
     useEffect(() => {
+        getInitialFunction()
+    }, []);
 
+    const getInitialFunction = async () => {
         if (Platform.OS === 'android') {
-            PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+            const res = await check(PERMISSIONS.ANDROID.READ_CONTACTS);
+            if (res == "granted") {
+                setpermissionStatus(true)
+                loadContacts();
+            } else {
+                setpermissionStatus(false)
+            }
+
+        } else if (Platform.OS === "ios") {
+            const res = await check(PERMISSIONS.IOS.CONTACTS);
+            // alert(res)
+            if (res == "granted") {
+                setpermissionStatus(true)
+                loadIOSContacts();
+            } else {
+                setpermissionStatus(false)
+            }
+        }
+
+    }
+
+
+    const activePermission = async () => {
+        Alert.alert(
+            "",
+            "Zasket needs to access contacts. Please permit the permission through Settings screen. Select Permissions -> Enable permission",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "OK", onPress: () => Linking.openSettings() }
+            ],
+            { cancelable: false }
+        );
+
+    }
+
+    const PermissionsFunction = async () => {
+        if (Platform.OS === 'android') {
+            // Calling the permission function
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+                {
+                    title: 'Contacts',
+                    message: 'This app would like to view your contacts.',
+                    buttonPositive: "Ok"
+                },
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                setpermissionStatus(true)
+                await AsyncStorage.setItem('contactActive', 'True')
+                loadContacts();
+            } else {
+                // Permission Denied
+                activePermission()
+            }
+        } else if (Platform.OS === 'ios') {
+            const granted = await request(
+                Platform.select({
+                    ios: PERMISSIONS.IOS.CONTACTS,
+                }), {
                 title: 'Contacts',
                 message: 'This app would like to view your contacts.',
-            }).then(() => {
-                // alert("pass")
-                loadContacts();
-            }
+                buttonPositive: "Ok"
+            },
             );
-        } else {
-            loadIOSContacts();
+            if (granted === RESULTS.GRANTED) {
+                setpermissionStatus(true)
+                loadIOSContacts();
+            } else {
+                activePermission()
+            }
         }
-    }, []);
+    }
     const loadIOSContacts = async () => {
         Contacts.getAll()
             .then((contacts) => {
@@ -122,6 +162,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
         }
     }
     const loadContacts = async () => {
+        setLoading(true)
         Contacts.getAll()
             .then((contacts) => {
                 // alert(JSON.stringify(contacts, null, "   "))
@@ -137,9 +178,12 @@ const Referral = ({ getLeaderBoardList, route }) => {
                     )
                 );
                 let acendeingOrder = arr.sort(dynamicSort("displayName"))
+                console.log("00000000000000000", JSON.stringify(acendeingOrder, null, "     "))
                 setContacts(acendeingOrder)
+                setLoading(false)
             })
             .catch((e) => { //handle error })
+                setLoading(false)
             })
     };
     useEffect(() => {
@@ -223,7 +267,6 @@ const Referral = ({ getLeaderBoardList, route }) => {
             var items = arr.splice(1, arr.length);
             var result = items.join('');
             specificNumber(result)
-
         } else {
             specificNumber(selectedNumber)
         }
@@ -261,37 +304,51 @@ const Referral = ({ getLeaderBoardList, route }) => {
     }
 
     const whatsAppShare = async () => {
-        try {
-            const toDataURL = (url) => fetch(url)
-                .then(response => response.blob())
-                .then(blob => new Promise((resolve, reject) => {
-                    const reader = new FileReader()
-                    reader.onloadend = () => resolve(reader.result)
-                    reader.onerror = reject
-                    reader.readAsDataURL(blob)
-                }))
-            toDataURL(appShareInfo?.image)
-                .then(dataUrl => {
-                    let split = dataUrl.split("base64,")
-                    const shareOptions = {
-                        title: "Zasket",//string
-                        message: `${appShareInfo?.content}`,
-                        url: `data:image/png;base64,${split[1]}`,
-                        failOnCancel: false,
-                        social: Sharee.Social.WHATSAPP,
+        if (Platform.OS == "android") {
+            try {
+                const toDataURL = (url) => fetch(url)
+                    .then(response => response.blob())
+                    .then(blob => new Promise((resolve, reject) => {
+                        const reader = new FileReader()
+                        reader.onloadend = () => resolve(reader.result)
+                        reader.onerror = reject
+                        reader.readAsDataURL(blob)
+                    }))
+                toDataURL(appShareInfo?.image)
+                    .then(dataUrl => {
+                        let split = dataUrl.split("base64,")
+                        const shareOptions = {
+                            title: "Zasket",//string
+                            message: `${appShareInfo?.content}`,
+                            url: `data:image/png;base64,${split[1]}`,
+                            failOnCancel: false,
+                            social: Sharee.Social.WHATSAPP,
 
-                    };
-                    try {
-                        Sharee.shareSingle(shareOptions).catch(err => console.log(err));
-                    } catch (err) {
-                        moreShare()
-                        // alert("notwhats app")
-                        // do something
-                    }
+                        };
+                        try {
+                            Sharee.shareSingle(shareOptions).catch(err => console.log(err));
+                        } catch (err) {
+                            moreShare()
+                            // alert("notwhats app")
+                            // do something
+                        }
+                    })
+            } catch (error) {
+                // alert(error)
+            }
+        } else {
+            let url =
+                'whatsapp://send?text=' +
+                `${appShareInfo?.content}`
+            Linking.openURL(url)
+                .then((data) => {
+                    console.log('WhatsApp Opened', data);
                 })
-        } catch (error) {
-            // alert(error)
+                .catch(() => {
+                    alert('Make sure Whatsapp installed on your device');
+                });
         }
+
 
 
     }
@@ -343,6 +400,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
 
 
     const LeaderboardListItems = (item, index) => {
+        console.log("''''''''''''''", item)
         return (
             <>
                 <View style={{}}>
@@ -404,14 +462,73 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 renderItem={({ item }) =>
                     renderItemComponentList(item)}
                 keyExtractor={(item, index) => index.toString()}
+            // ListEmptyComponent={() => {
+            //     return (
+            //         <View style={{ backgroundColor: "red", flex: 1,position: }}>
+            //             {/* <LottieView source={require('../../assets/json/Loader1.json')} autoPlay loop style={{ width: 150, height: 150 }} /> */}
+            //             <ActivityIndicator style={{}} size="large" color="white" />
+            //         </View>
+            //     )
+            // }}
             />
         );
     }
 
 
+    const onPressInviteButton = () => {
+        // alert("oooo")
+        // return
+        PermissionsFunction()
+    }
 
 
+    const ContatButton = () => {
+        return (
+            <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
+                <View style={{ justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{ color: "gray", letterSpacing: 0.2, fontSize: 13.5 }}>Invite your friends</Text>
+                    <Text style={{ color: "gray", letterSpacing: 0.2, fontSize: 13.5 }}> to Zasket with your unique referral code</Text>
+                </View>
+                <TouchableOpacity onPress={onPressInviteButton()} style={{ backgroundColor: Theme.Colors.primary, padding: 10, borderRadius: 12, marginTop: 15, elevation: 3 }}>
+                    <Text style={{ color: "white", letterSpacing: 0.1, fontSize: 15, marginHorizontal: 10, fontSize: 14 }}>Invite and Earn Now</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
 
+    const MyReferralPage = (item) => {
+        // alert(permissionStatus)
+        return (
+            permissionStatus == true ?
+                <View style={{ backgroundColor: "#f4f4f4", flex: 1, }}>
+                    {/* <Text>sdbsdbvjsd</Text> */}
+                    {/* <Text>{JSON.stringify(item, null, "    ")}</Text> */}
+                    {
+                        contacts ?
+                            <FlatList
+                                data={contacts}
+                                renderItem={({ item }) =>
+                                    renderItemComponentList(item)}
+                                keyExtractor={(item, index) => index.toString()}
+                            />
+                            :
+                            <Loader />
+                    }
+                </View>
+                :
+                <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
+                    <View style={{ justifyContent: "center", alignItems: "center" }}>
+                        <Text style={{ color: "gray", letterSpacing: 0.2, fontSize: 13.5 }}>Invite your friends</Text>
+                        <Text style={{ color: "gray", letterSpacing: 0.2, fontSize: 13.5 }}> to Zasket with your unique referral code</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => { onPressInviteButton() }} style={{ backgroundColor: Theme.Colors.primary, padding: 10, borderRadius: 12, marginTop: 15, elevation: 3 }}>
+                        <Text style={{ color: "white", letterSpacing: 0.1, fontSize: 15, marginHorizontal: 10, fontSize: 14 }}>Invite and Earn Now</Text>
+                    </TouchableOpacity>
+                </View>
+
+        );
+
+    }
 
     // Leaderboard Lists
     const LeaderboardList = () => {
@@ -441,15 +558,24 @@ const Referral = ({ getLeaderBoardList, route }) => {
         let number = whatsAppNumber.replace(/[^\d]/g, '');
         if (number.length == 10) {
             let mobileNumber = "91".concat(number);
-            modifiedNumber(mobileNumber)
+            if (Platform.OS === 'android') {
+                modifiedNumber(mobileNumber)
+            } else {
+                modifiedNumberIos(mobileNumber)
+            }
         } else {
             let mobileNumber = number
-            modifiedNumber(mobileNumber)
+            if (Platform.OS === 'android') {
+                modifiedNumber(mobileNumber)
+            } else {
+                modifiedNumberIos(mobileNumber)
+            }
         }
         return
         // whatsAppShares(number)
 
     }
+
     const modifiedNumber = (number) => {
         // console.log("numbernumbernumber", number)
         // return
@@ -475,6 +601,19 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 };
                 Sharee.shareSingle(shareOptions);
             })
+    }
+
+    const modifiedNumberIos = async (number) => {
+        let url =
+            'whatsapp://send?text=' +
+            `${appShareInfo?.content}` + `&phone=` + number
+        Linking.openURL(url)
+            .then((data) => {
+                console.log('WhatsApp Opened', data);
+            })
+            .catch(() => {
+                alert('Make sure Whatsapp installed on your device');
+            });
     }
     const onPressCopy = (text) => {
         setIsVisible(false)
@@ -593,7 +732,9 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 </LinearGradient>
                 {
                     selectedTabIndex == 0 &&
-                    <ContatsList />
+                    <MyReferralPage item={contacts} />
+                    // <ContatButton />
+
                 }
                 {
                     selectedTabIndex == 1 &&
@@ -637,14 +778,11 @@ const Referral = ({ getLeaderBoardList, route }) => {
                         <Text style={{ fontSize: 16, color: 'black', marginTop: 18, fontWeight: "bold", marginLeft: 20, letterSpacing: 0.3 }}>Invite your friends via</Text>
                     </View>
                     <View style={{ flexDirection: "row", width: "65%", marginTop: 35, marginLeft: 20, justifyContent: "space-around" }}>
+
                         <TouchableOpacity onPress={() => { onPressWhatsUp(selectedNumber) }} style={{ justifyContent: "center", alignItems: "center", width: "30%", height: 50 }}>
                             <View style={{ width: 30, height: 30, borderRadius: 15, justifyContent: "center", alignItems: "center", backgroundColor: "#66e228" }}>
                                 <FontAwesomeIcons name="whatsapp" color={"white"} size={20} />
                             </View>
-                            {/* <Image
-                                source={require('../../assets/png/whatsAppIcon.png')}
-                                style={{ height: 25, width: 25, }} resizeMode="cover"
-                            /> */}
                             <Text style={{ textAlign: "center", marginTop: 3, color: "#757575" }}>WhatsApp</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => { onPressCopy(referal) }} style={{ width: "30%", justifyContent: "center", alignItems: "center" }}>

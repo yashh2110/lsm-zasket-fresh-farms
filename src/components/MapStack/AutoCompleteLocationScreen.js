@@ -78,7 +78,7 @@ class AutoCompleteLocationScreen extends React.Component {
 
     async componentDidMount() {
         const { fromScreen, navigateTo } = this.props.route.params;
-        alert(JSON.stringify(this.props.route, null, "      "))
+        // alert(JSON.stringify(this.props.route, null, "      "))
         CheckPermissions((status) => {
             if (status) {
                 this.setState({ gpsEnabled: false })

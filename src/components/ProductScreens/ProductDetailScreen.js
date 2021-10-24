@@ -21,6 +21,7 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
     const [item, setItem] = useState({})
     const [isVisible, setIsVisible] = useState(true)
     const [dynamicLink, setDynamicLink] = useState("")
+    const [animationType, setAnimationType] = useState("fadeIn")
 
     // const { item } = route?.params;
     const [loadingCount, setLoadingCount] = useState(false)
@@ -189,6 +190,11 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
         }
 
     }
+    const onGoBack = () => {
+        setAnimationType("fadeOut")
+        setIsVisible(false)
+        navigation.goBack()
+    }
     return (
         <TouchableOpacity
             style={{ flex: 1, }}
@@ -216,12 +222,18 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
                 </View>
             </ScrollView> */}
             <Modal
+                // backdropTransitionOutTiming={6}
+                animationInTiming={500}
+                backdropTransitionOutTiming={0}
+                animationIn={animationType}
+                // animationOut="fadeOut"
                 isVisible={isVisible}
+                hideModalContentWhileAnimating={true}
                 onSwipeComplete={() => setIsVisible(false)}
                 // swipeDirection="down"
                 style={{ margin: 0, justifyContent: 'flex-end' }}
-                onBackButtonPress={() => navigation.goBack()}
-                onBackdropPress={() => navigation.goBack()}>
+                onBackButtonPress={() => onGoBack()}
+                onBackdropPress={() => onGoBack()}>
                 <SafeAreaView style={{ backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
                     <View style={{ height: 300 }}>
                         <BannerImages navigation={navigation} item={item} />
