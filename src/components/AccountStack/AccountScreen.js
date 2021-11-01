@@ -245,30 +245,30 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 5, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
+                    <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 5, paddingBottom: 6, borderBottomColor: '#EAEAEC', flexDirection: 'row' }}>
                         <View style={{ flex: 1, }}>
                             <Text style={{ color: '#909090', fontSize: 12 }}>Mobile Number</Text>
                             <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5 }}>{userDetails?.customerDetails?.userMobileNumber} </Text>
                         </View>
-                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center', top: 5 }}>
                             <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 5, paddingBottom: 5, flexDirection: 'row' }}>
+                    {/* <TouchableOpacity onPress={() => { setIsVisible(true) }} style={{ paddingTop: 5, paddingBottom: 5, flexDirection: 'row' }}>
                         <View style={{ flex: 1, }}>
                             <Text style={{ color: '#909090', fontSize: 12 }}>Email</Text>
                             <Text style={{ fontWeight: 'bold', fontSize: 14, marginTop: 5, textTransform: 'lowercase' }}>{userDetails?.customerDetails?.userEmail} </Text>
-                            {/* <Text>{JSON.stringify(userDetails, null, "       ")} </Text> */}
                         </View>
                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                             <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
                         </View>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
 
                 </View>
+                <View style={{ height: 10 }}></View>
 
-                <View style={{ backgroundColor: 'white', padding: 15, marginTop: 10 }}>
+                <View style={{ backgroundColor: 'white', padding: 15, }}>
                     <TouchableOpacity onPress={() => { navigation.navigate('MyOrders') }} style={{ paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
                         <View style={{ flex: 1, }}>
                             <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>My Orders</Text>

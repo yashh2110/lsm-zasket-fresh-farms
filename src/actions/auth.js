@@ -53,12 +53,31 @@ export const verifyOtp = (payLoad, callback) => async dispatch => {
     }
 }
 
+//trueCaller Login
+export const trueCallerSign = (payLoad, callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.post('/customers/sign-in', payLoad)
+        console.log("payLoadpayLoad", payLoad)
+        callback(res, true)
+    } catch (err) {
+        console.log("errrrr", err)
+        // alert(err)
+        // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
+        callback(err, false)
+        // if (__DEV__) {
+        //     alert(JSON.stringify(err.response, null, "     "))
+        // }
+    }
+}
+
 //create New Customer
 export const createNewCustomer = (payLoad, callback) => async dispatch => {
     try {
         const res = await axiosinstance.post('/customers/add', payLoad)
         callback(res, true)
     } catch (err) {
+        console.log("11111111111111111", JSON.stringify(err, null, "       "))
+        // alert(JSON.stringify(err, null, "       "))
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
         // if (__DEV__) {

@@ -16,6 +16,12 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) => {
     const { setOnBoardKey } = React.useContext(AuthContext);
     const [referralCode, setReferralCode] = useState("")
+    // useEffect(() => {
+    //     alert("00")
+
+    // });
+
+
 
     // useEffect(() => {
     //     const unsubscribe = dynamicLinks().onLink(handleDynamicLink);

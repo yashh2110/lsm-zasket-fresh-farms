@@ -81,7 +81,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                     name: 'Zasket',
                     order_id: res?.data?.paymentResponseId,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
                     prefill: {
-                        email: parsedUserDetails?.customerDetails?.userEmail,
+                        // email: parsedUserDetails?.customerDetails?.userEmail,
                         contact: parsedUserDetails?.customerDetails?.userMobileNumber,
                         name: parsedUserDetails?.customerDetails?.name
                     },

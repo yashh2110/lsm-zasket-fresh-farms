@@ -97,6 +97,7 @@ export const rejectPaymentByAPI = (payload, callback) => async dispatch => {
 
 
 export const getLeaderBoardList = (callback) => async dispatch => {
+    // alert("passs")
     try {
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
@@ -105,6 +106,7 @@ export const getLeaderBoardList = (callback) => async dispatch => {
         // alert(JSON.stringify(res, null, "       "))
         callback(res?.data, true)
     } catch (err) {
+        console.log("errrrrrrrrr", err)
         // alert("errr111")
         callback(err, false)
     }

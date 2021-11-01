@@ -34,7 +34,8 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLo
         if (otp) {
             let payLoad = {
                 "otp": otp,
-                "userMobileNumber": mobileNumber
+                "userMobileNumber": mobileNumber,
+                "type": "MOBILE_OTP",
             }
             try {
                 await verifyOtp(payLoad, async (response, status) => {

@@ -153,3 +153,18 @@ export const getCustomerDetails = (callback) => async dispatch => {
     }
 }
 
+
+//getSupportDetails
+export const getSupportDetails = (callback) => async dispatch => {
+    try {
+        const res = await axiosinstance.get(`/api/v1/support-details?application=CONSUMER`)
+        // alert(JSON.stringify(res?.data, null, "       "))
+        callback(res?.data, true)
+        // callback("error", false)
+    } catch (err) {
+        // alert(err)
+        callback(err, false)
+        // Alert.alert(JSON.stringify(err.response.data, null, "     "))
+    }
+}
+
