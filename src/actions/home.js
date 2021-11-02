@@ -78,11 +78,11 @@ export const getAllCategories = (callback) => async dispatch => {
 // getAllBanners
 export const getAllBanners = (callback) => async dispatch => {
     try {
-        const res = await axiosinstance.get('/banners');
+        const res = await axiosinstance.get('/api/v2/banners');
         // alert(JSON.stringify(res, null, "      "))
         dispatch({
             type: SET_BANNER_IMAGES,
-            payload: res?.data
+            payload: res?.data?.banenrs
         });
         callback(res, true)
     } catch (err) {

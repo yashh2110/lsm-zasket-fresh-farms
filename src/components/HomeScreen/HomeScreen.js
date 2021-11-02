@@ -43,6 +43,7 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocatio
     const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
     const [dynamicLink, setDynamicLink] = useState("")
     const [productId, setProductId] = useState("")
+    const [subBanners, setSubBanners] = useState("")
     // useEffect(() => {
     //     // let userDetails = await AsyncStorage.getItem('ProductId');
     //     // alert(userDetails)
@@ -259,7 +260,8 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocatio
 
         getAllBanners((res, status) => {
             if (status) {
-                // alert(JSON.stringify(res.data, null, "      "))
+                // alert(JSON.stringify(res?.data?.subBanners[0], null, "      "))
+                setSubBanners(res?.data?.subBanners[0])
                 setLoading(false)
                 setRefresh(false)
             } else {
@@ -600,14 +602,18 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocatio
                         })}
                     </View> */}
                 {/* </View> */}
-                <Image
-                    style={{
-                        borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', height: 125, width: "112.5%",
-                        // aspectRatio:3
-                    }}
-                    resizeMode={"cover"}
-                    source={require('../../assets/png/HomeFreeDelivery.png')}
-                />
+                {
+                    subBanners ?
+                        <FastImage
+                            style={{
+                                borderRadius: 5, alignSelf: 'center', borderRadius: 5, backgroundColor: 'white', height: 125, width: "112.5%",
+                                // aspectRatio:3
+                            }} source={subBanners ? { uri: subBanners } : null}
+                            resizeMode={FastImage.resizeMode.cover}
+                        />
+                        :
+                        undefined
+                }
                 <View style={{ flexDirection: 'row', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', padding: 5, marginTop: -10 }}>
                     <FlatList
                         data={categories}

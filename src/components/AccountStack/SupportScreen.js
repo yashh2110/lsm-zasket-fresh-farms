@@ -20,22 +20,19 @@ const SupportScreen = ({ navigation, getSupportDetails }) => {
         initialFunction()
     }, [])
 
-
     const initialFunction = () => {
         getSupportDetails((res, status) => {
             if (status) {
+                setLoading(false)
                 // alert(JSON.stringify(res, null, "       "))
                 setSupportDate(res)
                 // alert(res.data[0]?.customer?.creditBalance)
                 // SetCreditBalance(res.data[0]?.customer?.creditBalance)
                 setLoading(false)
-
             } else {
                 setLoading(false)
-
             }
         })
-
     }
 
     const callToThisNumber = () => {
