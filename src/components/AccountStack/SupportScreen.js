@@ -9,23 +9,26 @@ import { ActivityIndicator } from "react-native";
 import CustomHeader from "../common/CustomHeader";
 import call from 'react-native-phone-call';
 import { getSupportDetails } from '../../actions/home'
+import Loader from '../common/Loader';
 
 
 const SupportScreen = ({ navigation, getSupportDetails }) => {
     const [loading, setLoading] = useState(false)
     const [query, setQuery] = useState("")
-    const [supportDate, setSupportDate] = useState({})
+    const [supportData, setSupportData] = useState({})
 
     useEffect(() => {
         initialFunction()
     }, [])
 
     const initialFunction = () => {
+        setLoading(true)
         getSupportDetails((res, status) => {
             if (status) {
                 setLoading(false)
+                console.log(JSON.stringify(res, null, "       "))
                 // alert(JSON.stringify(res, null, "       "))
-                setSupportDate(res)
+                setSupportData(res)
                 // alert(res.data[0]?.customer?.creditBalance)
                 // SetCreditBalance(res.data[0]?.customer?.creditBalance)
                 setLoading(false)
@@ -35,18 +38,18 @@ const SupportScreen = ({ navigation, getSupportDetails }) => {
         })
     }
 
-    const callToThisNumber = () => {
+    const callToThisNumber = (erl) => {
         //handler to make a call
         const args = {
-            number: "6300105949",
+            number: erl,
             prompt: false,
         };
         call(args).catch(console.error);
     };
-    const onPressWhatsapp = () => {
-        Linking.canOpenURL("https://wa.me/916300105949").then(supported => {
+    const onPressWhatsapp = (url) => {
+        Linking.canOpenURL(url).then(supported => {
             if (supported) {
-                Linking.openURL("https://wa.me/916300105949");
+                Linking.openURL(url);
             } else {
                 console.warn("Don't know how to open URI");
             }
@@ -61,10 +64,10 @@ const SupportScreen = ({ navigation, getSupportDetails }) => {
             <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false}>
                 <View style={{ backgroundColor: 'white', padding: 15, marginTop: 10 }}>
                     <View style={{ width: "80%" }}>
-                        <Text style={{ color: "#000000", fontWeight: "bold", fontSize: 15, letterSpacing: 0.3 }}>{supportDate?.message} </Text>
+                        <Text style={{ color: "#000000", fontWeight: "bold", fontSize: 15, letterSpacing: 0.3 }}>{supportData?.message} </Text>
                     </View>
                     {/* <Text style={{ color: "#000000", fontWeight: "bold", fontSize: 15, letterSpacing: 0.2 }}>10AM - 7PM on all days</Text> */}
-                    <TouchableOpacity onPress={() => onPressWhatsapp()} style={{ borderWidth: 1, borderColor: "#EFEFEF", borderRadius: 6, padding: 10, flexDirection: 'row', marginTop: 15 }}>
+                    <TouchableOpacity onPress={() => onPressWhatsapp(supportData?.whatsAppUrl)} style={{ borderWidth: 1, borderColor: "#EFEFEF", borderRadius: 6, padding: 10, flexDirection: 'row', marginTop: 15 }}>
                         <View style={{ backgroundColor: '#FDEFEF', borderRadius: 50, width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
                             <Icon name="whatsapp" type="FontAwesome" style={{ fontSize: 24, color: Theme.Colors.primary }} />
                         </View>
@@ -78,7 +81,7 @@ const SupportScreen = ({ navigation, getSupportDetails }) => {
                             source={require('../../assets/png/rightIcon.png')}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => Linking.openURL('mailto:service@zasket.in')} style={{ borderWidth: 1, borderColor: "#EFEFEF", borderRadius: 6, padding: 10, flexDirection: 'row', marginTop: 15 }}>
+                    <TouchableOpacity onPress={() => Linking.openURL(`mailto:${supportData?.email}`)} style={{ borderWidth: 1, borderColor: "#EFEFEF", borderRadius: 6, padding: 10, flexDirection: 'row', marginTop: 15 }}>
                         <View style={{ backgroundColor: '#FDEFEF', borderRadius: 50, width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
                             {/* rightIcon */}
                             <Image
@@ -89,7 +92,25 @@ const SupportScreen = ({ navigation, getSupportDetails }) => {
                         </View>
                         <View style={{ flex: 1, justifyContent: 'center', paddingLeft: 15 }}>
                             <Text style={{ color: '#727272', fontSize: 12.5, marginTop: -5 }}>Email Us</Text>
-                            <Text style={{ fontWeight: 'bold', marginTop: 6 }}>service@zasket.in</Text>
+                            <Text style={{ fontWeight: 'bold', marginTop: 6 }}>{supportData?.email}</Text>
+                        </View>
+                        <Image
+                            style={{ width: 17, height: 17, alignSelf: "center" }}
+                            resizeMode="contain"
+                            source={require('../../assets/png/rightIcon.png')}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => callToThisNumber(supportData?.contactNumber)} style={{ borderWidth: 1, borderColor: "#EFEFEF", borderRadius: 6, padding: 10, flexDirection: 'row', marginTop: 15 }}>
+                        <View style={{ backgroundColor: '#FDEFEF', borderRadius: 50, width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
+                            <Image
+                                style={{ width: 20, height: 20, }}
+                                resizeMode="contain"
+                                source={require('../../assets/png/SupportScreenPhone.png')}
+                            />
+                        </View>
+                        <View style={{ flex: 1, justifyContent: 'center', paddingLeft: 15 }}>
+                            <Text style={{ color: '#727272', fontSize: 12.5, marginTop: -5 }}>{supportData?.callUsMessage} </Text>
+                            <Text style={{ fontWeight: 'bold', marginTop: 6 }}>{supportData?.contactNumber}</Text>
                         </View>
                         <Image
                             style={{ width: 17, height: 17, alignSelf: "center" }}
@@ -123,6 +144,8 @@ const SupportScreen = ({ navigation, getSupportDetails }) => {
                     }}><Text style={{ color: "white", fontSize: 16, fontWeight: "bold", letterSpacing: 0.4 }}>Submit</Text></Button>
                 </View> */}
             </ScrollView>
+            {loading ?
+                <Loader /> : undefined}
         </View>
     );
 }

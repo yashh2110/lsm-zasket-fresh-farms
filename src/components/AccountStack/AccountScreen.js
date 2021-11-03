@@ -104,7 +104,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
             try {
                 let payload = {
                     "name": userDetails?.customerDetails?.name,
-                    "userEmail": userDetails?.customerDetails?.userEmail.toLowerCase()
+                    // "userEmail": userDetails?.customerDetails?.userEmail.toLowerCase()
                 }
                 await profileUpdate(payload, async (response, status) => {
                     if (status) {
@@ -123,24 +123,24 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
 
     const validate = () => {
         let status = true
-        if (userDetails?.customerDetails?.userEmail == undefined || userDetails?.customerDetails?.userEmail.trim() == "") {
-            setemailErrorText("Email ID Required")
-            status = false
-            setLoading(false)
-        } else {
-            if (userDetails?.customerDetails?.userEmail.indexOf('@') > -1) {
-                let validation = new Validation()
-                if (!validation.validEmail(userDetails?.customerDetails?.userEmail)) {
-                    setemailErrorText("Please enter a valid email address")
-                    status = false
-                    setLoading(false)
-                }
-            } else {
-                setemailErrorText("Please enter a valid email address")
-                status = false
-                setLoading(false)
-            }
-        }
+        // if (userDetails?.customerDetails?.userEmail == undefined || userDetails?.customerDetails?.userEmail.trim() == "") {
+        //     setemailErrorText("Email ID Required")
+        //     status = false
+        //     setLoading(false)
+        // } else {
+        //     if (userDetails?.customerDetails?.userEmail.indexOf('@') > -1) {
+        //         let validation = new Validation()
+        //         if (!validation.validEmail(userDetails?.customerDetails?.userEmail)) {
+        //             setemailErrorText("Please enter a valid email address")
+        //             status = false
+        //             setLoading(false)
+        //         }
+        //     } else {
+        //         setemailErrorText("Please enter a valid email address")
+        //         status = false
+        //         setLoading(false)
+        //     }
+        // }
         if (userDetails?.customerDetails?.name == undefined || userDetails?.customerDetails?.name.trim() == "") {
             setNameErrorText("Name required")
             status = false
@@ -362,7 +362,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                     onBackButtonPress={() => setIsVisible(false)}
                     onBackdropPress={() => setIsVisible(false)}
                 >
-                    <SafeAreaView style={{ height: 350, backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
+                    <SafeAreaView style={{ height: 280, backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
                         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="never">
                             <View style={{ flex: 1, padding: 20 }}>
                                 <View style={{ alignSelf: 'center', height: 5, width: 50, backgroundColor: '#E2E2E2', borderRadius: 50 }} />
@@ -390,7 +390,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                                     editable={false}
                                 />
 
-                                <Text style={{ color: '#727272', fontSize: 12, marginTop: 20 }}>Email</Text>
+                                {/* <Text style={{ color: '#727272', fontSize: 12, marginTop: 20 }}>Email</Text>
                                 <View style={{ flexDirection: 'row' }}>
                                     <TextInput
                                         style={{ height: 40, flex: 1, fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#D8D8D8' }}
@@ -405,7 +405,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                                     <>
                                         <Text style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{emailErrorText} </Text>
                                     </>
-                                    : undefined}
+                                    : undefined} */}
                             </View>
                         </ScrollView>
                         <TouchableOpacity onPress={() => { onPressUpdate() }} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>

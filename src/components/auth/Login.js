@@ -23,14 +23,13 @@ import TRUECALLER, {
     TRUECALLER_FOOTER_TYPE
 } from 'react-native-truecaller-sdk'
 const Login = ({ navigation, darkMode, requestOtp, trueCallerSign, homeScreenLocation, getV2Config, onLogin }) => {
-
     const [mobileNumber, setMobileNumber] = useState("")
     const [loading, setLoading] = useState(false)
     const [truecallerLoading, setTruecallerLoading] = useState(false)
-
-
+    const [trueCallerButtonVisiable, setTrueCallerButtonVisiable] = useState(false)
 
     useEffect(() => {
+
         TRUECALLER.initializeClient(
             TRUECALLER_CONSENT_MODE.Popup,
             TRUECALLER_CONSENT_TITLE.Login,
@@ -43,6 +42,22 @@ const Login = ({ navigation, darkMode, requestOtp, trueCallerSign, homeScreenLoc
             // alert(JSON.stringify(profile, null, "       "))
         });
 
+        TRUECALLER.isUsable(result => {
+            if (result === true) {
+                setTrueCallerButtonVisiable(true)
+                // setTruecallerLoading(true)
+                // console.log('Authenticate via truecaller flow can be used')
+                // TRUECALLER.requestTrueProfile();
+            }
+            else {
+                // setTruecallerLoading(false)
+                setTrueCallerButtonVisiable(false)
+                // alert('Either truecaller app is not installed or user is not logged in')
+                console.log('Either truecaller app is not installed or user is not logged in')
+
+            }
+        });
+
         TRUECALLER.on(TRUECALLER_EVENT.TrueProfileResponseError, error => {
             console.log('User rejected the truecaller consent request! ', error);
 
@@ -50,26 +65,26 @@ const Login = ({ navigation, darkMode, requestOtp, trueCallerSign, homeScreenLoc
                 switch (error.errorCode) {
                     case 1: {
                         //Network Failure
-                        alert("Something went wrong', 'please try again")
+                        // alert("Something went wrong', 'please try again")
                         console.log('Something went wrong', 'please try again1')
                         setTruecallerLoading(false)
                         break;
                     }
                     case 2: {
                         //User pressed back
-                        console.log('Something went wrong', 'please try again2')
+                        // console.log('Something went wrong', 'please try again2')
                         setTruecallerLoading(false)
                         break;
                     }
                     case 3: {
                         //Incorrect Partner Key
-                        alert("Something went wrong', 'please try again")
+                        // alert("Something went wrong', 'please try again")
                         console.log('Something went wrong', 'please try again3')
                         setTruecallerLoading(false)
                         break;
                     }
                     case 4: {
-                        alert("User Not Verified on Truecaller")
+                        // alert("User Not Verified on Truecaller")
                         //User Not Verified on Truecaller
                         console.log('Something went wrong', 'please try again4')
                         setTruecallerLoading(false)
@@ -77,7 +92,7 @@ const Login = ({ navigation, darkMode, requestOtp, trueCallerSign, homeScreenLoc
                     }
                     case 5: {
                         //Truecaller App Internal Error
-                        alert("Something went wrong', 'please try again")
+                        // alert("Something went wrong', 'please try again")
                         console.log('Something went wrong', 'please try again5')
                         setTruecallerLoading(false)
                         break;
@@ -241,7 +256,7 @@ const Login = ({ navigation, darkMode, requestOtp, trueCallerSign, homeScreenLoc
             {/* <Text>dcsdu</Text> */}
             <View style={[styles.container, (darkMode) ? styles.darkBackGroundColor : null]}>
                 {
-                    Platform.OS == "android" ?
+                    (Platform.OS == "android" && trueCallerButtonVisiable == true) ?
                         <ScrollView
                             contentContainerStyle={{ width: "90%", alignSelf: "center", flex: 1, }}
                             keyboardShouldPersistTaps="always"
@@ -253,7 +268,6 @@ const Login = ({ navigation, darkMode, requestOtp, trueCallerSign, homeScreenLoc
                                     source={require('../../assets/png/backIcon.png')}
                                 />
                             </TouchableOpacity>
-
                             <Text style={{ marginTop: "4%", fontSize: 20, fontWeight: Platform.OS == "ios" ? "500" : "700", letterSpacing: .5 }}>Enter Mobile Number</Text>
                             <Text style={{ marginTop: "2%", fontSize: 13, color: "#727272" }}>Login or Sign up to get started</Text>
                             <View style={{}}>
