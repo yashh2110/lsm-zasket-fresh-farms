@@ -36,6 +36,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
         dynamicLinks()
             .getInitialLink()
             .then(link => {
+                console.log("limkkkk", link)
                 if (link) {
                     var regex = /[?&]([^=#]+)=([^&#]*)/g,
                         params = {},
@@ -43,7 +44,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                     while (match = regex.exec(link.url)) {
                         params[match[1]] = match[2];
                     }
-                    // console.log(params.referralCode)
+                    console.log("aaaaaaaaaa", params)
                     setReferralCode(params.referralCode)
                 }
             });

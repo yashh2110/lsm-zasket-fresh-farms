@@ -16,113 +16,114 @@ import RNUxcam from 'react-native-ux-cam';
 import { getV2Config } from '../../actions/home'
 import AsyncStorage from '@react-native-community/async-storage';
 import { StackActions } from '@react-navigation/native';
-import TRUECALLER, {
-    TRUECALLER_EVENT,
-    TRUECALLER_CONSENT_MODE,
-    TRUECALLER_CONSENT_TITLE,
-    TRUECALLER_FOOTER_TYPE
-} from 'react-native-truecaller-sdk'
+// import TRUECALLER, {
+// TRUECALLER_EVENT,
+// TRUECALLER_CONSENT_MODE,
+// TRUECALLER_CONSENT_TITLE,
+// TRUECALLER_FOOTER_TYPE
+// } from 'react-native-truecaller-sdk'
+// const NullComponent = (props) => null;
+let TRUECALLER;
+let TRUECALLERDEFAULT
+if (Platform.OS == 'android') {
+    TRUECALLER = require('react-native-truecaller-sdk');
+    TRUECALLERDEFAULT = require('react-native-truecaller-sdk').default;
+}
 const Login = ({ navigation, darkMode, requestOtp, trueCallerSign, homeScreenLocation, getV2Config, onLogin }) => {
     const [mobileNumber, setMobileNumber] = useState("")
     const [loading, setLoading] = useState(false)
     const [truecallerLoading, setTruecallerLoading] = useState(false)
     const [trueCallerButtonVisiable, setTrueCallerButtonVisiable] = useState(false)
+    const [banner, setBanner] = useState("")
 
     useEffect(() => {
+        if (Platform.OS == "android") {
+            TRUECALLERDEFAULT.initializeClient(
+                TRUECALLER.TRUECALLER_CONSENT_MODE.Popup,
+                TRUECALLER.TRUECALLER_CONSENT_TITLE.Login,
+                TRUECALLER.TRUECALLER_FOOTER_TYPE.Continue
+            );
+            TRUECALLERDEFAULT.on(TRUECALLER.TRUECALLER_EVENT.TrueProfileResponse, profile => { //callback executed 
+                console.log('Profile', profile);
+                trueCallerLogin(profile)
+            });
+            TRUECALLERDEFAULT.isUsable(result => {
+                if (result === true) {
+                    // alert("gfhf")
+                    setTrueCallerButtonVisiable(true)
+                }
+                else {
+                    // alert("falsee")
+                    setTrueCallerButtonVisiable(false)
+                    console.log('Either truecaller app is not installed or user is not logged in')
 
-        TRUECALLER.initializeClient(
-            TRUECALLER_CONSENT_MODE.Popup,
-            TRUECALLER_CONSENT_TITLE.Login,
-            TRUECALLER_FOOTER_TYPE.Continue
-        );
+                }
+            });
+            TRUECALLERDEFAULT.on(TRUECALLER.TRUECALLER_EVENT.TrueProfileResponseError, error => {
+                console.log('User rejected the truecaller consent request! ', error);
 
-        TRUECALLER.on(TRUECALLER_EVENT.TrueProfileResponse, profile => { //callback executed 
-            console.log('Profile', profile);
-            trueCallerLogin(profile)
-            // alert(JSON.stringify(profile, null, "       "))
-        });
+                if (error && error.errorCode) {
+                    switch (error.errorCode) {
+                        case 1: {
+                            //Network Failure
+                            // alert("Something went wrong', 'please try again")
+                            console.log('Something went wrong', 'please try again1')
+                            setTruecallerLoading(false)
+                            break;
+                        }
+                        case 2: {
+                            //User pressed back
+                            // console.log('Something went wrong', 'please try again2')
+                            setTruecallerLoading(false)
+                            break;
+                        }
+                        case 3: {
+                            //Incorrect Partner Key
+                            // alert("Something went wrong', 'please try again")
+                            console.log('Something went wrong', 'please try again3')
+                            setTruecallerLoading(false)
+                            break;
+                        }
+                        case 4: {
+                            // alert("User Not Verified on Truecaller")
+                            //User Not Verified on Truecaller
+                            console.log('Something went wrong', 'please try again4')
+                            setTruecallerLoading(false)
+                            break;
+                        }
+                        case 5: {
+                            //Truecaller App Internal Error
+                            // alert("Something went wrong', 'please try again")
+                            console.log('Something went wrong', 'please try again5')
+                            setTruecallerLoading(false)
+                            break;
+                        }
+                        case 10: {
+                            alert("User Not Verified on Truecaller")
+                            //User Not Verified on Truecaller
+                            console.log('Something went wrong', 'please try again6')
+                            setTruecallerLoading(false)
+                            break;
+                        }
+                        case 13: {
+                            //User pressed back while verification in process
+                            console.log('Something went wrong', 'please try again7')
+                            setTruecallerLoading(false)
+                            break;
+                        }
+                        case 14: {
+                            //User pressed SKIP or USE ANOTHER NUMBER
+                            console.log('Something went wrong', 'please try again8')
+                            setTruecallerLoading(false)
+                            break;
+                        }
+                        default: {
 
-        TRUECALLER.isUsable(result => {
-            if (result === true) {
-                setTrueCallerButtonVisiable(true)
-                // setTruecallerLoading(true)
-                // console.log('Authenticate via truecaller flow can be used')
-                // TRUECALLER.requestTrueProfile();
-            }
-            else {
-                // setTruecallerLoading(false)
-                setTrueCallerButtonVisiable(false)
-                // alert('Either truecaller app is not installed or user is not logged in')
-                console.log('Either truecaller app is not installed or user is not logged in')
-
-            }
-        });
-
-        TRUECALLER.on(TRUECALLER_EVENT.TrueProfileResponseError, error => {
-            console.log('User rejected the truecaller consent request! ', error);
-
-            if (error && error.errorCode) {
-                switch (error.errorCode) {
-                    case 1: {
-                        //Network Failure
-                        // alert("Something went wrong', 'please try again")
-                        console.log('Something went wrong', 'please try again1')
-                        setTruecallerLoading(false)
-                        break;
-                    }
-                    case 2: {
-                        //User pressed back
-                        // console.log('Something went wrong', 'please try again2')
-                        setTruecallerLoading(false)
-                        break;
-                    }
-                    case 3: {
-                        //Incorrect Partner Key
-                        // alert("Something went wrong', 'please try again")
-                        console.log('Something went wrong', 'please try again3')
-                        setTruecallerLoading(false)
-                        break;
-                    }
-                    case 4: {
-                        // alert("User Not Verified on Truecaller")
-                        //User Not Verified on Truecaller
-                        console.log('Something went wrong', 'please try again4')
-                        setTruecallerLoading(false)
-                        break;
-                    }
-                    case 5: {
-                        //Truecaller App Internal Error
-                        // alert("Something went wrong', 'please try again")
-                        console.log('Something went wrong', 'please try again5')
-                        setTruecallerLoading(false)
-                        break;
-                    }
-                    case 10: {
-                        alert("User Not Verified on Truecaller")
-                        //User Not Verified on Truecaller
-                        console.log('Something went wrong', 'please try again6')
-                        setTruecallerLoading(false)
-                        break;
-                    }
-                    case 13: {
-                        //User pressed back while verification in process
-                        console.log('Something went wrong', 'please try again7')
-                        setTruecallerLoading(false)
-                        break;
-                    }
-                    case 14: {
-                        //User pressed SKIP or USE ANOTHER NUMBER
-                        console.log('Something went wrong', 'please try again8')
-                        setTruecallerLoading(false)
-                        break;
-                    }
-                    default: {
-
+                        }
                     }
                 }
-            }
-        });
-
+            });
+        }
     }, [])
 
 
@@ -180,11 +181,11 @@ const Login = ({ navigation, darkMode, requestOtp, trueCallerSign, homeScreenLoc
     }
 
     const onSubmitTrueCaller = () => {
-        TRUECALLER.isUsable(result => {
+        TRUECALLERDEFAULT.isUsable(result => {
             if (result === true) {
                 setTruecallerLoading(false)
                 console.log('Authenticate via truecaller flow can be used')
-                TRUECALLER.requestTrueProfile();
+                TRUECALLERDEFAULT.requestTrueProfile();
             }
             else {
                 setTruecallerLoading(false)
