@@ -62,6 +62,7 @@ export const trueCallerSign = (payLoad, callback) => async dispatch => {
     } catch (err) {
         console.log("errrrr", err)
         // alert(err)
+        alert(err.response.data.description)
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
         // if (__DEV__) {
@@ -76,8 +77,8 @@ export const createNewCustomer = (payLoad, callback) => async dispatch => {
         const res = await axiosinstance.post('/customers/add', payLoad)
         callback(res, true)
     } catch (err) {
-        console.log("11111111111111111", JSON.stringify(err, null, "       "))
-        // alert(JSON.stringify(err, null, "       "))
+        // console.log("11111111111111111", JSON.stringify(err, null, "       "))
+        alert(err.response.data.description)
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
         // if (__DEV__) {
