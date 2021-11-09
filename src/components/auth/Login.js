@@ -38,6 +38,7 @@ const Login = ({ navigation, darkMode, requestOtp, trueCallerSign, homeScreenLoc
 
     useEffect(() => {
         if (Platform.OS == "android") {
+            return
             TRUECALLERDEFAULT.initializeClient(
                 TRUECALLER.TRUECALLER_CONSENT_MODE.Popup,
                 TRUECALLER.TRUECALLER_CONSENT_TITLE.Login,
