@@ -24,7 +24,7 @@ const OtpScreen = ({ navigation, darkMode, setDarkMode, homeScreenLocation, onLo
     const { setOnBoardKey } = React.useContext(AuthContext);
     const [otp, setOtp] = useState("")
     const [loading, setLoading] = useState(false)
-    const [counter, SetCounter] = useState(45); // Set here your own timer configurable
+    const [counter, SetCounter] = useState(25); // Set here your own timer configurable
     const [random, setRandom] = useState(1);
     const [disabled, setDisabled] = useState(true)
 

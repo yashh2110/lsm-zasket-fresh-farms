@@ -48,7 +48,7 @@ export const verifyOtp = (payLoad, callback) => async dispatch => {
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))
         callback(err, false)
         if (__DEV__) {
-            alert(JSON.stringify(err.response, null, "     "))
+            // alert(JSON.stringify(err.response, null, "     "))
         }
     }
 }

@@ -40,7 +40,7 @@ const BannerImages = ({ navigation, item }) => {
                 <Image
                     source={item?.itemImages?.[0]?.largeImagePath ?
                         { uri: banner ? banner : item?.itemImages?.[0]?.largeImagePath } : require('../../assets/png/default.png')}
-                    style={{ height: "80%", width: "80%", alignSelf: "center", }} resizeMode="cover"
+                    style={{ height: "80%", width: "80%", alignSelf: "center", }} resizeMode="contain"
                 />
             </View>
             {/* {item?.itemImages?.length > 0 ?

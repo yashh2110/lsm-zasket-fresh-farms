@@ -32,6 +32,8 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
     const { mobileNumber, otp } = route.params;
     const { mode, payLoadRes, signature, signatureAlgorithm, firstName } = route.params
     useEffect(() => {
+
+        initalFunction()
         const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
         dynamicLinks()
             .getInitialLink()
@@ -53,6 +55,14 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
             unsubscribe()
         }
     }, [])
+    const initalFunction = async () => {
+        let referralCode = await AsyncStorage.getItem('referralCode');
+        if (referralCode) {
+            setReferralCode(referralCode)
+
+        }
+
+    }
     const handleDynamicLink = (link) => {
         if (link) {
             spreatereferral(link)
@@ -233,7 +243,8 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
     }
 
 
-    const OnChangeReferral = (text) => {
+    const OnChangeReferral = async (text) => {
+        // let upperCaseText = text.toUpperCase()
         setReferralCode(text)
         setreferralValidation(true)
     }
@@ -310,9 +321,13 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                                     <TextInput
                                         style={{ height: 42, color: "#000000", fontWeight: "bold", fontSize: 15, }}
                                         // onChangeText={text => setReferralCode(text)}
-                                        onChangeText={text => OnChangeReferral(text)}
+                                        // onChangeText={text => {
+                                        //     setReferralCode(text)
+                                        // }}
+                                        onChangeText={(t) => OnChangeReferral(t)}
                                         value={referralCode}
                                         // placeholder={"Name"}
+                                        autoCapitalize={"characters"}
                                         placeholderTextColor={"#727272"}
                                         onTouchStart={() => {
                                             setemailErrorText("")

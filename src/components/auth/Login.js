@@ -25,10 +25,10 @@ import { StackActions } from '@react-navigation/native';
 // const NullComponent = (props) => null;
 let TRUECALLER;
 let TRUECALLERDEFAULT
-if (Platform.OS == 'android') {
-    TRUECALLER = require('react-native-truecaller-sdk');
-    TRUECALLERDEFAULT = require('react-native-truecaller-sdk').default;
-}
+// if (Platform.OS == 'android') {
+//     TRUECALLER = require('react-native-truecaller-sdk');
+//     TRUECALLERDEFAULT = require('react-native-truecaller-sdk').default;
+// }
 const Login = ({ navigation, darkMode, requestOtp, trueCallerSign, homeScreenLocation, getV2Config, onLogin }) => {
     const [mobileNumber, setMobileNumber] = useState("")
     const [loading, setLoading] = useState(false)

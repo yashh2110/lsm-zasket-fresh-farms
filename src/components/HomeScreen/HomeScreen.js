@@ -68,6 +68,12 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocatio
                     while (match = regex.exec(link.url)) {
                         params[match[1]] = match[2];
                     }
+                    console.log("params?.referralCodeparams?.referralCode", params)
+
+                    if (params?.referralCode) {
+                        console.log("params?.referralCodeparams?.referralCode", params?.referralCode)
+                        AsyncStorage.setItem('referralCode', params?.referralCode);
+                    }
                     if (params?.productDetails) {
                         // alert(JSON.stringify(params))
                         navigation.navigate("ProductDetailScreen", { item: params?.productDetails })
