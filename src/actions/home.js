@@ -136,14 +136,32 @@ export const searchItems = (searchTerm, callback) => async dispatch => {
 // https://test-api.zasket.in/customers/128?latitude=16.506174&longitude=80.648015
 
 
-//getCustomerDetails
-export const getCustomerDetails = (homeScreenLocation, callback) => async dispatch => {
+//getCustomerDetailsFromLanAndLon
+export const getCustomerDetailsLanAndLon = (homeScreenLocation, callback) => async dispatch => {
     try {
         let userDetails = await AsyncStorage.getItem('userDetails');
         let parsedUserDetails = await JSON.parse(userDetails);
         let customerId = await parsedUserDetails?.customerDetails?.id
         if (customerId) {
             const res = await axiosinstance.get(`/customers/${customerId}?latitude=${homeScreenLocation?.lat}&longitude=${homeScreenLocation?.lon}`)
+            callback(res, true)
+        } else {
+            callback("error", false)
+        }
+    } catch (err) {
+        callback(err, false)
+        // Alert.alert(JSON.stringify(err.response.data, null, "     "))
+    }
+}
+
+//getCustomerDetails
+export const getCustomerDetails = (callback) => async dispatch => {
+    try {
+        let userDetails = await AsyncStorage.getItem('userDetails');
+        let parsedUserDetails = await JSON.parse(userDetails);
+        let customerId = await parsedUserDetails?.customerDetails?.id
+        if (customerId) {
+            const res = await axiosinstance.get(`/customers/${customerId}`)
             callback(res, true)
         } else {
             callback("error", false)

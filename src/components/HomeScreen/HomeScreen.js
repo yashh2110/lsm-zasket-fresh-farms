@@ -4,7 +4,7 @@ import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
 import Theme from '../../styles/Theme';
-import { getAllCategories, isPincodeServiceable, getCustomerDetails, getAllBanners, addCustomerDeviceDetails } from '../../actions/home'
+import { getAllCategories, isPincodeServiceable, getCustomerDetailsLanAndLon, getAllBanners, addCustomerDeviceDetails } from '../../actions/home'
 import { getBillingDetails } from '../../actions/cart'
 import { onLogout } from '../../actions/auth'
 import { connect } from 'react-redux';
@@ -39,7 +39,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
 RNUxcam.tagScreenName('homeScreen');
-const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetails, getOrdersBillingDetails, addHomeScreenLocation, getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
+const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLanAndLon, getOrdersBillingDetails, addHomeScreenLocation, getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
     const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
     const [dynamicLink, setDynamicLink] = useState("")
     const [productId, setProductId] = useState("")
@@ -65,7 +65,7 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetails, 
     }, [])
     const initalCustomerDetails = async () => {
         setLoading(true)
-        getCustomerDetails(homeScreenLocation, async (res, status) => {
+        getCustomerDetailsLanAndLon(homeScreenLocation, async (res, status) => {
             // alert("asdkfhiu")
             if (status) {
                 // alert(JSON.stringify(res?.data?.assignedPartnerInfo, null, "   "))
@@ -528,16 +528,18 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetails, 
     // const { productId } = route?.params;
 
     const OnPressWhatsUpGrups = (Url) => {
+        Linking.openURL(Url);
+        // alert(Url)
         // Linking.openURL('whatsapp://send?text=' + this.state.msg + '&phone=91' + this.state.mobile_no);
         // if (Platform.OS == "android") {
-        Linking.canOpenURL(Url).then(supported => {
-            if (supported) {
-                Linking.openURL(Url);
-            } else {
-                // alert("nott")
-                console.warn("Don't know how to open URI");
-            }
-        });
+        // Linking.canOpenURL('https://chat.whatsapp.com/I6YikomYujr0v9b9JeI2wp').then(supported => {
+        //     if (supported) {
+
+        //     } else {
+        //         // alert("nott")
+        //         console.warn("Don't know how to open URI");
+        //     }
+        // });
         // }
     }
 
@@ -598,52 +600,54 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetails, 
                         return (
                             <>
                                 {/* <Text>{index}</Text> */}
-                                <View style={{ height: 155, width: screenWidth - 60, borderRadius: 5, marginRight: index == 0 ? 18 : 15, marginLeft: index == 0 ? 0 : 2 }}>
-                                    {
-                                        el?.imagePath ?
-                                            <Image
-                                                style={{ height: 155, width: screenWidth - 60, borderRadius: 5, alignSelf: 'center', }}
-                                                // resizeMode={"stretch"}
-                                                source={{ uri: el?.imagePath }}
-                                            />
-                                            :
-                                            null
+                                <View style={{}}>
+                                    <View style={{}}>
+                                        <View style={{ height: 155, width: screenWidth - 50, borderRadius: 5, marginRight: index == 0 ? 18 : 15, marginLeft: index == 0 ? 0 : 2 }}>
+                                            {
+                                                el?.imagePath ?
+                                                    <Image
+                                                        style={{ height: 155, width: screenWidth - 50, borderRadius: 5, alignSelf: 'center', }}
+                                                        // resizeMode={"stretch"}
+                                                        source={{ uri: el?.imagePath }}
+                                                    />
+                                                    :
+                                                    null
 
-                                    }
-                                    <TouchableOpacity activeOpacity={0.9} onPress={() => moreShare(el?.imagePath, el?.shareMessage)} style={{ position: "absolute", right: 5, bottom: 2, width: 110, height: 45, justifyContent: "center", alignItems: "center" }} onPress={() => moreShare(el?.imagePath, el?.shareMessage)}>
-                                        <View style={{ borderRadius: 25, backgroundColor: "#F7F7F7", width: 80, height: 24, justifyContent: "center", alignItems: "center" }}>
-                                            <View style={{ flexDirection: "row", marginHorizontal: 1, padding: 5, justifyContent: "center", alignItems: "center", opacity: 0.8 }}>
-                                                <FastImage
-                                                    style={{ width: 15, height: 15 }}
-                                                    source={require('../../assets/png/share.png')}
-                                                    resizeMode={FastImage.resizeMode.contain}
-                                                />
-                                                <Text style={{ marginHorizontal: 2, fontWeight: "bold", fontSize: 15 }}>Share</Text>
-                                            </View>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                                {/* <Image
-                                    style={{ height: 150, width: 345, borderRadius: 5, alignSelf: 'center', marginRight: bannerImages.length - 1 == index ? 0 : 25 }}
-                                    // resizeMode={"stretch"}
-                                    source={{ uri: el?.imagePath }}
-                                />
-                                <TouchableOpacity activeOpacity={0.9} onPress={() => moreShare(el?.imagePath, el?.shareMessage)} style={{ position: "absolute", width: 110, height: 45, justifyContent: "center", alignItems: "center" }} onPress={() => moreShare(el?.imagePath, el?.shareMessage)}>
-                                    <View style={{ borderRadius: 25, backgroundColor: "#F7F7F7", width: 80, height: 24, justifyContent: "center", alignItems: "center" }}>
-                                        <View style={{ flexDirection: "row", marginHorizontal: 1, padding: 5, justifyContent: "center", alignItems: "center", opacity: 0.8 }}>
-                                            <FastImage
-                                                style={{ width: 15, height: 15 }}
-                                                source={require('../../assets/png/share.png')}
-                                                resizeMode={FastImage.resizeMode.contain}
-                                            />
-                                            <Text style={{ marginHorizontal: 2, fontWeight: "bold", fontSize: 15 }}>Share</Text>
+                                            }
+                                            <TouchableOpacity activeOpacity={0.9} onPress={() => moreShare(el?.imagePath, el?.shareMessage)} style={{ position: "absolute", right: 5, bottom: 2, width: 110, height: 45, justifyContent: "center", alignItems: "center" }} onPress={() => moreShare(el?.imagePath, el?.shareMessage)}>
+                                                <View style={{ borderRadius: 25, backgroundColor: "#F7F7F7", width: 80, height: 24, justifyContent: "center", alignItems: "center" }}>
+                                                    <View style={{ flexDirection: "row", marginHorizontal: 1, padding: 5, justifyContent: "center", alignItems: "center", opacity: 0.8 }}>
+                                                        <FastImage
+                                                            style={{ width: 15, height: 15 }}
+                                                            source={require('../../assets/png/share.png')}
+                                                            resizeMode={FastImage.resizeMode.contain}
+                                                        />
+                                                        <Text style={{ marginHorizontal: 2, fontWeight: "bold", fontSize: 15 }}>Share</Text>
+                                                    </View>
+                                                </View>
+                                            </TouchableOpacity>
                                         </View>
                                     </View>
-                                </TouchableOpacity> */}
+                                </View>
                             </>
                         )
                     })}
                 </ScrollView>
+                {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 10, backgroundColor: "blue", flex: 1, justifyContent: "center" }}>
+                    {bannerImages?.map((el, index) => {
+                        return (
+                            <>
+                                <View style={{ justifyContent: "center", alignItems: "center", backgroundColor: "orange", minWidth: 30 }}>
+                                    <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: "red", }}>
+
+                                    </View>
+                                </View>
+                            </>
+                        )
+                    })}
+                </ScrollView> */}
+
+
                 {/* <View style={{ width: ("100%"), marginRight: 30 }}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 5 }}>
                         {bannerImages?.map((el, index) => {
@@ -685,7 +689,9 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetails, 
                         :
                         undefined
                 }
+
                 <View style={{ flexDirection: 'row', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', padding: 5, marginTop: -10 }}>
+
                     <FlatList
                         data={categories}
                         numColumns={3}
@@ -787,28 +793,31 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetails, 
                     : null}
                 {/* <Text>{JSON.stringify(sectionlistData, null, "      ")} </Text> */}
             </ScrollView>
-            {cartItems.length > 1 ?
-                <TouchableOpacity activeOpacity={0.7} onPress={() => { navigation.navigate("CartStack") }} style={{ height: 60, width: "95%", backgroundColor: '#6ba040', flexDirection: 'row', borderRadius: 5, marginBottom: 8, padding: 10, alignSelf: "center", justifyContent: "space-between" }}>
-                    <View style={{}}>
-                        <Text style={{ fontWeight: "bold", color: "#ffffff", fontSize: 16 }}>{`₹ ${getOrdersBillingDetails.finalPrice}`}</Text>
-                        <Text style={{ color: "#ffffff" }}>{`${cartItems.length} | Saved ₹ ${getOrdersBillingDetails?.marketPrice - getOrdersBillingDetails?.finalPrice}`}</Text>
-                    </View>
-                    <View style={{ flexDirection: "row", marginHorizontal: 10 }}>
-                        <Image
-                            style={{ height: 40, width: 30, alignSelf: "center" }}
-                            resizeMode="center"
-                            source={require('../../assets/png/bagIcon.png')}
-                        />
-                        <View style={{ flexDirection: "row" }}>
-                            <Text style={{ textAlign: "center", alignSelf: "center", color: "#ffffff", fontWeight: "bold", letterSpacing: 0.3, fontSize: 16 }}>Checkout</Text>
-                            <Image
-                                style={{ height: 54, width: 20, alignSelf: "center" }}
-                                resizeMode="center"
-                                source={require('../../assets/png/rightWhiteIcon.png')}
-                            />
+            {cartItems.length >= 1 ?
+                <View style={{ width: "100%", backgroundColor: 'white', }}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => { navigation.navigate("CartStack") }} style={{ height: 55, width: "95%", backgroundColor: '#6ba040', flexDirection: 'row', borderRadius: 5, marginBottom: 8, alignSelf: "center", justifyContent: "space-between", padding: 8 }}>
+                        <View style={{ marginLeft: 5 }}>
+                            <Text style={{ fontWeight: "bold", color: "#ffffff", fontSize: 16 }}>{`₹ ${getOrdersBillingDetails.finalPrice}`}</Text>
+                            <Text style={{ color: "#ffffff" }}>{`${cartItems.length} | Saved ₹ ${getOrdersBillingDetails?.marketPrice - getOrdersBillingDetails?.finalPrice}`}</Text>
                         </View>
-                    </View>
-                </TouchableOpacity>
+                        <View style={{ flexDirection: "row", }}>
+                            <Image
+                                style={{ height: 40, width: 30, alignSelf: "center" }}
+                                resizeMode="center"
+                                source={require('../../assets/png/bagIcon.png')}
+                            />
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={{ textAlign: "center", alignSelf: "center", color: "#ffffff", fontWeight: "bold", letterSpacing: 0.3, fontSize: 16 }}>Checkout</Text>
+                                <Image
+                                    style={{ height: 54, width: 20, alignSelf: "center" }}
+                                    resizeMode="center"
+                                    source={require('../../assets/png/rightWhiteIcon.png')}
+                                />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+
+                </View>
                 // rightWhiteIcon
                 :
                 undefined
@@ -862,7 +871,7 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getCustomerDetails, onLogout, getAllBanners, addHomeScreenLocation, getCartItemsApi, addCustomerDeviceDetails })(HomeScreen)
+export default connect(mapStateToProps, { getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getCustomerDetailsLanAndLon, onLogout, getAllBanners, addHomeScreenLocation, getCartItemsApi, addCustomerDeviceDetails })(HomeScreen)
 const styles = StyleSheet.create({
 
     scrollChildParent: {
