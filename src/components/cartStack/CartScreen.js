@@ -80,6 +80,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
     }, [cartItems])
 
     useEffect(() => {
+        // alert(JSON.stringify(getOrdersBillingDetails, null, "      "))
         // setloadinggg(true)
         const unsubscribe = navigation.addListener('focus', () => {
             initialBillingFunction()

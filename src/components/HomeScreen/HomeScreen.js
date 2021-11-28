@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState, useLayoutEffect } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter, Linking, } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, Dimensions, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter, Linking, } from 'react-native';
 import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
@@ -39,11 +39,12 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
 RNUxcam.tagScreenName('homeScreen');
-const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocation, getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
+const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetails, getOrdersBillingDetails, addHomeScreenLocation, getBillingDetails, getAllCategories, getAllUserAddress, isPincodeServiceable, getAllBanners, isAuthenticated, allUserAddress, bannerImages, addCustomerDeviceDetails, categories, navigation, userLocation, onLogout, config, getCartItemsApi }) => {
     const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
     const [dynamicLink, setDynamicLink] = useState("")
     const [productId, setProductId] = useState("")
     const [subBanners, setSubBanners] = useState("")
+    const [partnerDetails, setPartnerDetails] = useState("")
     // useEffect(() => {
     //     // let userDetails = await AsyncStorage.getItem('ProductId');
     //     // alert(userDetails)
@@ -55,7 +56,34 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocatio
     //     alert(userDetails)
 
     // }
+    const { width: screenWidth } = Dimensions.get('window');
+    useEffect(() => {
+        // alert(JSON.stringify(getOrdersBillingDetails, null, "      "))
+        initalCustomerDetails()
+        console.log("112312312312312", JSON.stringify(getOrdersBillingDetails.discountedPrice, null, "   "))
+        // alert(JSON.stringify(homeScreenLocation, null, "   "))
+    }, [])
+    const initalCustomerDetails = async () => {
+        setLoading(true)
+        getCustomerDetails(homeScreenLocation, async (res, status) => {
+            // alert("asdkfhiu")
+            if (status) {
+                // alert(JSON.stringify(res?.data?.assignedPartnerInfo, null, "   "))
+                // alert(JSON.stringify(res?.data, null, "       "))
+                setPartnerDetails(res?.data?.assignedPartnerInfo)
+                // setUserDetails(res?.data)
+                await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
+                setRefresh(false)
+                setLoading(false)
 
+            } else {
+                setUserDetails({})
+                setRefresh(false)
+                setLoading(false)
+
+            }
+        })
+    }
     useEffect(() => {
         const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
         dynamicLinks()
@@ -432,6 +460,7 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocatio
         // } catch (e) { }
     }
     useEffect(() => {
+        // alert(JSON.stringify(cartItems, null, "     "))
         if (cartItems.length > 0) {
             initialBillingFunction()
         }
@@ -498,6 +527,20 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocatio
     }
     // const { productId } = route?.params;
 
+    const OnPressWhatsUpGrups = (Url) => {
+        // Linking.openURL('whatsapp://send?text=' + this.state.msg + '&phone=91' + this.state.mobile_no);
+        // if (Platform.OS == "android") {
+        Linking.canOpenURL(Url).then(supported => {
+            if (supported) {
+                Linking.openURL(Url);
+            } else {
+                // alert("nott")
+                console.warn("Don't know how to open URI");
+            }
+        });
+        // }
+    }
+
 
     return (
         <>
@@ -505,19 +548,40 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocatio
                 refreshControl={
                     <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
                 }>
+                {/* <Text>{partnerDetails?.partnerStoreName}</Text> */}
+                {
+                    (partnerDetails?.partnerStoreName == "" || partnerDetails?.partnerStoreName == null || partnerDetails?.partnerStoreName == undefined) ?
+                        null
+                        :
+                        <>
+                            <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
+                                <TouchableOpacity onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreenGrabPincode" }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
+                                    <Image
+                                        style={{ height: 18, alignSelf: "flex-start", width: 20 }}
+                                        resizeMode="center"
+                                        source={require('../../assets/png/HomeIconInactive.png')}
+                                    />
+                                    <Text numberOfLines={1} style={{ maxWidth: '50%', marginLeft: 5 }}>{partnerDetails?.partnerStoreName}</Text>
+                                    <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
+                                </TouchableOpacity>
+
+                            </View>
+                            <TouchableOpacity onPress={() => { OnPressWhatsUpGrups(partnerDetails?.partnerWhatsappGroupLink) }} style={{ position: "absolute", right: 0, top: 0, height: 50 }}>
+                                <Image
+                                    style={{ height: 25, }}
+                                    resizeMode="center"
+                                    source={require('../../assets/png/aaaaaa.png')}
+                                />
+                            </TouchableOpacity>
+                        </>
+                }
+
                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
                     <TouchableOpacity onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreenGrabPincode" }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                         <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
                         <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1}</Text>
                         <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                     </TouchableOpacity>
-                    {/* {__DEV__ ?
-                        isAuthenticated ?
-                            <TouchableOpacity onPress={() => onPressLogout()} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
-                                <Text>Logout</Text>
-                            </TouchableOpacity>
-                            : undefined
-                        : undefined} */}
                 </View>
                 {pincodeError ?
                     <View style={{ backgroundColor: '#F65C65', width: "95%", alignSelf: 'center', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 3 }}>
@@ -529,56 +593,57 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocatio
                         </TouchableOpacity>
                     </View>
                     : undefined}
-                <View style={{ height: 160, justifyContent: 'center', alignItems: 'center', marginTop: 5, }}>
-                    {/* <Text>{productId ? productId : "kwjeckw"}</Text> */}
-                    {bannerImages?.length > 0 ?
-                        <Swiper
-                            autoplay={true}
-                            showsHorizontalScrollIndicator={false}
-                            showsVerticalScrollIndicator={false}
-                            autoplayTimeout={5}
-                            removeClippedSubviews={false}
-                            activeDotColor={"#ffffff"}
-                            dotStyle={{ bottom: -10, height: 6, width: 6 }}
-                            activeDotStyle={{ bottom: -10, height: 6, width: 8 }}>
-                            {bannerImages?.map((el, index) => {
-                                return (
-                                    <>
-                                        <Image
-                                            // resizeMode='contain'
-                                            style={{
-                                                height: "100%",
-                                                width: "96.5%",
-                                                alignSelf: "center",
-                                                borderRadius: 8,
-                                            }}
-                                            source={{ uri: el?.imagePath }}
-                                        />
-                                        <TouchableOpacity activeOpacity={0.9} onPress={() => moreShare(el?.imagePath, el?.shareMessage)} style={{ position: "absolute", right: 10, bottom: 2, width: 110, height: 45, justifyContent: "center", alignItems: "center" }} onPress={() => moreShare(el?.imagePath, el?.shareMessage)}>
-                                            <View style={{ borderRadius: 25, backgroundColor: "#F7F7F7", width: 80, height: 24, justifyContent: "center", alignItems: "center" }}>
-                                                <View style={{ flexDirection: "row", marginHorizontal: 1, padding: 5, justifyContent: "center", alignItems: "center", opacity: 0.8 }}>
-                                                    <FastImage
-                                                        style={{ width: 15, height: 15 }}
-                                                        source={require('../../assets/png/share.png')}
-                                                        resizeMode={FastImage.resizeMode.contain}
-                                                    />
-                                                    {/* <Image
-                                                    style={{ width: 21, height: 21 }}
-                                                    resizeMode={"contain"}
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 10, marginTop: 5 }}>
+                    {bannerImages?.map((el, index) => {
+                        return (
+                            <>
+                                {/* <Text>{index}</Text> */}
+                                <View style={{ height: 155, width: screenWidth - 60, borderRadius: 5, marginRight: index == 0 ? 18 : 15, marginLeft: index == 0 ? 0 : 2 }}>
+                                    {
+                                        el?.imagePath ?
+                                            <Image
+                                                style={{ height: 155, width: screenWidth - 60, borderRadius: 5, alignSelf: 'center', }}
+                                                // resizeMode={"stretch"}
+                                                source={{ uri: el?.imagePath }}
+                                            />
+                                            :
+                                            null
+
+                                    }
+                                    <TouchableOpacity activeOpacity={0.9} onPress={() => moreShare(el?.imagePath, el?.shareMessage)} style={{ position: "absolute", right: 5, bottom: 2, width: 110, height: 45, justifyContent: "center", alignItems: "center" }} onPress={() => moreShare(el?.imagePath, el?.shareMessage)}>
+                                        <View style={{ borderRadius: 25, backgroundColor: "#F7F7F7", width: 80, height: 24, justifyContent: "center", alignItems: "center" }}>
+                                            <View style={{ flexDirection: "row", marginHorizontal: 1, padding: 5, justifyContent: "center", alignItems: "center", opacity: 0.8 }}>
+                                                <FastImage
+                                                    style={{ width: 15, height: 15 }}
                                                     source={require('../../assets/png/share.png')}
-                                                /> */}
-                                                    <Text style={{ marginHorizontal: 2, fontWeight: "bold", fontSize: 15 }}>Share</Text>
-                                                </View>
+                                                    resizeMode={FastImage.resizeMode.contain}
+                                                />
+                                                <Text style={{ marginHorizontal: 2, fontWeight: "bold", fontSize: 15 }}>Share</Text>
                                             </View>
-                                        </TouchableOpacity>
-
-                                    </>
-                                )
-                            })}
-
-                        </Swiper>
-                        : undefined}
-                </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                                {/* <Image
+                                    style={{ height: 150, width: 345, borderRadius: 5, alignSelf: 'center', marginRight: bannerImages.length - 1 == index ? 0 : 25 }}
+                                    // resizeMode={"stretch"}
+                                    source={{ uri: el?.imagePath }}
+                                />
+                                <TouchableOpacity activeOpacity={0.9} onPress={() => moreShare(el?.imagePath, el?.shareMessage)} style={{ position: "absolute", width: 110, height: 45, justifyContent: "center", alignItems: "center" }} onPress={() => moreShare(el?.imagePath, el?.shareMessage)}>
+                                    <View style={{ borderRadius: 25, backgroundColor: "#F7F7F7", width: 80, height: 24, justifyContent: "center", alignItems: "center" }}>
+                                        <View style={{ flexDirection: "row", marginHorizontal: 1, padding: 5, justifyContent: "center", alignItems: "center", opacity: 0.8 }}>
+                                            <FastImage
+                                                style={{ width: 15, height: 15 }}
+                                                source={require('../../assets/png/share.png')}
+                                                resizeMode={FastImage.resizeMode.contain}
+                                            />
+                                            <Text style={{ marginHorizontal: 2, fontWeight: "bold", fontSize: 15 }}>Share</Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity> */}
+                            </>
+                        )
+                    })}
+                </ScrollView>
                 {/* <View style={{ width: ("100%"), marginRight: 30 }}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 5 }}>
                         {bannerImages?.map((el, index) => {
@@ -722,6 +787,32 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, addHomeScreenLocatio
                     : null}
                 {/* <Text>{JSON.stringify(sectionlistData, null, "      ")} </Text> */}
             </ScrollView>
+            {cartItems.length > 1 ?
+                <TouchableOpacity activeOpacity={0.7} onPress={() => { navigation.navigate("CartStack") }} style={{ height: 60, width: "95%", backgroundColor: '#6ba040', flexDirection: 'row', borderRadius: 5, marginBottom: 8, padding: 10, alignSelf: "center", justifyContent: "space-between" }}>
+                    <View style={{}}>
+                        <Text style={{ fontWeight: "bold", color: "#ffffff", fontSize: 16 }}>{`₹ ${getOrdersBillingDetails.finalPrice}`}</Text>
+                        <Text style={{ color: "#ffffff" }}>{`${cartItems.length} | Saved ₹ ${getOrdersBillingDetails?.marketPrice - getOrdersBillingDetails?.finalPrice}`}</Text>
+                    </View>
+                    <View style={{ flexDirection: "row", marginHorizontal: 10 }}>
+                        <Image
+                            style={{ height: 40, width: 30, alignSelf: "center" }}
+                            resizeMode="center"
+                            source={require('../../assets/png/bagIcon.png')}
+                        />
+                        <View style={{ flexDirection: "row" }}>
+                            <Text style={{ textAlign: "center", alignSelf: "center", color: "#ffffff", fontWeight: "bold", letterSpacing: 0.3, fontSize: 16 }}>Checkout</Text>
+                            <Image
+                                style={{ height: 54, width: 20, alignSelf: "center" }}
+                                resizeMode="center"
+                                source={require('../../assets/png/rightWhiteIcon.png')}
+                            />
+                        </View>
+                    </View>
+                </TouchableOpacity>
+                // rightWhiteIcon
+                :
+                undefined
+            }
             {showAppUpdate ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>
@@ -766,6 +857,8 @@ const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
     allUserAddress: state.auth.allUserAddress,
     cartItems: state.cart.cartItems,
+    getOrdersBillingDetails: state.cart.getOrdersBillingDetails,
+
 })
 
 

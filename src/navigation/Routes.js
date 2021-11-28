@@ -152,7 +152,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                     ),
                 }}
             />
-            <Tab.Screen
+            {/* <Tab.Screen
                 name="CartStack"
                 component={CartStack}
                 options={{
@@ -169,7 +169,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
             //         }
             //     }
             // })}
-            />
+            /> */}
             <Tab.Screen
                 name="ReferralStack"
                 component={ReferralStack}
@@ -489,6 +489,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                             </>) : (
                             <>
                                 <Stack.Screen name="BottomTabRoute" component={BottomTabRoute} />
+                                <Stack.Screen name="CartStack" component={CartStack} />
                                 <Stack.Screen name="MapStack" component={MapStack} options={{ cardStyleInterpolator: forFade }} />
                                 <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ title: 'Home Page' }} />
                                 <Stack.Screen name="MapScreen" component={MapScreen} options={{ cardStyleInterpolator: forFade }} />
