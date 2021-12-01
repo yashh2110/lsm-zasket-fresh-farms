@@ -68,7 +68,7 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
         getCustomerDetailsLanAndLon(homeScreenLocation, async (res, status) => {
             // alert("asdkfhiu")
             if (status) {
-                // alert(JSON.stringify(res?.data?.assignedPartnerInfo, null, "   "))
+                // alert(JSON.stringify(res?.data ?, null, "   "))
                 // alert(JSON.stringify(res?.data, null, "       "))
                 setPartnerDetails(res?.data?.assignedPartnerInfo)
                 // setUserDetails(res?.data)
@@ -460,6 +460,7 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
         // } catch (e) { }
     }
     useEffect(() => {
+        // alert(cartItems.length)
         // alert(JSON.stringify(cartItems, null, "     "))
         if (cartItems.length > 0) {
             initialBillingFunction()
@@ -543,6 +544,11 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
         // }
     }
 
+    const OnPressWhatsUpIcon = () => {
+        Alert.alert("No whatsApp group found for your store parner.")
+
+    }
+
 
     return (
         <>
@@ -552,8 +558,17 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
                 }>
                 {/* <Text>{partnerDetails?.partnerStoreName}</Text> */}
                 {
+
                     (partnerDetails?.partnerStoreName == "" || partnerDetails?.partnerStoreName == null || partnerDetails?.partnerStoreName == undefined) ?
-                        null
+                        <>
+                            <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
+                                <TouchableOpacity onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreenGrabPincode" }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
+                                    <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
+                                    <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1}</Text>
+                                    <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
+                                </TouchableOpacity>
+                            </View>
+                        </>
                         :
                         <>
                             <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
@@ -561,30 +576,44 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
                                     <Image
                                         style={{ height: 18, alignSelf: "flex-start", width: 20 }}
                                         resizeMode="center"
-                                        source={require('../../assets/png/HomeIconInactive.png')}
+                                        source={require('../../assets/png/StoreIcon.png')}
                                     />
-                                    <Text numberOfLines={1} style={{ maxWidth: '50%', marginLeft: 5 }}>{partnerDetails?.partnerStoreName}</Text>
+                                    <Text numberOfLines={1} style={{ maxWidth: '50%', marginLeft: 5, color: "#000000", fontWeight: "bold" }}>{partnerDetails?.partnerStoreName}</Text>
                                     <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
                                 </TouchableOpacity>
 
                             </View>
-                            <TouchableOpacity onPress={() => { OnPressWhatsUpGrups(partnerDetails?.partnerWhatsappGroupLink) }} style={{ position: "absolute", right: 0, top: 0, height: 50 }}>
-                                <Image
-                                    style={{ height: 25, }}
-                                    resizeMode="center"
-                                    source={require('../../assets/png/aaaaaa.png')}
-                                />
-                            </TouchableOpacity>
+                            {
+                                partnerDetails?.partnerWhatsappGroupLink == "" || partnerDetails?.partnerWhatsappGroupLink == undefined || partnerDetails?.partnerWhatsappGroupLink == null ?
+                                    null
+                                    // <TouchableOpacity onPress={() => { OnPressWhatsUpIcon() }} style={{ position: "absolute", right: 0, top: 0, height: 50 }}>
+                                    //     <Image
+                                    //         style={{ height: 25, }}
+                                    //         resizeMode="center"
+                                    //         source={require('../../assets/png/aaaaaa.png')}
+                                    //     />
+                                    // </TouchableOpacity>
+                                    :
+                                    <TouchableOpacity onPress={() => { OnPressWhatsUpGrups(partnerDetails?.partnerWhatsappGroupLink) }} style={{ position: "absolute", right: 0, top: 0, height: 50 }}>
+                                        <Image
+                                            style={{ height: 25, }}
+                                            resizeMode="center"
+                                            source={require('../../assets/png/aaaaaa.png')}
+                                        />
+                                    </TouchableOpacity>
+
+                            }
+                            <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
+                                <TouchableOpacity onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreenGrabPincode" }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginLeft: 25 }}>
+                                    {/* <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} /> */}
+                                    <Text numberOfLines={1} style={{ maxWidth: '50%', color: "#808080", fontSize: 12.5 }}>{homeScreenLocation?.addressLine_1}</Text>
+                                    {/* <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} /> */}
+                                </TouchableOpacity>
+                            </View>
                         </>
                 }
 
-                <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
-                    <TouchableOpacity onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreenGrabPincode" }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
-                        <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
-                        <Text numberOfLines={1} style={{ maxWidth: '50%' }}>{homeScreenLocation?.addressLine_1}</Text>
-                        <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} />
-                    </TouchableOpacity>
-                </View>
+
                 {pincodeError ?
                     <View style={{ backgroundColor: '#F65C65', width: "95%", alignSelf: 'center', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 3 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 5 }}>
