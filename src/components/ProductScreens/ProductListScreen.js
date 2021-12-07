@@ -5,6 +5,7 @@ import { getItemsByCategory } from '../../actions/home'
 import { connect } from 'react-redux';
 import CardProductListScreen from './CardProductListScreen';
 import Loader from '../common/Loader';
+import CartDown from '../common/cartDown'
 
 const ProductListScreen = ({ route, navigation, getItemsByCategory }) => {
     const { item } = route?.params;
@@ -51,6 +52,8 @@ const ProductListScreen = ({ route, navigation, getItemsByCategory }) => {
                         />
                     )}
                 />
+                <CartDown navigation={navigation} />
+
             </View>
             {/* <Text>{JSON.stringify(products, null, "       ")} </Text> */}
             {loading ?

@@ -51,7 +51,7 @@ const PaymentSuccessScreen = ({ navigation, route }) => {
     };
     return (
         <>
-            <View style={{ flex: 3, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ backgroundColor: 'white', alignItems: 'center', flex: 1 }}>
                 {/* <LottieView
                 style={{ width: 100, height: 100 }}
                 source={require("../../assets/animations/success.json")}
@@ -59,21 +59,37 @@ const PaymentSuccessScreen = ({ navigation, route }) => {
                 loop={false}
             /> */}
                 <Image
-                    style={{ width: 100, height: 100, }}
+                    style={{ width: 100, height: 100, marginTop: "25%" }}
                     resizeMode={"contain"}
                     source={require('../../assets/png/tickGreen.png')}
                 />
                 <Text style={{ color: "#449005", fontSize: 18, fontWeight: 'bold', marginTop: 20 }}>Thank you for your order</Text>
                 <Text style={{ color: "#727272", fontSize: 14, textAlign: 'center', width: '80%' }}>We are currently processing your order.
-                You can find updates to your order under <Text onPress={() => {
+                    You can find updates to your order under <Text onPress={() => {
                         navigation.navigate('CartStack', { screen: 'MyOrders' })
                         navigation.pop()
                     }} style={{ color: Theme.Colors.primary }}>My orders</Text>.</Text>
                 <Text style={{ fontSize: 14, color: "#727272", marginTop: 20 }}>Your order will arrive on </Text>
                 <Text style={{ fontSize: 14, fontWeight: 'bold' }}>{moment().add(date + 1, 'days').format("DD MMM")} ( <Text style={{ fontSize: 14, fontWeight: 'bold' }}>0{slotTime}</Text> )</Text>
-
+                {/* <Text>afasfasfas</Text> */}
+                <TouchableOpacity activeOpacity={0.8} onPress={() => { onShare() }} style={{ height: 200, marginTop: "6%" }}>
+                    <Image
+                        style={{ height: 200, marginTop: "6%" }}
+                        resizeMode={"contain"}
+                        source={require('../../assets/png/ReferralImage.png')}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={{ marginTop: "10%" }}
+                    onPress={() => {
+                        navigation.navigate('Home')
+                        navigation.pop()
+                    }}>
+                    <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>No Thanks</Text>
+                </TouchableOpacity>
             </View>
-            <View style={{ flex: 1.5, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
+            {/* ReferralImage */}
+            {/* <View style={{ flex: 1.5, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ fontSize: 14, color: "#727272", marginTop: 50, textAlign: "center", marginHorizontal: 20 }}>If you like the app experience share it
                     with your Friends Now! </Text>
                 <Button full style={{ marginVertical: 20, backgroundColor: Theme.Colors.primary, borderRadius: 25, marginHorizontal: 20, }} onPress={() => {
@@ -88,7 +104,7 @@ const PaymentSuccessScreen = ({ navigation, route }) => {
                 }}>
                     <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>No Thanks</Text>
                 </TouchableOpacity>
-            </View>
+            </View> */}
         </>
     );
 }

@@ -12,6 +12,8 @@ import { ActivityIndicator } from 'react-native';
 import Draggable from '../common/Draggable';
 import LottieView from 'lottie-react-native';
 import RNUxcam from 'react-native-ux-cam';
+import CartDown from '../common/cartDown'
+
 RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
 RNUxcam.tagScreenName('Search by category');
@@ -177,6 +179,8 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
                     />
                 )}
             />
+            <CartDown navigation={navigation} />
+
         </View>
     )
 }

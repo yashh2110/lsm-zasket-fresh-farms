@@ -35,6 +35,7 @@ import firebase from '@react-native-firebase/app'
 import Share from 'react-native-share';
 import FastImage from 'react-native-fast-image'
 import dynamicLinks from '@react-native-firebase/dynamic-links';
+import CartDown from '../common/cartDown'
 
 RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
@@ -631,12 +632,12 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
                                 {/* <Text>{index}</Text> */}
                                 <View style={{}}>
                                     <View style={{}}>
-                                        <View style={{ height: 155, width: screenWidth - 50, borderRadius: 5, marginRight: index == 0 ? 18 : 15, marginLeft: index == 0 ? 0 : 2 }}>
+                                        <View style={{ height: 150, width: screenWidth - 50, borderRadius: 5, marginRight: index == 0 ? 18 : 15, marginLeft: index == 0 ? 0 : 2, }}>
                                             {
                                                 el?.imagePath ?
                                                     <Image
-                                                        style={{ height: 155, width: screenWidth - 50, borderRadius: 5, alignSelf: 'center', }}
-                                                        // resizeMode={"stretch"}
+                                                        style={{ height: 150, width: screenWidth - 50, borderRadius: 5, alignSelf: 'center', }}
+                                                        resizeMode={"stretch"}
                                                         source={{ uri: el?.imagePath }}
                                                     />
                                                     :
@@ -822,35 +823,7 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
                     : null}
                 {/* <Text>{JSON.stringify(sectionlistData, null, "      ")} </Text> */}
             </ScrollView>
-            {cartItems.length >= 1 ?
-                <View style={{ width: "100%", backgroundColor: 'white', }}>
-                    <TouchableOpacity activeOpacity={0.7} onPress={() => { navigation.navigate("CartStack") }} style={{ height: 55, width: "95%", backgroundColor: '#6ba040', flexDirection: 'row', borderRadius: 5, marginBottom: 8, alignSelf: "center", justifyContent: "space-between", padding: 8 }}>
-                        <View style={{ marginLeft: 5 }}>
-                            <Text style={{ fontWeight: "bold", color: "#ffffff", fontSize: 16 }}>{`₹ ${getOrdersBillingDetails.finalPrice}`}</Text>
-                            <Text style={{ color: "#ffffff" }}>{`${cartItems.length} | Saved ₹ ${getOrdersBillingDetails?.marketPrice - getOrdersBillingDetails?.finalPrice}`}</Text>
-                        </View>
-                        <View style={{ flexDirection: "row", }}>
-                            <Image
-                                style={{ height: 40, width: 30, alignSelf: "center" }}
-                                resizeMode="center"
-                                source={require('../../assets/png/bagIcon.png')}
-                            />
-                            <View style={{ flexDirection: "row" }}>
-                                <Text style={{ textAlign: "center", alignSelf: "center", color: "#ffffff", fontWeight: "bold", letterSpacing: 0.3, fontSize: 16 }}>Checkout</Text>
-                                <Image
-                                    style={{ height: 54, width: 20, alignSelf: "center" }}
-                                    resizeMode="center"
-                                    source={require('../../assets/png/rightWhiteIcon.png')}
-                                />
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-
-                </View>
-                // rightWhiteIcon
-                :
-                undefined
-            }
+            <CartDown navigation={navigation} />
             {showAppUpdate ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>

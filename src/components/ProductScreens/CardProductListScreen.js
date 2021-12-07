@@ -7,6 +7,7 @@ import LottieView from 'lottie-react-native';
 import { Icon } from 'native-base';
 import firebase from '@react-native-firebase/app'
 import Sharee from 'react-native-share';
+import CartDown from '../common/cartDown'
 
 const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAuthenticated }) => {
     const [addButton, setAddButton] = useState(true)
@@ -121,15 +122,7 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
                 <View style={{
                     backgroundColor: '#F7F7F7', justifyContent: 'center', alignItems: 'center', borderWidth: 0.5, borderColor: "#EFEFEF", borderRadius: 5
                 }} onPress={() => { }}>
-                    {item?.discountedPrice == 1 ?
-                        <View style={[styles.offerButton, {}]}>
-                            <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
-                                <Icon name="brightness-percent" type="MaterialCommunityIcons" style={{ fontSize: 12, color: '#ffffff' }} />
-                                <Text style={{ color: "#ffffff", fontWeight: 'bold', fontSize: 11 }}>  OFFER </Text>
-                            </View>
-                        </View>
-                        :
-                        // (((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100) == 5 ?
+                    {item?.tag == null ?
                         (((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100).toFixed(0) == 0 ?
                             <View style={{
                                 height: 18, width: ("58%"),
@@ -155,6 +148,14 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
 
                                 </View>
                             </>
+                        :
+                        <View style={[styles.offerButton, {}]}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row', padding: 5 }}>
+                                <Icon name="brightness-percent" type="MaterialCommunityIcons" style={{ fontSize: 14, color: '#ffffff' }} />
+                                <Text style={{ color: "#ffffff", fontWeight: 'bold', fontSize: 12 }}> {item?.tag} </Text>
+                            </View>
+                        </View>
+                        // (((item?.actualPrice - item?.discountedPrice) / item?.actualPrice) * 100) == 5 ?
                         // undefined
 
 
@@ -247,7 +248,6 @@ const CardProductListScreen = ({ item, navigation, cartItems, updateCartItemsApi
 
                 </View>
             </TouchableOpacity>
-
         </View>
     )
 }
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     },
     offerButton: {
         height: 19,
-        width: 68,
+        minWidth: 70,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

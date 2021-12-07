@@ -11,6 +11,8 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
     const [count, setCount] = useState(0)
     const [loadingCount, setLoadingCount] = useState(false)
     useEffect(() => {
+        console.log("212121212121213", JSON.stringify(item, null, "      "))
+        // alert(JSON.stringify(item, null, "      "))
         let filteredItems = cartItems.filter(element => element?.id == item?.id);
         if (filteredItems.length == 1) {
             setAddButton(false)
@@ -79,14 +81,19 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
                             </View>
                         </View>
                     }
-                    {item?.discountedPrice == 1 &&
-                        <View style={[styles.offerButton, {}]}>
-                            <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
-                                <Icon name="brightness-percent" type="MaterialCommunityIcons" style={{ fontSize: 14, color: '#ffffff' }} />
-                                <Text style={{ color: "#ffffff", fontWeight: 'bold', fontSize: 12 }}> OFFER </Text>
+                    {/* {item?.discountedPrice == 1 && */}
+                    {
+                        item?.tag == null ?
+                            null :
+                            <View style={[styles.offerButton, {}]}>
+                                <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row', padding: 5 }}>
+                                    <Icon name="brightness-percent" type="MaterialCommunityIcons" style={{ fontSize: 14, color: '#ffffff' }} />
+                                    <Text style={{ color: "#ffffff", fontWeight: 'bold', fontSize: 12 }}> {item?.tag} </Text>
+                                </View>
                             </View>
-                        </View>
+
                     }
+                    {/* } */}
                 </View>
                 <View style={[{ padding: 10, }]}>
                     <Text numberOfLines={1} style={{ fontSize: 14, color: '#2E2E2E', fontWeight: 'bold', textTransform: 'capitalize' }}>{item?.itemName} </Text>
@@ -222,7 +229,7 @@ const styles = StyleSheet.create({
     },
     offerButton: {
         height: 20,
-        width: 70,
+        minWidth: 70,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
