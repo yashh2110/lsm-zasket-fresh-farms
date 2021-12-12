@@ -16,6 +16,7 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import * as Sentry from "@sentry/react-native";
 import RNUxcam from 'react-native-ux-cam';
 import firebase from '@react-native-firebase/app'
+import appsFlyer from 'react-native-appsflyer';
 RNUxcam.enableAdvancedGestureRecognizers = (enable) => void
   // Example
   // Set to FALSE before startWithKey to disable - Default is TRUE
@@ -30,6 +31,54 @@ const App = () => {
     // store.dispatch(loadUser())
 
     const initialFunction = async () => {
+      let userDetails = await AsyncStorage.getItem('userDetails');
+      let parsedUserDetails = await JSON.parse(userDetails);
+      if (parsedUserDetails !== null) {
+        appsFlyer.setCustomerUserId(parsedUserDetails.customerDetails.id, (res) => {
+          //..
+        });
+        store.dispatch(onLogin(parsedUserDetails))
+      }
+      appsFlyer.initSdk(
+        {
+          devKey: 'VGRZSCo9PgEpmGARECWLG3',
+          isDebug: false,
+          appId: 'id1541056118',
+          onInstallConversionDataListener: true, //Optional
+          onDeepLinkListener: true, //Optional
+          timeToWaitForATTUserAuthorization: 10 //for iOS 14.5
+        },
+        (res) => {
+          // alert(JSON.stringify(res, null, "   "))
+          console.log(res);
+        },
+        (err) => {
+          console.error("aaaaaaa", err);
+        }
+      );
+
+      const eventName = 'af_purchase';
+      const eventValues = {
+        af_revenue: '2',
+        af_price: '100',
+        // af_content_id: 'id123',
+        af_currency: 'INR',
+        af_quantity: "2",
+        af_order_id: 1
+      };
+
+      appsFlyer.logEvent(
+        eventName,
+        eventValues,
+        (res) => {
+          console.log(res);
+          // alert(res)
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
+
       if (Platform.OS == "ios") {
         PushNotificationIOS.requestPermissions()
         try {
@@ -42,15 +91,11 @@ const App = () => {
             storageBucket: 'zasket-9f0ab.appspot.com'
           })
         } catch (err) {
-  
+
         }
       }
-      let userDetails = await AsyncStorage.getItem('userDetails');
-      let parsedUserDetails = await JSON.parse(userDetails);
-      if (parsedUserDetails !== null) {
-        store.dispatch(onLogin(parsedUserDetails))
-      }
-    
+
+
     }
     initialFunction()
 

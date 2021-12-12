@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, View, Text, Dimensions, Image, } from 'react-native';
 import { AuthContext } from "../../navigation/Routes"
 import { getAllCategories, isPincodeServiceable, getCustomerDetailsLanAndLon, getAllBanners, addCustomerDeviceDetails } from '../../actions/home'
@@ -27,7 +27,7 @@ const CartDown = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLanA
                     <TouchableOpacity activeOpacity={0.7} onPress={() => { navigation.navigate("CartStack") }} style={{ height: 55, width: "95%", backgroundColor: '#6ba040', flexDirection: 'row', borderRadius: 5, marginBottom: 8, alignSelf: "center", justifyContent: "space-between", padding: 8 }}>
                         <View style={{ marginLeft: 5 }}>
                             <Text style={{ fontWeight: "bold", color: "#ffffff", fontSize: 16 }}>{`₹ ${getOrdersBillingDetails.finalPrice}`}</Text>
-                            <Text style={{ color: "#ffffff" }}>{`${cartItems.length} | Saved ₹ ${getOrdersBillingDetails?.marketPrice - getOrdersBillingDetails?.finalPrice}`}</Text>
+                            <Text style={{ color: "#ffffff" }}>{`${cartItems.length} | Saved ₹ ${getOrdersBillingDetails?.marketPrice - getOrdersBillingDetails?.discountedPrice}`}</Text>
                         </View>
                         <View style={{ flexDirection: "row", }}>
                             <Image

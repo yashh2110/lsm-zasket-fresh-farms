@@ -14,6 +14,7 @@ target 'Zasket' do
 
   pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
 
+  pod 'react-native-appsflyer',:path => '../node_modules/react-native-appsflyer'
 
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
   

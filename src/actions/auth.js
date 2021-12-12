@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { LOGIN, LOGOUT, SAVE_USER_DETAILS, CLEAR_REDUX_PERSIST } from './types';
 import { AxiosDefaultsManager } from '../axios/default';
 import AsyncStorage from '@react-native-community/async-storage';
+import appsFlyer from 'react-native-appsflyer';
 
 
 //get otp request
@@ -89,8 +90,13 @@ export const createNewCustomer = (payLoad, callback) => async dispatch => {
 
 
 export const onLogin = (payload) => async dispatch => {
+    // alert(JSON.stringify(payload?.customerSessionDetails))
     await AsyncStorage.setItem('onBoardKey', 'onBoardKey')
     new AxiosDefaultsManager().setAuthorizationHeader(payload?.customerSessionDetails?.sessionId)
+    // appsFlyer.setCustomerUserId(, (res) => {
+    //     alert(res)
+
+    //   });
     dispatch({
         type: LOGIN
     })
