@@ -13,6 +13,7 @@ import { ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
 import Sharee from 'react-native-share';
 import firebase from '@react-native-firebase/app'
+import appsFlyer from 'react-native-appsflyer';
 
 
 const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCartItemsApi, isAuthenticated }) => {
@@ -32,10 +33,28 @@ const ProductDetailScreen = ({ navigation, route, getItem, cartItems, updateCart
     }, [])
 
     const initialFunction = () => {
-        getItem(route?.params?.item, (res, status) => {
+        getItem(route?.params?.item, async (res, status) => {
             if (status) {
                 setItem(res?.data)
-                // alert(JSON.stringify(res?.data?.shareInfo, null, "      "))
+                // alert(JSON.stringify(res?.data, null, "      "))
+                let response = res?.data
+                const eventName = 'af_content_view';
+                const eventValues = {
+                    af_price: response?.actualPrice,
+                    af_content: response?.itemName,
+                    af_content_id: response?.id,
+                    af_content_type: response?.categoryName,
+                    af_currency: 'INR',
+                };
+                appsFlyer.logEvent(
+                    eventName,
+                    eventValues,
+                    (res) => {
+                    },
+                    (err) => {
+                        console.error(err);
+                    }
+                );
                 setLoading(false)
                 setRefresh(false)
             } else {

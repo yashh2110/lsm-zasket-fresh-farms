@@ -13,7 +13,7 @@ import Draggable from '../common/Draggable';
 import LottieView from 'lottie-react-native';
 import RNUxcam from 'react-native-ux-cam';
 import CartDown from '../common/cartDown'
-
+import appsFlyer from 'react-native-appsflyer';
 RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
 RNUxcam.tagScreenName('Search by category');
@@ -40,12 +40,40 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
         }
     }, [searchTerm]);
 
-    const searchFunction = () => {
-        searchItems(searchTerm, (res, status) => {
+    const searchFunction = async () => {
+        searchItems(searchTerm, async (res, status) => {
             if (status) {
+                // alert(JSON.stringify(res?.data, null, "      "))
                 setResult(res?.data)
                 setLoading(false)
                 setRefresh(false)
+                let searchItem = []
+                let contentList = []
+                await res?.data?.forEach((el, index) => {
+                    contentList.push(
+                        el?.itemName
+                    )
+                    searchItem.push(
+                        el?.id
+                    )
+                })
+                const eventName = 'af_search';
+                const eventValues = {
+                    af_search_string: searchItem.join(","),
+                    af_content_list: contentList.join(","),
+                };
+                console.log("dsadasdasdasdasdasd", eventValues)
+                appsFlyer.logEvent(
+                    eventName,
+                    eventValues,
+                    (res) => {
+                        console.log("sucessssssssssssssssss", res);
+                        // alert(res)
+                    },
+                    (err) => {
+                        console.error(err);
+                    }
+                );
             } else {
                 setResult([])
                 setLoading(false)

@@ -1,22 +1,21 @@
 import AsyncStorage from '@react-native-community/async-storage';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import firebase from '@react-native-firebase/app';
+import * as Sentry from "@sentry/react-native";
 import { Root } from "native-base";
 import React, { useEffect } from 'react';
+import { Platform } from 'react-native';
+import appsFlyer from 'react-native-appsflyer';
 import 'react-native-gesture-handler'; //do not remove this line else app will get crash while using drawer in release mode due to gesture handling 
+import OneSignal from 'react-native-onesignal';
 import { Provider as PaperProvider } from 'react-native-paper';
+import RNUxcam from 'react-native-ux-cam';
 import { Provider } from "react-redux";
-import { PersistGate } from 'redux-persist/es/integration/react'
+import { PersistGate } from 'redux-persist/es/integration/react';
+import { OneSignalAppId } from '../env';
 import { onLogin } from './actions/auth';
 import AppContainer from './AppContainer';
-import { store, persistor } from "./store";
-import OneSignal from 'react-native-onesignal';
-import { OneSignalAppId } from '../env';
-import { BackHandler, Platform } from 'react-native';
-import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
-import * as Sentry from "@sentry/react-native";
-import RNUxcam from 'react-native-ux-cam';
-import firebase from '@react-native-firebase/app'
-import appsFlyer from 'react-native-appsflyer';
+import { persistor, store } from "./store";
 RNUxcam.enableAdvancedGestureRecognizers = (enable) => void
   // Example
   // Set to FALSE before startWithKey to disable - Default is TRUE
@@ -57,27 +56,6 @@ const App = () => {
         }
       );
 
-      const eventName = 'af_purchase';
-      const eventValues = {
-        af_revenue: '2',
-        af_price: '100',
-        // af_content_id: 'id123',
-        af_currency: 'INR',
-        af_quantity: "2",
-        af_order_id: 1
-      };
-
-      appsFlyer.logEvent(
-        eventName,
-        eventValues,
-        (res) => {
-          console.log(res);
-          // alert(res)
-        },
-        (err) => {
-          console.error(err);
-        }
-      );
 
       if (Platform.OS == "ios") {
         PushNotificationIOS.requestPermissions()

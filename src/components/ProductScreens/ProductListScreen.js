@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import CardProductListScreen from './CardProductListScreen';
 import Loader from '../common/Loader';
 import CartDown from '../common/cartDown'
+import appsFlyer from 'react-native-appsflyer';
 
 const ProductListScreen = ({ route, navigation, getItemsByCategory }) => {
     const { item } = route?.params;
@@ -17,10 +18,37 @@ const ProductListScreen = ({ route, navigation, getItemsByCategory }) => {
         initialFunction()
     }, [])
 
-    const initialFunction = () => {
-        getItemsByCategory(item?.id, (res, status) => {
+    const initialFunction = async () => {
+        getItemsByCategory(item?.id, async (res, status) => {
             if (status) {
                 setProducts(res?.data)
+                let itemName = []
+                let itemId = []
+                await res?.data?.forEach((el, index) => {
+                    itemId.push(
+                        el?.itemName
+                    )
+                    itemName.push(
+                        el?.id
+                    )
+                })
+                const eventName = 'af_list_view';
+                const eventValues = {
+                    af_content_type: itemName.join(","),
+                    af_content_list: itemId.join(","),
+                };
+                console.log("sasasasasasasasasasasasasassassa", eventValues)
+                appsFlyer.logEvent(
+                    eventName,
+                    eventValues,
+                    (res) => {
+                        console.log("sucessssssssssssssssss", res);
+                        // alert(res)
+                    },
+                    (err) => {
+                        console.error(err);
+                    }
+                );
                 // console.warn(JSON.stringify(res?.data, null, "      "))
                 setLoading(false)
                 setRefresh(false)

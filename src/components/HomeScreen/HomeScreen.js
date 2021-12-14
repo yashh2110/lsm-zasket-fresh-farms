@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState, useLayoutEffect } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, Dimensions, Image, ScrollView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter, Linking, } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, Dimensions, ActivityIndicator, Image, ScrollView, SafeAreaView, Alert, SectionList, FlatList, RefreshControl, BackHandler, Platform, PermissionsAndroid, DeviceEventEmitter, Linking, } from 'react-native';
 import { Icon } from 'native-base';
 import { AuthContext } from "../../navigation/Routes"
 import Swiper from 'react-native-swiper';
@@ -36,6 +36,7 @@ import Share from 'react-native-share';
 import FastImage from 'react-native-fast-image'
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import CartDown from '../common/cartDown'
+import appsFlyer from 'react-native-appsflyer';
 
 RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
@@ -46,6 +47,8 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
     const [productId, setProductId] = useState("")
     const [subBanners, setSubBanners] = useState("")
     const [partnerDetails, setPartnerDetails] = useState("")
+    const [isVisible, setIsVisible] = useState(false)
+    const [modelSwip, setModelSwip] = useState("")
     // useEffect(() => {
     //     // let userDetails = await AsyncStorage.getItem('ProductId');
     //     // alert(userDetails)
@@ -61,9 +64,63 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
     useEffect(() => {
         // alert(JSON.stringify(getOrdersBillingDetails, null, "      "))
         initalCustomerDetails()
+        // const eventName = 'af_login'
+        // appsFlyer.logEvent(
+        //     eventName,
+        //     (res) => {
+        //         console.log(res);
+        //     },
+        //     (err) => {
+        //         console.error(err);
+        //     }
+        // );
         console.log("112312312312312", JSON.stringify(getOrdersBillingDetails.discountedPrice, null, "   "))
         // alert(JSON.stringify(homeScreenLocation, null, "   "))
     }, [])
+
+    useEffect(() => {
+        addToCard()
+    }, [cartItems])
+
+    const addToCard = async () => {
+        let productIdArray = []
+        await cartItems?.forEach((el, index) => {
+            productIdArray.push(
+                el?.id
+            )
+        })
+        const eventAddName = 'af_add_to_cart';
+        const eventRemoveName = 'af_remove_from_cart';
+        const eventValues = {
+            af_content_id: productIdArray.join(","),
+            af_currency: 'INR',
+            af_revenue: getOrdersBillingDetails?.finalPrice,
+        };
+        console.log("eventValueseventValueseventValueseventValues", eventValues)
+        appsFlyer.logEvent(
+            eventAddName,
+            eventValues,
+            (res) => {
+                console.log(res);
+            },
+            (err) => {
+                console.error(err);
+            }
+        );
+
+        appsFlyer.logEvent(
+            eventRemoveName,
+            eventValues,
+            (res) => {
+                console.log(res);
+            },
+            (err) => {
+                console.error(err);
+            }
+        );
+
+    }
+
     const initalCustomerDetails = async () => {
         setLoading(true)
         getCustomerDetailsLanAndLon(homeScreenLocation, async (res, status) => {
@@ -314,6 +371,16 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
 
     useEffect(() => {
         if (homeScreenLocation?.lat) {
+            const latitude = -18.406655;
+            const longitude = 46.40625;
+
+            appsFlyer.logLocation(homeScreenLocation?.lon, homeScreenLocation?.lat, (err, coords) => {
+                if (err) {
+                    console.error(err);
+                } else {
+                    //...
+                }
+            });
             setTimeout(() => {
                 setDeliveryLocationModalVisible(false)
             }, 1000);
@@ -531,6 +598,8 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
 
     const OnPressWhatsUpGrups = (Url) => {
         Linking.openURL(Url);
+        setIsVisible(false)
+        setModelSwip("up")
         // alert(Url)
         // Linking.openURL('whatsapp://send?text=' + this.state.msg + '&phone=91' + this.state.mobile_no);
         // if (Platform.OS == "android") {
@@ -550,6 +619,11 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
 
     }
 
+    const onPressWhatsApp = () => {
+        setIsVisible(true)
+        setModelSwip("down")
+
+    }
 
     return (
         <>
@@ -595,7 +669,7 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
                                     //     />
                                     // </TouchableOpacity>
                                     :
-                                    <TouchableOpacity onPress={() => { OnPressWhatsUpGrups(partnerDetails?.partnerWhatsappGroupLink) }} style={{ position: "absolute", right: 0, top: 0, height: 50 }}>
+                                    <TouchableOpacity onPress={() => { onPressWhatsApp() }} style={{ position: "absolute", right: 0, top: 0, height: 50 }}>
                                         <Image
                                             style={{ height: 25, }}
                                             resizeMode="center"
@@ -604,6 +678,13 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
                                     </TouchableOpacity>
 
                             }
+                            {/* <TouchableOpacity onPress={() => { onPressWhatsApp() }} style={{ position: "absolute", right: 0, top: 0, height: 50 }}>
+                                <Image
+                                    style={{ height: 25, }}
+                                    resizeMode="center"
+                                    source={require('../../assets/png/aaaaaa.png')}
+                                />
+                            </TouchableOpacity> */}
                             <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
                                 <TouchableOpacity onPress={() => { navigation.navigate('AutoCompleteLocationScreen', { navigateTo: "MapScreenGrabPincode" }) }} style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginLeft: 25 }}>
                                     {/* <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} /> */}
@@ -845,6 +926,31 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
                 <Loader />
                 : undefined
             }
+            <Modal
+                isVisible={isVisible}
+                onSwipeComplete={() => setIsVisible(false)}
+                swipeDirection={modelSwip}
+                style={{ justifyContent: 'center', width: "82%", alignSelf: "center" }}
+                onBackButtonPress={() => setIsVisible(false)}
+                onBackdropPress={() => setIsVisible(false)}>
+                <SafeAreaView style={{ height: 165, backgroundColor: 'white', borderRadius: 8 }}>
+                    <View style={{ alignSelf: "center", marginTop: -25 }}>
+                        <Image
+                            style={{ height: 52, width: 80 }}
+                            resizeMode="center"
+                            source={require('../../assets/png/whatsApp.png')}
+                        />
+                    </View>
+                    <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="never">
+                        <View style={{ flex: 1, width: "90%", alignSelf: "center" }}>
+                            <Text style={{ fontSize: 16, color: "#000000", textAlign: "center", paddingTop: 18, letterSpacing: 0.4, fontWeight: "bold" }}>Join our partner Whatsapp group {'\n'} for exclusive offers and deals</Text>
+                        </View>
+                    </ScrollView>
+                    <TouchableOpacity onPress={() => { OnPressWhatsUpGrups(partnerDetails?.partnerWhatsappGroupLink) }} style={{ padding: 14, backgroundColor: "#fdefef", borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
+                        <Text style={{ textAlign: "center", color: "#e1171e", fontWeight: "bold", fontSize: 17, letterSpacing: 0.4 }}>Join Now</Text>
+                    </TouchableOpacity >
+                </SafeAreaView>
+            </Modal>
             <AddressModal
                 addressModalVisible={addressModalVisible}
                 setAddressModalVisible={(option) => setAddressModalVisible(option)}

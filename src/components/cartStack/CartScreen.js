@@ -80,7 +80,6 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
     }, [cartItems])
 
     useEffect(() => {
-        // alert(JSON.stringify(getOrdersBillingDetails, null, "      "))
         // setloadinggg(true)
         const unsubscribe = navigation.addListener('focus', () => {
             initialBillingFunction()
@@ -413,7 +412,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ color: '#727272' }}>Delivery Charges</Text>
-                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{getOrdersBillingDetails?.deliveryCharges > 0 ? getOrdersBillingDetails?.deliveryCharges : "Free"} </Text>
+                                <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{getOrdersBillingDetails?.deliveryCharges > 0 ? (`${'₹'} ${getOrdersBillingDetails?.deliveryCharges}`) : "Free"} </Text>
                             </View>
                             {/* {getOrdersBillingDetails?.offer?.displayName ?
                                 <>
@@ -427,7 +426,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
                             <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                                 <Text style={{ fontWeight: 'bold' }}>Total Amount </Text>
-                                <Text style={{ fontWeight: 'bold' }}>₹ {(getOrdersBillingDetails?.offerPrice ? getOrdersBillingDetails?.offerPrice : 0).toFixed(2)} </Text>
+                                <Text style={{ fontWeight: 'bold' }}>₹ {(getOrdersBillingDetails?.finalPrice ? getOrdersBillingDetails?.finalPrice : 0).toFixed(2)} </Text>
                             </View>
                             {
                                 (getOrdersBillingDetails.canBeOrdered == true && getOrdersBillingDetails.comment) ?
@@ -489,7 +488,7 @@ const CartScreen = ({ navigation, cartItems, clearCart, userLocation, getBilling
             {(cartItems.length > 0 && (Object.keys(getOrdersBillingDetails).length > 0)) ?
                 <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(getOrdersBillingDetails?.offerPrice ? getOrdersBillingDetails?.offerPrice : 0).toFixed(2)} </Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(getOrdersBillingDetails?.finalPrice ? getOrdersBillingDetails?.finalPrice : 0).toFixed(2)} </Text>
                         <TouchableOpacity onPress={() => { scrollViewRef.current.scrollToEnd({ animated: true }); }} style={{}}>
                             <Text style={{ color: "#2D87C9" }}>View bill details <Icon name="down" type="AntDesign" style={{ fontSize: 12, color: '#2D87C9' }} /></Text>
                         </TouchableOpacity>

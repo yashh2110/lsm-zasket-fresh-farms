@@ -4,7 +4,8 @@ import { LOGIN, LOGOUT, SAVE_USER_DETAILS, CLEAR_REDUX_PERSIST } from './types';
 import { AxiosDefaultsManager } from '../axios/default';
 import AsyncStorage from '@react-native-community/async-storage';
 import appsFlyer from 'react-native-appsflyer';
-
+import DeviceInfo from 'react-native-device-info';
+import { Platform } from 'react-native';
 
 //get otp request
 export const requestOtp = (mobileNumber, callback) => async dispatch => {
@@ -92,11 +93,52 @@ export const createNewCustomer = (payLoad, callback) => async dispatch => {
 export const onLogin = (payload) => async dispatch => {
     // alert(JSON.stringify(payload?.customerSessionDetails))
     await AsyncStorage.setItem('onBoardKey', 'onBoardKey')
-    new AxiosDefaultsManager().setAuthorizationHeader(payload?.customerSessionDetails?.sessionId)
+    let version = DeviceInfo.getVersion()
+    let deviceType = Platform.OS
+    new AxiosDefaultsManager().setAuthorizationHeader(payload?.customerSessionDetails?.sessionId, version, deviceType)
     // appsFlyer.setCustomerUserId(, (res) => {
     //     alert(res)
 
     //   });
+    let userDetails = await AsyncStorage.getItem('userDetails');
+    let parsedUserDetails = await JSON.parse(userDetails);
+    if (parsedUserDetails !== null) {
+        appsFlyer.setCustomerUserId(parsedUserDetails.customerDetails.id, (res) => {
+            //..
+        });
+    }
+    appsFlyer.initSdk(
+        {
+            devKey: 'VGRZSCo9PgEpmGARECWLG3',
+            isDebug: false,
+            appId: 'id1541056118',
+            onInstallConversionDataListener: true, //Optional
+            onDeepLinkListener: true, //Optional
+            timeToWaitForATTUserAuthorization: 10 //for iOS 14.5
+        },
+        (res) => {
+            // alert(JSON.stringify(res, null, "   "))
+            console.log(res);
+        },
+        (err) => {
+            console.error("aaaaaaa", err);
+        }
+    );
+    appsFlyer.setCurrencyCode('INR', () => { });
+    const eventName = 'af_complete_registration'
+    const eventValues = {
+        af_registration_method: "Mobile Number"
+    };
+    appsFlyer.logEvent(
+        eventName,
+        eventValues,
+        (res) => {
+            console.log(res);
+        },
+        (err) => {
+            console.error(err);
+        }
+    );
     dispatch({
         type: LOGIN
     })

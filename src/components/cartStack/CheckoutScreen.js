@@ -1,35 +1,30 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, TextInput, ScrollView, Image, SafeAreaView, ActivityIndicator, Modal as NativeModal, FlatList, Pressable, TouchableWithoutFeedback } from 'react-native';
-import { connect } from 'react-redux';
-import { clearCart } from '../../actions/cart'
-import Theme from '../../styles/Theme';
-import CustomHeader from '../common/CustomHeader';
-import CardCartScreen from './CardCartScreen';
-import { Button, Icon } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage';
-import { getV2DeliverySlots, addOrder } from '../../actions/cart'
-import moment from 'moment'
-import { Radio, Toast, Root, Container, Content } from 'native-base';
-import RazorpayCheckout from 'react-native-razorpay';
-import Modal from 'react-native-modal';
-import { applyOffer, getAvailableOffers, getBillingDetails } from '../../actions/cart'
-import Loader from '../common/Loader';
-import AddressModal from '../common/AddressModal';
-import { AppEventsLogger } from "react-native-fbsdk";
-import FeatherIcons from "react-native-vector-icons/Feather"
-import { getV2Config } from '../../actions/home';
-import { getCustomerDetails } from "../../actions/home";
+import moment from 'moment';
+import { Container, Content, Icon, Radio, Root, Toast } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, Modal as NativeModal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import appsFlyer from 'react-native-appsflyer';
 import { CheckBox } from 'react-native-elements';
-import { paymentConfirm, rejectPaymentByAPI } from "../../actions/wallet";
-import { EventRegister } from 'react-native-event-listeners'
+import { EventRegister } from 'react-native-event-listeners';
+import { AppEventsLogger } from "react-native-fbsdk";
+import Modal from 'react-native-modal';
+import RazorpayCheckout from 'react-native-razorpay';
 import RNUxcam from 'react-native-ux-cam';
-
+import { connect } from 'react-redux';
+import { addOrder, applyOffer, clearCart, getAvailableOffers, getBillingDetails, getV2DeliverySlots } from '../../actions/cart';
+import { getCustomerDetails, getV2Config } from '../../actions/home';
+import { paymentConfirm, rejectPaymentByAPI } from "../../actions/wallet";
+import Theme from '../../styles/Theme';
+import AddressModal from '../common/AddressModal';
+import CustomHeader from '../common/CustomHeader';
+import Loader from '../common/Loader';
+import { getCustomerOrders } from '../../actions/cart';
 RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
 RNUxcam.tagScreenName('Checkout');
 
 
-const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetails, cartItems, getOrdersBillingDetails, allUserAddress, offerDetails, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer, getAvailableOffers, paymentConfirm, rejectPaymentByAPI }) => {
+const CheckoutScreen = ({ route, getCustomerOrders, navigation, getCustomerDetails, getBillingDetails, cartItems, getOrdersBillingDetails, allUserAddress, offerDetails, clearCart, getV2DeliverySlots, addOrder, userLocation, config, applyOffer, getAvailableOffers, paymentConfirm, rejectPaymentByAPI }) => {
     const scrollViewRef = useRef();
     const [coupon, setCoupon] = useState("")
     const [totalCartValue, setTotalCartValue] = useState(0)
@@ -65,17 +60,23 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
     const [walletAmountBalance, SetwalletAmountBalance] = useState(0)
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("PREPAID")
     const [OfferCode, setOfferCode] = useState("")
+    const [orderDetails, setOrderDetails] = useState([])
+
 
     const totalCartValueRef = useRef(totalCartValue);
+
+
     useEffect(() => {
         let listener = EventRegister.addEventListener('successWallet', async (data) => {
             initialFunction()
+
         })
         return () => {
             listener = false
             EventRegister.removeEventListener('successWallet');
         };
     }, [])
+
     const setTotalCartValueRef = newText => {
 
         totalCartValueRef.current = newText;
@@ -84,8 +85,19 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
 
     useEffect(() => {
         initialFunction()
+        initialGetCustomerOrders()
     }, [cartItems])
-
+    const initialGetCustomerOrders = async () => {
+        getCustomerOrders((res, status) => {
+            if (status) {
+                setOrderDetails(res?.data)
+                setLoading(false)
+                // alert(JSON.stringify(res?.data, null, "        "))
+            } else {
+                setLoading(false)
+            }
+        })
+    }
     useEffect(() => {
         if (getOrdersBillingDetails?.finalPrice == 0) {
             SetButtonHandle(true)
@@ -96,7 +108,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
     }, [getOrdersBillingDetails])
 
     // useEffect(() => {
-    //     // alert(JSON.stringify(getOrdersBillingDetails, null, "     "))
+    //     alert(JSON.stringify(getOrdersBillingDetails, null, "     "))
 
     // })
 
@@ -347,7 +359,12 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
     }
 
     const onSelectPaymentMethod = async (option) => {
+        // alert(JSON.stringify(cartItems, null, "      "))
         let itemCreateRequests = []
+        let productNameArray = []
+        let productIdArray = []
+        let productCountArray = []
+        let categoryArray = []
         await cartItems?.forEach((el, index) => {
             itemCreateRequests.push({
                 "itemId": el?.id,
@@ -355,7 +372,73 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                 // "totalPrice": el?.discountedPrice * el?.count,
                 // "unitPrice": el?.discountedPrice
             })
+            productNameArray.push(
+                el?.itemName
+            )
+            productIdArray.push(
+                el?.id
+            )
+            productCountArray.push(
+                el?.count
+            )
+            categoryArray.push(
+                el?.categoryName
+            )
         })
+        let categorys = categoryArray.join(",")
+        let removedDuplicateCategors = Array.from(new Set(categorys.split(','))).toString();
+        if (orderDetails.length > 1) {
+            const eventName = 'af_purchase';
+            const eventValues = {
+                af_revenue: getOrdersBillingDetails?.finalPrice,
+                af_price: getOrdersBillingDetails?.finalPrice,
+                af_content: productNameArray.join(","),
+                af_content_id: productIdArray.join(","),
+                af_content_type: removedDuplicateCategors,
+                af_currency: 'INR',
+                af_quantity: productCountArray.join(","),
+                af_order_id: res?.data?.orderId,
+                af_receipt_id: res?.data?.orderId
+            };
+            appsFlyer.logEvent(
+                eventName,
+                eventValues,
+                (res) => {
+                    console.log("sucessssssssssssssssss", res);
+                    // alert(res)
+                },
+                (err) => {
+                    console.error(err);
+                }
+            );
+        } else {
+            const eventName = 'first_purchase';
+            const eventValues = {
+                af_revenue: getOrdersBillingDetails?.finalPrice,
+                af_price: getOrdersBillingDetails?.finalPrice,
+                af_content: productNameArray.join(","),
+                af_content_id: productIdArray.join(","),
+                af_content_type: removedDuplicateCategors,
+                af_currency: 'INR',
+                af_quantity: productCountArray.join(","),
+                af_order_id: res?.data?.orderId,
+                af_receipt_id: res?.data?.orderId
+            };
+            appsFlyer.logEvent(
+                eventName,
+                eventValues,
+                (res) => {
+                    console.log("sucessssssssssssssssss", res);
+                    // alert(res)
+                },
+                (err) => {
+                    console.error(err);
+                }
+            );
+        }
+
+        console.log("eventValueseventValues", eventValues)
+        // alert(JSON.stringify(itemCreateRequests, null, "      "))
         let userLocation = await AsyncStorage.getItem('location');
         let parsedUserLocation = await JSON.parse(userLocation);
         let payload = {
@@ -377,6 +460,8 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
             }
             addOrder(codPayload, async (res, status) => {
                 // return
+                console.log("JSONJSONJSONJSONJSONJSONJSON", JSON.stringify(res, null, "    "))
+                // alert(JSON.stringify(res, null, "    "))
                 setLoading(false)
                 if (res?.data?.canBeOrdered == true) {
                     if (status) {
@@ -387,6 +472,55 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                         AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
                         navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, slotTime: slotTime })
                         EventRegister.emit('successWallet', 'it works!!!')
+                        if (orderDetails.length > 1) {
+                            const eventName = 'af_purchase';
+                            const eventValues = {
+                                af_revenue: getOrdersBillingDetails?.finalPrice,
+                                af_price: getOrdersBillingDetails?.finalPrice,
+                                af_content: productNameArray.join(","),
+                                af_content_id: productIdArray.join(","),
+                                af_content_type: removedDuplicateCategors,
+                                af_currency: 'INR',
+                                af_quantity: productCountArray.join(","),
+                                af_order_id: res?.data?.orderId,
+                                af_receipt_id: res?.data?.orderId
+                            };
+                            appsFlyer.logEvent(
+                                eventName,
+                                eventValues,
+                                (res) => {
+                                    console.log("sucessssssssssssssssss", res);
+                                    // alert(res)
+                                },
+                                (err) => {
+                                    console.error(err);
+                                }
+                            );
+                        } else {
+                            const eventName = 'first_purchase';
+                            const eventValues = {
+                                af_revenue: getOrdersBillingDetails?.finalPrice,
+                                af_price: getOrdersBillingDetails?.finalPrice,
+                                af_content: productNameArray.join(","),
+                                af_content_id: productIdArray.join(","),
+                                af_content_type: removedDuplicateCategors,
+                                af_currency: 'INR',
+                                af_quantity: productCountArray.join(","),
+                                af_order_id: res?.data?.orderId,
+                                af_receipt_id: res?.data?.orderId
+                            };
+                            appsFlyer.logEvent(
+                                eventName,
+                                eventValues,
+                                (res) => {
+                                    console.log("sucessssssssssssssssss", res);
+                                    // alert(res)
+                                },
+                                (err) => {
+                                    console.error(err);
+                                }
+                            );
+                        }
                     } else {
                         if (res?.response?.data?.description) {
                             Toast.show({
@@ -420,10 +554,8 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
             addOrder(prepaidPayload, async (res, status) => {
                 setLoading(false)
                 if (status) {
-                    // alert(JSON.stringify(res.data.paymentOrderId, null, "     "))
-
+                    // alert(JSON.stringify(res null, "     "))
                     // return
-
                     if (res?.data?.canBeOrdered == true) {
                         if (buttonHandle == true) {
                             if (status) {
@@ -434,9 +566,57 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                                 AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
                                 navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, slotTime: slotTime })
                                 EventRegister.emit('successWallet', 'it works!!!')
-
+                                if (orderDetails.length > 1) {
+                                    const eventName = 'af_purchase';
+                                    const eventValues = {
+                                        af_revenue: getOrdersBillingDetails?.finalPrice,
+                                        af_price: getOrdersBillingDetails?.finalPrice,
+                                        af_content: productNameArray.join(","),
+                                        af_content_id: productIdArray.join(","),
+                                        af_content_type: removedDuplicateCategors,
+                                        af_currency: 'INR',
+                                        af_quantity: productCountArray.join(","),
+                                        af_order_id: res?.data?.orderId,
+                                        af_receipt_id: res?.data?.orderId
+                                    };
+                                    appsFlyer.logEvent(
+                                        eventName,
+                                        eventValues,
+                                        (res) => {
+                                            console.log("sucessssssssssssssssss", res);
+                                            // alert(res)
+                                        },
+                                        (err) => {
+                                            console.error(err);
+                                        }
+                                    );
+                                } else {
+                                    const eventName = 'first_purchase';
+                                    const eventValues = {
+                                        af_revenue: getOrdersBillingDetails?.finalPrice,
+                                        af_price: getOrdersBillingDetails?.finalPrice,
+                                        af_content: productNameArray.join(","),
+                                        af_content_id: productIdArray.join(","),
+                                        af_content_type: removedDuplicateCategors,
+                                        af_currency: 'INR',
+                                        af_quantity: productCountArray.join(","),
+                                        af_order_id: res?.data?.orderId,
+                                        af_receipt_id: res?.data?.orderId
+                                    };
+                                    appsFlyer.logEvent(
+                                        eventName,
+                                        eventValues,
+                                        (res) => {
+                                            console.log("sucessssssssssssssssss", res);
+                                            // alert(res)
+                                        },
+                                        (err) => {
+                                            console.error(err);
+                                        }
+                                    );
+                                }
                             } else {
-                                // if (__DEV__) {
+                                // if (_DEV_) {
                                 //     alert(JSON.stringify(res?.response))
                                 // }
                                 if (res?.response?.data?.description) {
@@ -471,7 +651,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                                 // alert("passsssss")
                                 // handle success
                                 // alert(`Success: ${data.razorpay_payment_id}`);
-
                                 let paymentInfo = {
                                     "paymentType": "ORDER",
                                     "razorpayPaymentId": data.razorpay_payment_id,
@@ -483,6 +662,33 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                                         onClearCart()
                                         AsyncStorage.removeItem('appliedCoupon')
                                         navigation.pop()
+                                        if (orderDetails.length > 1) {
+                                            const eventName = 'af_purchase';
+                                            const eventValues = {
+                                                af_revenue: getOrdersBillingDetails?.finalPrice,
+                                                af_price: getOrdersBillingDetails?.finalPrice,
+                                                af_content: productNameArray.join(","),
+                                                af_content_id: productIdArray.join(","),
+                                                af_content_type: removedDuplicateCategors,
+                                                af_currency: 'INR',
+                                                af_quantity: productCountArray.join(","),
+                                                af_order_id: res?.data?.orderId,
+                                                af_receipt_id: res?.data?.orderId
+                                            };
+                                            appsFlyer.logEvent(
+                                                eventName,
+                                                eventValues,
+                                                (res) => {
+                                                    console.log("sucessssssssssssssssss", res);
+                                                    // alert(res)
+                                                },
+                                                (err) => {
+                                                    console.error(err);
+                                                }
+                                            );
+                                        } else {
+
+                                        }
                                         AppEventsLogger.logPurchase(500.00, "INR", { param: "value" });
                                         navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, slotTime: slotTime })
                                     } else {
@@ -492,7 +698,6 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                                             type: "danger",
                                             buttonStyle: { backgroundColor: "#a52f2b" }
                                         })
-
                                     }
                                 })
                                 // navigation.navigate('AccountStack', { screen: 'MyOrders' })
@@ -692,7 +897,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                 <CustomHeader navigation={navigation} title={"Checkout"} showSearch={false} />
                 {/* <Text>{getOrdersBillingDetails?.discountedPrice}</Text> */}
                 <ScrollView ref={scrollViewRef} style={{ flex: 1, backgroundColor: '#F8F8F8' }} showsVerticalScrollIndicator={false}>
-                    {/* <Text style={{ textAlign: 'center', marginBottom: 16 }}>{JSON.stringify(location, null, "       ")} </Text> */}
+                    {/* <Text style={{ textAlign: 'center', marginBottom: 16, backgroundColor: "red" }}>{JSON.stringify(orderDetails.length, null, "       ")} </Text> */}
 
                     <View style={{ backgroundColor: 'white', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
                         <View style={{ width: 60, height: 60, borderWidth: 1, borderRadius: 5, borderColor: Theme.Colors.primary, backgroundColor: '#FDEFEF', justifyContent: 'center', alignItems: 'center' }}>
@@ -993,7 +1198,7 @@ const CheckoutScreen = ({ route, navigation, getCustomerDetails, getBillingDetai
                         <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginBottom: 10 }} />
                         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                             <Text style={{ color: '#727272' }}>Delivery Charges</Text>
-                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{getOrdersBillingDetails?.deliveryCharges > 0 ? getOrdersBillingDetails?.deliveryCharges : "Free"} </Text>
+                            <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{getOrdersBillingDetails?.deliveryCharges > 0 ? (`${'₹'} ${getOrdersBillingDetails?.deliveryCharges}`) : "Free"} </Text>
                         </View>
                         {getOrdersBillingDetails?.offer?.displayName ?
                             <>
@@ -1322,7 +1527,7 @@ const mapStateToProps = (state) => ({
 
 })
 
-export default connect(mapStateToProps, { getBillingDetails, getCustomerDetails, clearCart, getV2DeliverySlots, addOrder, applyOffer, getAvailableOffers, paymentConfirm, rejectPaymentByAPI })(CheckoutScreen)
+export default connect(mapStateToProps, { getCustomerOrders, getBillingDetails, getCustomerDetails, clearCart, getV2DeliverySlots, addOrder, applyOffer, getAvailableOffers, paymentConfirm, rejectPaymentByAPI })(CheckoutScreen)
 
 const styles = StyleSheet.create({
     button: {

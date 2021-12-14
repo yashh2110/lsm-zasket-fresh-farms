@@ -305,7 +305,7 @@ const MyOrdersDetailScreen = ({ route, navigation, config, getOrderDetails, payO
                     <View style={{ marginTop: 3, height: 0.7, width: "100%", alignSelf: 'center', backgroundColor: '#EAEAEC', marginTop: 5, marginBottom: 10 }} />
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                         <Text style={{ color: '#727272' }}>Delivery Charges</Text>
-                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>Free</Text>
+                        <Text style={{ color: Theme.Colors.primary, fontWeight: 'bold' }}>{item?.deliveryFee > 0 ? (`${'₹'} ${item?.deliveryFee}`) : "Free"} </Text>
                     </View>
                     {item?.refundedAmount > 0 ?
                         <>

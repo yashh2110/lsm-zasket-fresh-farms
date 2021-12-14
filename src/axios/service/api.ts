@@ -3,6 +3,9 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { AxiosDefaultsManager } from '../default'
 import { EventRegister } from 'react-native-event-listeners'
 import { baseURL } from '../../../env'
+import DeviceInfo from 'react-native-device-info';
+import { Platform } from 'react-native';
+
 
 const axiosinstance = axios.create({
     baseURL: baseURL,
@@ -20,8 +23,11 @@ const axiosinstance = axios.create({
 let setAuthorizationFromAsyncStorage = async () => {
     let userDetails = await AsyncStorage.getItem('userDetails');
     let parsedUserDetails = await JSON.parse(userDetails!);
+    let version = DeviceInfo.getVersion()
+    let deviceType = Platform.OS
+    console.log("aaaa", version, deviceType)
     if (parsedUserDetails?.customerSessionDetails?.sessionId) {
-        new AxiosDefaultsManager().setAuthorizationHeader(parsedUserDetails?.customerSessionDetails?.sessionId)
+        new AxiosDefaultsManager().setAuthorizationHeader(parsedUserDetails?.customerSessionDetails?.sessionId, version, deviceType)
     }
 }
 
