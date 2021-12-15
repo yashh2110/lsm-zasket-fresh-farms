@@ -665,7 +665,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                             </View>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20, }}>
-                            <View style={{ borderRadius: 10, width: "50%", alignSelf: "center", flexDirection: 'row', borderStyle: 'dashed', borderRadius: 10, backgroundColor: "white", alignItems: "center", borderWidth: 2, borderColor: '#d8ad00', zIndex: 0, marginLeft: -1 }}>
+                            <TouchableOpacity activeOpacity={0.8} onPress={() => { get_Text_From_Clipboard(referal) }} style={{ borderRadius: 10, width: "50%", alignSelf: "center", flexDirection: 'row', borderStyle: 'dashed', borderRadius: 10, backgroundColor: "white", alignItems: "center", borderWidth: 2, borderColor: '#d8ad00', zIndex: 0, marginLeft: -1 }}>
                                 <View style={{ flex: 1 }}>
                                     <Text style={{ fontSize: 16, color: "#d8ad00", marginLeft: 10, fontWeight: 'bold', }}>{referal} </Text>
                                 </View>
@@ -678,7 +678,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                                         />
                                     </View>
                                 </TouchableOpacity>
-                            </View>
+                            </TouchableOpacity>
                             <TouchableOpacity activeOpacity={0.8} onPress={() => { whatsAppShare() }} style={{ width: "48%", height: 45, borderRadius: 10, justifyContent: "center", borderColor: "#1fa900", borderWidth: 1, backgroundColor: "#1fa900", marginTop: 3 }}>
                                 <View style={{ flexDirection: "row", justifyContent: "center" }}>
                                     <View style={{ width: 22, height: 22, justifyContent: "center", alignItems: "center" }}>

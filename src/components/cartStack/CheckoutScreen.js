@@ -107,10 +107,10 @@ const CheckoutScreen = ({ route, getCustomerOrders, navigation, getCustomerDetai
         }
     }, [getOrdersBillingDetails])
 
-    // useEffect(() => {
-    //     alert(JSON.stringify(getOrdersBillingDetails, null, "     "))
+    useEffect(() => {
+        alert(JSON.stringify(getOrdersBillingDetails, null, "     "))
 
-    // })
+    })
 
     const initialFunction = async () => {
         if (cartItems.length > 0) {
@@ -387,57 +387,6 @@ const CheckoutScreen = ({ route, getCustomerOrders, navigation, getCustomerDetai
         })
         let categorys = categoryArray.join(",")
         let removedDuplicateCategors = Array.from(new Set(categorys.split(','))).toString();
-        if (orderDetails.length > 1) {
-            const eventName = 'af_purchase';
-            const eventValues = {
-                af_revenue: getOrdersBillingDetails?.finalPrice,
-                af_price: getOrdersBillingDetails?.finalPrice,
-                af_content: productNameArray.join(","),
-                af_content_id: productIdArray.join(","),
-                af_content_type: removedDuplicateCategors,
-                af_currency: 'INR',
-                af_quantity: productCountArray.join(","),
-                af_order_id: res?.data?.orderId,
-                af_receipt_id: res?.data?.orderId
-            };
-            appsFlyer.logEvent(
-                eventName,
-                eventValues,
-                (res) => {
-                    console.log("sucessssssssssssssssss", res);
-                    // alert(res)
-                },
-                (err) => {
-                    console.error(err);
-                }
-            );
-        } else {
-            const eventName = 'first_purchase';
-            const eventValues = {
-                af_revenue: getOrdersBillingDetails?.finalPrice,
-                af_price: getOrdersBillingDetails?.finalPrice,
-                af_content: productNameArray.join(","),
-                af_content_id: productIdArray.join(","),
-                af_content_type: removedDuplicateCategors,
-                af_currency: 'INR',
-                af_quantity: productCountArray.join(","),
-                af_order_id: res?.data?.orderId,
-                af_receipt_id: res?.data?.orderId
-            };
-            appsFlyer.logEvent(
-                eventName,
-                eventValues,
-                (res) => {
-                    console.log("sucessssssssssssssssss", res);
-                    // alert(res)
-                },
-                (err) => {
-                    console.error(err);
-                }
-            );
-        }
-
-        console.log("eventValueseventValues", eventValues)
         // alert(JSON.stringify(itemCreateRequests, null, "      "))
         let userLocation = await AsyncStorage.getItem('location');
         let parsedUserLocation = await JSON.parse(userLocation);
