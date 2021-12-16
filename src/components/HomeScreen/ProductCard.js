@@ -29,7 +29,7 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
     const onAddToCart = async () => {
         if (isAuthenticated) {
             setLoadingCount(true)
-            updateCartItemsApi(item?.id, 1, (res, status) => {
+            updateCartItemsApi(item?.id, 1, item?.itemName, (res, status) => {
                 setAddButton(!addButton)
                 setCount(1)
             })
@@ -56,7 +56,7 @@ const ProductCard = ({ item, navigation, cartItems, updateCartItemsApi, isAuthen
 
     const onUpdateCartItemApi = (quantity) => {
         setLoadingCount(true)
-        updateCartItemsApi(item?.id, quantity, (res, status) => {
+        updateCartItemsApi(item?.id, quantity, item?.itemName, (res, status) => {
             // alert(JSON.stringify(res, null, "     "))
         })
     }

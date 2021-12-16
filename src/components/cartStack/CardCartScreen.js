@@ -78,7 +78,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
     const onAddToCart = async () => {
         if (isAuthenticated) {
             setLoadingCount(true)
-            updateCartItemsApi(item?.id, 1, (res, status) => {
+            updateCartItemsApi(item?.id, 1, item?.itemName, (res, status) => {
                 setAddButton(!addButton)
                 setCount(1)
                 // initialBillingFunction()
@@ -107,7 +107,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
 
     const onUpdateCartItemApi = (quantity) => {
         setLoadingCount(true)
-        updateCartItemsApi(item?.id, quantity, (res, status) => {
+        updateCartItemsApi(item?.id, quantity, item?.itemName, (res, status) => {
             // alert(JSON.stringify(res, null, "     "))
             // initialBillingFunction()
         })
@@ -115,7 +115,7 @@ const CardCartScreen = ({ item, navigation, cartItems, updateCartItemsApi, isAut
 
     const onDeleteItem = () => {
         setLoadingCount(true)
-        updateCartItemsApi(item?.id, 0, (res, status) => {
+        updateCartItemsApi(item?.id, 0, item?.itemName, (res, status) => {
             // alert(JSON.stringify(res, null, "     "))
             // initialBillingFunction()
         })

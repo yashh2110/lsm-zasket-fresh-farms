@@ -59,8 +59,8 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
                 })
                 const eventName = 'af_search';
                 const eventValues = {
-                    af_search_string: searchItem.join(","),
-                    af_content_list: contentList.join(","),
+                    af_search_string: contentList.join(","),
+                    af_content_list: searchItem.join(","),
                 };
                 console.log("dsadasdasdasdasdasd", eventValues)
                 appsFlyer.logEvent(

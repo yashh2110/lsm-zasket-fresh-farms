@@ -77,6 +77,20 @@ export const trueCallerSign = (payLoad, callback) => async dispatch => {
 export const createNewCustomer = (payLoad, callback) => async dispatch => {
     try {
         const res = await axiosinstance.post('/customers/add', payLoad)
+        const eventName = 'af_complete_registration'
+        const eventValues = {
+            af_registration_method: "Mobile"
+        };
+        appsFlyer.logEvent(
+            eventName,
+            eventValues,
+            (res) => {
+                console.log(res);
+            },
+            (err) => {
+                console.error(err);
+            }
+        );
         callback(res, true)
     } catch (err) {
         // console.log("11111111111111111", JSON.stringify(err, null, "       "))
@@ -124,14 +138,9 @@ export const onLogin = (payload) => async dispatch => {
             console.error("aaaaaaa", err);
         }
     );
-    appsFlyer.setCurrencyCode('INR', () => { });
-    const eventName = 'af_complete_registration'
-    const eventValues = {
-        af_registration_method: "Mobile Number"
-    };
+    const eventName = 'af_login'
     appsFlyer.logEvent(
         eventName,
-        eventValues,
         (res) => {
             console.log(res);
         },
@@ -139,6 +148,7 @@ export const onLogin = (payload) => async dispatch => {
             console.error(err);
         }
     );
+    appsFlyer.setCurrencyCode('INR', () => { });
     dispatch({
         type: LOGIN
     })

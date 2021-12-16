@@ -108,11 +108,50 @@ const CheckoutScreen = ({ route, getCustomerOrders, navigation, getCustomerDetai
     }, [getOrdersBillingDetails])
 
     useEffect(() => {
-        alert(JSON.stringify(getOrdersBillingDetails, null, "     "))
 
-    })
+
+    }, [])
 
     const initialFunction = async () => {
+        let productNameArray = []
+        let productIdArray = []
+        let productCountArray = []
+        let categoryArray = []
+        await cartItems?.forEach(async (el, index) => {
+            productNameArray.push(
+                el?.itemName
+            )
+            productIdArray.push(
+                el?.id
+            )
+            productCountArray.push(
+                el?.count
+            )
+            categoryArray.push(
+                el?.categoryName
+            )
+        })
+        let categorys = categoryArray.join(",")
+        let removedDuplicateCategors = Array.from(new Set(categorys.split(','))).toString();
+        const eventAddName = 'af_initiated_checkout';
+        const eventValues = {
+            af_price: getOrdersBillingDetails?.finalPrice,
+            af_content_id: productIdArray.join(","),
+            af_content_type: removedDuplicateCategors,
+            af_currency: 'INR',
+            af_quantity: productCountArray.join(",")
+        };
+        console.log("2121212121212121212121212121212121", eventValues)
+        appsFlyer.logEvent(
+            eventAddName,
+            eventValues,
+            (res) => {
+                console.log(res);
+            },
+            (err) => {
+                console.error(err);
+            }
+        );
         if (cartItems.length > 0) {
             setloadinggg(true)
             let coupons = await AsyncStorage.getItem('appliedCoupon');
@@ -409,7 +448,7 @@ const CheckoutScreen = ({ route, getCustomerOrders, navigation, getCustomerDetai
             }
             addOrder(codPayload, async (res, status) => {
                 // return
-                console.log("JSONJSONJSONJSONJSONJSONJSON", JSON.stringify(res, null, "    "))
+                console.log("sasasdsdasdsdasadsadasdasdasdasdasdasdasdasdasdas", JSON.stringify(res?.data?.firstOrder, null, "    "))
                 // alert(JSON.stringify(res, null, "    "))
                 setLoading(false)
                 if (res?.data?.canBeOrdered == true) {
@@ -421,10 +460,10 @@ const CheckoutScreen = ({ route, getCustomerOrders, navigation, getCustomerDetai
                         AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
                         navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, slotTime: slotTime })
                         EventRegister.emit('successWallet', 'it works!!!')
-                        if (orderDetails.length > 1) {
+                        if (res?.data?.firstOrder == false) {
                             const eventName = 'af_purchase';
                             const eventValues = {
-                                af_revenue: getOrdersBillingDetails?.finalPrice,
+                                af_revenue: getOrdersBillingDetails?.finalPrice * 0.2,
                                 af_price: getOrdersBillingDetails?.finalPrice,
                                 af_content: productNameArray.join(","),
                                 af_content_id: productIdArray.join(","),
@@ -448,7 +487,7 @@ const CheckoutScreen = ({ route, getCustomerOrders, navigation, getCustomerDetai
                         } else {
                             const eventName = 'first_purchase';
                             const eventValues = {
-                                af_revenue: getOrdersBillingDetails?.finalPrice,
+                                af_revenue: getOrdersBillingDetails?.finalPrice * 0.2,
                                 af_price: getOrdersBillingDetails?.finalPrice,
                                 af_content: productNameArray.join(","),
                                 af_content_id: productIdArray.join(","),
@@ -515,10 +554,10 @@ const CheckoutScreen = ({ route, getCustomerOrders, navigation, getCustomerDetai
                                 AppEventsLogger.logPurchase(totalCartValue, "INR", { param: "value" });
                                 navigation.navigate('PaymentSuccessScreen', { date: nextDayBuffer, slotTime: slotTime })
                                 EventRegister.emit('successWallet', 'it works!!!')
-                                if (orderDetails.length > 1) {
+                                if (res?.data?.firstOrder == false) {
                                     const eventName = 'af_purchase';
                                     const eventValues = {
-                                        af_revenue: getOrdersBillingDetails?.finalPrice,
+                                        af_revenue: getOrdersBillingDetails?.finalPrice * 0.2,
                                         af_price: getOrdersBillingDetails?.finalPrice,
                                         af_content: productNameArray.join(","),
                                         af_content_id: productIdArray.join(","),
@@ -542,7 +581,7 @@ const CheckoutScreen = ({ route, getCustomerOrders, navigation, getCustomerDetai
                                 } else {
                                     const eventName = 'first_purchase';
                                     const eventValues = {
-                                        af_revenue: getOrdersBillingDetails?.finalPrice,
+                                        af_revenue: getOrdersBillingDetails?.finalPrice * 0.2,
                                         af_price: getOrdersBillingDetails?.finalPrice,
                                         af_content: productNameArray.join(","),
                                         af_content_id: productIdArray.join(","),
@@ -611,10 +650,10 @@ const CheckoutScreen = ({ route, getCustomerOrders, navigation, getCustomerDetai
                                         onClearCart()
                                         AsyncStorage.removeItem('appliedCoupon')
                                         navigation.pop()
-                                        if (orderDetails.length > 1) {
+                                        if (res?.data?.firstOrder == false) {
                                             const eventName = 'af_purchase';
                                             const eventValues = {
-                                                af_revenue: getOrdersBillingDetails?.finalPrice,
+                                                af_revenue: getOrdersBillingDetails?.finalPrice * 0.2,
                                                 af_price: getOrdersBillingDetails?.finalPrice,
                                                 af_content: productNameArray.join(","),
                                                 af_content_id: productIdArray.join(","),

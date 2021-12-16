@@ -83,20 +83,46 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
     }, [cartItems])
 
     const addToCard = async () => {
+        // let productIdArray = []
+        // console.log("cartItemscartItemscartItemscartItems", JSON.stringify(cartItems, null, "    "))
+        // await cartItems?.forEach((el, index) => {
+        //     productIdArray.push(
+        //         el?.id
+        //     )
+        // })
+
+        // alert(JSON.stringify(cartItems, null, "    "))
+
+        let productNameArray = []
         let productIdArray = []
+        let productCountArray = []
+        let categoryArray = []
         await cartItems?.forEach((el, index) => {
+            productNameArray.push(
+                el?.itemName
+            )
             productIdArray.push(
                 el?.id
             )
+            productCountArray.push(
+                el?.count
+            )
+            categoryArray.push(
+                el?.categoryName
+            )
         })
+        let categorys = categoryArray.join(",")
+        let removedDuplicateCategors = Array.from(new Set(categorys.split(','))).toString();
         const eventAddName = 'af_add_to_cart';
-        const eventRemoveName = 'af_remove_from_cart';
         const eventValues = {
+            af_price: getOrdersBillingDetails?.finalPrice,
+            af_content: productNameArray.join(","),
             af_content_id: productIdArray.join(","),
+            af_content_type: removedDuplicateCategors,
             af_currency: 'INR',
-            af_revenue: getOrdersBillingDetails?.finalPrice,
+            af_quantity: productCountArray.join(",")
         };
-        console.log("eventValueseventValueseventValueseventValues", eventValues)
+        console.log("fdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdf", eventValues)
         appsFlyer.logEvent(
             eventAddName,
             eventValues,
@@ -107,19 +133,8 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
                 console.error(err);
             }
         );
-
-        appsFlyer.logEvent(
-            eventRemoveName,
-            eventValues,
-            (res) => {
-                console.log(res);
-            },
-            (err) => {
-                console.error(err);
-            }
-        );
-
     }
+
 
     const initalCustomerDetails = async () => {
         setLoading(true)
@@ -133,12 +148,10 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
                 await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
                 setRefresh(false)
                 setLoading(false)
-
             } else {
-                setUserDetails({})
+                // setUserDetails({})
                 setRefresh(false)
                 setLoading(false)
-
             }
         })
     }

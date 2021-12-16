@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import axiosinstance from '../axios/service/api'
 import { CLEAR_CART, GET_CART_ITEMS, GET_BILLING_DETAILS } from './types'
 import * as Sentry from "@sentry/react-native";
+import appsFlyer from 'react-native-appsflyer';
 
 export const getCartItemsApi = (callback) => async dispatch => {
     try {
@@ -65,7 +66,7 @@ export const getBillingDetails = (payLoad, callback) => async dispatch => {
     }
 }
 
-export const updateCartItemsApi = (itemId, quantity, callback) => async dispatch => {
+export const updateCartItemsApi = (itemId, quantity, itemName, callback) => async dispatch => {
     try {
         let payload = {
             "itemId": itemId,
@@ -76,6 +77,23 @@ export const updateCartItemsApi = (itemId, quantity, callback) => async dispatch
         let customerId = await parsedUserDetails?.customerDetails?.id
         // alert(JSON.stringify(userDetails, null, "     "))
         const res = await axiosinstance.post(`/${customerId}/cart-items`, payload)
+        if (quantity == 0) {
+            const eventValues = {
+                af_content_id: itemId,
+                af_content_type: itemName,
+            };
+            const eventAddName = 'af_remove_from_cart';
+            appsFlyer.logEvent(
+                eventAddName,
+                eventValues,
+                (res) => {
+                    console.log(res);
+                },
+                (err) => {
+                    console.error(err);
+                }
+            );
+        }
         dispatch(getCartItemsApi((res, status) => { }))
         // dispatch(getBillingDetails((res, status) => { }))
         callback(res, true)
