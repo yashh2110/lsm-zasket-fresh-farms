@@ -645,7 +645,7 @@ const CheckoutScreen = ({ route, getCustomerOrders, navigation, getCustomerDetai
                                     "razorpaySignature": data.razorpay_signature,
                                     "zasketPaymentOrderId": res?.data?.paymentOrderId
                                 }
-                                paymentConfirm(paymentInfo, (res, status) => {
+                                paymentConfirm(paymentInfo, (response, status) => {
                                     if (status) {
                                         onClearCart()
                                         AsyncStorage.removeItem('appliedCoupon')
@@ -675,6 +675,30 @@ const CheckoutScreen = ({ route, getCustomerOrders, navigation, getCustomerDetai
                                                 }
                                             );
                                         } else {
+                                            const eventName = 'first_purchase';
+                                            const eventValues = {
+                                                af_revenue: getOrdersBillingDetails?.finalPrice * 0.2,
+                                                af_price: getOrdersBillingDetails?.finalPrice,
+                                                af_content: productNameArray.join(","),
+                                                af_content_id: productIdArray.join(","),
+                                                af_content_type: removedDuplicateCategors,
+                                                af_currency: 'INR',
+                                                af_quantity: productCountArray.join(","),
+                                                af_order_id: res?.data?.orderId,
+                                                af_receipt_id: res?.data?.orderId
+                                            };
+                                            appsFlyer.logEvent(
+                                                eventName,
+                                                eventValues,
+                                                (res) => {
+                                                    console.log("sucessssssssssssssssss", res);
+                                                    // alert(res)
+                                                },
+                                                (err) => {
+                                                    console.error(err);
+                                                }
+                                            );
+
 
                                         }
                                         AppEventsLogger.logPurchase(500.00, "INR", { param: "value" });

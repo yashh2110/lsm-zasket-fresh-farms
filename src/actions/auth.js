@@ -121,6 +121,7 @@ export const onLogin = (payload) => async dispatch => {
             //..
         });
     }
+
     appsFlyer.initSdk(
         {
             devKey: 'VGRZSCo9PgEpmGARECWLG3',
@@ -141,13 +142,15 @@ export const onLogin = (payload) => async dispatch => {
     const eventName = 'af_login'
     appsFlyer.logEvent(
         eventName,
+        null,
         (res) => {
-            console.log(res);
+            console.log("sasadsdasd", res);
         },
         (err) => {
-            console.error(err);
+            console.error("errrrrrrrrrr", err);
         }
     );
+
     appsFlyer.setCurrencyCode('INR', () => { });
     dispatch({
         type: LOGIN

@@ -56,6 +56,10 @@ const CancelOrderScreen = ({ route, navigation, cancelOrder }) => {
         }
         return status
     }
+    useEffect(() => {
+        console.log("eweweweweweweeeewewewewewewew,", JSON.stringify(item, null, "    "))
+        // alert(JSON.stringify(item, null, "    "))
+    }, [])
     const onPressConfirm = () => {
         if (validate()) {
             let payload = {
@@ -103,7 +107,14 @@ const CancelOrderScreen = ({ route, navigation, cancelOrder }) => {
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-start', }}>
                         <Text style={{ color: '#909090', fontSize: 13 }}>Qty : </Text>
                         <Text style={{ color: '#909090', fontSize: 13 }}>{item?.items?.length} items</Text>
-                        <Text style={{ color: '#909090', marginLeft: 25 }}>₹ {(item?.offerPrice > 0 ? item?.offerPrice : item?.totalPrice).toFixed(2)}  </Text>
+                        {/* <Text style={{ color: "red" }}>{item?.refundedAmount}</Text> */}
+                        {
+                            item?.cancellationRefundInfo != null && (item?.refundedAmount != 0 || item?.refundedAmount != null) ?
+                                <Text style={{ color: '#909090', marginLeft: 25 }}>₹ {item?.cancellationRefundInfo?.eligibleRefundAmount}  </Text>
+                                :
+                                null
+
+                        }
                     </View>
                 </View>
                 <View style={{ backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
@@ -143,17 +154,28 @@ const CancelOrderScreen = ({ route, navigation, cancelOrder }) => {
                     </View>
                     : null}
                 <View style={{ backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 16, marginTop: 10 }}>
-                    <Text style={{ marginBottom: 10, color: '#909090', fontSize: 14 }}><Text style={{ marginLeft: 25, color: 'black', fontWeight: 'bold', }}>₹ {(item?.offerPrice > 0 ? item?.offerPrice : item?.totalPrice).toFixed(2)} </Text> will be refunded to you with in 4-5 working days </Text>
+                    {
+                        item?.cancellationRefundInfo != null && (item?.refundedAmount != 0 || item?.refundedAmount != null) ?
+                            <Text style={{ marginBottom: 10, color: '#909090', fontSize: 14 }}><Text style={{ marginLeft: 25, color: 'black', fontWeight: 'bold', }}>₹ {item?.cancellationRefundInfo?.eligibleRefundAmount} </Text> will be refunded to you with in 4-5 working days </Text>
+                            :
+                            <Text style={{ marginBottom: 10, color: '#909090', fontSize: 14 }}> Your order will be canceled. Do you want to continue? </Text>
+                    }
                 </View>
                 {/* <Text Text style={{ marginBottom: 16 }}> {JSON.stringify(item, null, "       ")} </Text> */}
             </ScrollView>
             <View style={{ height: 55, width: "100%", backgroundColor: '#F5F5F5', flexDirection: 'row', justifyContent: 'center' }}>
-                <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {(item?.offerPrice > 0 ? item?.offerPrice : item?.totalPrice).toFixed(2)} </Text>
-                    <View style={{}}>
-                        <Text style={{ color: "#2D87C9" }}>Refund Amount</Text>
-                    </View>
-                </View>
+                {
+                    item?.cancellationRefundInfo != null && (item?.refundedAmount != 0 || item?.refundedAmount != null) ?
+                        <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>₹ {item?.cancellationRefundInfo?.eligibleRefundAmount} </Text>
+                            <View style={{}}>
+                                <Text style={{ color: "#2D87C9" }}>Refund Amount</Text>
+                            </View>
+                        </View>
+                        :
+                        null
+
+                }
                 {!selectedReason?.id ?
                     <View style={{ flex: 1.2, backgroundColor: "#F5B0B2", margin: 5, borderRadius: 5, justifyContent: 'center', alignItems: "center" }}>
                         <Text style={{ color: 'white', fontSize: 17 }}>Confirm <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: 'white' }} /></Text>

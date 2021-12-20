@@ -199,6 +199,7 @@ const AddMoney = ({ route, navigation, getCustomerDetails, addMoneyWallet, clear
                                 value={amount}
                                 placeholder={"₹"}
                                 placeholderTextColor={"#000000"}
+                                keyboardType="number-pad"
                             />
                         </View>
                     </View>

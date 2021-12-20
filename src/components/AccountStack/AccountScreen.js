@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, TextInput, RefreshControl, Platform, Share } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, SafeAreaView, Dimensions, KeyboardAvoidingView, TextInput, RefreshControl, Platform, Share } from 'react-native';
 import { Icon } from 'native-base'
 import AsyncStorage from "@react-native-community/async-storage";
 import Modal from 'react-native-modal';
@@ -362,35 +362,37 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                     onBackButtonPress={() => setIsVisible(false)}
                     onBackdropPress={() => setIsVisible(false)}
                 >
-                    <SafeAreaView style={{ height: 280, backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
-                        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="never">
-                            <View style={{ flex: 1, padding: 20 }}>
-                                <View style={{ alignSelf: 'center', height: 5, width: 50, backgroundColor: '#E2E2E2', borderRadius: 50 }} />
-                                <Text style={{ fontSize: 12, color: '#727272', marginTop: 20 }}>Name</Text>
-                                <TextInput
-                                    style={{ height: 40, fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#D8D8D8' }}
-                                    onChangeText={text => setUserDetails({ ...userDetails, customerDetails: { ...userDetails?.customerDetails, name: text } })}
-                                    value={userDetails?.customerDetails?.name}
-                                    onTouchStart={() => {
-                                        setNameErrorText("")
-                                    }}
-                                />
-                                {nameErrorText ?
-                                    <>
-                                        <Text style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{nameErrorText} </Text>
-                                    </>
-                                    : undefined}
+                    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.safeAreaView}>
+                        <View style={{ height: 280, backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25 }}>
+                            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="never">
+                                {/* <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}> */}
+                                <View style={{ flex: 1, padding: 20 }}>
+                                    <View style={{ alignSelf: 'center', height: 5, width: 50, backgroundColor: '#E2E2E2', borderRadius: 50 }} />
+                                    <Text style={{ fontSize: 12, color: '#727272', marginTop: 20 }}>Name</Text>
+                                    <TextInput
+                                        style={{ height: 40, fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#D8D8D8' }}
+                                        onChangeText={text => setUserDetails({ ...userDetails, customerDetails: { ...userDetails?.customerDetails, name: text } })}
+                                        value={userDetails?.customerDetails?.name}
+                                        onTouchStart={() => {
+                                            setNameErrorText("")
+                                        }}
+                                    />
+                                    {nameErrorText ?
+                                        <>
+                                            <Text style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{nameErrorText} </Text>
+                                        </>
+                                        : undefined}
 
-                                <Text style={{ fontSize: 12, color: '#727272', marginTop: 20 }}>Mobile Number</Text>
-                                <TextInput
-                                    style={{ height: 40, color: 'grey', fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#D8D8D8' }}
-                                    onChangeText={text => setUserDetails({ ...userDetails, customerDetails: { ...userDetails?.customerDetails, userMobileNumber: text } })}
-                                    value={userDetails?.customerDetails?.userMobileNumber}
-                                    keyboardType={"number-pad"}
-                                    editable={false}
-                                />
+                                    <Text style={{ fontSize: 12, color: '#727272', marginTop: 20 }}>Mobile Number</Text>
+                                    <TextInput
+                                        style={{ height: 40, color: 'grey', fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#D8D8D8' }}
+                                        onChangeText={text => setUserDetails({ ...userDetails, customerDetails: { ...userDetails?.customerDetails, userMobileNumber: text } })}
+                                        value={userDetails?.customerDetails?.userMobileNumber}
+                                        keyboardType={"number-pad"}
+                                        editable={false}
+                                    />
 
-                                {/* <Text style={{ color: '#727272', fontSize: 12, marginTop: 20 }}>Email</Text>
+                                    {/* <Text style={{ color: '#727272', fontSize: 12, marginTop: 20 }}>Email</Text>
                                 <View style={{ flexDirection: 'row' }}>
                                     <TextInput
                                         style={{ height: 40, flex: 1, fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#D8D8D8' }}
@@ -406,12 +408,14 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                                         <Text style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{emailErrorText} </Text>
                                     </>
                                     : undefined} */}
-                            </View>
-                        </ScrollView>
-                        <TouchableOpacity onPress={() => { onPressUpdate() }} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ color: 'white', fontSize: 18 }}>{loading ? <ActivityIndicator /> : "Update"} </Text>
-                        </TouchableOpacity>
-                    </SafeAreaView>
+                                </View>
+                                {/* </KeyboardAvoidingView> */}
+                            </ScrollView>
+                            <TouchableOpacity onPress={() => { onPressUpdate() }} style={{ height: 50, backgroundColor: Theme.Colors.primary, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: 'white', fontSize: 18 }}>{loading ? <ActivityIndicator /> : "Update"} </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </KeyboardAvoidingView>
                 </Modal>
             </ScrollView>
             {loading ?
