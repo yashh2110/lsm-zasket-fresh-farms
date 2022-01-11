@@ -93,6 +93,7 @@ export const createNewCustomer = (payLoad, callback) => async dispatch => {
         );
         callback(res, true)
     } catch (err) {
+        console.log("errrrr", err)
         // console.log("11111111111111111", JSON.stringify(err, null, "       "))
         alert(err.response.data.description)
         // Alert.alert(JSON.stringify(err.response.data.description, null, "     "))

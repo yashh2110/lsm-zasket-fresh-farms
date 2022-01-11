@@ -30,6 +30,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
     const [nameValidation, setnameValidation] = useState(false)
     const [referralValidation, setreferralValidation] = useState(false)
     const { mobileNumber, otp } = route.params;
+    const [visiableReferralCode, setVisiableReferralCode] = useState(true)
     const { mode, payLoadRes, signature, signatureAlgorithm, firstName } = route.params
     useEffect(() => {
 
@@ -48,6 +49,9 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                     }
                     console.log("aaaaaaaaaa", params)
                     setReferralCode(params.referralCode)
+                    if (params.referralCode) {
+                        setVisiableReferralCode(false)
+                    }
                 }
             });
         setName(firstName)
@@ -315,34 +319,41 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                                     <Text style={{ color: 'red', fontSize: 14 }}>{emailErrorText} </Text>
                                 </>
                                 : undefined} */}
-                            <View style={{ borderBottomColor: "#D8D8D8", flexDirection: 'row', borderBottomWidth: 1, marginTop: "11%" }}>
-                                <View style={{ flex: 1 }}>
-                                    <Text style={referralValidation ? { color: '#e1171e', fontSize: 12 } : { color: '#727272', fontSize: 12 }}>Referral code</Text>
-                                    <TextInput
-                                        style={{ height: 42, color: "#000000", fontWeight: "bold", fontSize: 15, }}
-                                        // onChangeText={text => setReferralCode(text)}
-                                        // onChangeText={text => {
-                                        //     setReferralCode(text)
-                                        // }}
-                                        onChangeText={(t) => OnChangeReferral(t)}
-                                        value={referralCode}
-                                        // placeholder={"Name"}
-                                        autoCapitalize={"characters"}
-                                        placeholderTextColor={"#727272"}
-                                        onTouchStart={() => {
-                                            setemailErrorText("")
-                                            setNameErrorText("")
-                                        }}
-                                    />
-                                </View>
-                                <View style={{ justifyContent: 'center' }}>
-                                    <Image
-                                        style={{ width: 20, height: 20, alignSelf: "center" }}
-                                        resizeMode="contain"
-                                        source={require('../../assets/png/referralIcon.png')}
-                                    />
-                                </View>
-                            </View>
+                            {
+                                visiableReferralCode ?
+                                    <View style={{ borderBottomColor: "#D8D8D8", flexDirection: 'row', borderBottomWidth: 1, marginTop: "11%" }}>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={referralValidation ? { color: '#e1171e', fontSize: 12 } : { color: '#727272', fontSize: 12 }}>Referral code</Text>
+                                            <TextInput
+                                                style={{ height: 42, color: "#000000", fontWeight: "bold", fontSize: 15, }}
+                                                // onChangeText={text => setReferralCode(text)}
+                                                // onChangeText={text => {
+                                                //     setReferralCode(text)
+                                                // }}
+                                                onChangeText={(t) => OnChangeReferral(t)}
+                                                value={referralCode}
+                                                // placeholder={"Name"}
+                                                autoCapitalize={"characters"}
+                                                placeholderTextColor={"#727272"}
+                                                onTouchStart={() => {
+                                                    setemailErrorText("")
+                                                    setNameErrorText("")
+                                                }}
+                                            />
+                                        </View>
+                                        <View style={{ justifyContent: 'center' }}>
+                                            <Image
+                                                style={{ width: 20, height: 20, alignSelf: "center" }}
+                                                resizeMode="contain"
+                                                source={require('../../assets/png/referralIcon.png')}
+                                            />
+                                        </View>
+                                    </View>
+                                    :
+                                    undefined
+
+
+                            }
                             {/* <View style={{ marginTop: "10%", borderBottomColor: "#D8D8D8", flexDirection: 'row', borderBottomWidth: 1 }}>
                                 <View style={{ flex: 1, flexDirection: "row" }}>
                                     <Text style={{ fontSize: 12, color: "#727272" }}>Referral code</Text>

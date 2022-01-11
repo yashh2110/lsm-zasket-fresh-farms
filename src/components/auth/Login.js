@@ -17,18 +17,18 @@ import { getV2Config } from '../../actions/home'
 import AsyncStorage from '@react-native-community/async-storage';
 import { StackActions } from '@react-navigation/native';
 // import TRUECALLER, {
-// TRUECALLER_EVENT,
-// TRUECALLER_CONSENT_MODE,
-// TRUECALLER_CONSENT_TITLE,
-// TRUECALLER_FOOTER_TYPE
+//     TRUECALLER_EVENT,
+//     TRUECALLER_CONSENT_MODE,
+//     TRUECALLER_CONSENT_TITLE,
+//     TRUECALLER_FOOTER_TYPE
 // } from 'react-native-truecaller-sdk'
-// const NullComponent = (props) => null;
+const NullComponent = (props) => null;
 let TRUECALLER;
 let TRUECALLERDEFAULT
-// if (Platform.OS == 'android') {
-//     TRUECALLER = require('react-native-truecaller-sdk');
-//     TRUECALLERDEFAULT = require('react-native-truecaller-sdk').default;
-// }
+if (Platform.OS == 'android') {
+    TRUECALLER = require('react-native-truecaller-sdk');
+    TRUECALLERDEFAULT = require('react-native-truecaller-sdk').default;
+}
 const Login = ({ navigation, darkMode, requestOtp, trueCallerSign, homeScreenLocation, getV2Config, onLogin }) => {
     const [mobileNumber, setMobileNumber] = useState("")
     const [loading, setLoading] = useState(false)
@@ -38,7 +38,6 @@ const Login = ({ navigation, darkMode, requestOtp, trueCallerSign, homeScreenLoc
 
     useEffect(() => {
         if (Platform.OS == "android") {
-            return
             TRUECALLERDEFAULT.initializeClient(
                 TRUECALLER.TRUECALLER_CONSENT_MODE.Popup,
                 TRUECALLER.TRUECALLER_CONSENT_TITLE.Login,
