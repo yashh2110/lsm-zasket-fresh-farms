@@ -349,7 +349,7 @@ PODS:
     - React
   - react-native-gps-state (2.0.3):
     - React
-  - react-native-in-app-review (2.1.8):
+  - react-native-in-app-review (3.3.1):
     - React
   - react-native-location (2.5.0):
     - React
@@ -453,6 +453,8 @@ PODS:
     - React-Core
   - RNPermissions (3.0.5):
     - React-Core
+  - RNRate (1.2.9):
+    - React-Core
   - RNReanimated (1.13.3):
     - React-Core
   - RNScreens (2.18.1):
@@ -461,6 +463,8 @@ PODS:
     - React-Core
     - Sentry (= 7.1.4)
   - RNShare (7.2.0):
+    - React-Core
+  - RNStoreReview (0.2.0):
     - React-Core
   - RNUxcam (5.3.4-beta.2):
     - React-Core
@@ -558,10 +562,12 @@ DEPENDENCIES:
   - "RNFBDynamicLinks (from `../node_modules/@react-native-firebase/dynamic-links`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
+  - RNRate (from `../node_modules/react-native-rate`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNShare (from `../node_modules/react-native-share`)
+  - RNStoreReview (from `../node_modules/react-native-store-review/ios`)
   - RNUxcam (from `../node_modules/react-native-ux-cam`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -709,6 +715,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
+  RNRate:
+    :path: "../node_modules/react-native-rate"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -717,6 +725,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@sentry/react-native"
   RNShare:
     :path: "../node_modules/react-native-share"
+  RNStoreReview:
+    :path: "../node_modules/react-native-store-review/ios"
   RNUxcam:
     :path: "../node_modules/react-native-ux-cam"
   RNVectorIcons:
@@ -777,7 +787,7 @@ SPEC CHECKSUMS:
   react-native-fbsdk: 8e92c7a334fd8d9c2b5d8b8fcd7ae2c314161099
   react-native-geolocation: cbd9d6bd06bac411eed2671810f454d4908484a8
   react-native-gps-state: ca94d5e3156fcc1c48c4eaa932910ec481bb5d8c
-  react-native-in-app-review: 3d6d73b840bdb94ecf83f22e5fee74ee255829d0
+  react-native-in-app-review: dbdf950d70d9f33edd6958949c1da50d90d3a15e
   react-native-location: 9c53c0957756f7d70e8fdc76b1c7ed85867c8d0b
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-netinfo: 52cf0ee8342548a485e28f4b09e56b477567244d
@@ -805,10 +815,12 @@ SPEC CHECKSUMS:
   RNFBDynamicLinks: 49ed2e712bb27db884167edd7ad8f141729b6d6c
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNPermissions: 3e5bb8afd93c787681bbacbf54d586a6272ecc92
+  RNRate: 622db602051b6abf6ec467cdcc3c5e3112076745
   RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
   RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
   RNSentry: 68644ef607b780551cc555f084869764f2566652
   RNShare: 70356a1bb406bc46ae03196a5d3048c702bb71a7
+  RNStoreReview: d7d2a006e14030fe101cac9da487a17f98d73eff
   RNUxcam: 6bb9ff68ebcdd360e6082f12c8f4872ffd7fdd58
   RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
