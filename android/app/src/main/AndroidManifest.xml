@@ -44,7 +44,7 @@
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyCCv96lsG-ywwvtHz9M0JmU4Uyzxl17Vuc"/>
       <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
-      <meta-data android:name="com.truecaller.android.sdk.PartnerKey" android:value="e62vOa6a82fa700584a9caf7e002a34acffb5"/>
+      <meta-data android:name="com.truecaller.android.sdk.PartnerKey" android:value="Pk5cF6bcc98fe5e03492bb412f6e618913bf7"/>
     </application>
 
 </manifest>
