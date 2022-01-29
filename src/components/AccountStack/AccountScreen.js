@@ -16,11 +16,15 @@ import { getCreditTransactions } from "../../actions/wallet";
 import Loader from '../common/Loader';
 import { EventRegister } from 'react-native-event-listeners'
 import RNUxcam from 'react-native-ux-cam';
+import DarkModeToggle from '../common/DarkModeToggle'
+import Switch from '../../lib/react-native-switch-pro';
+import { getLeaderBoardList } from "../../actions/wallet";
+
 RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
 RNUxcam.tagScreenName('Account');
 
-const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigation, onLogout, getCreditTransactions, walletbalance }) => {
+const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigation, onLogout, getCreditTransactions, walletbalance, getLeaderBoardList }) => {
     const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
     const [loading, setLoading] = useState(false)
     const [userDetails, setUserDetails] = useState({})
@@ -29,6 +33,9 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
     const [nameErrorText, setNameErrorText] = useState("")
     const [refresh, setRefresh] = useState(false)
     const [creditBalance, SetCreditBalance] = useState(0)
+    const [darkMode, setDarkMode] = useState(false)
+    const [appShareInfo, setAppShareInfo] = useState({})
+
 
     useEffect(() => {
         initialFunction()
@@ -63,6 +70,18 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
 
             }
         })
+        getLeaderBoardList(async (res, status) => {
+            if (status) {
+                console.log("aaa", JSON.stringify(res, null, "       "))
+                // alert(JSON.stringify(res, null, "       "))
+                setAppShareInfo(res?.appShareInfoResponse)
+                // alert(JSON.stringify(res?.appShareInfoResponse, null, "       "))
+                setLoading(false)
+                // setRefresh(false)
+            } else {
+                setLoading(false)
+            }
+        })
 
     }
 
@@ -77,6 +96,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
             if (status) {
                 // alert(JSON.stringify(res?.data, null, "       "))
                 setUserDetails(res?.data)
+                setDarkMode(res?.data?.customerDetails?.whatsAppAlerts)
                 await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data))
                 setRefresh(false)
                 setLoading(false)
@@ -198,6 +218,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
         removeOnBoardKey()
     }
     const onShare = async () => {
+        // alert(appShareInfo?.content)
         let appUrl
         if (Platform.OS == "ios") {
             appUrl = "https://apps.apple.com/in/app/zasket/id1541056118"
@@ -207,7 +228,7 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
         }
         try {
             const result = await Share.share({
-                message: "Hi there! We've been using the Zasket App and find it really useful. It's for ordering Groceries online and provides \"Lifetime free delivery\" at \"Least prices\". " + appUrl,
+                message: appShareInfo?.content,
             });
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
@@ -222,6 +243,28 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
             // alert(error.message);
         }
     };
+
+
+    const onPressWhatsUpSwitch = async (darkMode) => {
+        setDarkMode(darkMode)
+        try {
+            let payload = {
+                "whatsAppAlerts": darkMode,
+            }
+            await profileUpdate(payload, async (response, status) => {
+                if (status) {
+                    console.log("ppp", response)
+                    // alert(response)
+                    setLoading(false)
+                } else {
+                    // alert("failll")
+                    setLoading(false)
+                }
+            })
+        } catch {
+            setLoading(false)
+        }
+    }
     return (
         <>
             <ScrollView style={{ flex: 1, backgroundColor: '#F8F8F8' }} refreshControl={
@@ -342,6 +385,18 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                         </View>
                     </TouchableOpacity>
 
+                    <TouchableOpacity activeOpacity={0.8} style={{ paddingTop: 10, paddingBottom: 10, borderBottomColor: '#EAEAEC', borderBottomWidth: 1, flexDirection: 'row' }}>
+                        <View style={{ flex: 1, }}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5 }}>Whatsapp orders update </Text>
+                            <Text style={{ color: '#909090', fontSize: 12 }}>Get Order updates & important notifications on WhatsApp </Text>
+                        </View>
+                        <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                            <Switch
+                                value={darkMode}
+                                style={{ marginLeft: 10, }}
+                                onSyncPress={() => onPressWhatsUpSwitch(!darkMode)} />
+                        </View>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => onPressLogout()} style={{ paddingTop: 10, paddingBottom: 0, flexDirection: 'row' }}>
                         <View style={{ flex: 1, }}>
                             <Text style={{ fontWeight: 'bold', fontSize: 14, marginVertical: 5, }}>Logout</Text>
@@ -350,9 +405,8 @@ const AccountScreen = ({ profileUpdate, getCustomerDetails, verifyEmail, navigat
                         <Icon name="right" type="AntDesign" style={{ fontSize: 14, color: '#727272' }} />
                     </View> */}
                     </TouchableOpacity>
-
-
                 </View>
+
 
                 <Modal
                     isVisible={isVisible}
@@ -436,4 +490,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, { profileUpdate, verifyEmail, getCustomerDetails, onLogout, getCreditTransactions })(AccountScreen)
+export default connect(mapStateToProps, { profileUpdate, verifyEmail, getCustomerDetails, onLogout, getCreditTransactions, getLeaderBoardList })(AccountScreen)

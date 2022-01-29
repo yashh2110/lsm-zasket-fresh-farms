@@ -167,10 +167,9 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
                     while (match = regex.exec(link.url)) {
                         params[match[1]] = match[2];
                     }
-                    console.log("params?.referralCodeparams?.referralCode", params)
-
+                    console.warn("params?.referralCodeparams?.referralCode", params)
                     if (params?.referralCode) {
-                        console.log("params?.referralCodeparams?.referralCode", params?.referralCode)
+                        console.warn("params?.referralCodeparams?.referralCode", params?.referralCode)
                         AsyncStorage.setItem('referralCode', params?.referralCode);
                     }
                     if (params?.productDetails) {

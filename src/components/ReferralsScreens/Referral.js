@@ -27,7 +27,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
     const [referal, setReferal] = useState("")
     const [copymessage, setCopymessage] = useState(false)
     const [invitecopymessage, setInviteCopymessage] = useState(false)
-    const [referalContent, setReferalContent] = useState({})
+    const [referalContent, setReferalContent] = useState("")
     const [dynamicLink, setDynamicLink] = useState("")
     const [leaderslist, setLeaderslist] = useState([])
     const [mobileNumber, setMobileNumber] = useState("")
@@ -36,6 +36,10 @@ const Referral = ({ getLeaderBoardList, route }) => {
     const [selectedNumber, setSelectedNumber] = useState("")
     const [appShareInfo, setAppShareInfo] = useState({})
     const [permissionStatus, setpermissionStatus] = useState(false)
+    const [firstOrderContent, setFirstOrderContent] = useState("")
+    const [secondOrderContent, setFecondOrderContent] = useState("")
+    const [commissionByOrder, setCommissionByOrder] = useState("")
+
 
 
 
@@ -196,8 +200,12 @@ const Referral = ({ getLeaderBoardList, route }) => {
         setLoading(true)
         getLeaderBoardList(async (res, status) => {
             if (status) {
+                console.log("aaa", JSON.stringify(res, null, "       "))
                 // alert(JSON.stringify(res, null, "       "))
-                setReferalContent(res?.referralContent)
+                setReferalContent(res?.referralContent?.v2ReferralContent?.amountPerReferral)
+                setFirstOrderContent(res?.referralContent?.v2ReferralContent?.content[0])
+                setFecondOrderContent(res?.referralContent?.v2ReferralContent?.content[1])
+                setCommissionByOrder(res?.referralContent?.v2ReferralContent?.content[2])
                 setLeaderslist(res?.leaders)
                 setAppShareInfo(res?.appShareInfoResponse)
                 // alert(JSON.stringify(res?.appShareInfoResponse, null, "       "))
@@ -226,6 +234,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
     const moreShare = async () => {
         // alert(shareMessage)
         // return
+        console.warn(appShareInfo?.content)
         const toDataURL = (url) => fetch(url)
             .then(response => response.blob())
             .then(blob => new Promise((resolve, reject) => {
@@ -636,96 +645,92 @@ const Referral = ({ getLeaderBoardList, route }) => {
     return (
         <>
             <View style={styles.container}>
-                <View style={{}}>
-                    <LinearGradient colors={['#ec3c3c', '#ed873c',]} start={{ x: 0.9, y: 0.4 }}
-                        style={{ padding: 10, paddingTop: 10, paddingBottom: 25 }}
-                    >
-                        <View style={{ flexDirection: "row", paddingTop: 10 }}>
-                            <View style={{}}>
-                                <FastImage
-                                    style={{ width: 94, height: 94, }}
-                                    source={require('../../assets/png/referIcon.png')}
-                                    resizeMode={FastImage.resizeMode.contain}
+                <View style={{ padding: 10 }}>
+                    <View style={{ backgroundColor: "#FFFFFF", borderRadius: 8, borderColor: "#f7d395", padding: 18, borderWidth: 0.9 }}>
+                        <Text style={{ fontSize: 19, fontWeight: "bold", letterSpacing: 0.6, color: "#000001" }}>Refer Friends and earn</Text>
+                        <Text style={{ fontSize: 19, fontWeight: "bold", letterSpacing: 0.6, color: "#000001" }}>up to <Text style={{ fontSize: 19, fontWeight: "bold", letterSpacing: 0.6, color: "#c89131" }}>Rs {referalContent}</Text> per referral</Text>
+                        <View style={{ marginVertical: 16 }}>
+                            <View style={{ flexDirection: "row" }}>
+                                <Image
+                                    source={require('../../assets/png/ReferOrderSt1.png')}
+                                    style={{ height: 14, width: 14, marginTop: 2 }} resizeMode="cover"
                                 />
-                                {/* <Image
-                                    style={{ width: 94, height: 94, }}
-                                    resizeMode="contain"
-                                    source={require('../../assets/png/referIcon.png')}
-                                /> */}
+                                <Text style={{ marginHorizontal: 11, fontSize: 12.5 }}>{firstOrderContent}</Text>
                             </View>
-                            <View style={{ paddingLeft: 20, paddingTop: 3, flex: 1, }}>
-                                <View style={{ width: "90%" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#FFFFFF" }}>{referalContent?.title}</Text>
-                                    {/* <Text style={{ fontWeight: "bold", fontSize: 16, color: "#FFFFFF" }}>& earn over ₹100</Text> */}
+                            <View style={{ marginTop: 20 }}>
+                                <View style={{ flexDirection: "row" }}>
+                                    <Image
+                                        source={require('../../assets/png/ReferOrderSt2.png')}
+                                        style={{ height: 23, width: 19, }} resizeMode="cover"
+                                    />
+                                    <Text style={{ marginHorizontal: 11, fontSize: 12.5 }}>{secondOrderContent}</Text>
                                 </View>
-                                <View style={{ paddingTop: 6, width: "98%" }}>
-                                    <Text style={{ fontSize: 14, color: "#FFFFFF" }}>{referalContent?.description}</Text>
-                                    {/* <Text style={{ fontSize: 14, color: "#FFFFFF" }}>invite and make their first order.</Text> */}
+                            </View>
+                            <View style={{ marginVertical: 15 }}>
+                                <View style={{ flexDirection: "row" }}>
+                                    <Image
+                                        source={require('../../assets/png/ReferOrderSt3.png')}
+                                        style={{ height: 19, width: 19, }} resizeMode="cover"
+                                    />
+                                    <Text style={{ marginHorizontal: 11, fontSize: 12.5 }}>{commissionByOrder}</Text>
                                 </View>
+                            </View>
+                            <View style={{}}>
+                                <Text style={{ color: "#000000", fontSize: 14, letterSpacing: 0.5 }}>Hurry up become a <Text style={{ fontSize: 14, fontWeight: "bold", letterSpacing: 0.5, color: "#c89131" }}>ZASKET</Text> entrepreneur.</Text>
                             </View>
                         </View>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20, }}>
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => { get_Text_From_Clipboard(referal) }} style={{ borderRadius: 10, width: "50%", alignSelf: "center", flexDirection: 'row', borderStyle: 'dashed', borderRadius: 10, backgroundColor: "white", alignItems: "center", borderWidth: 2, borderColor: '#d8ad00', zIndex: 0, marginLeft: -1 }}>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                            <TouchableOpacity activeOpacity={0.8} onPress={() => { get_Text_From_Clipboard(referal) }} style={{ borderRadius: 10, width: "50%", alignSelf: "center", flexDirection: 'row', borderStyle: 'dashed', borderRadius: 8, backgroundColor: "#fff7ea", alignItems: "center", borderWidth: 2, borderColor: '#d8ad00', zIndex: 0, marginLeft: -1, height: 40 }}>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={{ fontSize: 16, color: "#d8ad00", marginLeft: 10, fontWeight: 'bold', }}>{referal} </Text>
+                                    <Text style={{ fontSize: 15, color: "#d8ad00", marginLeft: 10, fontWeight: 'bold', }}>{referal} </Text>
                                 </View>
                                 <TouchableOpacity activeOpacity={0.8} onPress={() => { get_Text_From_Clipboard(referal) }} style={{ flexDirection: "row", height: 45, width: 35, justifyContent: "space-evenly", alignItems: "center", }}>
                                     <View style={{}}>
                                         <Image
-                                            style={{ width: 30, height: 30, }}
+                                            style={{ width: 25, height: 30, }}
                                             resizeMode="contain"
                                             source={require('../../assets/png/copyIcon.png')}
                                         />
                                     </View>
                                 </TouchableOpacity>
                             </TouchableOpacity>
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => { whatsAppShare() }} style={{ width: "48%", height: 45, borderRadius: 10, justifyContent: "center", borderColor: "#1fa900", borderWidth: 1, backgroundColor: "#1fa900", marginTop: 3 }}>
+                            <TouchableOpacity activeOpacity={0.8} onPress={() => { whatsAppShare() }} style={{ height: 40, width: "46%", height: 45, borderRadius: 8, justifyContent: "center", borderColor: "#1fa900", borderWidth: 1, backgroundColor: "#1fa900" }}>
                                 <View style={{ flexDirection: "row", justifyContent: "center" }}>
                                     <View style={{ width: 22, height: 22, justifyContent: "center", alignItems: "center" }}>
-                                        {/* <Image
-                                            source={require('../../assets/png/whatsAppIcon.png')}
-                                            style={{ height: 20, width: 20, alignSelf: "flex-start" }} resizeMode="cover"
-                                        /> */}
-                                        <FontAwesomeIcons name="whatsapp" color={"white"} size={21} />
-                                        {/* <Text style={{ color: "#FFFFFF", fontSize: 16, fontWeight: "bold", alignSelf: "center", marginBottom: 3 }}>+</Text> */}
+                                        <Image
+                                            style={{ width: 19, height: 19, }}
+                                            resizeMode="contain"
+                                            source={require('../../assets/png/WhatIcon.png')}
+                                        />
                                     </View>
                                     <View style={{}}>
-                                        <Text style={{ color: "#f8f8f8", marginHorizontal: 6, fontSize: 15, fontWeight: "bold" }}>WhatsApp</Text>
+                                        <Text style={{ color: "#f8f8f8", marginHorizontal: 6, fontSize: 13, fontWeight: "bold" }}>WhatsApp</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>
                         </View>
-                    </LinearGradient>
+                    </View>
                 </View>
                 <LinearGradient
-                    colors={['#ed873c', '#ec3c3c']}
-                    style={{ height: 46, opacity: 0.9, zIndex: -1 }}
+                    colors={['#ffffff', '#ffffff']}
+                    style={{ height: 46, opacity: 0.9, zIndex: -1, elevation: 2.5 }}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0.5, y: 0 }}
-                    locations={[0.1, 0.9]}
-                // <LinearGradient colors={['#d14343', '#ed873c',]} start={{ x: 0.9, y: 0.1 }}
-                // colors={['#ed873c', '#ec3c3c']}
-                // style={{ height: 46, opacity: 0.9, zIndex: -1 }}
-                // start={{ x: 0.4, y: 0.8 }}
-                // start={{ x: 0.1, y: 0.9 }}
-                // start={{ x: 0, y: 0 }}
-                // end={{ x: 0.5, y: 0 }}
-                // locations={[0, 0]}
-                >
-                    <View style={{ height: 46, flexDirection: "row", zIndex: 1 }}>
+                    locations={[0.1, 0.9]}>
+                    <View style={{ height: 46, flexDirection: "row", zIndex: 1, backgroundColor: "white", elevation: 2.5 }}>
                         <TouchableOpacity activeOpacity={0.9} onPress={() => { tabChange(0) }} style={{ width: "50%", justifyContent: "center", alignItems: "center" }}>
                             {/* <Text style={{}}>My refeeee</Text> */}
-                            <Text style={[styles.tabText, selectedTabIndex == 0 ? { color: 'white', opacity: 1 } : null]}>My Referrals</Text>
+                            <Text style={[styles.tabText, selectedTabIndex == 0 ? { color: '#e1171e', opacity: 1 } : null]}>My Referrals</Text>
                             {
                                 selectedTabIndex == 0 &&
-                                <View style={{ width: 31, height: 2.5, backgroundColor: "white", borderRadius: 5, position: "absolute", bottom: 6 }}></View>
+                                <View style={{ width: 31, height: 2.5, backgroundColor: "#e1171e", borderRadius: 5, position: "absolute", bottom: 6 }}></View>
                             }
                         </TouchableOpacity>
                         <TouchableOpacity activeOpacity={0.9} onPress={() => { tabChange(1) }} style={{ width: "50%", justifyContent: "center", alignItems: "center" }}>
-                            <Text style={[styles.tabText, selectedTabIndex == 1 ? { color: 'white', opacity: 1 } : null]}>Leaderboard</Text>
+                            <Text style={[styles.tabText, selectedTabIndex == 1 ? { color: '#e1171e', opacity: 1 } : null]}>Leaderboard</Text>
                             {
                                 selectedTabIndex == 1 &&
-                                <View style={{ width: 31, height: 2.5, backgroundColor: "white", borderRadius: 5, position: "absolute", bottom: 6 }}></View>
+                                <View style={{ width: 31, height: 2.5, backgroundColor: "#e1171e", borderRadius: 5, position: "absolute", bottom: 6 }}></View>
                             }
                         </TouchableOpacity>
                     </View>
@@ -821,9 +826,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     tabText: {
-        color: "#ebe6e4",
+        color: "#727272",
         fontSize: 14,
-        opacity: 0.7
+        opacity: 0.7,
+        fontWeight: "bold"
     }
 });
 
@@ -832,3 +838,8 @@ const mapStateToProps = (state) => ({
 })
 
 export default connect(mapStateToProps, { getLeaderBoardList })(Referral)
+
+
+
+
+

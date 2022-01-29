@@ -10,6 +10,7 @@ export class AxiosDefaultsManager {
 
         console.log("app-Version", appVersion)
         console.log("app-OS", appOS)
+        console.log("session-id", sessionId)
         axiosinstance.defaults.headers['session-id'] = sessionId
         axiosinstance.defaults.headers['app-version'] = appVersion
         axiosinstance.defaults.headers['app-os'] = appOS

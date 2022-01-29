@@ -8,6 +8,7 @@ import {
     Easing,
     PanResponder,
 } from 'react-native'
+import { View } from 'react-native-animatable'
 
 const SCALE = 6 / 5
 
@@ -34,7 +35,7 @@ export default class extends Component {
         disabled: false,
         circleColorActive: 'white',
         circleColorInactive: 'white',
-        backgroundActive: '#43d551',
+        backgroundActive: '#1793e1',
         backgroundInactive: '#dddddd',
         onAsyncPress: (callback) => { callback(true) }
     }
@@ -237,7 +238,11 @@ export default class extends Component {
                     height: this.handlerSize,
                     borderRadius: height / 2,
                     transform: [{ translateX: interpolatedTranslateX }]
-                }, circleStyle]} />
+                }, circleStyle]}
+                />
+                {/* <View style={{ height: 50, width: 50, backgroundColor: "red", justifyContent: "center", alignItems: "center" }}>
+                    <View style={{ height: 20, width: 20, backgroundColor: "blue" }}></View>
+                </View> */}
             </Animated.View>
         )
     }
@@ -246,6 +251,7 @@ export default class extends Component {
 const styles = StyleSheet.create({
     container: {
         overflow: 'hidden',
-        justifyContent: 'center'
+        justifyContent: 'center',
+
     }
 })

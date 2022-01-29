@@ -18,6 +18,8 @@ import { AuthContext } from "../../navigation/Routes"
 import { getV2Config } from '../../actions/home'
 import { StackActions } from '@react-navigation/native';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
+import { CheckBox } from 'react-native-elements';
+
 
 const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScreenLocation, onLogin, loginWithProvider, isAuthenticated, getV2Config }) => {
 
@@ -31,9 +33,9 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
     const [referralValidation, setreferralValidation] = useState(false)
     const { mobileNumber, otp } = route.params;
     const [visiableReferralCode, setVisiableReferralCode] = useState(true)
+    const [whatsUpCheck, setWhatsUpCheck] = useState(true)
     const { mode, payLoadRes, signature, signatureAlgorithm, firstName } = route.params
     useEffect(() => {
-
         initalFunction()
         const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
         dynamicLinks()
@@ -121,7 +123,8 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                     "referralCode": referralCode.toUpperCase(),
                     "payload": payLoadRes,
                     "signature": signature,
-                    "signatureAlgorithm": signatureAlgorithm
+                    "signatureAlgorithm": signatureAlgorithm,
+                    "isWhatAppAlertsEnabled": whatsUpCheck
                 }
                 console.log("payLoadpayLoadpayLoad", payLoad)
                 try {
@@ -172,7 +175,9 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                     "otp": otp,
                     "referralCode": referralCode.toUpperCase(),
                     // "userEmail": email.toLowerCase(),
-                    "userMobileNumber": mobileNumber
+                    "userMobileNumber": mobileNumber,
+                    "isWhatAppAlertsEnabled": whatsUpCheck
+
                 }
 
                 try {
@@ -252,6 +257,8 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
         setReferralCode(text)
         setreferralValidation(true)
     }
+
+
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -354,6 +361,46 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
 
 
                             }
+
+                            <View style={{ backgroundColor: "#f5fff7", borderRadius: 8, borderColor: "#b3cbae", padding: 10, borderWidth: 0.9, marginTop: "10%" }}>
+                                <View style={{ justifyContent: 'center', flexDirection: "row", justifyContent: "space-between" }}>
+                                    <TouchableOpacity onPress={() => setWhatsUpCheck(!whatsUpCheck)} style={{ width: 30, height: 35, justifyContent: "center", alignItems: "center" }}>
+                                        <CheckBox
+                                            containerStyle={{ backgroundColor: "white", borderWidth: 0, width: 0, height: 0, marginLeft: -10 }}
+                                            checkedIcon={
+                                                <Image
+                                                    style={{ width: 24, height: 24, }}
+                                                    resizeMode="contain"
+                                                    source={require('../../assets/png/checkedCheckbox.png')}
+                                                />
+                                            }
+                                            textStyle={{ fontSize: 5 }}
+                                            uncheckedIcon={
+                                                <>
+                                                    <View style={{ padding: 7, borderColor: "red", borderRadius: 2, borderWidth: 2, borderColor: "red" }}>
+
+                                                    </View>
+                                                </>
+                                            }
+                                            checked={whatsUpCheck}
+                                            onPress={() => setWhatsUpCheck(!whatsUpCheck)}
+                                            // disabled={false}
+                                            checkedColor={Theme.Colors.primary}
+                                        />
+                                    </TouchableOpacity>
+                                    <View style={{ flex: 1, marginLeft: -8 }}>
+                                        <Text style={{ textAlign: "center", fontSize: 14 }}>Get updates on your orders and other important notifications on WhatsApp</Text>
+                                    </View>
+                                    <View style={{ alignSelf: "center" }}>
+                                        <Image
+                                            style={{ width: 30, height: 32 }}
+                                            resizeMode="center"
+                                            source={require('../../assets/png/aaaaaa.png')}
+                                        />
+                                    </View>
+                                </View>
+                            </View>
+
                             {/* <View style={{ marginTop: "10%", borderBottomColor: "#D8D8D8", flexDirection: 'row', borderBottomWidth: 1 }}>
                                 <View style={{ flex: 1, flexDirection: "row" }}>
                                     <Text style={{ fontSize: 12, color: "#727272" }}>Referral code</Text>
