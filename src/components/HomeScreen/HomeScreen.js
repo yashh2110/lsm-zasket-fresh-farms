@@ -168,10 +168,10 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
                         params[match[1]] = match[2];
                     }
                     console.warn("params?.referralCodeparams?.referralCode", params)
-                    if (params?.referralCode) {
-                        console.warn("params?.referralCodeparams?.referralCode", params?.referralCode)
-                        AsyncStorage.setItem('referralCode', params?.referralCode);
-                    }
+                    // if (params?.referralCode) {
+                    //     console.warn("params?.referralCodeparams?.referralCode", params?.referralCode)
+                    //     AsyncStorage.setItem('referralCode', params?.referralCode);
+                    // }
                     if (params?.productDetails) {
                         // alert(JSON.stringify(params))
                         navigation.navigate("ProductDetailScreen", { item: params?.productDetails })
@@ -226,7 +226,6 @@ const HomeScreen = ({ route, cartItems, homeScreenLocation, getCustomerDetailsLa
                 domainUriPrefix: 'https://zasket.page.link',
             });
             setDynamicLink(link)
-            console.log("111111212121212121212", link)
         } catch (error) {
             alert(error)
         }

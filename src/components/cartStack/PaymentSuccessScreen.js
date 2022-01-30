@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { TouchableOpacity, StyleSheet, View, FlatList, Share, Image, Clipboard, Platform } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Image, StyleSheet, Alert, Linking, FlatList, Clipboard, PermissionsAndroid, ActivityIndicator, Share, SafeAreaView, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import { Icon, Button, Text } from 'native-base';
 import LottieView from 'lottie-react-native';
 import Theme from '../../styles/Theme';
 import moment from 'moment'
@@ -10,6 +9,8 @@ import { getLeaderBoardList } from "../../actions/wallet";
 import AsyncStorage from '@react-native-community/async-storage';
 import Sharee from 'react-native-share';
 import Loader from '../common/Loader';
+import { request, PERMISSIONS, RESULTS, check } from 'react-native-permissions';
+
 
 
 const PaymentSuccessScreen = ({ navigation, route, getLeaderBoardList }) => {
@@ -49,7 +50,7 @@ const PaymentSuccessScreen = ({ navigation, route, getLeaderBoardList }) => {
             if (status) {
                 console.log(res?.referralContent?.v2ReferralContent?.amountPerReferral)
                 // alert(JSON.stringify(res, null, "        "))
-                // setAppShareInfo(res?.appShareInfoResponse)
+                setAppShareInfo(res?.appShareInfoResponse)
                 setReferalContent(res?.referralContent?.v2ReferralContent?.amountPerReferral)
                 setFirstOrderContent(res?.referralContent?.v2ReferralContent?.content[0])
                 setFecondOrderContent(res?.referralContent?.v2ReferralContent?.content[1])
@@ -262,12 +263,12 @@ const PaymentSuccessScreen = ({ navigation, route, getLeaderBoardList }) => {
                             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                 <TouchableOpacity activeOpacity={0.8} onPress={() => { get_Text_From_Clipboard(referal) }} style={{ borderRadius: 10, width: "50%", alignSelf: "center", flexDirection: 'row', borderStyle: 'dashed', borderRadius: 8, backgroundColor: "#fff7ea", alignItems: "center", borderWidth: 2, borderColor: '#d8ad00', zIndex: 0, marginLeft: -1, height: 40 }}>
                                     <View style={{ flex: 1 }}>
-                                        <Text style={{ fontSize: 15, color: "#d8ad00", marginLeft: 10, fontWeight: 'bold', }}>{referal} </Text>
+                                        <Text style={{ fontSize: 14, color: "#d8ad00", marginLeft: 10, fontWeight: 'bold', }}>{referal} </Text>
                                     </View>
-                                    <TouchableOpacity activeOpacity={0.8} onPress={() => { get_Text_From_Clipboard(referal) }} style={{ flexDirection: "row", height: 45, width: 35, justifyContent: "space-evenly", alignItems: "center", }}>
+                                    <TouchableOpacity activeOpacity={0.8} onPress={() => { get_Text_From_Clipboard(referal) }} style={{ flexDirection: "row", height: 40, width: 30, justifyContent: "space-evenly", alignItems: "center", }}>
                                         <View style={{}}>
                                             <Image
-                                                style={{ width: 25, height: 30, }}
+                                                style={{ width: 25, height: 25, }}
                                                 resizeMode="contain"
                                                 source={require('../../assets/png/copyIcon.png')}
                                             />

@@ -45,7 +45,9 @@ const Referral = ({ getLeaderBoardList, route }) => {
 
 
 
-
+    useEffect(() => {
+        initialFunction()
+    }, [])
     useEffect(() => {
         getInitialFunction()
     }, []);
@@ -190,9 +192,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 setLoading(false)
             })
     };
-    useEffect(() => {
-        initialFunction()
-    }, [])
+
     const splitName = (name) => {
         return name.charAt(0)
     }
@@ -682,12 +682,12 @@ const Referral = ({ getLeaderBoardList, route }) => {
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                             <TouchableOpacity activeOpacity={0.8} onPress={() => { get_Text_From_Clipboard(referal) }} style={{ borderRadius: 10, width: "50%", alignSelf: "center", flexDirection: 'row', borderStyle: 'dashed', borderRadius: 8, backgroundColor: "#fff7ea", alignItems: "center", borderWidth: 2, borderColor: '#d8ad00', zIndex: 0, marginLeft: -1, height: 40 }}>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={{ fontSize: 15, color: "#d8ad00", marginLeft: 10, fontWeight: 'bold', }}>{referal} </Text>
+                                    <Text style={{ fontSize: 14, color: "#d8ad00", marginLeft: 10, fontWeight: 'bold', }}>{referal} </Text>
                                 </View>
-                                <TouchableOpacity activeOpacity={0.8} onPress={() => { get_Text_From_Clipboard(referal) }} style={{ flexDirection: "row", height: 45, width: 35, justifyContent: "space-evenly", alignItems: "center", }}>
+                                <TouchableOpacity activeOpacity={0.8} onPress={() => { get_Text_From_Clipboard(referal) }} style={{ flexDirection: "row", height: 40, width: 30, justifyContent: "space-evenly", alignItems: "center", }}>
                                     <View style={{}}>
                                         <Image
-                                            style={{ width: 25, height: 30, }}
+                                            style={{ width: 25, height: 25, }}
                                             resizeMode="contain"
                                             source={require('../../assets/png/copyIcon.png')}
                                         />
@@ -813,6 +813,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                     </View>
                 </SafeAreaView>
             </Modal>
+
         </>
     );
 };

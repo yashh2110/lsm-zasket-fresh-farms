@@ -13,63 +13,12 @@ import { AuthContext } from '../../navigation/Routes';
 import { CheckGpsState, CheckPermissions } from '../../utils/utils';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 
-const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) => {
+const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated, referralCode }) => {
     const { setOnBoardKey } = React.useContext(AuthContext);
-    const [referralCode, setReferralCode] = useState("")
-    // useEffect(() => {
-    //     alert("00")
-
-    // });
+    const [referralCodess, setreferralCodess] = useState("")
 
 
 
-    // useEffect(() => {
-    //     const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
-    //     dynamicLinks()
-    //         .getInitialLink()
-    //         .then(link => {
-    //             if (link) {
-    //                 var regex = /[?&]([^=#]+)=([^&#]*)/g,
-    //                     params = {},
-    //                     match;
-    //                 while (match = regex.exec(link.url)) {
-    //                     params[match[1]] = match[2];
-    //                 }
-    //                 // alert(JSON.stringify(params))
-    //                 // console.log(params.referralCode)
-    //                 // setReferralCode(params.referralCode)
-    //                 // alert(params?.productDetails)
-    //                 // if (params.banner == "HomePage") {
-    //                 //     // alert
-    //                 //     navigation.navigate("SwitchNavigator")
-    //                 // } else if (params?.productDetails) {
-    //                 //     AsyncStorage.setItem('ProductId', "90");
-    //                 //     navigation.navigate("SwitchNavigator")
-    //                 // }
-    //                 // alert(params)
-    //             }
-    //         });
-
-    //     return () => {
-    //         unsubscribe()
-    //     }
-    // }, [])
-    // const handleDynamicLink = (link) => {
-    //     if (link) {
-    //         spreatereferral(link)
-
-    //     }
-    // };
-    // const spreatereferral = (link) => {
-    //     var regex = /[?&]([^=#]+)=([^&#]*)/g,
-    //         params = {},
-    //         match;
-    //     while (match = regex.exec(link.url)) {
-    //         params[match[1]] = match[2];
-    //     }
-    //     // console.log(params.referralCode)
-    //     setReferralCode(params.referralCode)
-    // }
     const _onDone = async () => {
         // await AsyncStorage.setItem('onBoardKey', 'onBoardKey');
         // navigation.pop()
@@ -98,10 +47,12 @@ const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) 
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
+
             <StatusBar translucent backgroundColor="transparent" />
             {/* <TouchableOpacity onPress={() => { onSkip() }} style={{ backgroundColor: '#FDEFEF', position: 'absolute', top: 20, right: 20, paddingVertical: 5, borderRadius: 25, zIndex: 1 }}>
                 <Text style={{ color: Theme.Colors.primary, paddingHorizontal: 10, fontWeight: 'bold' }}>Skip <Icon name="right" type="AntDesign" style={{ fontSize: 13, marginLeft: 10, color: Theme.Colors.primary }} /></Text>
             </TouchableOpacity> */}
+            {/* <Text>{referralCode}</Text> */}
             <Image
                 style={{ width: 150, height: 60, position: 'absolute', left: 20, zIndex: 1, top: "2.5%" }}
                 resizeMode="contain"
@@ -125,7 +76,9 @@ const OnBoard = ({ navigation, darkMode, setDarkMode, login, isAuthenticated }) 
 }
 const mapStateToProps = (state) => ({
     darkMode: state.dark,
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    referralCode: state.auth.referralCode,
+
 })
 
 

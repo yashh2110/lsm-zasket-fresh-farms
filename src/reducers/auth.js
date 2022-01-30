@@ -1,9 +1,10 @@
-import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, SAVE_USER_DETAILS, LOGIN, LOGOUT, ACCOUNT_DELETED, GET_ALL_USER_ADDRESSES } from '../actions/types'
+import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, SAVE_USER_DETAILS, SAVE_REFERRAL_CODE, LOGIN, LOGOUT, ACCOUNT_DELETED, GET_ALL_USER_ADDRESSES } from '../actions/types'
 import AsyncStorage from '@react-native-community/async-storage';
 const initialState = {
     isAuthenticated: false,
     userDetails: {},
-    allUserAddress: []
+    allUserAddress: [],
+    referralCode: ""
 }
 
 export default function (state = initialState, action) {
@@ -31,6 +32,11 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 allUserAddress: payload,
+            }
+        case SAVE_REFERRAL_CODE:
+            return {
+                ...state,
+                referralCode: payload,
             }
         default:
             return {

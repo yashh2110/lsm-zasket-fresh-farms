@@ -1,6 +1,6 @@
 import axiosinstance from '../axios/service/api';
 import { Alert } from 'react-native';
-import { LOGIN, LOGOUT, SAVE_USER_DETAILS, CLEAR_REDUX_PERSIST } from './types';
+import { LOGIN, LOGOUT, SAVE_USER_DETAILS, CLEAR_REDUX_PERSIST, SAVE_REFERRAL_CODE } from './types';
 import { AxiosDefaultsManager } from '../axios/default';
 import AsyncStorage from '@react-native-community/async-storage';
 import appsFlyer from 'react-native-appsflyer';
@@ -171,6 +171,12 @@ export const onLogout = () => async dispatch => {
 export const saveUserDetails = (payload) => async dispatch => {
     dispatch({
         type: SAVE_USER_DETAILS,
+        payload: payload
+    })
+}
+export const referralCodeLink = (payload) => dispatch => {
+    dispatch({
+        type: SAVE_REFERRAL_CODE,
         payload: payload
     })
 }

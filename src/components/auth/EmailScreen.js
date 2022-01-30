@@ -21,70 +21,27 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { CheckBox } from 'react-native-elements';
 
 
-const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScreenLocation, onLogin, loginWithProvider, isAuthenticated, getV2Config }) => {
+const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScreenLocation, onLogin, loginWithProvider, isAuthenticated, getV2Config, referralCode }) => {
 
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
-    const [referralCode, setReferralCode] = useState("")
+    const [userReferralCode, setUserReferralCode] = useState("")
     const [emailErrorText, setemailErrorText] = useState("")
     const [nameErrorText, setNameErrorText] = useState("")
     const [loading, setLoading] = useState(false)
     const [nameValidation, setnameValidation] = useState(false)
     const [referralValidation, setreferralValidation] = useState(false)
     const { mobileNumber, otp } = route.params;
-    const [visiableReferralCode, setVisiableReferralCode] = useState(true)
+    const [visiableuserReferralCode, setVisiableuserReferralCode] = useState(true)
     const [whatsUpCheck, setWhatsUpCheck] = useState(true)
     const { mode, payLoadRes, signature, signatureAlgorithm, firstName } = route.params
+
     useEffect(() => {
-        initalFunction()
-        const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
-        dynamicLinks()
-            .getInitialLink()
-            .then(link => {
-                console.log("limkkkk", link)
-                if (link) {
-                    var regex = /[?&]([^=#]+)=([^&#]*)/g,
-                        params = {},
-                        match;
-                    while (match = regex.exec(link.url)) {
-                        params[match[1]] = match[2];
-                    }
-                    console.log("aaaaaaaaaa", params)
-                    setReferralCode(params.referralCode)
-                    if (params.referralCode) {
-                        setVisiableReferralCode(false)
-                    }
-                }
-            });
-        setName(firstName)
-        return () => {
-            unsubscribe()
-        }
-    }, [])
-    const initalFunction = async () => {
-        let referralCode = await AsyncStorage.getItem('referralCode');
         if (referralCode) {
-            setReferralCode(referralCode)
-
+            setUserReferralCode(referralCode)
+            setVisiableuserReferralCode(false)
         }
-
-    }
-    const handleDynamicLink = (link) => {
-        if (link) {
-            spreatereferral(link)
-
-        }
-    };
-    const spreatereferral = (link) => {
-        var regex = /[?&]([^=#]+)=([^&#]*)/g,
-            params = {},
-            match;
-        while (match = regex.exec(link.url)) {
-            params[match[1]] = match[2];
-        }
-        // console.log(params.referralCode)
-        setReferralCode(params.referralCode)
-    }
+    }, [referralCode]);
     const validate = () => {
         let status = true
         // if (email == undefined || email.trim() == "") {
@@ -120,7 +77,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                 let payLoad = {
                     "type": "TRUE_CALLER",
                     "name": name,
-                    "referralCode": referralCode.toUpperCase(),
+                    "referralCode": userReferralCode.toUpperCase(),
                     "payload": payLoadRes,
                     "signature": signature,
                     "signatureAlgorithm": signatureAlgorithm,
@@ -164,22 +121,20 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                 } catch {
                     setLoading(false)
                 }
-
             }
-
         } else {
             if (validate()) {
                 let payLoad = {
                     "type": "MOBILE_OTP",
                     "name": name,
                     "otp": otp,
-                    "referralCode": referralCode.toUpperCase(),
+                    "referralCode": userReferralCode.toUpperCase(),
                     // "userEmail": email.toLowerCase(),
                     "userMobileNumber": mobileNumber,
                     "isWhatAppAlertsEnabled": whatsUpCheck
-
                 }
-
+                console.log("pppp", payLoad)
+                // return
                 try {
                     await createNewCustomer(payLoad, (response, status) => {
                         // Alert.alert(JSON.stringify(response?.response?.data?.description, null, "     "))
@@ -254,7 +209,7 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
 
     const OnChangeReferral = async (text) => {
         // let upperCaseText = text.toUpperCase()
-        setReferralCode(text)
+        setUserReferralCode(text)
         setreferralValidation(true)
     }
 
@@ -327,18 +282,18 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                                 </>
                                 : undefined} */}
                             {
-                                visiableReferralCode ?
+                                visiableuserReferralCode ?
                                     <View style={{ borderBottomColor: "#D8D8D8", flexDirection: 'row', borderBottomWidth: 1, marginTop: "11%" }}>
                                         <View style={{ flex: 1 }}>
                                             <Text style={referralValidation ? { color: '#e1171e', fontSize: 12 } : { color: '#727272', fontSize: 12 }}>Referral code</Text>
                                             <TextInput
                                                 style={{ height: 42, color: "#000000", fontWeight: "bold", fontSize: 15, }}
-                                                // onChangeText={text => setReferralCode(text)}
+                                                // onChangeText={text => setUserReferralCode(text)}
                                                 // onChangeText={text => {
-                                                //     setReferralCode(text)
+                                                //     setUserReferralCode(text)
                                                 // }}
                                                 onChangeText={(t) => OnChangeReferral(t)}
-                                                value={referralCode}
+                                                value={userReferralCode}
                                                 // placeholder={"Name"}
                                                 autoCapitalize={"characters"}
                                                 placeholderTextColor={"#727272"}
@@ -406,8 +361,8 @@ const EmailScreen = ({ navigation, darkMode, route, createNewCustomer, homeScree
                                     <Text style={{ fontSize: 12, color: "#727272" }}>Referral code</Text>
                                     <TextInput
                                         style={{ height: 55, color: "#000000", fontWeight: "bold", fontSize: 15, flex: 1 }}
-                                        onChangeText={text => setReferralCode(text)}
-                                        value={referralCode}
+                                        onChangeText={text => setUserReferralCode(text)}
+                                        value={userReferralCode}
                                         placeholderTextColor={"#727272"}
                                     />
                                     <Image
@@ -445,6 +400,8 @@ const mapStateToProps = (state) => ({
     darkMode: state.dark,
     isAuthenticated: state.auth.isAuthenticated,
     homeScreenLocation: state.homeScreenLocation,
+    referralCode: state.auth.referralCode,
+
 })
 
 
