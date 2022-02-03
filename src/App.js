@@ -17,7 +17,6 @@ import { onLogin, referralCodeLink } from './actions/auth';
 import AppContainer from './AppContainer';
 import { persistor, store } from "./store";
 import dynamicLinks from '@react-native-firebase/dynamic-links';
-
 RNUxcam.enableAdvancedGestureRecognizers = (enable) => void
   // Example
   // Set to FALSE before startWithKey to disable - Default is TRUE
@@ -29,44 +28,9 @@ RNUxcam.startWithKey('qercwheqrlqze96'); // Add this line after RNUxcam.optIntoS
 const App = () => {
 
   useEffect(() => {
-    // store.dispatch(loadUser())
-
-
-    initialFunction()
-
-    Sentry.init({
-      dsn: "https://3fe28747315644a6adfe8787746b7923@o515547.ingest.sentry.io/5621805",
-    });
-
+    initialIosFirebaseFunction()
   }, [])
-  const initialFunction = async () => {
-    let userDetails = await AsyncStorage.getItem('userDetails');
-    let parsedUserDetails = await JSON.parse(userDetails);
-    if (parsedUserDetails !== null) {
-      appsFlyer.setCustomerUserId(parsedUserDetails.customerDetails.id, (res) => {
-        //..
-      });
-      store.dispatch(onLogin(parsedUserDetails))
-    }
-    appsFlyer.initSdk(
-      {
-        devKey: 'VGRZSCo9PgEpmGARECWLG3',
-        isDebug: false,
-        appId: 'id1541056118',
-        onInstallConversionDataListener: true, //Optional
-        onDeepLinkListener: true, //Optional
-        timeToWaitForATTUserAuthorization: 10 //for iOS 14.5
-      },
-      (res) => {
-        // alert(JSON.stringify(res, null, "   "))
-        console.log(res);
-      },
-      (err) => {
-        console.error("aaaaaaa", err);
-      }
-    );
-
-
+  const initialIosFirebaseFunction = async () => {
     if (Platform.OS == "ios") {
       PushNotificationIOS.requestPermissions()
       try {
@@ -82,9 +46,47 @@ const App = () => {
 
       }
     }
-
-
   }
+
+
+  useEffect(() => {
+    // store.dispatch(loadUser())
+
+    const initialFunction = async () => {
+      let userDetails = await AsyncStorage.getItem('userDetails');
+      let parsedUserDetails = await JSON.parse(userDetails);
+      if (parsedUserDetails !== null) {
+        appsFlyer.setCustomerUserId(parsedUserDetails.customerDetails.id, (res) => {
+          //..
+        });
+        store.dispatch(onLogin(parsedUserDetails))
+      }
+      appsFlyer.initSdk(
+        {
+          devKey: 'VGRZSCo9PgEpmGARECWLG3',
+          isDebug: false,
+          appId: 'id1541056118',
+          onInstallConversionDataListener: true, //Optional
+          onDeepLinkListener: true, //Optional
+          timeToWaitForATTUserAuthorization: 10 //for iOS 14.5
+        },
+        (res) => {
+          // alert(JSON.stringify(res, null, "   "))
+          console.log(res);
+        },
+        (err) => {
+          console.error("aaaaaaa", err);
+        }
+      );
+
+    }
+    initialFunction()
+
+    Sentry.init({
+      dsn: "https://3fe28747315644a6adfe8787746b7923@o515547.ingest.sentry.io/5621805",
+    });
+
+  }, [])
 
   useEffect(() => {
     OneSignal.setLogLevel(6, 0);
@@ -107,7 +109,7 @@ const App = () => {
           while (match = regex.exec(link.url)) {
             params[match[1]] = match[2];
           }
-          console.log("aaaaaaaaaa", params)
+          console.warn("aaaaaaaaaa", params)
           if (params.referralCode) {
             store.dispatch(referralCodeLink(params.referralCode))
           }
