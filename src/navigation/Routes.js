@@ -225,7 +225,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                   position: "absolute",
                   //   left: "60%",
                   borderRadius: 5,
-                  marginLeft: 10,
+                  marginLeft: 2,
                   marginTop: -2,
                   fontWeight: "bold",
                   backgroundColor: "#9462FF",
