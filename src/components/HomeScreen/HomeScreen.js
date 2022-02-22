@@ -63,6 +63,7 @@ import dynamicLinks from "@react-native-firebase/dynamic-links";
 import CartDown from "../common/cartDown";
 import appsFlyer from "react-native-appsflyer";
 import LinearGradient from "react-native-linear-gradient";
+import analytics from "@react-native-firebase/analytics";
 
 RNUxcam.startWithKey("qercwheqrlqze96"); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
@@ -122,10 +123,7 @@ const HomeScreen = ({
     //         console.error(err);
     //     }
     // );
-    console.log(
-      "112312312312312",
-      JSON.stringify(getOrdersBillingDetails.discountedPrice, null, "   ")
-    );
+
     // alert(JSON.stringify(homeScreenLocation, null, "   "))
   }, []);
 
@@ -167,17 +165,20 @@ const HomeScreen = ({
       af_currency: "INR",
       af_quantity: productCountArray.join(","),
     };
-    console.log("fdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdf", eventValues);
     appsFlyer.logEvent(
       eventAddName,
       eventValues,
-      (res) => {
-        console.log(res);
-      },
-      (err) => {
-        console.error(err);
-      }
+      (res) => {},
+      (err) => {}
     );
+    analytics().logEvent("add_to_cart", {
+      price: getOrdersBillingDetails?.finalPrice,
+      content: productNameArray.join(","),
+      content_id: productIdArray.join(","),
+      content_type: removedDuplicateCategors,
+      currency: "INR",
+      quantity: productCountArray.join(","),
+    });
   };
 
   const initalCustomerDetails = async () => {
@@ -280,7 +281,7 @@ const HomeScreen = ({
   useEffect(() => {
     // alert(JSON.stringify(bannerImages, null, "       "))
     const onReceived = (notification) => {
-      console.log("Notification received: ", notification);
+      // console.log("Notification received: ", notification);
     };
     const onOpened = (openResult) => {
       // alert(JSON.stringify(openResult.notification.isAppInFocus, null, "       "))
@@ -302,13 +303,13 @@ const HomeScreen = ({
         //     },
         // });
       }
-      console.log("Message: ", openResult.notification.payload.body);
-      console.log("Data: ", openResult.notification.payload.additionalData);
-      console.log("isActive: ", openResult.notification.isAppInFocus);
-      console.log("openResult: ", openResult);
+      // console.log("Message: ", openResult.notification.payload.body);
+      // console.log("Data: ", openResult.notification.payload.additionalData);
+      // console.log("isActive: ", openResult.notification.isAppInFocus);
+      // console.log("openResult: ", openResult);
     };
     const onIds = (device) => {
-      console.log("Device info: ", device);
+      // console.log("Device info: ", device);
     };
     OneSignal.addEventListener("received", onReceived);
     OneSignal.addEventListener("opened", onOpened);
@@ -451,6 +452,11 @@ const HomeScreen = ({
           }
         }
       );
+      analytics().logEvent("location", {
+        longitude: homeScreenLocation?.lon,
+        latitude: homeScreenLocation?.lat,
+      });
+      // .then((res) => console.log("firebase_location_event"));
       setTimeout(() => {
         setDeliveryLocationModalVisible(false);
       }, 1000);
@@ -664,10 +670,10 @@ const HomeScreen = ({
     // alert(JSON.stringify(validateOrder, null, "      "))
     getBillingDetails(validateOrders, async (res, status) => {
       if (status) {
-        console.log(
-          "getorderssssssss",
-          JSON.stringify(res.data, null, "      ")
-        );
+        // console.log(
+        //   "getorderssssssss",
+        //   JSON.stringify(res.data, null, "      ")
+        // );
         setLoading(false);
         setRefresh(false);
       } else {

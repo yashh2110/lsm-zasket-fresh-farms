@@ -93,7 +93,7 @@ const AccountScreen = ({
     });
     getLeaderBoardList(async (res, status) => {
       if (status) {
-        console.log("aaa", JSON.stringify(res, null, "       "));
+        // console.log("aaa", JSON.stringify(res, null, "       "));
         // alert(JSON.stringify(res, null, "       "))
         setAppShareInfo(res?.appShareInfoResponse);
         // alert(JSON.stringify(res?.appShareInfoResponse, null, "       "))
@@ -277,7 +277,7 @@ const AccountScreen = ({
       };
       await profileUpdate(payload, async (response, status) => {
         if (status) {
-          console.log("ppp", response);
+          // console.log("ppp", response);
           // alert(response)
           setLoading(false);
         } else {

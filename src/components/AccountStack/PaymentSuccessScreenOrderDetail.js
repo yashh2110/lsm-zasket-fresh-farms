@@ -70,7 +70,7 @@ const PaymentSuccessScreenOrderDetail = ({
     setLoading(true);
     getLeaderBoardList(async (res, status) => {
       if (status) {
-        console.log(res?.referralContent?.v2ReferralContent?.amountPerReferral);
+        // console.log(res?.referralContent?.v2ReferralContent?.amountPerReferral);
         // alert(JSON.stringify(res, null, "        "))
         setAppShareInfo(res?.appShareInfoResponse);
         setReferalContent(
@@ -169,7 +169,7 @@ const PaymentSuccessScreenOrderDetail = ({
       let url = "whatsapp://send?text=" + `${appShareInfo?.content}`;
       Linking.openURL(url)
         .then((data) => {
-          console.log("WhatsApp Opened", data);
+          // console.log("WhatsApp Opened", data);
         })
         .catch(() => {
           alert("Make sure Whatsapp installed on your device");
