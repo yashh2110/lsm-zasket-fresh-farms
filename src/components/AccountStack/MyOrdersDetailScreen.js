@@ -57,7 +57,7 @@ const MyOrdersDetailScreen = ({
     setLoading(true);
     getOrderDetails(order_id, async (response, status) => {
       if (status) {
-        console.log("sssssss", JSON.stringify(response.data, null, "        "));
+        // console.log("sssssss", JSON.stringify(response.data, null, "        "));
         // alert(JSON.stringify(response.data, null, "        "))
         setItem(response?.data);
         setFinalPrice(response?.data?.finalPrice);

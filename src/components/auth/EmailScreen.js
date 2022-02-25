@@ -118,7 +118,6 @@ const EmailScreen = ({
           signatureAlgorithm: signatureAlgorithm,
           isWhatAppAlertsEnabled: whatsUpCheck,
         };
-        console.log("payLoadpayLoadpayLoad", payLoad);
         try {
           await createNewCustomer(payLoad, (response, status) => {
             // Alert.alert(JSON.stringify(response?.response?.data?.description, null, "     "))
@@ -177,7 +176,6 @@ const EmailScreen = ({
           userMobileNumber: mobileNumber,
           isWhatAppAlertsEnabled: whatsUpCheck,
         };
-        console.log("pppp", payLoad);
         // return
         try {
           await createNewCustomer(payLoad, (response, status) => {
