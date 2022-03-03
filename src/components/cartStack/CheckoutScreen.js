@@ -147,6 +147,7 @@ const CheckoutScreen = ({
       SetButtonHandle(false);
     }
   }, [getOrdersBillingDetails]);
+  console.log(getOrdersBillingDetails?.finalPrice, "final_price");
 
   useEffect(() => {}, []);
 
@@ -405,7 +406,7 @@ const CheckoutScreen = ({
       await onSelectPaymentMethod("PREPAID");
     }
   };
-
+  console.log(buttonHandle);
   const onSelectPaymentMethod = async (option) => {
     // alert(JSON.stringify(cartItems, null, "      "))
     let itemCreateRequests = [];
@@ -451,10 +452,6 @@ const CheckoutScreen = ({
         paymentMethod: "COD",
       };
       addOrder(codPayload, async (res, status) => {
-        // return
-
-        // alert(JSON.stringify(res, null, "    "))
-
         setLoading(false);
         if (res?.data?.canBeOrdered == true) {
           if (status) {
@@ -494,77 +491,6 @@ const CheckoutScreen = ({
               afEventParams: afEventParams,
             });
             EventRegister.emit("successWallet", "it works!!!");
-            // if (res?.data?.firstOrder === false) {
-            //   const eventName = "af_purchase";
-            //   const eventValues = {
-            //     af_revenue: getOrdersBillingDetails?.finalPrice * 0.2,
-            //     af_price: getOrdersBillingDetails?.finalPrice,
-            //     af_content: productNameArray.join(","),
-            //     af_content_id: productIdArray.join(","),
-            //     af_content_type: removedDuplicateCategors,
-            //     af_currency: "INR",
-            //     af_quantity: productCountArray.join(","),
-            //     af_order_id: res?.data?.orderId,
-            //     af_receipt_id: res?.data?.orderId,
-            //   };
-            //   appsFlyer.logEvent(
-            //     eventName,
-            //     eventValues,
-            //     (res) => {
-            //       console.log(eventName, res);
-            //       // alert(res)
-            //     },
-            //     (err) => {
-            //       console.error(err);
-            //     }
-            //   );
-            //   analytics().logEvent("purchase", {
-            //     revenue: getOrdersBillingDetails?.finalPrice * 0.2,
-            //     price: getOrdersBillingDetails?.finalPrice,
-            //     content: productNameArray.join(","),
-            //     content_id: productIdArray.join(","),
-            //     content_type: removedDuplicateCategors,
-            //     currency: "INR",
-            //     quantity: productCountArray.join(","),
-            //     order_id: res?.data?.orderId,
-            //     receipt_id: res?.data?.orderId,
-            //   });
-            // } else {
-            //   console.log("af_first");
-            //   const eventName = "first_purchase";
-            //   const eventValues = {
-            //     af_revenue: getOrdersBillingDetails?.finalPrice * 0.2,
-            //     af_price: getOrdersBillingDetails?.finalPrice,
-            //     af_content: productNameArray.join(","),
-            //     af_content_id: productIdArray.join(","),
-            //     af_content_type: removedDuplicateCategors,
-            //     af_currency: "INR",
-            //     af_quantity: productCountArray.join(","),
-            //     af_order_id: res?.data?.orderId,
-            //     af_receipt_id: res?.data?.orderId,
-            //   };
-            //   appsFlyer.logEvent(
-            //     eventName,
-            //     eventValues,
-            //     (res) => {
-            //       console.log(eventName, res);
-            //     },
-            //     (err) => {
-            //       console.error(err, eventName);
-            //     }
-            //   );
-            //   analytics().logEvent("first_purchase", {
-            //     revenue: getOrdersBillingDetails?.finalPrice * 0.2,
-            //     price: getOrdersBillingDetails?.finalPrice,
-            //     content: productNameArray.join(","),
-            //     content_id: productIdArray.join(","),
-            //     content_type: removedDuplicateCategors,
-            //     currency: "INR",
-            //     quantity: productCountArray.join(","),
-            //     order_id: res?.data?.orderId,
-            //     receipt_id: res?.data?.orderId,
-            //   });
-            // }
           } else {
             if (res?.response?.data?.description) {
               Toast.show({
@@ -590,18 +516,14 @@ const CheckoutScreen = ({
         ...payload,
         paymentMethod: "PREPAID",
       };
-      // setLoading(false)
-      // alert(JSON.stringify(prepaidPayload, null, "     "))
-      // alert(buttonHandle)
-      // return
-
       addOrder(prepaidPayload, async (res, status) => {
         setLoading(false);
         if (status) {
           // alert(JSON.stringify(res null, "     "))
           // return
+          console.log(res.data, "final_data");
           if (res?.data?.canBeOrdered == true) {
-            if (buttonHandle == true) {
+            if (res?.data?.finalPrice == 0) {
               if (status) {
                 setPaymentSelectionActionScreen(false);
                 onClearCart();
@@ -640,80 +562,6 @@ const CheckoutScreen = ({
                   afEventParams: afEventParams,
                 });
                 EventRegister.emit("successWallet", "it works!!!");
-                // if (res?.data?.firstOrder == false) {
-                //   console.log("testing first_purchase_not_first");
-
-                //   const eventName = "af_purchase";
-                //   const eventValues = {
-                //     af_revenue: getOrdersBillingDetails?.finalPrice * 0.2,
-                //     af_price: getOrdersBillingDetails?.finalPrice,
-                //     af_content: productNameArray.join(","),
-                //     af_content_id: productIdArray.join(","),
-                //     af_content_type: removedDuplicateCategors,
-                //     af_currency: "INR",
-                //     af_quantity: productCountArray.join(","),
-                //     af_order_id: res?.data?.orderId,
-                //     af_receipt_id: res?.data?.orderId,
-                //   };
-                //   appsFlyer.logEvent(
-                //     eventName,
-                //     eventValues,
-                //     (res) => {
-                //       console.log(eventName, res);
-                //       // alert(res)
-                //     },
-                //     (err) => {
-                //       console.error(err);
-                //     }
-                //   );
-                //   analytics().logEvent("purchase", {
-                //     revenue: getOrdersBillingDetails?.finalPrice * 0.2,
-                //     price: getOrdersBillingDetails?.finalPrice,
-                //     content: productNameArray.join(","),
-                //     content_id: productIdArray.join(","),
-                //     content_type: removedDuplicateCategors,
-                //     currency: "INR",
-                //     quantity: productCountArray.join(","),
-                //     order_id: res?.data?.orderId,
-                //     receipt_id: res?.data?.orderId,
-                //   });
-                // } else {
-                //   console.log("testing first_purchase_entered");
-                //   const eventName = "first_purchase";
-                //   const eventValues = {
-                //     af_revenue: getOrdersBillingDetails?.finalPrice * 0.2,
-                //     af_price: getOrdersBillingDetails?.finalPrice,
-                //     af_content: productNameArray.join(","),
-                //     af_content_id: productIdArray.join(","),
-                //     af_content_type: removedDuplicateCategors,
-                //     af_currency: "INR",
-                //     af_quantity: productCountArray.join(","),
-                //     af_order_id: res?.data?.orderId,
-                //     af_receipt_id: res?.data?.orderId,
-                //   };
-                //   appsFlyer.logEvent(
-                //     eventName,
-                //     eventValues,
-                //     (res) => {
-                //       console.log(eventName, res);
-                //       // alert(res)
-                //     },
-                //     (err) => {
-                //       console.error(err);
-                //     }
-                //   );
-                //   analytics().logEvent("first_purchase", {
-                //     revenue: getOrdersBillingDetails?.finalPrice * 0.2,
-                //     price: getOrdersBillingDetails?.finalPrice,
-                //     content: productNameArray.join(","),
-                //     content_id: productIdArray.join(","),
-                //     content_type: removedDuplicateCategors,
-                //     currency: "INR",
-                //     quantity: productCountArray.join(","),
-                //     order_id: res?.data?.orderId,
-                //     receipt_id: res?.data?.orderId,
-                //   });
-                // }
               } else {
                 // if (_DEV_) {
                 //     alert(JSON.stringify(res?.response))
@@ -749,9 +597,6 @@ const CheckoutScreen = ({
               };
               RazorpayCheckout.open(options)
                 .then(async (data) => {
-                  // alert("passsssss")
-                  // handle success
-                  // alert(`Success: ${data.razorpay_payment_id}`);
                   let paymentInfo = {
                     paymentType: "ORDER",
                     razorpayPaymentId: data.razorpay_payment_id,
@@ -795,81 +640,6 @@ const CheckoutScreen = ({
                         firebaseEventParams: firebaseEventParams,
                         afEventParams: afEventParams,
                       });
-                      // if (res?.data?.firstOrder == false) {
-                      //   console.log("testing razor first_purchase_not_first");
-
-                      //   const eventName = "af_purchase";
-                      //   const eventValues = {
-                      //     af_revenue: getOrdersBillingDetails?.finalPrice * 0.2,
-                      //     af_price: getOrdersBillingDetails?.finalPrice,
-                      //     af_content: productNameArray.join(","),
-                      //     af_content_id: productIdArray.join(","),
-                      //     af_content_type: removedDuplicateCategors,
-                      //     af_currency: "INR",
-                      //     af_quantity: productCountArray.join(","),
-                      //     af_order_id: res?.data?.orderId,
-                      //     af_receipt_id: res?.data?.orderId,
-                      //   };
-                      //   appsFlyer.logEvent(
-                      //     eventName,
-                      //     eventValues,
-                      //     (res) => {
-                      //       console.log(eventName, res);
-                      //       // alert(res)
-                      //     },
-                      //     (err) => {
-                      //       console.error(err);
-                      //     }
-                      //   );
-                      //   analytics().logEvent("purchase", {
-                      //     revenue: getOrdersBillingDetails?.finalPrice * 0.2,
-                      //     price: getOrdersBillingDetails?.finalPrice,
-                      //     content: productNameArray.join(","),
-                      //     content_id: productIdArray.join(","),
-                      //     content_type: removedDuplicateCategors,
-                      //     currency: "INR",
-                      //     quantity: productCountArray.join(","),
-                      //     order_id: res?.data?.orderId,
-                      //     receipt_id: res?.data?.orderId,
-                      //   });
-                      // } else {
-                      //   console.log("testing razor first_purchase_entered");
-
-                      //   const eventName = "first_purchase";
-                      //   const eventValues = {
-                      //     af_revenue: getOrdersBillingDetails?.finalPrice * 0.2,
-                      //     af_price: getOrdersBillingDetails?.finalPrice,
-                      //     af_content: productNameArray.join(","),
-                      //     af_content_id: productIdArray.join(","),
-                      //     af_content_type: removedDuplicateCategors,
-                      //     af_currency: "INR",
-                      //     af_quantity: productCountArray.join(","),
-                      //     af_order_id: res?.data?.orderId,
-                      //     af_receipt_id: res?.data?.orderId,
-                      //   };
-                      //   appsFlyer.logEvent(
-                      //     eventName,
-                      //     eventValues,
-                      //     (res) => {
-                      //       console.log(eventName, res);
-                      //       // alert(res)
-                      //     },
-                      //     (err) => {
-                      //       console.error(err);
-                      //     }
-                      //   );
-                      //   analytics().logEvent("first_purchase", {
-                      //     revenue: getOrdersBillingDetails?.finalPrice * 0.2,
-                      //     price: getOrdersBillingDetails?.finalPrice,
-                      //     content: productNameArray.join(","),
-                      //     content_id: productIdArray.join(","),
-                      //     content_type: removedDuplicateCategors,
-                      //     currency: "INR",
-                      //     quantity: productCountArray.join(","),
-                      //     order_id: res?.data?.orderId,
-                      //     receipt_id: res?.data?.orderId,
-                      //   });
-                      // }
                     } else {
                       Toast.show({
                         text: "Payment failed",
@@ -1087,8 +857,7 @@ const CheckoutScreen = ({
         <ScrollView
           ref={scrollViewRef}
           style={{ flex: 1, backgroundColor: "#F8F8F8" }}
-          showsVerticalScrollIndicator={false}
-        >
+          showsVerticalScrollIndicator={false}>
           {/* <Text style={{ textAlign: 'center', marginBottom: 16, backgroundColor: "red" }}>{JSON.stringify(orderDetails.length, null, "       ")} </Text> */}
 
           <View
@@ -1098,8 +867,7 @@ const CheckoutScreen = ({
               paddingVertical: 10,
               paddingHorizontal: 16,
               marginTop: 10,
-            }}
-          >
+            }}>
             <View
               style={{
                 width: 60,
@@ -1110,22 +878,19 @@ const CheckoutScreen = ({
                 backgroundColor: "#FDEFEF",
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <Image
                 style={{ width: 30, height: 30 }}
                 source={require("../../assets/png/locationIcon.png")}
               />
             </View>
             <View
-              style={{ flex: 1, paddingLeft: 10, justifyContent: "center" }}
-            >
+              style={{ flex: 1, paddingLeft: 10, justifyContent: "center" }}>
               <View
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
-                }}
-              >
+                }}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   {userLocation?.saveAs == "Home" && (
                     <View
@@ -1136,15 +901,13 @@ const CheckoutScreen = ({
                         borderColor: "#FCD8EC",
                         paddingVertical: 3,
                         marginRight: 5,
-                      }}
-                    >
+                      }}>
                       <Text
                         style={{
                           color: "#F464AD",
                           fontSize: 12,
                           marginHorizontal: 5,
-                        }}
-                      >
+                        }}>
                         Home
                       </Text>
                     </View>
@@ -1158,15 +921,13 @@ const CheckoutScreen = ({
                         borderColor: "#F0D4FA",
                         paddingVertical: 3,
                         marginRight: 5,
-                      }}
-                    >
+                      }}>
                       <Text
                         style={{
                           color: "#CD64F4",
                           fontSize: 12,
                           marginHorizontal: 5,
-                        }}
-                      >
+                        }}>
                         Office
                       </Text>
                     </View>
@@ -1180,15 +941,13 @@ const CheckoutScreen = ({
                         borderColor: "#BEDCFF",
                         paddingVertical: 3,
                         marginRight: 5,
-                      }}
-                    >
+                      }}>
                       <Text
                         style={{
                           color: "#64A6F4",
                           fontSize: 12,
                           marginHorizontal: 5,
-                        }}
-                      >
+                        }}>
                         Others
                       </Text>
                     </View>
@@ -1203,11 +962,9 @@ const CheckoutScreen = ({
                   onPress={() => {
                     onPressSelectAddress();
                   }}
-                  style={{}}
-                >
+                  style={{}}>
                   <Text
-                    style={{ color: Theme.Colors.primary, fontWeight: "bold" }}
-                  >
+                    style={{ color: Theme.Colors.primary, fontWeight: "bold" }}>
                     Change
                   </Text>
                 </TouchableOpacity>
@@ -1216,8 +973,11 @@ const CheckoutScreen = ({
                 {userLocation?.houseNo ? (
                   <>
                     <Text
-                      style={{ color: "#909090", fontSize: 13, marginRight: 5 }}
-                    >
+                      style={{
+                        color: "#909090",
+                        fontSize: 13,
+                        marginRight: 5,
+                      }}>
                       {userLocation?.houseNo}
                     </Text>
                   </>
@@ -1233,8 +993,7 @@ const CheckoutScreen = ({
               </View>
               <Text
                 numberOfLines={2}
-                style={{ color: "#909090", fontSize: 13 }}
-              >
+                style={{ color: "#909090", fontSize: 13 }}>
                 {userLocation?.addressLine_1}{" "}
               </Text>
             </View>
@@ -1247,8 +1006,7 @@ const CheckoutScreen = ({
               paddingHorizontal: 16,
               marginTop: 10,
               paddingBottom: 10,
-            }}
-          >
+            }}>
             <Text style={{ fontWeight: "bold", fontSize: 16 }}>
               Book a slot
             </Text>
@@ -1258,8 +1016,7 @@ const CheckoutScreen = ({
                 justifyContent: "space-between",
                 marginTop: 5,
                 height: 60,
-              }}
-            >
+              }}>
               {disableTomorrowSlot ? (
                 <View
                   style={{
@@ -1271,8 +1028,7 @@ const CheckoutScreen = ({
                     backgroundColor: "#F1F1F1",
                     justifyContent: "center",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Text style={{ color: "#727272", fontSize: 12 }}>
                     Tomorrow
                   </Text>
@@ -1281,8 +1037,7 @@ const CheckoutScreen = ({
                       color: "#727272",
                       fontSize: 12,
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     {moment().add(1, "days").format("DD MMM")}{" "}
                   </Text>
                 </View>
@@ -1302,8 +1057,7 @@ const CheckoutScreen = ({
                     backgroundColor: nextDayBuffer == 0 ? "#FDEFEF" : "white",
                     justifyContent: "center",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Text style={{ color: "#727272", fontSize: 12 }}>
                     Tomorrow
                   </Text>
@@ -1322,8 +1076,7 @@ const CheckoutScreen = ({
                     backgroundColor: "#F1F1F1",
                     justifyContent: "center",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Text style={{ color: "#727272", fontSize: 12 }}>
                     Tomorrow
                   </Text>
@@ -1332,8 +1085,7 @@ const CheckoutScreen = ({
                       color: "#727272",
                       fontSize: 12,
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     {moment().add(1, "days").format("DD MMM")}{" "}
                   </Text>
                 </View>
@@ -1354,8 +1106,7 @@ const CheckoutScreen = ({
                     backgroundColor: nextDayBuffer == 1 ? "#FDEFEF" : "white",
                     justifyContent: "center",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Text style={{ color: "#727272", fontSize: 12 }}>
                     {moment().add(2, "days").format("ddd")}{" "}
                   </Text>
@@ -1374,8 +1125,7 @@ const CheckoutScreen = ({
                     backgroundColor: "#F1F1F1",
                     justifyContent: "center",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Text style={{ color: "#727272", fontSize: 12 }}>
                     {moment().add(2, "days").format("ddd")}{" "}
                   </Text>
@@ -1384,8 +1134,7 @@ const CheckoutScreen = ({
                       color: "#727272",
                       fontSize: 12,
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     {moment().add(2, "days").format("DD MMM")}{" "}
                   </Text>
                 </View>
@@ -1406,8 +1155,7 @@ const CheckoutScreen = ({
                     backgroundColor: nextDayBuffer == 2 ? "#FDEFEF" : "white",
                     justifyContent: "center",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Text style={{ color: "#727272", fontSize: 12 }}>
                     {moment().add(3, "days").format("ddd")}{" "}
                   </Text>
@@ -1426,8 +1174,7 @@ const CheckoutScreen = ({
                     backgroundColor: "#F1F1F1",
                     justifyContent: "center",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Text style={{ color: "#727272", fontSize: 12 }}>
                     {moment().add(3, "days").format("ddd")}{" "}
                   </Text>
@@ -1436,8 +1183,7 @@ const CheckoutScreen = ({
                       color: "#727272",
                       fontSize: 12,
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     {moment().add(3, "days").format("DD MMM")}{" "}
                   </Text>
                 </View>
@@ -1458,8 +1204,7 @@ const CheckoutScreen = ({
                     backgroundColor: nextDayBuffer == 3 ? "#FDEFEF" : "white",
                     justifyContent: "center",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Text style={{ color: "#727272", fontSize: 12 }}>
                     {moment().add(4, "days").format("ddd")}{" "}
                   </Text>
@@ -1478,8 +1223,7 @@ const CheckoutScreen = ({
                     backgroundColor: "#F1F1F1",
                     justifyContent: "center",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Text style={{ color: "#727272", fontSize: 12 }}>
                     {moment().add(4, "days").format("ddd")}{" "}
                   </Text>
@@ -1488,8 +1232,7 @@ const CheckoutScreen = ({
                       color: "#727272",
                       fontSize: 12,
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     {moment().add(4, "days").format("DD MMM")}{" "}
                   </Text>
                 </View>
@@ -1507,8 +1250,7 @@ const CheckoutScreen = ({
                   flexDirection: "row",
                   alignItems: "center",
                   marginTop: 10,
-                }}
-              >
+                }}>
                 <Image
                   style={{ alignSelf: "flex-end", width: 15, height: 15 }}
                   resizeMode="contain"
@@ -1526,8 +1268,7 @@ const CheckoutScreen = ({
                 paddingHorizontal: 15,
                 paddingVertical: 10,
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <View style={{ flex: 1, flexDirection: "row" }}>
                 <View
                   style={{
@@ -1539,8 +1280,7 @@ const CheckoutScreen = ({
                     justifyContent: "center",
                     alignItems: "center",
                     zIndex: 1,
-                  }}
-                >
+                  }}>
                   <Image
                     style={{ height: 16, width: 50 }}
                     resizeMode={"contain"}
@@ -1560,8 +1300,7 @@ const CheckoutScreen = ({
                     borderColor: "#E3E3E3",
                     zIndex: 0,
                     marginLeft: -1,
-                  }}
-                >
+                  }}>
                   <View style={{ flex: 1 }}>
                     <Text
                       style={{
@@ -1569,13 +1308,15 @@ const CheckoutScreen = ({
                         color: "#E1171E",
                         marginLeft: 10,
                         fontWeight: "bold",
-                      }}
-                    >
+                      }}>
                       {selectedOffer?.offer?.displayName}{" "}
                     </Text>
                     <Text
-                      style={{ fontSize: 12, color: "#727272", marginLeft: 10 }}
-                    >
+                      style={{
+                        fontSize: 12,
+                        color: "#727272",
+                        marginLeft: 10,
+                      }}>
                       Coupon applied on the bill
                     </Text>
                   </View>
@@ -1588,8 +1329,7 @@ const CheckoutScreen = ({
                       alignItems: "center",
                       height: 50,
                       width: 50,
-                    }}
-                  >
+                    }}>
                     <Icon
                       name="closecircle"
                       type="AntDesign"
@@ -1611,8 +1351,7 @@ const CheckoutScreen = ({
                 paddingVertical: 10,
                 justifyContent: "center",
                 // borderTopWidth: 1, borderBottomWidth: 1, borderColor: Theme.Colors.primary,
-              }}
-            >
+              }}>
               <View style={{ flex: 1, flexDirection: "row" }}>
                 <View
                   style={{
@@ -1624,8 +1363,7 @@ const CheckoutScreen = ({
                     justifyContent: "center",
                     alignItems: "center",
                     zIndex: 1,
-                  }}
-                >
+                  }}>
                   <Image
                     style={{ height: 16, width: 50 }}
                     resizeMode={"contain"}
@@ -1645,8 +1383,7 @@ const CheckoutScreen = ({
                     borderColor: "#E3E3E3",
                     zIndex: 0,
                     marginLeft: -1,
-                  }}
-                >
+                  }}>
                   <Text style={{ fontSize: 15, marginLeft: 10, flex: 1 }}>
                     Apply Coupon Code
                   </Text>
@@ -1658,8 +1395,7 @@ const CheckoutScreen = ({
                       height: 40,
                       flexDirection: "row",
                       width: 60,
-                    }}
-                  >
+                    }}>
                     {availableCouponList?.length > 0 && (
                       <>
                         <View
@@ -1670,8 +1406,7 @@ const CheckoutScreen = ({
                             justifyContent: "center",
                             alignItems: "center",
                             borderRadius: 10,
-                          }}
-                        >
+                          }}>
                           <Text style={{ color: "white", fontSize: 12 }}>
                             {availableCouponList?.length}
                           </Text>
@@ -1695,8 +1430,7 @@ const CheckoutScreen = ({
                 marginTop: 10,
                 paddingHorizontal: 15,
                 paddingVertical: 12,
-              }}
-            >
+              }}>
               <Text style={{ fontWeight: "bold", marginTop: 10 }}>
                 Select payment method{" "}
               </Text>
@@ -1715,11 +1449,9 @@ const CheckoutScreen = ({
                   }}
                   onPress={() => {
                     setSelectedPaymentMethod("PREPAID");
-                  }}
-                >
+                  }}>
                   <View
-                    style={{ justifyContent: "center", alignItems: "center" }}
-                  >
+                    style={{ justifyContent: "center", alignItems: "center" }}>
                     <Radio
                       style={{ width: 20 }}
                       selected={
@@ -1733,16 +1465,14 @@ const CheckoutScreen = ({
                     />
                   </View>
                   <View
-                    style={{ marginLeft: 10, flexDirection: "row", flex: 1 }}
-                  >
+                    style={{ marginLeft: 10, flexDirection: "row", flex: 1 }}>
                     <View style={{ flex: 1 }}>
                       <Text
                         style={{
                           color: "black",
                           fontSize: 14,
                           fontWeight: "bold",
-                        }}
-                      >
+                        }}>
                         Make Online Payment{" "}
                       </Text>
                       <Text
@@ -1750,8 +1480,7 @@ const CheckoutScreen = ({
                           color: "#727272",
                           fontSize: 12,
                           fontWeight: null,
-                        }}
-                      >
+                        }}>
                         Preferred payment due to covid{" "}
                       </Text>
                     </View>
@@ -1786,11 +1515,9 @@ const CheckoutScreen = ({
                 }}
                 onPress={() => {
                   setSelectedPaymentMethod("COD");
-                }}
-              >
+                }}>
                 <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                >
+                  style={{ justifyContent: "center", alignItems: "center" }}>
                   <Radio
                     style={{ width: 20 }}
                     selected={selectedPaymentMethod == "COD" ? true : false}
@@ -1803,8 +1530,11 @@ const CheckoutScreen = ({
                 </View>
                 <View style={{ marginLeft: 10 }}>
                   <Text
-                    style={{ color: "black", fontSize: 14, fontWeight: "bold" }}
-                  >
+                    style={{
+                      color: "black",
+                      fontSize: 14,
+                      fontWeight: "bold",
+                    }}>
                     Cash on delivery{" "}
                   </Text>
                   {/* <Text style={{ color: '#727272', fontSize: 12, fontWeight: null }}>Coupon Codes not applicable for COD </Text> */}
@@ -1823,8 +1553,7 @@ const CheckoutScreen = ({
                   borderWidth: 1,
                   borderColor: "#EFEFEF",
                 }}
-                onPress={() => onPressCheckbox()}
-              >
+                onPress={() => onPressCheckbox()}>
                 {/* <CheckBox
                                     containerStyle={{ backgroundColor: "white", borderWidth: 0, width: 0, height: 0, marginLeft: -10 }}
                                     checkedIcon='check-square'
@@ -1870,8 +1599,7 @@ const CheckoutScreen = ({
                         color: "black",
                         fontSize: 14,
                         fontWeight: "bold",
-                      }}
-                    >
+                      }}>
                       Use Zasket Wallet Money{" "}
                     </Text>
                     <Text
@@ -1879,8 +1607,7 @@ const CheckoutScreen = ({
                         color: "#727272",
                         fontSize: 12,
                         fontWeight: null,
-                      }}
-                    >
+                      }}>
                       Available balance : ₹ {creditBalance}{" "}
                     </Text>
                   </View>
@@ -1918,8 +1645,7 @@ const CheckoutScreen = ({
               marginTop: 10,
               padding: 10,
               paddingHorizontal: 15,
-            }}
-          >
+            }}>
             <Text style={{ fontSize: 15 }}>
               <Text style={{ fontWeight: "bold" }}>Bill Details</Text>{" "}
               <Text style={{ color: "#727272", fontSize: 14 }}>
@@ -1932,8 +1658,7 @@ const CheckoutScreen = ({
                 flexDirection: "row",
                 justifyContent: "space-between",
                 marginTop: 5,
-              }}
-            >
+              }}>
               <Text style={{ color: "#727272" }}>Item Total</Text>
               <Text style={{}}>
                 ₹ {getOrdersBillingDetails?.discountedPrice?.toFixed(2)}{" "}
@@ -1954,8 +1679,7 @@ const CheckoutScreen = ({
                 flex: 1,
                 flexDirection: "row",
                 justifyContent: "space-between",
-              }}
-            >
+              }}>
               <Text style={{ color: "#727272" }}>Delivery Charges</Text>
               <Text style={{ color: Theme.Colors.primary, fontWeight: "bold" }}>
                 {getOrdersBillingDetails?.deliveryCharges > 0
@@ -1980,8 +1704,7 @@ const CheckoutScreen = ({
                     flex: 1,
                     flexDirection: "row",
                     justifyContent: "space-between",
-                  }}
-                >
+                  }}>
                   <Text style={{ color: "#35B332" }}>Coupon Discount</Text>
                   <Text style={{ color: "#35B332" }}>
                     - ₹ {(getOrdersBillingDetails?.couponDiscount).toFixed(2)}{" "}
@@ -2005,8 +1728,7 @@ const CheckoutScreen = ({
                 flexDirection: "row",
                 justifyContent: "space-between",
                 marginTop: 5,
-              }}
-            >
+              }}>
               <Text style={{ color: "#727272" }}>Zasket wallet</Text>
               <Text style={{}}>
                 ₹ {getOrdersBillingDetails?.creditUsed?.toFixed(2)}{" "}
@@ -2027,8 +1749,7 @@ const CheckoutScreen = ({
                 flex: 1,
                 flexDirection: "row",
                 justifyContent: "space-between",
-              }}
-            >
+              }}>
               <Text style={{ fontWeight: "bold" }}>Total Amount </Text>
               <Text style={{ fontWeight: "bold" }}>
                 ₹ {(getOrdersBillingDetails?.finalPrice).toFixed(2)}{" "}
@@ -2053,8 +1774,7 @@ const CheckoutScreen = ({
                   backgroundColor: "#F1FAEA",
                   alignItems: "center",
                   marginVertical: 25,
-                }}
-              >
+                }}>
                 <View
                   style={{
                     paddingLeft: 10,
@@ -2063,8 +1783,7 @@ const CheckoutScreen = ({
                     justifyContent: "center",
                     width: "90%",
                     marginVertical: 15,
-                  }}
-                >
+                  }}>
                   <Text style={{ color: "#60B11F", textAlign: "center" }}>
                     😊 {getOrdersBillingDetails?.comment}{" "}
                   </Text>
@@ -2082,8 +1801,7 @@ const CheckoutScreen = ({
               backgroundColor: "#F5F5F5",
               flexDirection: "row",
               justifyContent: "center",
-            }}
-          >
+            }}>
             <View style={{ flex: 1, justifyContent: "center", padding: 10 }}>
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>
                 ₹ {(getOrdersBillingDetails?.finalPrice).toFixed(2)}{" "}
@@ -2092,8 +1810,7 @@ const CheckoutScreen = ({
                 onPress={() => {
                   scrollViewRef.current.scrollToEnd({ animated: true });
                 }}
-                style={{}}
-              >
+                style={{}}>
                 <Text style={{ color: "#2D87C9" }}>
                   View bill details{" "}
                   <Icon
@@ -2113,8 +1830,7 @@ const CheckoutScreen = ({
                   borderRadius: 5,
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <Text style={{ color: "white", fontSize: 17 }}>
                   Make a Payment{" "}
                   <Icon
@@ -2138,8 +1854,7 @@ const CheckoutScreen = ({
                       borderRadius: 5,
                       justifyContent: "center",
                       alignItems: "center",
-                    }}
-                  >
+                    }}>
                     <ActivityIndicator color="white" />
                   </View>
                 ) : (
@@ -2152,16 +1867,14 @@ const CheckoutScreen = ({
                       borderRadius: 5,
                       justifyContent: "center",
                       alignItems: "center",
-                    }}
-                  >
+                    }}>
                     {config?.enableCOD ? (
                       <Text
                         style={{
                           color: "white",
                           fontWeight: "bold",
                           fontSize: 16,
-                        }}
-                      >
+                        }}>
                         {selectedPaymentMethod == "COD"
                           ? "Place Order"
                           : "Continue"}{" "}
@@ -2172,8 +1885,7 @@ const CheckoutScreen = ({
                           color: "white",
                           fontWeight: "bold",
                           fontSize: 16,
-                        }}
-                      >
+                        }}>
                         Make payment{" "}
                       </Text>
                     )}
@@ -2195,16 +1907,14 @@ const CheckoutScreen = ({
           swipeDirection="down"
           style={{ margin: 0, justifyContent: "flex-end" }}
           onBackButtonPress={() => setPaymentSelectionActionScreen(false)}
-          onBackdropPress={() => setPaymentSelectionActionScreen(false)}
-        >
+          onBackdropPress={() => setPaymentSelectionActionScreen(false)}>
           <SafeAreaView
             style={{
               height: "50%",
               backgroundColor: "white",
               borderTopLeftRadius: 25,
               borderTopRightRadius: 25,
-            }}
-          >
+            }}>
             <View
               style={{
                 alignSelf: "center",
@@ -2217,8 +1927,7 @@ const CheckoutScreen = ({
             />
             <ScrollView
               style={{ flex: 1 }}
-              showsVerticalScrollIndicator={false}
-            >
+              showsVerticalScrollIndicator={false}>
               <View
                 style={{
                   flex: 1,
@@ -2228,8 +1937,7 @@ const CheckoutScreen = ({
                   alignSelf: "center",
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <Text style={{ fontWeight: "bold", marginTop: 10 }}>
                   Select payment method
                 </Text>
@@ -2255,11 +1963,9 @@ const CheckoutScreen = ({
                 }}
                 onPress={() => {
                   setSelectedPaymentMethod("PREPAID");
-                }}
-              >
+                }}>
                 <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                >
+                  style={{ justifyContent: "center", alignItems: "center" }}>
                   <Radio
                     selected={selectedPaymentMethod == "PREPAID" ? true : false}
                     color={Theme.Colors.primary}
@@ -2276,8 +1982,7 @@ const CheckoutScreen = ({
                         textTransform: "capitalize",
                         color: "black",
                         fontSize: 14,
-                      }}
-                    >
+                      }}>
                       Make Online Payment{" "}
                     </Text>
                     <Text style={{ color: "#727272", fontSize: 12 }}>
@@ -2314,11 +2019,9 @@ const CheckoutScreen = ({
                 }}
                 onPress={() => {
                   setSelectedPaymentMethod("COD");
-                }}
-              >
+                }}>
                 <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                >
+                  style={{ justifyContent: "center", alignItems: "center" }}>
                   <Radio
                     selected={selectedPaymentMethod == "COD" ? true : false}
                     color={Theme.Colors.primary}
@@ -2346,8 +2049,7 @@ const CheckoutScreen = ({
         <NativeModal
           animationType="slide"
           visible={couponModalVisible}
-          onRequestClose={() => setCouponModalVisible(false)}
-        >
+          onRequestClose={() => setCouponModalVisible(false)}>
           <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
             <Root>
               <Container>
@@ -2361,8 +2063,7 @@ const CheckoutScreen = ({
                         width: 60,
                         justifyContent: "center",
                         alignItems: "center",
-                      }}
-                    >
+                      }}>
                       <Icon
                         name="chevron-small-left"
                         type="Entypo"
@@ -2376,8 +2077,7 @@ const CheckoutScreen = ({
                           color: "black",
                           textTransform: "capitalize",
                           fontWeight: "bold",
-                        }}
-                      >
+                        }}>
                         Apply Coupon{" "}
                       </Text>
                     </View>
@@ -2391,8 +2091,7 @@ const CheckoutScreen = ({
                           paddingHorizontal: 15,
                           paddingVertical: 10,
                           justifyContent: "center",
-                        }}
-                      >
+                        }}>
                         <View style={{ flex: 1, flexDirection: "row" }}>
                           <View
                             style={{
@@ -2404,8 +2103,7 @@ const CheckoutScreen = ({
                               justifyContent: "center",
                               alignItems: "center",
                               zIndex: 1,
-                            }}
-                          >
+                            }}>
                             <Image
                               style={{ height: 16, width: 50 }}
                               resizeMode={"contain"}
@@ -2425,8 +2123,7 @@ const CheckoutScreen = ({
                               borderColor: "#E3E3E3",
                               zIndex: 0,
                               marginLeft: -1,
-                            }}
-                          >
+                            }}>
                             <View style={{ flex: 1 }}>
                               <Text
                                 style={{
@@ -2434,8 +2131,7 @@ const CheckoutScreen = ({
                                   color: "#E1171E",
                                   marginLeft: 10,
                                   fontWeight: "bold",
-                                }}
-                              >
+                                }}>
                                 {selectedOffer?.offer?.displayName}{" "}
                               </Text>
                               <Text
@@ -2443,8 +2139,7 @@ const CheckoutScreen = ({
                                   fontSize: 12,
                                   color: "#727272",
                                   marginLeft: 10,
-                                }}
-                              >
+                                }}>
                                 Coupon applied on the bill
                               </Text>
                             </View>
@@ -2457,8 +2152,7 @@ const CheckoutScreen = ({
                                 alignItems: "center",
                                 height: 50,
                                 width: 50,
-                              }}
-                            >
+                              }}>
                               <Icon
                                 name="closecircle"
                                 type="AntDesign"
@@ -2478,8 +2172,7 @@ const CheckoutScreen = ({
                           justifyContent: "center",
                           height: 65,
                           // borderTopWidth: 1, borderBottomWidth: 1, borderColor: Theme.Colors.primary,
-                        }}
-                      >
+                        }}>
                         <View style={{ flex: 1, flexDirection: "row" }}>
                           {/* <View style={{ backgroundColor: '#FDEFEF', borderWidth: 1, borderColor: "#F5C4C6", borderTopLeftRadius: 4, borderBottomLeftRadius: 4, justifyContent: 'center', alignItems: 'center', zIndex: 1 }}>
                                                 <Image
@@ -2501,8 +2194,7 @@ const CheckoutScreen = ({
                               borderColor: "#E3E3E3",
                               zIndex: 0,
                               marginLeft: -1,
-                            }}
-                          >
+                            }}>
                             <TextInput
                               style={{ height: 40, flex: 1, marginLeft: 8 }}
                               onChangeText={(text) => setCoupon(text)}
@@ -2519,15 +2211,13 @@ const CheckoutScreen = ({
                                   justifyContent: "center",
                                   alignItems: "center",
                                   height: 40,
-                                }}
-                              >
+                                }}>
                                 <Text
                                   style={{
                                     marginHorizontal: 5,
                                     color: Theme.Colors.primary,
                                     fontWeight: "bold",
-                                  }}
-                                >
+                                  }}>
                                   Apply
                                 </Text>
                               </TouchableOpacity>
@@ -2537,15 +2227,13 @@ const CheckoutScreen = ({
                                   justifyContent: "center",
                                   alignItems: "center",
                                   height: 40,
-                                }}
-                              >
+                                }}>
                                 <Text
                                   style={{
                                     marginHorizontal: 5,
                                     color: "#F5C4C6",
                                     fontWeight: "bold",
-                                  }}
-                                >
+                                  }}>
                                   Apply
                                 </Text>
                               </View>
@@ -2562,8 +2250,7 @@ const CheckoutScreen = ({
                             paddingLeft: 20,
                             paddingTop: 10,
                             fontWeight: "bold",
-                          }}
-                        >
+                          }}>
                           Available Coupons for you
                         </Text>
                       ) : null}
@@ -2572,16 +2259,14 @@ const CheckoutScreen = ({
                         renderItem={({ item }) => (
                           <View
                             // onPress={() => { navigation.navigate("ProductDetailScreen", { item: item }) }}
-                            style={styles.productCard}
-                          >
+                            style={styles.productCard}>
                             {/* <Text>{JSON.stringify(item, null, "         ")} </Text> */}
                             <View style={[{ padding: 10, flex: 1 }]}>
                               <View
                                 style={{
                                   flexDirection: "row",
                                   justifyContent: "space-between",
-                                }}
-                              >
+                                }}>
                                 <View
                                   style={{
                                     justifyContent: "space-between",
@@ -2593,15 +2278,13 @@ const CheckoutScreen = ({
                                     backgroundColor: "#FDEFEF",
                                     padding: 7,
                                     borderRadius: 4,
-                                  }}
-                                >
+                                  }}>
                                   <Text
                                     style={{
                                       fontSize: 14,
                                       color: "#E1171E",
                                       fontWeight: "bold",
-                                    }}
-                                  >
+                                    }}>
                                     {item?.offerResponse?.offerCode}{" "}
                                   </Text>
                                 </View>
@@ -2616,15 +2299,13 @@ const CheckoutScreen = ({
                                     style={{
                                       justifyContent: "center",
                                       alignItems: "center",
-                                    }}
-                                  >
+                                    }}>
                                     <Text
                                       style={{
                                         marginHorizontal: 5,
                                         color: Theme.Colors.primary,
                                         fontWeight: "bold",
-                                      }}
-                                    >
+                                      }}>
                                       Apply
                                     </Text>
                                   </TouchableOpacity>
@@ -2633,15 +2314,13 @@ const CheckoutScreen = ({
                                     style={{
                                       justifyContent: "center",
                                       alignItems: "center",
-                                    }}
-                                  >
+                                    }}>
                                     <Text
                                       style={{
                                         marginHorizontal: 5,
                                         color: "#F5C4C6",
                                         fontWeight: "bold",
-                                      }}
-                                    >
+                                      }}>
                                       Apply
                                     </Text>
                                   </View>
@@ -2654,8 +2333,7 @@ const CheckoutScreen = ({
                                   fontWeight: "bold",
                                   textTransform: "capitalize",
                                   marginVertical: 5,
-                                }}
-                              >
+                                }}>
                                 {item?.offerResponse?.uiListDisplayNameHeader}{" "}
                               </Text>
                               <Text style={{ fontSize: 14, color: "#909090" }}>
@@ -2670,8 +2348,7 @@ const CheckoutScreen = ({
                                     fontSize: 14,
                                     color: "#E1171E",
                                     marginVertical: 10,
-                                  }}
-                                >
+                                  }}>
                                   {item?.comment}{" "}
                                 </Text>
                               ) : null}
@@ -2708,13 +2385,11 @@ const CheckoutScreen = ({
           animationType="fade"
           transparent={true}
           visible={couponSuccessModal}
-          onRequestClose={() => setCouponSuccessModal(false)}
-        >
+          onRequestClose={() => setCouponSuccessModal(false)}>
           <TouchableWithoutFeedback
             onPress={() => {
               setCouponSuccessModal(false);
-            }}
-          >
+            }}>
             <View style={styles.centeredView}>
               <TouchableWithoutFeedback onPress={() => {}}>
                 <View style={styles.modalView}>
@@ -2731,8 +2406,7 @@ const CheckoutScreen = ({
                       width: 50,
                       alignSelf: "center",
                       marginTop: -25,
-                    }}
-                  >
+                    }}>
                     <Image
                       style={{ height: 16, width: 50 }}
                       resizeMode={"contain"}
@@ -2748,8 +2422,7 @@ const CheckoutScreen = ({
                         color: "#909090",
                         textAlign: "center",
                         fontSize: 14,
-                      }}
-                    >
+                      }}>
                       Saving with this coupon
                     </Text>
                     <Text
@@ -2758,8 +2431,7 @@ const CheckoutScreen = ({
                         fontWeight: "bold",
                         textAlign: "center",
                         marginVertical: 10,
-                      }}
-                    >
+                      }}>
                       “{appliedCoupon?.offer?.offerCode}” Applied
                     </Text>
                   </View>
@@ -2774,14 +2446,12 @@ const CheckoutScreen = ({
                       padding: 10,
                       borderBottomLeftRadius: 10,
                       borderBottomRightRadius: 10,
-                    }}
-                  >
+                    }}>
                     <Text
                       style={{
                         color: Theme.Colors.primary,
                         fontWeight: "bold",
-                      }}
-                    >
+                      }}>
                       OK{" "}
                     </Text>
                   </TouchableOpacity>
@@ -2803,8 +2473,7 @@ const CheckoutScreen = ({
                 bottom: 0,
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <ActivityIndicator size="large" color="#ffffff" />
             </View>
           </>
