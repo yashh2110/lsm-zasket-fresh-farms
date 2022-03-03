@@ -140,16 +140,16 @@ const CheckoutScreen = ({
       }
     });
   };
-  useEffect(() => {
-    if (getOrdersBillingDetails?.finalPrice == 0) {
-      SetButtonHandle(true);
-    } else {
-      SetButtonHandle(false);
-    }
-  }, [getOrdersBillingDetails]);
-  console.log(getOrdersBillingDetails?.finalPrice, "final_price");
+  // useEffect(() => {
+  //   if (getOrdersBillingDetails?.finalPrice == 0) {
+  //     SetButtonHandle(true);
+  //   } else {
+  //     SetButtonHandle(false);
+  //   }
+  // }, [getOrdersBillingDetails]);
+  // console.log(getOrdersBillingDetails?.finalPrice, "final_price");
 
-  useEffect(() => {}, []);
+  // useEffect(() => {}, []);
 
   const initialFunction = async () => {
     let productNameArray = [];
@@ -186,18 +186,11 @@ const CheckoutScreen = ({
             setDisableCheck(false);
           }
           SetCreditBalance(res?.data?.customerDetails?.creditBalance);
-          // alert(res?.data?.customerDetails?.creditBalance)
           let total = cartItems.reduce(function (sum, item) {
-            // alert(JSON.stringify(item, null, "       "))
             setDiscountedPrice(item.discountedPrice);
             setCount(item.count);
             return sum + item.discountedPrice * item.count;
           }, 0);
-          if (getOrdersBillingDetails?.finalPrice == 0) {
-            SetButtonHandle(true);
-          } else {
-            SetButtonHandle(false);
-          }
           setloadinggg(false);
         } else {
           setloadinggg(false);
@@ -324,7 +317,6 @@ const CheckoutScreen = ({
         if (newArray[i]?.availableOrdersCount > 0) {
           setNextDayBuffer(newArray[i]?.nextDayBuffer);
           setslotTime(slotsArray[i]?.description);
-
           break;
         }
       }
@@ -355,7 +347,6 @@ const CheckoutScreen = ({
         if (newArray[i]?.availableOrdersCount > 0) {
           setNextDayBuffer(newArray[i]?.nextDayBuffer);
           setslotTime(slotsArray[i]?.description);
-
           break;
         }
       }
@@ -406,7 +397,7 @@ const CheckoutScreen = ({
       await onSelectPaymentMethod("PREPAID");
     }
   };
-  console.log(buttonHandle);
+
   const onSelectPaymentMethod = async (option) => {
     // alert(JSON.stringify(cartItems, null, "      "))
     let itemCreateRequests = [];
@@ -817,43 +808,21 @@ const CheckoutScreen = ({
 
   const onPressCheckbox = async () => {
     if (walletCheck == true) {
-      // let coupons = await AsyncStorage.getItem('appliedCoupon');
-      // let parsedCoupon = await JSON.parse(coupons);
-      // let appliedCoupon = await parsedCoupon?.offer?.offerCode
       await initialBillingFunction(false, OfferCode);
       setWalletCheck(false);
-
-      // if (getOrdersBillingDetails?.finalPrice == 0) {
-      //     SetButtonHandle(true)
-      // } else {
-      //     SetButtonHandle(false)
-
-      // }
     } else {
-      // let coupons = await AsyncStorage.getItem('appliedCoupon');
-      // let parsedCoupon = await JSON.parse(coupons);
-      // let appliedCoupon = await parsedCoupon?.offer?.offerCode
       await initialBillingFunction(true, OfferCode);
       setWalletCheck(true);
-
-      // if (getOrdersBillingDetails?.finalPrice == 0) {
-      //     SetButtonHandle(true)
-      // } else {
-      //     SetButtonHandle(false)
-
-      // }
     }
   };
   return (
     <>
       <View style={{ flex: 1, backgroundColor: "white" }}>
-        {/* <Text>{getOrdersBillingDetails?.finalPrice}</Text> */}
         <CustomHeader
           navigation={navigation}
           title={"Checkout"}
           showSearch={false}
         />
-        {/* <Text>{getOrdersBillingDetails?.discountedPrice}</Text> */}
         <ScrollView
           ref={scrollViewRef}
           style={{ flex: 1, backgroundColor: "#F8F8F8" }}

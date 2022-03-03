@@ -167,7 +167,11 @@ export const onLogin = (payload) => async (dispatch) => {
   });
   dispatch(saveUserDetails(payload));
 };
-
+export const setUnAuthorized = () => async (dispatch) => {
+  dispatch({
+    type: LOGOUT,
+  });
+};
 export const onLogout = () => async (dispatch) => {
   dispatch({
     type: LOGOUT,

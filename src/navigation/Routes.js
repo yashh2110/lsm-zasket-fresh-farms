@@ -87,8 +87,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
       // initialRouteName="OnBoardScreen"
       screenOptions={{
         headerShown: false,
-      }}
-    >
+      }}>
       <Stack.Screen
         name="Login"
         component={Login}
@@ -112,8 +111,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
       initialRouteName="AccessPermissionScreen"
       screenOptions={{
         headerShown: false,
-      }}
-    >
+      }}>
       <Stack.Screen
         name="AccessPermissionScreen"
         component={AccessPermissionScreen}
@@ -144,8 +142,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
         activeTintColor: Theme.Colors.primary,
         activeBackgroundColor: "#fff",
         inactiveBackgroundColor: "#fff",
-      }}
-    >
+      }}>
       <Tab.Screen
         name="HomeStack"
         component={HomeStack}
@@ -229,8 +226,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                   marginTop: -2,
                   fontWeight: "bold",
                   backgroundColor: "#9462FF",
-                }}
-              >
+                }}>
                 Get ₹ 500
               </Text>
             </View>
@@ -317,8 +313,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
           // headerTintColor: '#fff',
           // headerTitleStyle: { fontWeight: 'bold' },
           headerShown: false,
-        }}
-      >
+        }}>
         <Stack.Screen
           name="Home"
           component={HomeScreen}
@@ -345,8 +340,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
         initialRouteName="Search"
         screenOptions={{
           headerShown: false,
-        }}
-      >
+        }}>
         <Stack.Screen
           name="Search"
           component={SearchScreen}
@@ -366,8 +360,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
         initialRouteName="Cart"
         screenOptions={{
           headerShown: false,
-        }}
-      >
+        }}>
         <Stack.Screen
           name="Cart"
           component={CartScreen}
@@ -405,8 +398,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
         initialRouteName="Referrals"
         screenOptions={{
           headerShown: false,
-        }}
-      >
+        }}>
         <Stack.Screen
           name="Referrals"
           component={ReferralScreen}
@@ -425,8 +417,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
           // headerTintColor: '#fff',
           // headerTitleStyle: { fontWeight: 'bold' },
           headerShown: false,
-        }}
-      >
+        }}>
         <Stack.Screen name="Account" component={AccountScreen} />
         <Stack.Screen name="SupportScreen" component={SupportScreen} />
         <Stack.Screen name="CancelOrderScreen" component={CancelOrderScreen} />
@@ -497,6 +488,7 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
     }),
     []
   );
+  console.log(isAuthenticated);
 
   React.useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
@@ -518,106 +510,112 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
   return (
     <>
       <AuthContext.Provider value={authContext}>
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="BottomTabRoute"
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            {state.onBoardKey == null ? (
-              <>
-                {/* <Stack.Screen name="LoadingScreen" component={LoadingScreen} /> */}
-                <Stack.Screen name="OnBoardScreen" component={OnBoardScreen} />
-                <Stack.Screen
-                  name="SwitchNavigator"
-                  component={SwitchNavigator}
-                  options={{ cardStyleInterpolator: forFade }}
-                />
-              </>
-            ) : (
-              <>
-                <Stack.Screen
-                  name="BottomTabRoute"
-                  component={BottomTabRoute}
-                />
-                <Stack.Screen name="CartStack" component={CartStack} />
-                <Stack.Screen
-                  name="MapStack"
-                  component={MapStack}
-                  options={{ cardStyleInterpolator: forFade }}
-                />
-                <Stack.Screen
-                  name="ProductDetailScreen"
-                  component={ProductDetailScreen}
-                  options={{ title: "Home Page" }}
-                />
-                <Stack.Screen
-                  name="MapScreen"
-                  component={MapScreen}
-                  options={{ cardStyleInterpolator: forFade }}
-                />
-                <Stack.Screen
-                  name="CartScreen"
-                  component={CartScreen}
-                  options={{ cardStyleInterpolator: forFade }}
-                />
-                <Stack.Screen
-                  name="CheckoutScreen"
-                  component={CheckoutScreen}
-                  options={{ cardStyleInterpolator: forFade }}
-                />
-                <Stack.Screen
-                  name="ManageAddressScreen"
-                  component={ManageAddressScreen}
-                  options={{ title: "Manage Addresses" }}
-                />
-                <Stack.Screen
-                  name="ReferalCodeScreen"
-                  component={ReferalCodeScreen}
-                  options={{ title: "Referal Code" }}
-                />
-                <Stack.Screen
-                  name="AccessPermissionScreen"
-                  component={AccessPermissionScreen}
-                  options={{ cardStyleInterpolator: forFade }}
-                />
-                <Stack.Screen
-                  name="SetDeliveryLocationScreen"
-                  component={SetDeliveryLocationScreen}
-                  options={{ cardStyleInterpolator: forFade }}
-                />
-                <Stack.Screen
-                  name="MyOrdersDetailScreen"
-                  component={MyOrdersDetailScreen}
-                  options={{ cardStyleInterpolator: forFade }}
-                />
-                <Stack.Screen
-                  name="PaymentSuccessScreenOrderDetail"
-                  component={PaymentSuccessScreenOrderDetail}
-                  options={{ cardStyleInterpolator: forFade }}
-                />
-                <Stack.Screen
-                  name="WalletSuccessScreen"
-                  component={WalletSuccessScreen}
-                  options={{ cardStyleInterpolator: forFade }}
-                />
-              </>
-            )}
-            <Stack.Screen name="AuthRoute" component={AuthRoute} />
-            <Stack.Screen
-              name="AutoCompleteLocationScreen"
-              component={AutoCompleteLocationScreen}
-              options={{ cardStyleInterpolator: forFade }}
-            />
-            <Stack.Screen
-              name="MapScreenGrabPincode"
-              component={MapScreenGrabPincode}
-              options={{ cardStyleInterpolator: forFade }}
-            />
-            <></>
-          </Stack.Navigator>
-        </NavigationContainer>
+        {isAuthenticated != null ? (
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName="BottomTabRoute"
+              screenOptions={{
+                headerShown: false,
+              }}>
+              {!isAuthenticated ? (
+                <>
+                  {/* <Stack.Screen name="LoadingScreen" component={LoadingScreen} /> */}
+                  <Stack.Screen
+                    name="OnBoardScreen"
+                    component={OnBoardScreen}
+                  />
+                  <Stack.Screen
+                    name="SwitchNavigator"
+                    component={SwitchNavigator}
+                    options={{ cardStyleInterpolator: forFade }}
+                  />
+                </>
+              ) : (
+                <>
+                  <Stack.Screen
+                    name="BottomTabRoute"
+                    component={BottomTabRoute}
+                  />
+                  <Stack.Screen name="CartStack" component={CartStack} />
+                  <Stack.Screen
+                    name="MapStack"
+                    component={MapStack}
+                    options={{ cardStyleInterpolator: forFade }}
+                  />
+                  <Stack.Screen
+                    name="ProductDetailScreen"
+                    component={ProductDetailScreen}
+                    options={{ title: "Home Page" }}
+                  />
+                  <Stack.Screen
+                    name="MapScreen"
+                    component={MapScreen}
+                    options={{ cardStyleInterpolator: forFade }}
+                  />
+                  <Stack.Screen
+                    name="CartScreen"
+                    component={CartScreen}
+                    options={{ cardStyleInterpolator: forFade }}
+                  />
+                  <Stack.Screen
+                    name="CheckoutScreen"
+                    component={CheckoutScreen}
+                    options={{ cardStyleInterpolator: forFade }}
+                  />
+                  <Stack.Screen
+                    name="ManageAddressScreen"
+                    component={ManageAddressScreen}
+                    options={{ title: "Manage Addresses" }}
+                  />
+                  <Stack.Screen
+                    name="ReferalCodeScreen"
+                    component={ReferalCodeScreen}
+                    options={{ title: "Referal Code" }}
+                  />
+                  <Stack.Screen
+                    name="AccessPermissionScreen"
+                    component={AccessPermissionScreen}
+                    options={{ cardStyleInterpolator: forFade }}
+                  />
+                  <Stack.Screen
+                    name="SetDeliveryLocationScreen"
+                    component={SetDeliveryLocationScreen}
+                    options={{ cardStyleInterpolator: forFade }}
+                  />
+                  <Stack.Screen
+                    name="MyOrdersDetailScreen"
+                    component={MyOrdersDetailScreen}
+                    options={{ cardStyleInterpolator: forFade }}
+                  />
+                  <Stack.Screen
+                    name="PaymentSuccessScreenOrderDetail"
+                    component={PaymentSuccessScreenOrderDetail}
+                    options={{ cardStyleInterpolator: forFade }}
+                  />
+                  <Stack.Screen
+                    name="WalletSuccessScreen"
+                    component={WalletSuccessScreen}
+                    options={{ cardStyleInterpolator: forFade }}
+                  />
+                </>
+              )}
+              <Stack.Screen name="AuthRoute" component={AuthRoute} />
+              <Stack.Screen
+                name="AutoCompleteLocationScreen"
+                component={AutoCompleteLocationScreen}
+                options={{ cardStyleInterpolator: forFade }}
+              />
+              <Stack.Screen
+                name="MapScreenGrabPincode"
+                component={MapScreenGrabPincode}
+                options={{ cardStyleInterpolator: forFade }}
+              />
+              <></>
+            </Stack.Navigator>
+          </NavigationContainer>
+        ) : (
+          <LoadingScreen />
+        )}
       </AuthContext.Provider>
     </>
   );

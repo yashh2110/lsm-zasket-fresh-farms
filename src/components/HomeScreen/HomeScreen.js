@@ -64,6 +64,7 @@ import CartDown from "../common/cartDown";
 import appsFlyer from "react-native-appsflyer";
 import LinearGradient from "react-native-linear-gradient";
 import analytics from "@react-native-firebase/analytics";
+import InitialLoader from "../common/InitialLoader";
 
 RNUxcam.startWithKey("qercwheqrlqze96"); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
@@ -110,22 +111,22 @@ const HomeScreen = ({
 
   // }
   const { width: screenWidth } = Dimensions.get("window");
-  useEffect(() => {
-    // alert(JSON.stringify(getOrdersBillingDetails, null, "      "))
-    initalCustomerDetails();
-    // const eventName = 'af_login'
-    // appsFlyer.logEvent(
-    //     eventName,
-    //     (res) => {
-    //         console.log(res);
-    //     },
-    //     (err) => {
-    //         console.error(err);
-    //     }
-    // );
+  // useEffect(() => {
+  //   // alert(JSON.stringify(getOrdersBillingDetails, null, "      "))
+  //   initalCustomerDetails();
+  //   // const eventName = 'af_login'
+  //   // appsFlyer.logEvent(
+  //   //     eventName,
+  //   //     (res) => {
+  //   //         console.log(res);
+  //   //     },
+  //   //     (err) => {
+  //   //         console.error(err);
+  //   //     }
+  //   // );
 
-    // alert(JSON.stringify(homeScreenLocation, null, "   "))
-  }, []);
+  //   // alert(JSON.stringify(homeScreenLocation, null, "   "))
+  // }, []);
 
   useEffect(() => {
     addToCard();
@@ -182,7 +183,6 @@ const HomeScreen = ({
   };
 
   const initalCustomerDetails = async () => {
-    setLoading(true);
     getCustomerDetailsLanAndLon(homeScreenLocation, async (res, status) => {
       // alert("asdkfhiu")
       if (status) {
@@ -192,11 +192,9 @@ const HomeScreen = ({
         // setUserDetails(res?.data)
         await AsyncStorage.setItem("userDetails", JSON.stringify(res?.data));
         setRefresh(false);
-        setLoading(false);
       } else {
         // setUserDetails({})
         setRefresh(false);
-        setLoading(false);
       }
     });
   };
@@ -364,8 +362,14 @@ const HomeScreen = ({
   ] = useState(false);
   const [addressResult, setAddressResult] = useState([]);
   useEffect(() => {
-    initialFunction();
-    checkForHomescreenLocationAddress();
+    setLoading(true);
+    const initial = async () => {
+      await initialFunction();
+      await checkForHomescreenLocationAddress();
+      await initalCustomerDetails();
+      setLoading(false);
+    };
+    initial();
   }, []);
 
   useEffect(() => {
@@ -405,27 +409,22 @@ const HomeScreen = ({
     }
   }, [isAuthenticated]);
 
-  const initialFunction = () => {
-    getAllCategories((res, status) => {
+  const initialFunction = async () => {
+    await getAllCategories((res, status) => {
       if (status) {
         // alert(JSON.stringify(res.data, null, "      "))
-        setLoading(false);
         setRefresh(false);
       } else {
         setRefresh(false);
-        setLoading(false);
       }
     });
-
-    getAllBanners((res, status) => {
+    await getAllBanners((res, status) => {
       if (status) {
         // alert(JSON.stringify(res?.data?.subBanners[0], null, "      "))
         setSubBanners(res?.data?.subBanners[0]);
-        setLoading(false);
         setRefresh(false);
       } else {
         setRefresh(false);
-        setLoading(false);
       }
     });
   };
@@ -496,11 +495,11 @@ const HomeScreen = ({
         homeScreenLocation?.lat == undefined ||
         homeScreenLocation?.lat == ""
       ) {
-        CheckPermissions((status) => {
+        await CheckPermissions(async (status) => {
           if (status) {
-            getCurrentPosition();
+            await getCurrentPosition();
           } else {
-            getAllUserAddress(async (response, status) => {
+            await getAllUserAddress(async (response, status) => {
               if (status) {
                 let newArray = [];
                 await response?.data?.forEach((el, index) => {
@@ -525,7 +524,7 @@ const HomeScreen = ({
   const getCurrentPosition = async () => {
     Geolocation.getCurrentPosition(
       async (position) => {
-        fetch(
+        await fetch(
           "https://maps.googleapis.com/maps/api/geocode/json?address=" +
             position.coords.latitude +
             "," +
@@ -674,11 +673,11 @@ const HomeScreen = ({
         //   "getorderssssssss",
         //   JSON.stringify(res.data, null, "      ")
         // );
-        setLoading(false);
+        // setLoading(false);
         setRefresh(false);
       } else {
         setRefresh(false);
-        setLoading(false);
+        // setLoading(false);
       }
     });
   };
@@ -750,8 +749,7 @@ const HomeScreen = ({
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
-        }
-      >
+        }>
         {/* <Text>{partnerDetails?.partnerStoreName}</Text> */}
         {partnerDetails?.partnerStoreName == "" ||
         partnerDetails?.partnerStoreName == null ||
@@ -763,16 +761,14 @@ const HomeScreen = ({
                 justifyContent: "space-between",
                 paddingHorizontal: 10,
                 flexWrap: "wrap",
-              }}
-            >
+              }}>
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate("AutoCompleteLocationScreen", {
                     navigateTo: "MapScreenGrabPincode",
                   });
                 }}
-                style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
-              >
+                style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
                 <Icon
                   name="location-pin"
                   type="Entypo"
@@ -797,8 +793,7 @@ const HomeScreen = ({
               flexDirection: "row",
               paddingHorizontal: 1,
               paddingRight: 2,
-            }}
-          >
+            }}>
             <View style={{ width: "60%", paddingLeft: 7 }}>
               <View style={{}}>
                 <TouchableOpacity
@@ -810,15 +805,13 @@ const HomeScreen = ({
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Text
                     numberOfLines={1}
                     style={{
                       color: "#000000",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     <Image
                       style={{
                         height: 14,
@@ -857,16 +850,14 @@ const HomeScreen = ({
                     flex: 1,
                     marginLeft: 3,
                     marginTop: 2,
-                  }}
-                >
+                  }}>
                   {/* <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} /> */}
                   <Text
                     numberOfLines={1}
                     style={{
                       color: "#808080",
                       fontSize: 12.5,
-                    }}
-                  >
+                    }}>
                     {homeScreenLocation?.addressLine_1}
                   </Text>
                   {/* <Icon name="arrow-drop-down" type="MaterialIcons" style={{ fontSize: 22 }} /> */}
@@ -887,8 +878,7 @@ const HomeScreen = ({
                 onPress={() => {
                   onPressWhatsApp();
                 }}
-                style={{ marginRight: 3 }}
-              >
+                style={{ marginRight: 3 }}>
                 <Image
                   style={{ height: 40, width: 80, marginHorizontal: 5 }}
                   resizeMode="contain"
@@ -912,16 +902,14 @@ const HomeScreen = ({
               justifyContent: "space-between",
               alignItems: "center",
               marginVertical: 3,
-            }}
-          >
+            }}>
             <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
                 flex: 1,
                 marginRight: 5,
-              }}
-            >
+              }}>
               <Text style={{ color: "white" }}>
                 <Icon
                   name="warning"
@@ -942,8 +930,7 @@ const HomeScreen = ({
                 paddingHorizontal: 5,
                 paddingVertical: 4,
                 borderRadius: 5,
-              }}
-            >
+              }}>
               <Text style={{ color: "white" }}>Change</Text>
             </TouchableOpacity>
           </View>
@@ -951,8 +938,7 @@ const HomeScreen = ({
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ padding: 10, marginTop: 5 }}
-        >
+          contentContainerStyle={{ padding: 10, marginTop: 5 }}>
           {bannerImages?.map((el, index) => {
             return (
               <>
@@ -966,8 +952,7 @@ const HomeScreen = ({
                         borderRadius: 5,
                         marginRight: index == 0 ? 18 : 15,
                         marginLeft: index == 0 ? 0 : 2,
-                      }}
-                    >
+                      }}>
                       {el?.imagePath ? (
                         <Image
                           style={{
@@ -996,8 +981,7 @@ const HomeScreen = ({
                         }}
                         onPress={() =>
                           moreShare(el?.imagePath, el?.shareMessage)
-                        }
-                      >
+                        }>
                         <View
                           style={{
                             borderRadius: 25,
@@ -1006,8 +990,7 @@ const HomeScreen = ({
                             height: 24,
                             justifyContent: "center",
                             alignItems: "center",
-                          }}
-                        >
+                          }}>
                           <View
                             style={{
                               flexDirection: "row",
@@ -1016,8 +999,7 @@ const HomeScreen = ({
                               justifyContent: "center",
                               alignItems: "center",
                               opacity: 0.8,
-                            }}
-                          >
+                            }}>
                             <FastImage
                               style={{ width: 15, height: 15 }}
                               source={require("../../assets/png/share.png")}
@@ -1028,8 +1010,7 @@ const HomeScreen = ({
                                 marginHorizontal: 2,
                                 fontWeight: "bold",
                                 fontSize: 15,
-                              }}
-                            >
+                              }}>
                               Share
                             </Text>
                           </View>
@@ -1109,8 +1090,7 @@ const HomeScreen = ({
             justifyContent: "center",
             padding: 5,
             marginTop: -10,
-          }}
-        >
+          }}>
           <FlatList
             data={categories}
             numColumns={3}
@@ -1129,16 +1109,14 @@ const HomeScreen = ({
                     // alignItems: 'center',
                     margin: 5,
                     // backgroundColor: '#00BCD4'
-                  }}
-                >
+                  }}>
                   <View
                     style={{
                       backgroundColor: "#F7F7F7",
                       borderRadius: 6,
                       borderColor: "#EDEDED",
                       borderWidth: 1,
-                    }}
-                  >
+                    }}>
                     {item.categoryTag ? (
                       <>
                         <View
@@ -1160,16 +1138,14 @@ const HomeScreen = ({
                             marginRight: -1,
                             marginTop: -1,
                             justifyContent: "center",
-                          }}
-                        >
+                          }}>
                           <Text
                             style={{
                               fontSize: 9,
                               textAlign: "center",
                               color: "#f7f7f7",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             {item.categoryTag}
                           </Text>
                         </View>
@@ -1179,8 +1155,7 @@ const HomeScreen = ({
                         style={{
                           height: 18,
                           width: "58%",
-                        }}
-                      ></View>
+                        }}></View>
                     )}
                     {/* <View style={[styles.categoriesCard, item.categories ? { padding: 9, marginTop: -5 } : undefined]}> */}
 
@@ -1204,8 +1179,7 @@ const HomeScreen = ({
                       marginVertical: 5,
                       fontWeight: "bold",
                       fontSize: 13,
-                    }}
-                  >
+                    }}>
                     {item?.categoryDisplayName}
                   </Text>
                 </TouchableOpacity>
@@ -1236,8 +1210,7 @@ const HomeScreen = ({
               shadowOpacity: 0.34,
               shadowRadius: 6.27,
               elevation: 10,
-            }}
-          >
+            }}>
             <View style={{ flexDirection: "row" }}>
               <View style={{ flex: 1, justifyContent: "space-evenly" }}>
                 <Text style={{ fontWeight: "bold", fontSize: 16 }}>
@@ -1260,8 +1233,7 @@ const HomeScreen = ({
                 flexDirection: "row",
                 justifyContent: "space-between",
                 marginTop: 5,
-              }}
-            >
+              }}>
               <TouchableOpacity
                 onPress={() => setShowAppReviewCard(false)}
                 style={{
@@ -1271,8 +1243,7 @@ const HomeScreen = ({
                   width: "47%",
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <Text style={{ color: "#E1171E", fontSize: 13 }}>
                   No, Thanks
                 </Text>
@@ -1286,8 +1257,7 @@ const HomeScreen = ({
                   width: "47%",
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <Text style={{ color: "white", fontSize: 13 }}>
                   Rate the app
                 </Text>
@@ -1306,16 +1276,14 @@ const HomeScreen = ({
             backgroundColor: "#F5F5F5",
             flexDirection: "row",
             justifyContent: "center",
-          }}
-        >
+          }}>
           <View
             style={{
               flex: 1,
               paddingLeft: 10,
               flexDirection: "row",
               alignItems: "center",
-            }}
-          >
+            }}>
             <FeatherIcons name="info" color={"#C8C8C8"} size={18} />
             <Text style={{}}> App update available</Text>
           </View>
@@ -1339,8 +1307,7 @@ const HomeScreen = ({
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.22,
               shadowRadius: 2.22,
-            }}
-          >
+            }}>
             <Icon name="close" style={{ color: "#AAAAAA", fontSize: 20 }} />
           </TouchableOpacity>
           <TouchableOpacity
@@ -1352,30 +1319,27 @@ const HomeScreen = ({
               borderRadius: 5,
               justifyContent: "center",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Text
               style={{
                 fontSize: 14,
                 color: Theme.Colors.primary,
                 fontWeight: "bold",
                 marginRight: 10,
-              }}
-            >
+              }}>
               UPDATE NOW
             </Text>
           </TouchableOpacity>
         </View>
       ) : undefined}
-      {loading ? <Loader /> : undefined}
+      {loading ? <InitialLoader /> : undefined}
       <Modal
         isVisible={isVisible}
         onSwipeComplete={() => setIsVisible(false)}
         swipeDirection={modelSwip}
         style={{}}
         onBackButtonPress={() => setIsVisible(false)}
-        onBackdropPress={() => setIsVisible(false)}
-      >
+        onBackdropPress={() => setIsVisible(false)}>
         <LinearGradient
           colors={["#16c3a1", "#116c5c"]}
           start={{ x: 0, y: 0 }}
@@ -1388,8 +1352,7 @@ const HomeScreen = ({
             alignSelf: "center",
             borderRadius: 6,
             overflow: "visible",
-          }}
-        >
+          }}>
           <Image
             source={require("../../assets/png/whatsappcreative.png")}
             style={{
@@ -1403,13 +1366,12 @@ const HomeScreen = ({
           />
           <View
             style={{
-              marginTop: "35       %",
+              marginTop: "35%",
               paddingLeft: 5,
               height: "50%",
               alignItems: "center",
               justifyContent: "center",
-            }}
-          >
+            }}>
             <Text
               style={{
                 color: "white",
@@ -1419,8 +1381,7 @@ const HomeScreen = ({
                 paddingHorizontal: 10,
                 letterSpacing: 0.7,
                 marginTop: 10,
-              }}
-            >
+              }}>
               Join our{" "}
               <Text style={{ fontSize: 30, color: "#3ce75c" }}>
                 WhatsApp Groups For
@@ -1435,8 +1396,7 @@ const HomeScreen = ({
                 paddingHorizontal: 10,
                 letterSpacing: 0.4,
                 marginTop: 5,
-              }}
-            >
+              }}>
               Daily Exclusive Offers
             </Text>
           </View>
@@ -1445,8 +1405,7 @@ const HomeScreen = ({
               height: "25%",
               justifyContent: "center",
               alignItems: "center",
-            }}
-          >
+            }}>
             <TouchableOpacity
               style={{
                 width: "95%",
@@ -1456,16 +1415,14 @@ const HomeScreen = ({
               }}
               onPress={() => {
                 OnPressWhatsUpGrups(partnerDetails?.partnerWhatsappGroupLink);
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontWeight: "bold",
                   color: "white",
                   textAlign: "center",
                   fontSize: 16,
-                }}
-              >
+                }}>
                 <Image
                   source={require("../../assets/png/wpicon-white.png")}
                   style={{ width: 16, height: 16, marginRight: 5 }}
