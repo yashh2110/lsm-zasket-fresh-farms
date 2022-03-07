@@ -13,7 +13,12 @@ import RNUxcam from "react-native-ux-cam";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/es/integration/react";
 import { OneSignalAppId } from "../env";
-import { onLogin, referralCodeLink } from "./actions/auth";
+import {
+  onLogin,
+  onLogout,
+  referralCodeLink,
+  setUnAuthorized,
+} from "./actions/auth";
 import AppContainer from "./AppContainer";
 import { persistor, store } from "./store";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
@@ -65,7 +70,10 @@ const App = () => {
         analytics().setUserId(parsedUserDetails.customerDetails.id.toString());
         // .then((res) => console.log(res, "firebase user storing"));
         store.dispatch(onLogin(parsedUserDetails));
+      } else {
+        store.dispatch(setUnAuthorized());
       }
+
       appsFlyer.initSdk(
         {
           devKey: "VGRZSCo9PgEpmGARECWLG3",

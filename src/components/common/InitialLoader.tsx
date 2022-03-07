@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import LottieView from "lottie-react-native";
 import Theme from "../../styles/Theme";
 
-const Loader = () => {
+const InitialLoader = () => {
   return (
     <>
       <View style={[styles.loading]}></View>
@@ -19,23 +19,23 @@ const Loader = () => {
           alignItems: "center",
           zIndex: 1,
         }}>
-        {/* <LottieView
+        <LottieView
           source={require("../../assets/json/loader.json")}
           autoPlay
           loop
           style={{ width: 100, height: 100 }}
-        /> */}
-        <ActivityIndicator
+        />
+        {/* <ActivityIndicator
           style={{}}
           size="large"
           color={Theme.Colors.primary}
-        />
+        /> */}
       </View>
     </>
   );
 };
 
-export default Loader;
+export default InitialLoader;
 
 const styles = StyleSheet.create({
   loading: {
