@@ -978,10 +978,7 @@ const HomeScreen = ({
                           height: 45,
                           justifyContent: "center",
                           alignItems: "center",
-                        }}
-                        onPress={() =>
-                          moreShare(el?.imagePath, el?.shareMessage)
-                        }>
+                        }}>
                         <View
                           style={{
                             borderRadius: 25,

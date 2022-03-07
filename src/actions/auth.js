@@ -174,10 +174,10 @@ export const setUnAuthorized = () => async (dispatch) => {
 };
 export const onLogout = () => async (dispatch) => {
   dispatch({
-    type: LOGOUT,
+    type: CLEAR_REDUX_PERSIST,
   });
   dispatch({
-    type: CLEAR_REDUX_PERSIST,
+    type: LOGOUT,
   });
 };
 
