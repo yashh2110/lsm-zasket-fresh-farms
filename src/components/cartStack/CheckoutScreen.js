@@ -437,6 +437,7 @@ const CheckoutScreen = ({
       totalPayableAmount: getOrdersBillingDetails?.finalPrice,
       useWallet: walletCheck ? true : false,
     };
+    console.log(payload);
     if (option === "COD") {
       let codPayload = {
         ...payload,

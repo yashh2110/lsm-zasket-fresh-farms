@@ -56,7 +56,9 @@ const PaymentSuccessScreen = ({
             appsFlyer.logEvent(
               eventName,
               afEventParams,
-              (res) => {},
+              (res) => {
+                console.log("res", "af_first_purchase");
+              },
               (error) => {}
             );
             analytics().logEvent(eventName, firebaseEventParams);
@@ -66,7 +68,9 @@ const PaymentSuccessScreen = ({
             appsFlyer.logEvent(
               afEventName,
               afEventParams,
-              (res) => {},
+              (res) => {
+                console.log("res", "af_purchase");
+              },
               (error) => {}
             );
             analytics().logEvent(FirebaseEventName, firebaseEventParams);
@@ -280,8 +284,7 @@ const PaymentSuccessScreen = ({
             fontSize: 18,
             fontWeight: "bold",
             marginTop: "10%",
-          }}
-        >
+          }}>
           Thank you for your order
         </Text>
         <Text
@@ -290,8 +293,7 @@ const PaymentSuccessScreen = ({
             fontSize: 14,
             textAlign: "center",
             width: "80%",
-          }}
-        >
+          }}>
           We are currently processing your order. You can find updates to your
           order under{" "}
           <Text
@@ -303,8 +305,7 @@ const PaymentSuccessScreen = ({
               color: Theme.Colors.primary,
               fontWeight: "bold",
               fontSize: 14,
-            }}
-          >
+            }}>
             My orders
           </Text>
           .
@@ -329,16 +330,14 @@ const PaymentSuccessScreen = ({
                 borderColor: "#f7d395",
                 padding: 18,
                 borderWidth: 0.9,
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontSize: 19,
                   fontWeight: "bold",
                   letterSpacing: 0.6,
                   color: "#000001",
-                }}
-              >
+                }}>
                 Refer Friends and earn
               </Text>
               <Text
@@ -347,8 +346,7 @@ const PaymentSuccessScreen = ({
                   fontWeight: "bold",
                   letterSpacing: 0.6,
                   color: "#000001",
-                }}
-              >
+                }}>
                 up to{" "}
                 <Text
                   style={{
@@ -356,8 +354,7 @@ const PaymentSuccessScreen = ({
                     fontWeight: "bold",
                     letterSpacing: 0.6,
                     color: "#c89131",
-                  }}
-                >
+                  }}>
                   Rs {referalContent}
                 </Text>{" "}
                 per referral
@@ -403,8 +400,7 @@ const PaymentSuccessScreen = ({
                       color: "#000000",
                       fontSize: 14,
                       letterSpacing: 0.5,
-                    }}
-                  >
+                    }}>
                     Hurry up become a{" "}
                     <Text
                       style={{
@@ -412,8 +408,7 @@ const PaymentSuccessScreen = ({
                         fontWeight: "bold",
                         letterSpacing: 0.5,
                         color: "#c89131",
-                      }}
-                    >
+                      }}>
                       ZASKET
                     </Text>{" "}
                     entrepreneur.
@@ -424,8 +419,7 @@ const PaymentSuccessScreen = ({
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
-                }}
-              >
+                }}>
                 <TouchableOpacity
                   activeOpacity={0.8}
                   onPress={() => {
@@ -445,8 +439,7 @@ const PaymentSuccessScreen = ({
                     zIndex: 0,
                     marginLeft: -1,
                     height: 40,
-                  }}
-                >
+                  }}>
                   <View style={{ flex: 1 }}>
                     <Text
                       style={{
@@ -454,8 +447,7 @@ const PaymentSuccessScreen = ({
                         color: "#d8ad00",
                         marginLeft: 10,
                         fontWeight: "bold",
-                      }}
-                    >
+                      }}>
                       {referal}{" "}
                     </Text>
                   </View>
@@ -470,8 +462,7 @@ const PaymentSuccessScreen = ({
                       width: 30,
                       justifyContent: "space-evenly",
                       alignItems: "center",
-                    }}
-                  >
+                    }}>
                     <View style={{}}>
                       <Image
                         style={{ width: 25, height: 25 }}
@@ -495,19 +486,16 @@ const PaymentSuccessScreen = ({
                     borderColor: "#1fa900",
                     borderWidth: 1,
                     backgroundColor: "#1fa900",
-                  }}
-                >
+                  }}>
                   <View
-                    style={{ flexDirection: "row", justifyContent: "center" }}
-                  >
+                    style={{ flexDirection: "row", justifyContent: "center" }}>
                     <View
                       style={{
                         width: 22,
                         height: 22,
                         justifyContent: "center",
                         alignItems: "center",
-                      }}
-                    >
+                      }}>
                       <Image
                         style={{ width: 19, height: 19 }}
                         resizeMode="contain"
@@ -521,8 +509,7 @@ const PaymentSuccessScreen = ({
                           marginHorizontal: 6,
                           fontSize: 13,
                           fontWeight: "bold",
-                        }}
-                      >
+                        }}>
                         WhatsApp
                       </Text>
                     </View>
@@ -544,8 +531,7 @@ const PaymentSuccessScreen = ({
             onPress={() => {
               navigation.navigate("Home");
               navigation.pop();
-            }}
-          >
+            }}>
             <Text style={{ color: Theme.Colors.primary, fontWeight: "bold" }}>
               No Thanks
             </Text>
@@ -562,15 +548,13 @@ const PaymentSuccessScreen = ({
             left: 0,
             right: 0,
             bottom: 10,
-          }}
-        >
+          }}>
           <View
             style={{
               backgroundColor: "#191919",
               padding: 10,
               borderRadius: 10,
-            }}
-          >
+            }}>
             <Text style={{ color: "#DCDCDC", letterSpacing: 0.2 }}>
               Copied to Clipboard
             </Text>
@@ -587,15 +571,13 @@ const PaymentSuccessScreen = ({
             left: 0,
             right: 0,
             bottom: 20,
-          }}
-        >
+          }}>
           <View
             style={{
               backgroundColor: "#191919",
               padding: 10,
               borderRadius: 10,
-            }}
-          >
+            }}>
             <Text style={{ color: "#DCDCDC", letterSpacing: 0.2 }}>
               Invite message copied succcessfully
             </Text>
