@@ -77,7 +77,7 @@ const App = () => {
       appsFlyer.initSdk(
         {
           devKey: "VGRZSCo9PgEpmGARECWLG3",
-          isDebug: true,
+          isDebug: false,
           appId: "id1541056118",
           onInstallConversionDataListener: true, //Optional
           onDeepLinkListener: true, //Optional
