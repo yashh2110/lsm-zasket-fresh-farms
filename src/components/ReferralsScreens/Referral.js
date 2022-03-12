@@ -172,7 +172,6 @@ const Referral = ({ getLeaderBoardList, route }) => {
     };
   };
   const loadContacts = async () => {
-    setLoading(true);
     Contacts.getAll()
       .then((contacts) => {
         // alert(JSON.stringify(contacts, null, "   "))
@@ -187,11 +186,9 @@ const Referral = ({ getLeaderBoardList, route }) => {
         );
         let acendeingOrder = arr.sort(dynamicSort("displayName"));
         setContacts(acendeingOrder);
-        setLoading(false);
       })
       .catch((e) => {
         //handle error })
-        setLoading(false);
       });
   };
 
@@ -200,6 +197,11 @@ const Referral = ({ getLeaderBoardList, route }) => {
   };
   const initialFunction = async () => {
     setLoading(true);
+    let userDetails = await AsyncStorage.getItem("userDetails");
+    let parsedUserDetails = await JSON.parse(userDetails);
+    let referralCode = await parsedUserDetails?.customerDetails?.referralCode;
+    setReferal(referralCode);
+
     getLeaderBoardList(async (res, status) => {
       if (status) {
         // alert(JSON.stringify(res, null, "       "))
@@ -224,12 +226,9 @@ const Referral = ({ getLeaderBoardList, route }) => {
         setLoading(false);
       }
     });
-    let userDetails = await AsyncStorage.getItem("userDetails");
-    let parsedUserDetails = await JSON.parse(userDetails);
-    let referralCode = await parsedUserDetails?.customerDetails?.referralCode;
+
     // alert(referralCode)
-    setReferal(referralCode);
-    setLoading(false);
+    // setLoading(false);
   };
 
   const get_Text_From_Clipboard = (text) => {
@@ -384,8 +383,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
               borderBottomWidth: 0.8,
               paddingTop: 13,
               paddingBottom: 13,
-            }}
-          >
+            }}>
             <View style={{ flex: 1, flexDirection: "row" }}>
               <View style={{ justifyContent: "center", alignItems: "center" }}>
                 {splitName(item.displayName) == "+" ||
@@ -399,16 +397,14 @@ const Referral = ({ getLeaderBoardList, route }) => {
                       justifyContent: "center",
                       alignItems: "center",
                       elevation: 5,
-                    }}
-                  >
+                    }}>
                     <Text
                       style={{
                         textTransform: "capitalize",
                         color: "#FFFFFF",
                         fontWeight: "bold",
                         fontSize: 18,
-                      }}
-                    >
+                      }}>
                       Z
                     </Text>
                   </View>
@@ -422,16 +418,14 @@ const Referral = ({ getLeaderBoardList, route }) => {
                       justifyContent: "center",
                       alignItems: "center",
                       elevation: 5,
-                    }}
-                  >
+                    }}>
                     <Text
                       style={{
                         textTransform: "capitalize",
                         color: "#FFFFFF",
                         fontWeight: "bold",
                         fontSize: 18,
-                      }}
-                    >
+                      }}>
                       {splitName(item.displayName)}
                     </Text>
                   </View>
@@ -440,8 +434,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
 
               <View style={{ paddingLeft: 10, justifyContent: "center" }}>
                 <Text
-                  style={{ marginVertical: 1, color: "black", fontSize: 15 }}
-                >
+                  style={{ marginVertical: 1, color: "black", fontSize: 15 }}>
                   {item.displayName}
                 </Text>
                 <Text style={{ color: "gray", fontSize: 14.5 }}>
@@ -456,8 +449,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 justifyContent: "center",
                 width: 110,
                 alignItems: "flex-end",
-              }}
-            >
+              }}>
               <TouchableOpacity
                 activeOpacity={0.6}
                 onPress={() => onPressModal(item.number)}
@@ -473,8 +465,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                   width: 80,
                   borderWidth: 0.7,
                   borderColor: "#efefef",
-                }}
-              >
+                }}>
                 <Text
                   onPress={() => onPressModal(item.number)}
                   style={{
@@ -482,8 +473,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                     fontSize: 17,
                     marginHorizontal: 6,
                     color: "#e1171e",
-                  }}
-                >
+                  }}>
                   +
                 </Text>
                 <Text
@@ -494,8 +484,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                     marginHorizontal: 6,
                     letterSpacing: 0.2,
                     color: "#e1171e",
-                  }}
-                >
+                  }}>
                   Invite
                 </Text>
               </TouchableOpacity>
@@ -521,8 +510,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
               alignSelf: "center",
               paddingBottom: 9,
               padding: 4,
-            }}
-          >
+            }}>
             <View style={{ flexDirection: "row", flex: 1 }}>
               <View style={{}}>
                 {index == 0 ? (
@@ -553,16 +541,14 @@ const Referral = ({ getLeaderBoardList, route }) => {
                       justifyContent: "center",
                       alignItems: "center",
                       elevation: 4,
-                    }}
-                  >
+                    }}>
                     <Text
                       style={{
                         textTransform: "capitalize",
                         color: "#FFFFFF",
                         fontWeight: "bold",
                         fontSize: 18,
-                      }}
-                    >
+                      }}>
                       {index}
                     </Text>
                   </View>
@@ -575,16 +561,14 @@ const Referral = ({ getLeaderBoardList, route }) => {
                   flexDirection: "row",
                   alignSelf: "center",
                   flex: 1,
-                }}
-              >
+                }}>
                 <Text
                   style={{
                     marginVertical: 3,
                     color: "black",
                     fontSize: 15,
                     width: "85%",
-                  }}
-                >
+                  }}>
                   {item?.name}{" "}
                 </Text>
               </View>
@@ -598,8 +582,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                     textAlign: "center",
                     width: 100,
                     textAlign: "right",
-                  }}
-                >
+                  }}>
                   ₹ {item?.earnedAmount}
                 </Text>
               </View>
@@ -655,8 +638,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
             borderRadius: 12,
             marginTop: 15,
             elevation: 3,
-          }}
-        >
+          }}>
           <Text
             style={{
               color: "white",
@@ -664,8 +646,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
               fontSize: 15,
               marginHorizontal: 10,
               fontSize: 14,
-            }}
-          >
+            }}>
             Invite and Earn Now
           </Text>
         </TouchableOpacity>
@@ -710,8 +691,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
             borderRadius: 12,
             marginTop: 15,
             elevation: 3,
-          }}
-        >
+          }}>
           <Text
             style={{
               color: "white",
@@ -719,8 +699,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
               fontSize: 15,
               marginHorizontal: 10,
               fontSize: 14,
-            }}
-          >
+            }}>
             Invite and Earn Now
           </Text>
         </TouchableOpacity>
@@ -837,16 +816,14 @@ const Referral = ({ getLeaderBoardList, route }) => {
               borderColor: "#f7d395",
               padding: 18,
               borderWidth: 0.9,
-            }}
-          >
+            }}>
             <Text
               style={{
                 fontSize: 19,
                 fontWeight: "bold",
                 letterSpacing: 0.6,
                 color: "#000001",
-              }}
-            >
+              }}>
               Refer Friends and earn
             </Text>
             <Text
@@ -855,8 +832,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 fontWeight: "bold",
                 letterSpacing: 0.6,
                 color: "#000001",
-              }}
-            >
+              }}>
               up to{" "}
               <Text
                 style={{
@@ -864,8 +840,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                   fontWeight: "bold",
                   letterSpacing: 0.6,
                   color: "#c89131",
-                }}
-              >
+                }}>
                 Rs {referalContent}
               </Text>{" "}
               per referral
@@ -907,8 +882,11 @@ const Referral = ({ getLeaderBoardList, route }) => {
               </View>
               <View style={{}}>
                 <Text
-                  style={{ color: "#000000", fontSize: 14, letterSpacing: 0.5 }}
-                >
+                  style={{
+                    color: "#000000",
+                    fontSize: 14,
+                    letterSpacing: 0.5,
+                  }}>
                   Hurry up become a{" "}
                   <Text
                     style={{
@@ -916,8 +894,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                       fontWeight: "bold",
                       letterSpacing: 0.5,
                       color: "#c89131",
-                    }}
-                  >
+                    }}>
                     ZASKET
                   </Text>{" "}
                   entrepreneur.
@@ -925,8 +902,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
               </View>
             </View>
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
+              style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => {
@@ -946,8 +922,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                   zIndex: 0,
                   marginLeft: -1,
                   height: 40,
-                }}
-              >
+                }}>
                 <View style={{ flex: 1 }}>
                   <Text
                     style={{
@@ -955,8 +930,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                       color: "#d8ad00",
                       marginLeft: 10,
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     {referal}{" "}
                   </Text>
                 </View>
@@ -971,8 +945,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                     width: 30,
                     justifyContent: "space-evenly",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <View style={{}}>
                     <Image
                       style={{ width: 25, height: 25 }}
@@ -996,19 +969,16 @@ const Referral = ({ getLeaderBoardList, route }) => {
                   borderColor: "#1fa900",
                   borderWidth: 1,
                   backgroundColor: "#1fa900",
-                }}
-              >
+                }}>
                 <View
-                  style={{ flexDirection: "row", justifyContent: "center" }}
-                >
+                  style={{ flexDirection: "row", justifyContent: "center" }}>
                   <View
                     style={{
                       width: 22,
                       height: 22,
                       justifyContent: "center",
                       alignItems: "center",
-                    }}
-                  >
+                    }}>
                     <Image
                       style={{ width: 19, height: 19 }}
                       resizeMode="contain"
@@ -1022,8 +992,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                         marginHorizontal: 6,
                         fontSize: 13,
                         fontWeight: "bold",
-                      }}
-                    >
+                      }}>
                       WhatsApp
                     </Text>
                   </View>
@@ -1037,8 +1006,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
           style={{ height: 46, opacity: 0.9, zIndex: -1, elevation: 2.5 }}
           start={{ x: 0, y: 0 }}
           end={{ x: 0.5, y: 0 }}
-          locations={[0.1, 0.9]}
-        >
+          locations={[0.1, 0.9]}>
           <View
             style={{
               height: 46,
@@ -1046,8 +1014,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
               zIndex: 1,
               backgroundColor: "white",
               elevation: 2.5,
-            }}
-          >
+            }}>
             <TouchableOpacity
               activeOpacity={0.9}
               onPress={() => {
@@ -1057,8 +1024,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 width: "50%",
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
+              }}>
               {/* <Text style={{}}>My refeeee</Text> */}
               <Text
                 style={[
@@ -1066,8 +1032,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                   selectedTabIndex == 0
                     ? { color: "#e1171e", opacity: 1 }
                     : null,
-                ]}
-              >
+                ]}>
                 My Referrals
               </Text>
               {selectedTabIndex == 0 && (
@@ -1079,8 +1044,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                     borderRadius: 5,
                     position: "absolute",
                     bottom: 6,
-                  }}
-                ></View>
+                  }}></View>
               )}
             </TouchableOpacity>
             <TouchableOpacity
@@ -1092,16 +1056,14 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 width: "50%",
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <Text
                 style={[
                   styles.tabText,
                   selectedTabIndex == 1
                     ? { color: "#e1171e", opacity: 1 }
                     : null,
-                ]}
-              >
+                ]}>
                 Leaderboard
               </Text>
               {selectedTabIndex == 1 && (
@@ -1113,8 +1075,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                     borderRadius: 5,
                     position: "absolute",
                     bottom: 6,
-                  }}
-                ></View>
+                  }}></View>
               )}
             </TouchableOpacity>
           </View>
@@ -1125,7 +1086,6 @@ const Referral = ({ getLeaderBoardList, route }) => {
         }
         {selectedTabIndex == 1 && <LeaderboardList />}
       </View>
-      {loading ? <Loader /> : undefined}
       {copymessage ? (
         <View
           style={{
@@ -1136,15 +1096,13 @@ const Referral = ({ getLeaderBoardList, route }) => {
             left: 0,
             right: 0,
             bottom: 10,
-          }}
-        >
+          }}>
           <View
             style={{
               backgroundColor: "#191919",
               padding: 10,
               borderRadius: 10,
-            }}
-          >
+            }}>
             <Text style={{ color: "#DCDCDC", letterSpacing: 0.2 }}>
               Copied to Clipboard
             </Text>
@@ -1161,15 +1119,13 @@ const Referral = ({ getLeaderBoardList, route }) => {
             left: 0,
             right: 0,
             bottom: 20,
-          }}
-        >
+          }}>
           <View
             style={{
               backgroundColor: "#191919",
               padding: 10,
               borderRadius: 10,
-            }}
-          >
+            }}>
             <Text style={{ color: "#DCDCDC", letterSpacing: 0.2 }}>
               Invite message copied succcessfully
             </Text>
@@ -1182,16 +1138,14 @@ const Referral = ({ getLeaderBoardList, route }) => {
         swipeDirection="down"
         style={{ margin: 0, justifyContent: "flex-end" }}
         onBackButtonPress={() => setIsVisible(false)}
-        onBackdropPress={() => setIsVisible(false)}
-      >
+        onBackdropPress={() => setIsVisible(false)}>
         <SafeAreaView
           style={{
             height: 190,
             backgroundColor: "white",
             borderTopLeftRadius: 16,
             borderTopRightRadius: 16,
-          }}
-        >
+          }}>
           <View style={{}}>
             <Text
               style={{
@@ -1201,8 +1155,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 fontWeight: "bold",
                 marginLeft: 20,
                 letterSpacing: 0.3,
-              }}
-            >
+              }}>
               Invite your friends via
             </Text>
           </View>
@@ -1213,8 +1166,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
               marginTop: 35,
               marginLeft: 20,
               justifyContent: "space-around",
-            }}
-          >
+            }}>
             <TouchableOpacity
               onPress={() => {
                 onPressWhatsUp(selectedNumber);
@@ -1224,8 +1176,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 alignItems: "center",
                 width: "30%",
                 height: 50,
-              }}
-            >
+              }}>
               <View
                 style={{
                   width: 30,
@@ -1234,13 +1185,11 @@ const Referral = ({ getLeaderBoardList, route }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   backgroundColor: "#66e228",
-                }}
-              >
+                }}>
                 <FontAwesomeIcons name="whatsapp" color={"white"} size={20} />
               </View>
               <Text
-                style={{ textAlign: "center", marginTop: 3, color: "#757575" }}
-              >
+                style={{ textAlign: "center", marginTop: 3, color: "#757575" }}>
                 WhatsApp
               </Text>
             </TouchableOpacity>
@@ -1252,8 +1201,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 width: "30%",
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <View
                 style={{
                   width: 30,
@@ -1263,8 +1211,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                   borderRadius: 15,
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <FontAwesomeIcons name="copy" color={"#757575"} size={18} />
                 {/* <Image
                                     source={require('../../assets/png/whatsAppIcon.png')}
@@ -1272,8 +1219,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                                 /> */}
               </View>
               <Text
-                style={{ textAlign: "center", marginTop: 3, color: "#757575" }}
-              >
+                style={{ textAlign: "center", marginTop: 3, color: "#757575" }}>
                 Copy
               </Text>
             </TouchableOpacity>
@@ -1283,8 +1229,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 width: "30%",
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <View
                 style={{
                   width: 30,
@@ -1294,8 +1239,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                   borderRadius: 15,
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <FeatherIcons
                   name="more-horizontal"
                   color={"#757575"}
@@ -1307,14 +1251,14 @@ const Referral = ({ getLeaderBoardList, route }) => {
                                 /> */}
               </View>
               <Text
-                style={{ textAlign: "center", marginTop: 3, color: "#757575" }}
-              >
+                style={{ textAlign: "center", marginTop: 3, color: "#757575" }}>
                 More
               </Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
       </Modal>
+      {loading ? <Loader /> : undefined}
     </>
   );
 };

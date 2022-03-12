@@ -12,7 +12,6 @@ import { Provider as PaperProvider } from "react-native-paper";
 import RNUxcam from "react-native-ux-cam";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/es/integration/react";
-import { OneSignalAppId } from "../env";
 import {
   onLogin,
   onLogout,
@@ -23,6 +22,7 @@ import AppContainer from "./AppContainer";
 import { persistor, store } from "./store";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
 import analytics from "@react-native-firebase/analytics";
+import Config from "react-native-config";
 RNUxcam.enableAdvancedGestureRecognizers = (enable) =>
   void (
     // Example
@@ -34,6 +34,7 @@ RNUxcam.optIntoSchematicRecordings(); // Add this line to enable iOS screen reco
 RNUxcam.startWithKey("qercwheqrlqze96"); // Add this line after RNUxcam.optIntoSchematicRecordings();
 
 const App = () => {
+  const oneSignalAppId = Config.ONESIGNAL_APP_ID;
   useEffect(() => {
     initialIosFirebaseFunction();
   }, []);
@@ -104,7 +105,7 @@ const App = () => {
     OneSignal.setLogLevel(6, 0);
 
     // Replace 'YOUR_ONESIGNAL_APP_ID' with your OneSignal App ID.
-    OneSignal.init(OneSignalAppId, {
+    OneSignal.init(oneSignalAppId, {
       kOSSettingsKeyAutoPrompt: false,
       kOSSettingsKeyInAppLaunchURL: false,
       kOSSettingsKeyInFocusDisplayOption: 2,

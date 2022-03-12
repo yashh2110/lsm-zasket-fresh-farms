@@ -35,7 +35,6 @@ import Loader from "../common/Loader";
 import DarkModeToggle from "../common/DarkModeToggle";
 import AsyncStorage from "@react-native-community/async-storage";
 import Geolocation from "@react-native-community/geolocation";
-import { appVersion, MapApiKey, OneSignalAppId } from "../../../env";
 import { addHomeScreenLocation } from "../../actions/homeScreenLocation";
 import { getCartItemsApi } from "../../actions/cart";
 import FeatherIcons from "react-native-vector-icons/Feather";
@@ -48,13 +47,14 @@ import GPSState from "react-native-gps-state";
 import { CheckGpsState, CheckPermissions } from "../../utils/utils";
 import { useIsFocused } from "@react-navigation/native";
 import AddressModal from "../common/AddressModal";
-import { getAllUserAddress } from "../../actions/map";
+import { geocodeing, getAllUserAddress } from "../../actions/map";
 import Modal from "react-native-modal";
 import SetDeliveryLocationModal from "../common/SetDeliveryLocationModal";
 import { EventRegister } from "react-native-event-listeners";
 import RNUxcam from "react-native-ux-cam";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
 import firebase from "@react-native-firebase/app";
+import Config from "react-native-config";
 
 RNUxcam.startWithKey("qercwheqrlqze96"); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
@@ -80,7 +80,8 @@ const HomeScreen = ({
   getCartItemsApi,
 }) => {
   const { setOnBoardKey, removeOnBoardKey } = React.useContext(AuthContext);
-
+  const mapApiKey = Config.MAP_API_KEY;
+  const oneSignalAppId = Config.ONESIGNAL_APP_ID;
   // const generateLink = async () => {
   //     //build the link
   //     const SENDER_UID = 'USER1234';
@@ -179,7 +180,7 @@ const HomeScreen = ({
   const [showAppUpdate, setShowAppUpdate] = useState(false);
   useEffect(() => {
     if (config?.appVersion !== undefined) {
-      if (config?.appVersion !== appVersion) {
+      if (config?.appVersion !== Config.appVersion) {
         setShowAppUpdate(true);
       }
     }
@@ -216,7 +217,7 @@ const HomeScreen = ({
       });
 
       let userID;
-      OneSignal.init(OneSignalAppId, {
+      OneSignal.init(oneSignalAppId, {
         kOSSettingsKeyAutoPrompt: true,
       });
       OneSignal.getPermissionSubscriptionState(async (status) => {
@@ -226,7 +227,7 @@ const HomeScreen = ({
         let version = DeviceInfo.getVersion();
         let model = DeviceInfo.getModel();
         let payload = {
-          appVersion: appVersion,
+          appVersion: Config.appVersion,
           deviceId: deviceId,
           mobileOS: Platform.OS == "android" ? "android" : "ios",
           phoneModel:
@@ -341,14 +342,7 @@ const HomeScreen = ({
   const getCurrentPosition = async () => {
     Geolocation.getCurrentPosition(
       async (position) => {
-        fetch(
-          "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-            position.coords.latitude +
-            "," +
-            position.coords.longitude +
-            "&key=" +
-            MapApiKey
-        )
+        geocodeing(position.coords.latitude, position.coords.longitude)
           .then((response) => {
             response.json().then(async (json) => {
               let postal_code = json?.results?.[0]?.address_components?.find(
@@ -500,24 +494,21 @@ const HomeScreen = ({
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
-        }
-      >
+        }>
         <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
             paddingHorizontal: 10,
             flexWrap: "wrap",
-          }}
-        >
+          }}>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("AutoCompleteLocationScreen", {
                 navigateTo: "MapScreenGrabPincode",
               });
             }}
-            style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
-          >
+            style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
             <Icon name="location-pin" type="Entypo" style={{ fontSize: 22 }} />
             <Text numberOfLines={1} style={{ maxWidth: "50%" }}>
               {homeScreenLocation?.addressLine_1}
@@ -549,16 +540,14 @@ const HomeScreen = ({
               justifyContent: "space-between",
               alignItems: "center",
               marginVertical: 3,
-            }}
-          >
+            }}>
             <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
                 flex: 1,
                 marginRight: 5,
-              }}
-            >
+              }}>
               <Text style={{ color: "white" }}>
                 <Icon
                   name="warning"
@@ -579,8 +568,7 @@ const HomeScreen = ({
                 paddingHorizontal: 5,
                 paddingVertical: 4,
                 borderRadius: 5,
-              }}
-            >
+              }}>
               <Text style={{ color: "white" }}>Change</Text>
             </TouchableOpacity>
           </View>
@@ -591,8 +579,7 @@ const HomeScreen = ({
             justifyContent: "center",
             alignItems: "center",
             marginTop: 5,
-          }}
-        >
+          }}>
           {bannerImages?.length > 0 ? (
             <Swiper
               autoplay={true}
@@ -602,8 +589,7 @@ const HomeScreen = ({
               removeClippedSubviews={false}
               activeDotColor={"#ffffff"}
               dotStyle={{ bottom: -10, height: 6, width: 6 }}
-              activeDotStyle={{ bottom: -10, height: 6, width: 8 }}
-            >
+              activeDotStyle={{ bottom: -10, height: 6, width: 8 }}>
               {bannerImages?.map((el, index) => {
                 return (
                   <>
@@ -674,8 +660,7 @@ const HomeScreen = ({
             justifyContent: "center",
             padding: 5,
             marginTop: -10,
-          }}
-        >
+          }}>
           <FlatList
             data={categories}
             numColumns={3}
@@ -694,16 +679,14 @@ const HomeScreen = ({
                     // alignItems: 'center',
                     margin: 5,
                     // backgroundColor: '#00BCD4'
-                  }}
-                >
+                  }}>
                   <View
                     style={{
                       backgroundColor: "#F7F7F7",
                       borderRadius: 6,
                       borderColor: "#EDEDED",
                       borderWidth: 1,
-                    }}
-                  >
+                    }}>
                     {item.categoryTag ? (
                       <>
                         <View
@@ -725,16 +708,14 @@ const HomeScreen = ({
                             marginRight: -1,
                             marginTop: -1,
                             justifyContent: "center",
-                          }}
-                        >
+                          }}>
                           <Text
                             style={{
                               fontSize: 9,
                               textAlign: "center",
                               color: "#f7f7f7",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             {item.categoryTag}
                           </Text>
                         </View>
@@ -744,8 +725,7 @@ const HomeScreen = ({
                         style={{
                           height: 18,
                           width: "58%",
-                        }}
-                      ></View>
+                        }}></View>
                     )}
                     {/* <View style={[styles.categoriesCard, item.categories ? { padding: 9, marginTop: -5 } : undefined]}> */}
 
@@ -769,8 +749,7 @@ const HomeScreen = ({
                       marginVertical: 5,
                       fontWeight: "bold",
                       fontSize: 13,
-                    }}
-                  >
+                    }}>
                     {item?.categoryDisplayName}
                   </Text>
                 </TouchableOpacity>
@@ -801,8 +780,7 @@ const HomeScreen = ({
               shadowOpacity: 0.34,
               shadowRadius: 6.27,
               elevation: 10,
-            }}
-          >
+            }}>
             <View style={{ flexDirection: "row" }}>
               <View style={{ flex: 1, justifyContent: "space-evenly" }}>
                 <Text style={{ fontWeight: "bold", fontSize: 16 }}>
@@ -825,8 +803,7 @@ const HomeScreen = ({
                 flexDirection: "row",
                 justifyContent: "space-between",
                 marginTop: 5,
-              }}
-            >
+              }}>
               <TouchableOpacity
                 onPress={() => setShowAppReviewCard(false)}
                 style={{
@@ -836,8 +813,7 @@ const HomeScreen = ({
                   width: "47%",
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <Text style={{ color: "#E1171E", fontSize: 13 }}>
                   No, Thanks
                 </Text>
@@ -851,8 +827,7 @@ const HomeScreen = ({
                   width: "47%",
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <Text style={{ color: "white", fontSize: 13 }}>
                   Rate the app
                 </Text>
@@ -870,16 +845,14 @@ const HomeScreen = ({
             backgroundColor: "#F5F5F5",
             flexDirection: "row",
             justifyContent: "center",
-          }}
-        >
+          }}>
           <View
             style={{
               flex: 1,
               paddingLeft: 10,
               flexDirection: "row",
               alignItems: "center",
-            }}
-          >
+            }}>
             <FeatherIcons name="info" color={"#C8C8C8"} size={18} />
             <Text style={{}}> App update available</Text>
           </View>
@@ -903,8 +876,7 @@ const HomeScreen = ({
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.22,
               shadowRadius: 2.22,
-            }}
-          >
+            }}>
             <Icon name="close" style={{ color: "#AAAAAA", fontSize: 20 }} />
           </TouchableOpacity>
           <TouchableOpacity
@@ -916,16 +888,14 @@ const HomeScreen = ({
               borderRadius: 5,
               justifyContent: "center",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Text
               style={{
                 fontSize: 14,
                 color: Theme.Colors.primary,
                 fontWeight: "bold",
                 marginRight: 10,
-              }}
-            >
+              }}>
               UPDATE NOW
             </Text>
           </TouchableOpacity>

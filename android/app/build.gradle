@@ -9,7 +9,14 @@ buildscript {
 
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 apply plugin: "com.android.application"
-apply plugin: 'com.google.gms.google-services'  
+apply plugin: 'com.google.gms.google-services'
+project.ext.envConfigFiles = [
+  productiondebug: ".env.production",
+  productionrelease: ".env.production",
+  developmentrelease: ".env.development",
+  developmentdebug: ".env.development",
+]
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"  
 import com.android.build.OutputFile
 
 /**
@@ -175,6 +182,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            matchingFallbacks = ['debug', 'release']
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
@@ -185,6 +193,14 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    flavorDimensions "default"
+        productFlavors {
+            production {}
+            staging {
+            // We can have build-specific configurations here. Like using applicationIdSuffix to create different package name (ex. ".staging")
+            }
+            development {}
+        }
 
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
