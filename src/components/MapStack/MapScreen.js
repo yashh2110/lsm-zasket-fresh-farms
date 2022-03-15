@@ -20,7 +20,6 @@ import MapView, { Marker, Callout, ProviderPropType } from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import marker from "../../assets/png/locationIcon.png";
 import { Icon, Button, Text } from "native-base";
-import { MapApiKey } from "../../../env";
 import LottieView from "lottie-react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import Theme from "../../styles/Theme";
@@ -31,6 +30,7 @@ import {
   addNewCustomerAddress,
   updateUserAddress,
   getAllUserAddress,
+  geocodeing,
 } from "../../actions/map";
 import { addLocation } from "../../actions/location";
 import { connect } from "react-redux";
@@ -39,6 +39,7 @@ import AntDesignIcons from "react-native-vector-icons/AntDesign";
 import { addHomeScreenLocation } from "../../actions/homeScreenLocation";
 import { CheckGpsState, CheckPermissions } from "../../utils/utils";
 import RNUxcam from "react-native-ux-cam";
+import Config from "react-native-config";
 
 RNUxcam.startWithKey("qercwheqrlqze96"); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
@@ -53,6 +54,7 @@ const initialRegion = {
   longitudeDelta,
 };
 
+const mapApiKey = Config.MAP_API_KEY;
 class MyMapView extends React.Component {
   map = null;
 
@@ -205,15 +207,10 @@ class MyMapView extends React.Component {
               };
               await this.setRegion(region);
 
-              fetch(
-                "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-                  position.coords.latitude +
-                  "," +
-                  position.coords.longitude +
-                  "&key=" +
-                  MapApiKey
-              )
+              geocodeing(position.coords.latitude, position.coords.longitude)
                 .then((response) => {
+                  console.log("map screen hit");
+
                   response.json().then(async (json) => {
                     // alert(JSON.stringify(json?.results?.[0], null, "      "))
                     // console.warn("aaaa", json?.results?.[0]?.formatted_address);
@@ -285,14 +282,7 @@ class MyMapView extends React.Component {
       errorMessage: "",
       movetoadjust: true,
     });
-    fetch(
-      "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-        this.state.region.latitude +
-        "," +
-        this.state.region.longitude +
-        "&key=" +
-        MapApiKey
-    )
+    geocodeing(this.state.region.latitude, this.state.region.longitude)
       .then((response) => {
         response.json().then(async (json) => {
           let postal_code = json?.results?.[0]?.address_components?.find(
@@ -732,8 +722,7 @@ class MyMapView extends React.Component {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <KeyboardAvoidingView
             style={{ flex: 1 }}
-            behavior={Platform.OS == "ios" ? "padding" : null}
-          >
+            behavior={Platform.OS == "ios" ? "padding" : null}>
             {this.state.errorMessageBanner && (
               <View
                 style={{
@@ -745,11 +734,9 @@ class MyMapView extends React.Component {
                   left: 0,
                   zIndex: 1,
                   flexDirection: "row",
-                }}
-              >
+                }}>
                 <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                >
+                  style={{ justifyContent: "center", alignItems: "center" }}>
                   <FeatherIcons name="info" color={"white"} size={18} />
                 </View>
                 <View
@@ -757,8 +744,7 @@ class MyMapView extends React.Component {
                     flex: 1,
                     justifyContent: "center",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Text style={{ fontSize: 12, color: "white" }}>
                     We might be not available in all the locations. We are
                     expanding, very soon we will be delivered in all location.
@@ -768,8 +754,7 @@ class MyMapView extends React.Component {
                   style={{ justifyContent: "center", alignItems: "center" }}
                   onPress={() => {
                     this.setState({ errorMessageBanner: false });
-                  }}
-                >
+                  }}>
                   <AntDesignIcons name="close" color={"white"} size={18} />
                 </TouchableOpacity>
               </View>
@@ -778,12 +763,10 @@ class MyMapView extends React.Component {
               style={[
                 styles.map,
                 this.state.mode == "EDIT_SCREEN" ? { height: "50%" } : null,
-              ]}
-            >
+              ]}>
               {!this.state.errorMessageBanner && (
                 <View
-                  style={{ zIndex: 1, height: 60, backgroundColor: "white" }}
-                >
+                  style={{ zIndex: 1, height: 60, backgroundColor: "white" }}>
                   {this.state.mode == "EDIT_SCREEN" ? (
                     <>
                       <TouchableOpacity
@@ -796,8 +779,7 @@ class MyMapView extends React.Component {
                           zIndex: 1,
                           left: 10,
                           top: 10,
-                        }}
-                      >
+                        }}>
                         <Icon
                           name="chevron-small-left"
                           type="Entypo"
@@ -810,8 +792,7 @@ class MyMapView extends React.Component {
                             fontWeight: "bold",
                             fontSize: 18,
                             color: "#242A40",
-                          }}
-                        >
+                          }}>
                           Add address details
                         </Text>
                       </View>
@@ -828,8 +809,7 @@ class MyMapView extends React.Component {
                           zIndex: 1,
                           left: 10,
                           top: 10,
-                        }}
-                      >
+                        }}>
                         <Icon
                           name="chevron-small-left"
                           type="Entypo"
@@ -842,8 +822,7 @@ class MyMapView extends React.Component {
                             fontWeight: "bold",
                             fontSize: 18,
                             color: "#242A40",
-                          }}
-                        >
+                          }}>
                           Edit location
                         </Text>
                       </View>
@@ -871,8 +850,7 @@ class MyMapView extends React.Component {
                 containerStyle={{
                   backgroundColor: "white",
                   borderColor: "#BC8B00",
-                }}
-              >
+                }}>
                 {(children && children) || null}
               </MapView>
               <View style={styles.markerFixed}>
@@ -894,16 +872,14 @@ class MyMapView extends React.Component {
                       alignItems: "center",
                       marginTop: -55,
                       marginBottom: -28,
-                    }}
-                  >
+                    }}>
                     <Text
                       style={{
                         color: "#9BA2BC",
                         fontWeight: "bold",
                         fontSize: 13,
                         letterSpacing: 0.2,
-                      }}
-                    >
+                      }}>
                       Selected location{" "}
                     </Text>
                     <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>
@@ -923,8 +899,7 @@ class MyMapView extends React.Component {
                       alignItems: "center",
                       marginTop: -55,
                       marginBottom: -28,
-                    }}
-                  >
+                    }}>
                     {this.state.address ? (
                       <>
                         <Text
@@ -933,8 +908,7 @@ class MyMapView extends React.Component {
                             fontWeight: "bold",
                             fontSize: 13,
                             letterSpacing: 0.2,
-                          }}
-                        >
+                          }}>
                           Selected location{" "}
                         </Text>
                         <View
@@ -944,15 +918,13 @@ class MyMapView extends React.Component {
                             alignSelf: "center",
                             flex: 1,
                             flexWrap: "wrap",
-                          }}
-                        >
+                          }}>
                           {this.state.addressResult.map((el, index) => {
                             return (
                               <View style={{ flexDirection: "row" }}>
                                 <Text
                                   numberOfLines={2}
-                                  style={{ color: "#EFF4F6", fontSize: 14 }}
-                                >
+                                  style={{ color: "#EFF4F6", fontSize: 14 }}>
                                   {(index ? ", " : "") + el.long_name}
                                 </Text>
                               </View>
@@ -969,8 +941,7 @@ class MyMapView extends React.Component {
                             fontWeight: "bold",
                             fontSize: 13,
                             letterSpacing: 0.2,
-                          }}
-                        >
+                          }}>
                           Selected location{" "}
                         </Text>
                         <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>
@@ -1001,8 +972,7 @@ class MyMapView extends React.Component {
                 <TouchableOpacity
                   onPress={() => this.OnPressEditOnmap()}
                   style={styles.editonmap}
-                  activeOpacity={0.6}
-                >
+                  activeOpacity={0.6}>
                   <View style={{ flexDirection: "row" }}>
                     {/* <View style={{}}>
                                                 <Image
@@ -1017,8 +987,7 @@ class MyMapView extends React.Component {
                           color: "red",
                           letterSpacing: 0.2,
                           fontWeight: "bold",
-                        }}
-                      >
+                        }}>
                         Edit on map
                       </Text>
                     </View>
@@ -1031,8 +1000,7 @@ class MyMapView extends React.Component {
                 <TouchableOpacity
                   onPress={() => this.getCurrentPosition()}
                   style={styles.getcurrentlocation}
-                  activeOpacity={0.6}
-                >
+                  activeOpacity={0.6}>
                   <Icon
                     name="gps-fixed"
                     type="MaterialIcons"
@@ -1052,8 +1020,7 @@ class MyMapView extends React.Component {
                         left: "22%",
                         position: "absolute",
                         zIndex: 1,
-                      }}
-                    >
+                      }}>
                       <View
                         style={{
                           backgroundColor: "#6B6B6B",
@@ -1063,15 +1030,13 @@ class MyMapView extends React.Component {
                           borderRadius: 20,
                           justifyContent: "center",
                           alignItems: "center",
-                        }}
-                      >
+                        }}>
                         <Text
                           style={{
                             color: "#ffffff",
                             fontSize: 14,
                             letterSpacing: 0.2,
-                          }}
-                        >
+                          }}>
                           Move the pin to adjust
                         </Text>
                       </View>
@@ -1094,8 +1059,7 @@ class MyMapView extends React.Component {
               <ScrollView
                 // ref='_scrollView'
                 contentContainerStyle={{ zIndex: 1 }}
-                showsVerticalScrollIndicator={true}
-              >
+                showsVerticalScrollIndicator={true}>
                 {/* {this.state.gpsEnabled ?
                                 <View style={{ backgroundColor: '#6B98DE' }}>
                                     <View style={{ flexDirection: 'row', padding: 10 }}>
@@ -1180,8 +1144,7 @@ class MyMapView extends React.Component {
                           borderBottomColor: "#D8D8D8",
                           flexDirection: "row",
                           borderBottomWidth: 1,
-                        }}
-                      >
+                        }}>
                         <View style={{ justifyContent: "center" }}>
                           <Text style={{ fontSize: 16 }}>+91 </Text>
                         </View>
@@ -1230,8 +1193,7 @@ class MyMapView extends React.Component {
                                         /> */}
                       {this.state.mobileNumberErrorText ? (
                         <Text
-                          style={{ color: "red", fontSize: 12, marginTop: 5 }}
-                        >
+                          style={{ color: "red", fontSize: 12, marginTop: 5 }}>
                           {this.state.mobileNumberErrorText}{" "}
                         </Text>
                       ) : undefined}
@@ -1262,8 +1224,7 @@ class MyMapView extends React.Component {
                       />
                       {this.state.houseNumberErrorText ? (
                         <Text
-                          style={{ color: "red", fontSize: 12, marginTop: 5 }}
-                        >
+                          style={{ color: "red", fontSize: 12, marginTop: 5 }}>
                           {this.state.houseNumberErrorText}{" "}
                         </Text>
                       ) : undefined}
@@ -1331,8 +1292,7 @@ class MyMapView extends React.Component {
                         color: "#727272",
                         fontSize: 14,
                         fontWeight: "bold",
-                      }}
-                    >
+                      }}>
                       Save as{" "}
                     </Text>
                   </View>
@@ -1387,8 +1347,7 @@ class MyMapView extends React.Component {
               </ScrollView>
             )}
             <View
-              style={{ flex: 1, justifyContent: "center", marginBottom: 10 }}
-            >
+              style={{ flex: 1, justifyContent: "center", marginBottom: 10 }}>
               {this.state.mode == "EDIT_SCREEN" ? (
                 <Button
                   rounded
@@ -1399,16 +1358,14 @@ class MyMapView extends React.Component {
                     justifyContent: "center",
                     marginBottom: 10,
                   }}
-                  onPress={() => this.onSubmit()}
-                >
+                  onPress={() => this.onSubmit()}>
                   <Text
                     style={{
                       textTransform: "capitalize",
                       fontWeight: "bold",
                       fontSize: 16,
                       letterSpacing: 0.2,
-                    }}
-                  >
+                    }}>
                     Save & continue{" "}
                   </Text>
                 </Button>
@@ -1421,16 +1378,14 @@ class MyMapView extends React.Component {
                     width: "90%",
                     justifyContent: "center",
                   }}
-                  onPress={() => this.OnConfirmLocation()}
-                >
+                  onPress={() => this.OnConfirmLocation()}>
                   <Text
                     style={{
                       textTransform: "capitalize",
                       fontWeight: "bold",
                       fontSize: 16,
                       letterSpacing: 0.2,
-                    }}
-                  >
+                    }}>
                     Confirm Location{" "}
                   </Text>
                 </Button>
@@ -1448,8 +1403,7 @@ class MyMapView extends React.Component {
           visible={this.state.modalVisible}
           onRequestClose={() => {
             this.setState({ modalVisible: false });
-          }}
-        >
+          }}>
           <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
             <View flex={1}>
               <View style={{ position: "relative", height: 65 }}>
@@ -1487,16 +1441,14 @@ class MyMapView extends React.Component {
                     onPress={() => {
                       this.getCurrentPosition();
                     }}
-                    style={{ flexDirection: "row" }}
-                  >
+                    style={{ flexDirection: "row" }}>
                     <View
                       style={{
                         width: 50,
                         height: 50,
                         justifyContent: "center",
                         alignItems: "center",
-                      }}
-                    >
+                      }}>
                       <Icon
                         name="crosshairs-gps"
                         type="MaterialCommunityIcons"
@@ -1535,8 +1487,7 @@ class MyMapView extends React.Component {
                             marginLeft: 10,
                             fontSize: 14,
                             marginBottom: 10,
-                          }}
-                        >
+                          }}>
                           Saved Address{" "}
                         </Text>
                       ) : undefined}
@@ -1551,8 +1502,7 @@ class MyMapView extends React.Component {
                               flexDirection: "row",
                               paddingBottom: 10,
                               paddingTop: 5,
-                            }}
-                          >
+                            }}>
                             {/* <Text style={styles.item}
                                                 //   onPress={this.getListViewItem.bind(this, item)}
                                                 >{JSON.stringify(item, null, "      ")}  </Text> */}
@@ -1563,8 +1513,7 @@ class MyMapView extends React.Component {
                                   height: 50,
                                   justifyContent: "center",
                                   alignItems: "center",
-                                }}
-                              >
+                                }}>
                                 <Icon
                                   name="home"
                                   type="AntDesign"
@@ -1579,8 +1528,7 @@ class MyMapView extends React.Component {
                                   height: 50,
                                   justifyContent: "center",
                                   alignItems: "center",
-                                }}
-                              >
+                                }}>
                                 <Icon
                                   name="office-building"
                                   type="MaterialCommunityIcons"
@@ -1595,8 +1543,7 @@ class MyMapView extends React.Component {
                                   height: 50,
                                   justifyContent: "center",
                                   alignItems: "center",
-                                }}
-                              >
+                                }}>
                                 <Icon
                                   name="location-pin"
                                   type="SimpleLineIcons"
@@ -1609,14 +1556,12 @@ class MyMapView extends React.Component {
                                 flex: 1,
                                 paddingLeft: 10,
                                 justifyContent: "center",
-                              }}
-                            >
+                              }}>
                               <View
                                 style={{
                                   flexDirection: "row",
                                   alignItems: "center",
-                                }}
-                              >
+                                }}>
                                 {item?.saveAs == "Home" && (
                                   <View
                                     style={{
@@ -1626,15 +1571,13 @@ class MyMapView extends React.Component {
                                       borderColor: "#FCD8EC",
                                       paddingVertical: 3,
                                       marginRight: 5,
-                                    }}
-                                  >
+                                    }}>
                                     <Text
                                       style={{
                                         color: "#F464AD",
                                         fontSize: 12,
                                         marginHorizontal: 5,
-                                      }}
-                                    >
+                                      }}>
                                       Home
                                     </Text>
                                   </View>
@@ -1648,15 +1591,13 @@ class MyMapView extends React.Component {
                                       borderColor: "#F0D4FA",
                                       paddingVertical: 3,
                                       marginRight: 5,
-                                    }}
-                                  >
+                                    }}>
                                     <Text
                                       style={{
                                         color: "#CD64F4",
                                         fontSize: 12,
                                         marginHorizontal: 5,
-                                      }}
-                                    >
+                                      }}>
                                       Office
                                     </Text>
                                   </View>
@@ -1670,15 +1611,13 @@ class MyMapView extends React.Component {
                                       borderColor: "#BEDCFF",
                                       paddingVertical: 3,
                                       marginRight: 5,
-                                    }}
-                                  >
+                                    }}>
                                     <Text
                                       style={{
                                         color: "#64A6F4",
                                         fontSize: 12,
                                         marginHorizontal: 5,
-                                      }}
-                                    >
+                                      }}>
                                       Others
                                     </Text>
                                   </View>
@@ -1686,8 +1625,7 @@ class MyMapView extends React.Component {
                                 {/* <Text style={{ fontSize: 14, fontWeight: 'bold', }}>{item?.recepientName} </Text> */}
                               </View>
                               <View
-                                style={{ marginTop: 5, flexDirection: "row" }}
-                              >
+                                style={{ marginTop: 5, flexDirection: "row" }}>
                                 {item?.houseNo ? (
                                   <>
                                     <Text
@@ -1695,8 +1633,7 @@ class MyMapView extends React.Component {
                                         color: "#909090",
                                         fontSize: 13,
                                         marginRight: 5,
-                                      }}
-                                    >
+                                      }}>
                                       {item?.houseNo}
                                     </Text>
                                   </>
@@ -1705,8 +1642,10 @@ class MyMapView extends React.Component {
                                 {item?.landmark ? (
                                   <>
                                     <Text
-                                      style={{ color: "#909090", fontSize: 13 }}
-                                    >
+                                      style={{
+                                        color: "#909090",
+                                        fontSize: 13,
+                                      }}>
                                       {item?.landmark}
                                     </Text>
                                   </>
@@ -1714,8 +1653,7 @@ class MyMapView extends React.Component {
                               </View>
                               <Text
                                 numberOfLines={2}
-                                style={{ color: "#909090", fontSize: 13 }}
-                              >
+                                style={{ color: "#909090", fontSize: 13 }}>
                                 {item?.addressLine_1}{" "}
                               </Text>
                             </View>

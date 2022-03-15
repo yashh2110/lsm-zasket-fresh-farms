@@ -21,7 +21,6 @@ import MapView, { Marker, Callout, ProviderPropType } from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import marker from "../../assets/png/locationIcon.png";
 import { Icon, Button, Text } from "native-base";
-import { MapApiKey } from "../../../env";
 import LottieView from "lottie-react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import Theme from "../../styles/Theme";
@@ -32,6 +31,7 @@ import {
   addNewCustomerAddress,
   updateUserAddress,
   getAllUserAddress,
+  geocodeing,
 } from "../../actions/map";
 import { addLocation } from "../../actions/location";
 import { addHomeScreenLocation } from "../../actions/homeScreenLocation";
@@ -44,6 +44,7 @@ import { CheckGpsState, CheckPermissions } from "../../utils/utils";
 import RNAndroidLocationEnabler from "react-native-android-location-enabler";
 import { AuthContext } from "../../navigation/Routes";
 import { StackActions } from "@react-navigation/native";
+import Config from "react-native-config";
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
 
@@ -53,7 +54,7 @@ const initialRegion = {
   latitudeDelta,
   longitudeDelta,
 };
-
+const mapApiKey = Config.MAP_API_KEY;
 class MapScreenGrabPincode extends React.Component {
   map = null;
 
@@ -189,15 +190,7 @@ class MapScreenGrabPincode extends React.Component {
                 longitudeDelta,
               };
               await this.setRegion(region);
-
-              fetch(
-                "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-                  position.coords.latitude +
-                  "," +
-                  position.coords.longitude +
-                  "&key=" +
-                  MapApiKey
-              )
+              geocodeing(position.coords.latitude, position.coords.longitude)
                 .then((response) => {
                   response.json().then(async (json) => {
                     let postal_code = json?.results?.[0]?.address_components?.find(
@@ -268,14 +261,7 @@ class MapScreenGrabPincode extends React.Component {
       errorMessage: "",
       movetoadjust: true,
     });
-    fetch(
-      "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-        this.state.region.latitude +
-        "," +
-        this.state.region.longitude +
-        "&key=" +
-        MapApiKey
-    )
+    geocodeing(this.state.region.latitude, this.state.region.longitude)
       .then((response) => {
         response.json().then(async (json) => {
           // console.warn(json)
@@ -406,8 +392,7 @@ class MapScreenGrabPincode extends React.Component {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: "white" }}
-            behavior={Platform.OS == "ios" ? "padding" : null}
-          >
+            behavior={Platform.OS == "ios" ? "padding" : null}>
             {this.state.errorMessageBanner && (
               <View
                 style={{
@@ -419,11 +404,9 @@ class MapScreenGrabPincode extends React.Component {
                   left: 0,
                   zIndex: 1,
                   flexDirection: "row",
-                }}
-              >
+                }}>
                 <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                >
+                  style={{ justifyContent: "center", alignItems: "center" }}>
                   <FeatherIcons name="info" color={"white"} size={18} />
                 </View>
                 <View
@@ -431,8 +414,7 @@ class MapScreenGrabPincode extends React.Component {
                     flex: 1,
                     justifyContent: "center",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Text style={{ fontSize: 12, color: "white" }}>
                     We might be not available in all the locations. We are
                     expanding, very soon we will be delivered in all location.{" "}
@@ -442,8 +424,7 @@ class MapScreenGrabPincode extends React.Component {
                   style={{ justifyContent: "center", alignItems: "center" }}
                   onPress={() => {
                     this.setState({ errorMessageBanner: false });
-                  }}
-                >
+                  }}>
                   <AntDesignIcons name="close" color={"white"} size={18} />
                 </TouchableOpacity>
               </View>
@@ -451,8 +432,7 @@ class MapScreenGrabPincode extends React.Component {
             <View style={styles.map}>
               {!this.state.errorMessageBanner && (
                 <View
-                  style={{ zIndex: 1, height: 60, backgroundColor: "white" }}
-                >
+                  style={{ zIndex: 1, height: 60, backgroundColor: "white" }}>
                   <TouchableOpacity
                     onPress={() => navigation.goBack()}
                     style={{
@@ -463,8 +443,7 @@ class MapScreenGrabPincode extends React.Component {
                       zIndex: 1,
                       left: 10,
                       top: 10,
-                    }}
-                  >
+                    }}>
                     <Icon
                       name="chevron-small-left"
                       type="Entypo"
@@ -477,8 +456,7 @@ class MapScreenGrabPincode extends React.Component {
                         fontWeight: "bold",
                         fontSize: 18,
                         color: "#242A40",
-                      }}
-                    >
+                      }}>
                       Set delivery location{" "}
                     </Text>
                   </View>
@@ -500,8 +478,7 @@ class MapScreenGrabPincode extends React.Component {
                 containerStyle={{
                   backgroundColor: "white",
                   borderColor: "#BC8B00",
-                }}
-              >
+                }}>
                 {(children && children) || null}
               </MapView>
               <View style={styles.markerFixed}>
@@ -523,16 +500,14 @@ class MapScreenGrabPincode extends React.Component {
                       alignItems: "center",
                       marginTop: -55,
                       marginBottom: -28,
-                    }}
-                  >
+                    }}>
                     <Text
                       style={{
                         color: "#9BA2BC",
                         fontWeight: "bold",
                         fontSize: 12,
                         letterSpacing: 0.2,
-                      }}
-                    >
+                      }}>
                       SELECTED LOCATION{" "}
                     </Text>
                     <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>
@@ -552,8 +527,7 @@ class MapScreenGrabPincode extends React.Component {
                       alignItems: "center",
                       marginTop: -55,
                       marginBottom: -28,
-                    }}
-                  >
+                    }}>
                     {this.state.address ? (
                       <>
                         <Text
@@ -562,8 +536,7 @@ class MapScreenGrabPincode extends React.Component {
                             fontWeight: "bold",
                             fontSize: 12,
                             letterSpacing: 0.2,
-                          }}
-                        >
+                          }}>
                           SELECTED LOCATION{" "}
                         </Text>
                         <View
@@ -573,15 +546,13 @@ class MapScreenGrabPincode extends React.Component {
                             alignSelf: "center",
                             flex: 1,
                             flexWrap: "wrap",
-                          }}
-                        >
+                          }}>
                           {this.state.addressResult.map((el, index) => {
                             return (
                               <View style={{ flexDirection: "row" }}>
                                 <Text
                                   numberOfLines={2}
-                                  style={{ color: "#EFF4F6", fontSize: 14 }}
-                                >
+                                  style={{ color: "#EFF4F6", fontSize: 14 }}>
                                   {(index ? ",  " : "") + el.long_name}
                                 </Text>
                               </View>
@@ -597,8 +568,7 @@ class MapScreenGrabPincode extends React.Component {
                             fontWeight: "bold",
                             fontSize: 12,
                             letterSpacing: 0.2,
-                          }}
-                        >
+                          }}>
                           SELECTED LOCATION{" "}
                         </Text>
                         <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>
@@ -617,8 +587,7 @@ class MapScreenGrabPincode extends React.Component {
               <TouchableOpacity
                 onPress={() => this.getCurrentPosition()}
                 style={styles.getcurrentlocation}
-                activeOpacity={0.6}
-              >
+                activeOpacity={0.6}>
                 <Icon
                   name="gps-fixed"
                   type="MaterialIcons"
@@ -634,8 +603,7 @@ class MapScreenGrabPincode extends React.Component {
                     left: "25%",
                     position: "absolute",
                     zIndex: 1,
-                  }}
-                >
+                  }}>
                   <View
                     style={{
                       backgroundColor: "#202741",
@@ -646,15 +614,13 @@ class MapScreenGrabPincode extends React.Component {
                       borderRadius: 5,
                       justifyContent: "center",
                       alignItems: "center",
-                    }}
-                  >
+                    }}>
                     <Text
                       style={{
                         color: "#ffffff",
                         fontSize: 14,
                         letterSpacing: 0.2,
-                      }}
-                    >
+                      }}>
                       Move the pin to adjust{" "}
                     </Text>
                   </View>
@@ -680,8 +646,7 @@ class MapScreenGrabPincode extends React.Component {
                   backgroundColor: "#6B98DE",
                   position: "absolute",
                   bottom: 140,
-                }}
-              >
+                }}>
                 <View style={{ flexDirection: "row", padding: 10 }}>
                   <View
                     style={{
@@ -689,8 +654,7 @@ class MapScreenGrabPincode extends React.Component {
                       height: 50,
                       justifyContent: "center",
                       alignItems: "center",
-                    }}
-                  >
+                    }}>
                     <Icon
                       name="crosshairs-gps"
                       type="MaterialCommunityIcons"
@@ -703,8 +667,7 @@ class MapScreenGrabPincode extends React.Component {
                         fontSize: 14,
                         color: "#ffffff",
                         fontWeight: "bold",
-                      }}
-                    >
+                      }}>
                       Unable to get location{" "}
                     </Text>
                     <Text style={{ fontSize: 12, color: "#ffffff" }}>
@@ -721,16 +684,14 @@ class MapScreenGrabPincode extends React.Component {
                       backgroundColor: "white",
                       margin: 10,
                       borderRadius: 5,
-                    }}
-                  >
+                    }}>
                     <Text
                       style={{
                         fontSize: 14,
                         color: "#6B98DE",
                         marginHorizontal: 10,
                         fontWeight: "bold",
-                      }}
-                    >
+                      }}>
                       TURN ON{" "}
                     </Text>
                   </TouchableOpacity>
@@ -784,8 +745,7 @@ class MapScreenGrabPincode extends React.Component {
             {/* </View> */}
             {/* </ScrollView> */}
             <View
-              style={{ flex: 1, justifyContent: "center", marginBottom: 10 }}
-            >
+              style={{ flex: 1, justifyContent: "center", marginBottom: 10 }}>
               <Button
                 rounded
                 style={{
@@ -794,8 +754,7 @@ class MapScreenGrabPincode extends React.Component {
                   width: "90%",
                   justifyContent: "center",
                 }}
-                onPress={() => this.onSubmit()}
-              >
+                onPress={() => this.onSubmit()}>
                 <Text style={{}}>Confirm Location</Text>
               </Button>
             </View>

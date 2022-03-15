@@ -38,7 +38,6 @@ import Loader from "../common/Loader";
 import DarkModeToggle from "../common/DarkModeToggle";
 import AsyncStorage from "@react-native-community/async-storage";
 import Geolocation from "@react-native-community/geolocation";
-import { appVersion, MapApiKey, OneSignalAppId } from "../../../env";
 import { addHomeScreenLocation } from "../../actions/homeScreenLocation";
 import { getCartItemsApi } from "../../actions/cart";
 import FeatherIcons from "react-native-vector-icons/Feather";
@@ -51,7 +50,7 @@ import GPSState from "react-native-gps-state";
 import { CheckGpsState, CheckPermissions } from "../../utils/utils";
 import { useIsFocused } from "@react-navigation/native";
 import AddressModal from "../common/AddressModal";
-import { getAllUserAddress } from "../../actions/map";
+import { getAllUserAddress, geocodeing } from "../../actions/map";
 import Modal from "react-native-modal";
 import SetDeliveryLocationModal from "../common/SetDeliveryLocationModal";
 import { EventRegister } from "react-native-event-listeners";
@@ -65,6 +64,7 @@ import appsFlyer from "react-native-appsflyer";
 import LinearGradient from "react-native-linear-gradient";
 import analytics from "@react-native-firebase/analytics";
 import InitialLoader from "../common/InitialLoader";
+import Config from "react-native-config";
 
 RNUxcam.startWithKey("qercwheqrlqze96"); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
@@ -99,6 +99,8 @@ const HomeScreen = ({
   const [partnerDetails, setPartnerDetails] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [modelSwip, setModelSwip] = useState("");
+  const mapApiKey = Config.MAP_API_KEY;
+  const oneSignalAppId = Config.ONESIGNAL_APP_ID;
   // useEffect(() => {
   //     // let userDetails = await AsyncStorage.getItem('ProductId');
   //     // alert(userDetails)
@@ -341,7 +343,7 @@ const HomeScreen = ({
   const [showAppUpdate, setShowAppUpdate] = useState(false);
   useEffect(() => {
     if (config?.appVersion !== undefined) {
-      if (config?.appVersion !== appVersion) {
+      if (config?.appVersion !== Config.appVersion) {
         setShowAppUpdate(true);
       }
     }
@@ -365,7 +367,6 @@ const HomeScreen = ({
     setLoading(true);
     const initial = async () => {
       await initialFunction();
-      await checkForHomescreenLocationAddress();
       await initalCustomerDetails();
       setLoading(false);
     };
@@ -384,7 +385,7 @@ const HomeScreen = ({
       });
 
       let userID;
-      OneSignal.init(OneSignalAppId, {
+      OneSignal.init(oneSignalAppId, {
         kOSSettingsKeyAutoPrompt: true,
       });
       OneSignal.getPermissionSubscriptionState(async (status) => {
@@ -394,7 +395,7 @@ const HomeScreen = ({
         let version = DeviceInfo.getVersion();
         let model = DeviceInfo.getModel();
         let payload = {
-          appVersion: appVersion,
+          appVersion: Config.appVersion,
           deviceId: deviceId,
           mobileOS: Platform.OS == "android" ? "android" : "ios",
           phoneModel:
@@ -496,10 +497,8 @@ const HomeScreen = ({
         homeScreenLocation?.lat == ""
       ) {
         await CheckPermissions(async (status) => {
-          if (status) {
-            await getCurrentPosition();
-          } else {
-            await getAllUserAddress(async (response, status) => {
+          if (!status)
+            return await getAllUserAddress(async (response, status) => {
               if (status) {
                 let newArray = [];
                 await response?.data?.forEach((el, index) => {
@@ -514,7 +513,7 @@ const HomeScreen = ({
                 setDeliveryLocationModalVisible(true);
               }
             });
-          }
+          return await getCurrentPosition();
         }, false);
       } else {
         setDeliveryLocationModalVisible(false);
@@ -522,16 +521,11 @@ const HomeScreen = ({
     }
   };
   const getCurrentPosition = async () => {
+    console.log("geoloaction api hit");
+
     Geolocation.getCurrentPosition(
       async (position) => {
-        await fetch(
-          "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-            position.coords.latitude +
-            "," +
-            position.coords.longitude +
-            "&key=" +
-            MapApiKey
-        )
+        geocodeing(position.coords.latitude, position.coords.longitude)
           .then((response) => {
             response.json().then(async (json) => {
               let postal_code = json?.results?.[0]?.address_components?.find(
