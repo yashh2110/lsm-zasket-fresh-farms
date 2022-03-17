@@ -32,7 +32,7 @@ import FeatherIcons from "react-native-vector-icons/Feather";
 import FontAwesomeIcons from "react-native-vector-icons/FontAwesome5";
 import { request, PERMISSIONS, RESULTS, check } from "react-native-permissions";
 
-const Referral = ({ getLeaderBoardList, route }) => {
+const Referral = ({ getLeaderBoardList, route, navigation }) => {
   const [contacts, setContacts] = useState([]);
   const [titleText, setTitleText] = useState("Bird's Nest");
   const bodyText = "This is not really a bird nest.";
@@ -903,7 +903,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
             </View>
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => {
                   get_Text_From_Clipboard(referal);
@@ -954,7 +954,7 @@ const Referral = ({ getLeaderBoardList, route }) => {
                     />
                   </View>
                 </TouchableOpacity>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => {
@@ -962,9 +962,9 @@ const Referral = ({ getLeaderBoardList, route }) => {
                 }}
                 style={{
                   height: 40,
-                  width: "46%",
+                  width: "100%",
                   height: 45,
-                  borderRadius: 8,
+                  borderRadius: 6,
                   justifyContent: "center",
                   borderColor: "#1fa900",
                   borderWidth: 1,
@@ -974,8 +974,6 @@ const Referral = ({ getLeaderBoardList, route }) => {
                   style={{ flexDirection: "row", justifyContent: "center" }}>
                   <View
                     style={{
-                      width: 22,
-                      height: 22,
                       justifyContent: "center",
                       alignItems: "center",
                     }}>
@@ -993,13 +991,52 @@ const Referral = ({ getLeaderBoardList, route }) => {
                         fontSize: 13,
                         fontWeight: "bold",
                       }}>
-                      WhatsApp
+                      Refer a friend
                     </Text>
                   </View>
                 </View>
               </TouchableOpacity>
             </View>
           </View>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#FFFFFF",
+              borderRadius: 8,
+              borderColor: "#f7d395",
+              padding: 11,
+              marginTop: 10,
+              borderWidth: 0.9,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              paddingHorizontal: 10,
+            }}
+            onPress={() => {
+              navigation.navigate("QuickTipsScreen");
+            }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingLeft: 10,
+              }}>
+              <View>
+                <Image
+                  source={require("../../assets/png/quickTip.png")}
+                  style={{ width: 46, height: 39 }}
+                  resizeMode="contain"
+                />
+              </View>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text>How to get</Text>
+                <Text style={{ fontWeight: "bold" }}>maximum earnings.</Text>
+              </View>
+            </View>
+            <FeatherIcons
+              name="chevron-right"
+              style={{ fontSize: 24, color: "#727272" }}
+            />
+          </TouchableOpacity>
         </View>
         <LinearGradient
           colors={["#ffffff", "#ffffff"]}

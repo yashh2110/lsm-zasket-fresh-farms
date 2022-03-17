@@ -50,6 +50,7 @@ import LoadingScreen from "./LoadingScreen";
 import ReferalCodeScreen from "../components/AccountStack/ReferalCodeScreen";
 import ReferralScreen from "../components/ReferralsScreens/Referral";
 import IconBadge from "react-native-icon-badge";
+import QuickTips from "../components/ReferralsScreens/QuickTips";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -596,6 +597,11 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                     name="WalletSuccessScreen"
                     component={WalletSuccessScreen}
                     options={{ cardStyleInterpolator: forFade }}
+                  />
+                  <Stack.Screen
+                    name="QuickTipsScreen"
+                    component={QuickTips}
+                    // options={{ cardStyleInterpolator: forFade }}
                   />
                 </>
               )}

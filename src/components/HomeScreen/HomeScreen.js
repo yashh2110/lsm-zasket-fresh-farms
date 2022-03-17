@@ -65,7 +65,10 @@ import LinearGradient from "react-native-linear-gradient";
 import analytics from "@react-native-firebase/analytics";
 import InitialLoader from "../common/InitialLoader";
 import Config from "react-native-config";
-
+import Carousel, {
+  Pagination,
+  PaginationLight,
+} from "react-native-x2-carousel";
 RNUxcam.startWithKey("qercwheqrlqze96"); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
 RNUxcam.tagScreenName("homeScreen");
@@ -354,6 +357,11 @@ const HomeScreen = ({
   const [pincodeError, setPincodeError] = useState(false);
   const [showAppReviewCard, setShowAppReviewCard] = useState(true);
   const [addressModalVisible, setAddressModalVisible] = useState(false);
+  const [images, setImages] = useState([
+    { img: require("../../assets/png/searchBanner1.png"), id: 1 },
+    { img: require("../../assets/png/searchBanner2.png"), id: 2 },
+    { img: require("../../assets/png/searchBanner3.png"), id: 3 },
+  ]);
   const [
     deliveryLocationModalVisible,
     setDeliveryLocationModalVisible,
@@ -736,6 +744,14 @@ const HomeScreen = ({
     setModelSwip("down");
   };
 
+  // rendering image item for the corousel after category section
+  const renderImageItem = (data) => {
+    return (
+      <View key={data.id} style={styles.item}>
+        <Image source={data.img} style={{ height: 100 }} resizeMode="contain" />
+      </View>
+    );
+  };
   return (
     <>
       <ScrollView
@@ -882,7 +898,6 @@ const HomeScreen = ({
             )}
           </View>
         )}
-
         {pincodeError ? (
           <View
             style={{
@@ -1027,7 +1042,6 @@ const HomeScreen = ({
                         )
                     })}
                 </ScrollView> */}
-
         {/* <View style={{ width: ("100%"), marginRight: 30 }}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 5 }}>
                         {bannerImages?.map((el, index) => {
@@ -1041,7 +1055,6 @@ const HomeScreen = ({
                             )
                         })}
                     </ScrollView> */}
-
         {/* <View style={{ justifyContent: "center", alignItems: "center", flexDirection: "row", }}>
                         {bannerImages?.map((el, index) => {
                             return (
@@ -1072,7 +1085,6 @@ const HomeScreen = ({
             resizeMode={FastImage.resizeMode.cover}
           />
         ) : undefined}
-
         <View
           style={{
             flexDirection: "row",
@@ -1180,6 +1192,42 @@ const HomeScreen = ({
           />
         </View>
 
+        <View style={{ alignItems: "center", flex: 1, marginVertical: 13 }}>
+          {/* <SliderBox
+                images={images}
+                sliderBoxHeight={125}
+                circleLoop
+                resizeMethod={"resize"}
+                resizeMode={"contain"}
+                autoplay
+                parentWidth={width * 0.95}
+                ImageComponent={FastImage}
+                ImageComponentStyle={{
+                  width: "97%",
+                  alignSelf: "center",
+                }}
+                dotColor={Theme.Colors.primary}
+                inactiveDotColor="#fff"
+                paginationBoxVerticalPadding={20}
+                dotStyle={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: 7,
+                  marginHorizontal: 0,
+                  padding: 0,
+                  margin: 0,
+                  backgroundColor: "rgba(128, 128, 128, 0.92)",
+                }}
+              /> */}
+          <Carousel
+            pagination={(Pagination, PaginationLight)}
+            renderItem={renderImageItem}
+            data={images}
+            autoplay
+            loop
+            autoplayInterval={2000}
+          />
+        </View>
         <FlatList
           data={categories}
           renderItem={({ item }) => (
@@ -1187,7 +1235,6 @@ const HomeScreen = ({
           )}
           keyExtractor={(item) => item?.id.toString()}
         />
-
         {showAppReviewCard ? (
           <View
             style={{

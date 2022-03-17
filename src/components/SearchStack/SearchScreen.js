@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  Dimensions,
+  StyleSheet,
 } from "react-native";
 import CustomHeader from "../common/CustomHeader";
 import { Button, Icon } from "react-native-elements";
@@ -22,7 +24,13 @@ import RNUxcam from "react-native-ux-cam";
 import CartDown from "../common/cartDown";
 import appsFlyer from "react-native-appsflyer";
 import analytics from "@react-native-firebase/analytics";
-
+import { SliderBox } from "react-native-image-slider-box";
+import FastImage from "react-native-fast-image";
+import Carousel, {
+  Pagination,
+  PaginationLight,
+} from "react-native-x2-carousel";
+const { width, height } = Dimensions.get("screen");
 RNUxcam.startWithKey("qercwheqrlqze96"); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
 RNUxcam.tagScreenName("Search by category");
@@ -31,7 +39,11 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
   const [result, setResult] = useState([]);
-
+  const [images, setImages] = useState([
+    { img: require("../../assets/png/searchBanner1.png"), id: 1 },
+    { img: require("../../assets/png/searchBanner2.png"), id: 2 },
+    { img: require("../../assets/png/searchBanner3.png"), id: 3 },
+  ]);
   useEffect(() => {
     return () => {};
   }, []);
@@ -92,7 +104,13 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
     setSearchTerm("");
     setResult([]);
   };
-
+  const renderItem = (data) => {
+    return (
+      <View key={data.id} style={styles.item}>
+        <Image source={data.img} style={{ height: 100 }} resizeMode="contain" />
+      </View>
+    );
+  };
   const emptyComponent = () => {
     return (
       <View style={[{ marginTop: 5 }]}>
@@ -111,8 +129,7 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
                 textAlign: "center",
                 fontWeight: "bold",
                 fontSize: 18,
-              }}
-            >
+              }}>
               Nothing Found!
             </Text>
             <Text
@@ -121,8 +138,7 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
                 textAlign: "center",
                 color: "#727272",
                 fontSize: 12,
-              }}
-            >
+              }}>
               We cannot find what you are looking for.
             </Text>
             <Text
@@ -131,13 +147,48 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
                 textAlign: "center",
                 color: "#727272",
                 fontSize: 12,
-              }}
-            >
+              }}>
               Try search something else.
             </Text>
           </View>
         ) : (
           <>
+            {/* <View style={{ alignItems: "center", flex: 1, marginVertical: 10 }}> */}
+            {/* <SliderBox
+                images={images}
+                sliderBoxHeight={125}
+                circleLoop
+                resizeMethod={"resize"}
+                resizeMode={"contain"}
+                autoplay
+                parentWidth={width * 0.95}
+                ImageComponent={FastImage}
+                ImageComponentStyle={{
+                  width: "97%",
+                  alignSelf: "center",
+                }}
+                dotColor={Theme.Colors.primary}
+                inactiveDotColor="#fff"
+                paginationBoxVerticalPadding={20}
+                dotStyle={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: 7,
+                  marginHorizontal: 0,
+                  padding: 0,
+                  margin: 0,
+                  backgroundColor: "rgba(128, 128, 128, 0.92)",
+                }}
+              /> */}
+            {/* <Carousel
+                pagination={(Pagination, PaginationLight)}
+                renderItem={renderItem}
+                data={images}
+                autoplay
+                loop
+                autoplayInterval={2000}
+              />
+            </View> */}
             <Text style={{ fontWeight: "bold", fontSize: 16, marginLeft: 10 }}>
               Search by category
             </Text>
@@ -156,16 +207,14 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
                     activeOpacity={0.5}
                     onPress={() => {
                       setSearchTerm(item?.categoryName);
-                    }}
-                  >
+                    }}>
                     <View
                       style={{
                         backgroundColor: "#F7F7F7",
                         borderRadius: 6,
                         borderColor: "#EDEDED",
                         borderWidth: 1,
-                      }}
-                    >
+                      }}>
                       {item.categoryTag ? (
                         <>
                           <View
@@ -187,16 +236,14 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
                               marginRight: -1,
                               marginTop: -1,
                               justifyContent: "center",
-                            }}
-                          >
+                            }}>
                             <Text
                               style={{
                                 fontSize: 9,
                                 textAlign: "center",
                                 color: "#f7f7f7",
                                 fontWeight: "bold",
-                              }}
-                            >
+                              }}>
                               {item.categoryTag}
                             </Text>
                           </View>
@@ -206,8 +253,7 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
                           style={{
                             height: 18,
                             width: "58%",
-                          }}
-                        ></View>
+                          }}></View>
                       )}
                       {/* <View style={[styles.categoriesCard, item.categories ? { padding: 9, marginTop: -5 } : undefined]}> */}
 
@@ -231,8 +277,7 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
                         marginVertical: 5,
                         fontWeight: "bold",
                         fontSize: 13,
-                      }}
-                    >
+                      }}>
                       {item?.categoryDisplayName}
                     </Text>
                   </TouchableOpacity>
@@ -256,14 +301,12 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
           paddingRight: 10,
           flexDirection: "row",
           alignItems: "center",
-        }}
-      >
+        }}>
         <TouchableOpacity
           onPress={() => {
             navigation.goBack();
           }}
-          style={{ justifyContent: "center", alignItems: "center" }}
-        >
+          style={{ justifyContent: "center", alignItems: "center" }}>
           <Icons
             name="chevron-small-left"
             type="Entypo"
@@ -284,8 +327,7 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
             shadowOpacity: 0.1,
             shadowRadius: 6.68,
             elevation: 11,
-          }}
-        >
+          }}>
           <View style={{ paddingHorizontal: 5 }}>
             <Icon name="search" style={{ fontSize: 24 }} color="#727272" />
           </View>
@@ -302,8 +344,7 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
             onPress={() => {
               clearFunction();
             }}
-            style={{ paddingHorizontal: 5 }}
-          >
+            style={{ paddingHorizontal: 5 }}>
             <Icons
               name="close-circle"
               type="MaterialCommunityIcons"
@@ -336,6 +377,17 @@ const SearchScreen = ({ navigation, searchItems, categories }) => {
     </View>
   );
 };
+const styles = StyleSheet.create({
+  item: {
+    width,
+    height: 100,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+    flex: 1,
+    // marginVertical: 10,
+  },
+});
 const mapStateToProps = (state) => ({
   categories: state.home.categories,
 });
