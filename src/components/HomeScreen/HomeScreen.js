@@ -1526,6 +1526,23 @@ const HomeScreen = ({
           </TouchableOpacity>
         </SafeAreaView> */}
       </Modal>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("PriceChopStack");
+        }}
+        style={{
+          // width: 100,
+          position: "absolute",
+          bottom: 0,
+          right: 0,
+          margin: 10,
+        }}>
+        <Image
+          source={require("../../assets/png/priceChop.png")}
+          style={{ width: 68, height: 68 }}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
       <AddressModal
         addressModalVisible={addressModalVisible}
         setAddressModalVisible={(option) => setAddressModalVisible(option)}

@@ -51,6 +51,8 @@ import ReferalCodeScreen from "../components/AccountStack/ReferalCodeScreen";
 import ReferralScreen from "../components/ReferralsScreens/Referral";
 import IconBadge from "react-native-icon-badge";
 import QuickTips from "../components/ReferralsScreens/QuickTips";
+import PcProductsScreen from "../components/PriceChopStack/PcProductsScreen";
+import PcProductDetailsScreen from "../components/PriceChopStack/PcProductDetailsScreen";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -459,6 +461,22 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
     );
   }
 
+  const PriceChopStack = () => {
+    return (
+      <Stack.Navigator
+        initialRouteName="PcProductsScreen"
+        screenOptions={{
+          headerShown: false,
+        }}>
+        <Stack.Screen name="PcProductsScreen" component={PcProductsScreen} />
+        <Stack.Screen
+          name="PcProductDetailsScreen"
+          component={PcProductDetailsScreen}
+        />
+      </Stack.Navigator>
+    );
+  };
+
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -542,6 +560,10 @@ const Navigate = ({ darkMode, isAuthenticated }) => {
                     name="MapStack"
                     component={MapStack}
                     options={{ cardStyleInterpolator: forFade }}
+                  />
+                  <Stack.Screen
+                    name="PriceChopStack"
+                    component={PriceChopStack}
                   />
                   <Stack.Screen
                     name="ProductDetailScreen"
