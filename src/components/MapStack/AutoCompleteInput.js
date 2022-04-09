@@ -116,7 +116,7 @@ const AutoCompleteLocation = ({
       ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
       // predefinedPlaces={[currentPosition]}
 
-      debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
+      debounce={900} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
       // renderLeftButton={() => <TouchableOpacity style={{ justifyContent: 'center' }} onPress={onRequestClose}>
       //   <Icon name="arrowleft" type="AntDesign" style={{ fontSize: 20, marginLeft: 10, color: "grey" }} />
       // </TouchableOpacity>}

@@ -362,7 +362,7 @@ class AutoCompleteLocationScreen extends React.Component {
                 <AutoCompleteLocation
                   style={{ container: { positition: "absolute", height: 50 } }}
                   getLocation={async (data, details = null) => {
-                    console.warn("dsataaaaaaaaaaaaaaaaa", data.description);
+                    console.log(data.location, details, "auto_places");
                     await this.setState({
                       region: {
                         latitude: details?.geometry?.location?.lat,

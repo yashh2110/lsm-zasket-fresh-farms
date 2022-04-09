@@ -24,14 +24,16 @@ const axiosinstance = axios.create({
 let setAuthorizationFromAsyncStorage = async () => {
   let userDetails = await AsyncStorage.getItem("userDetails");
   let parsedUserDetails = await JSON.parse(userDetails!);
+  console.log(parsedUserDetails);
   let version = DeviceInfo.getVersion();
   let deviceId = DeviceInfo.getUniqueId();
   // console.log("deviceId: " + deviceId);
   let deviceType = Platform.OS;
-  // console.log("aaaa", version, deviceType)
+
   if (parsedUserDetails?.customerSessionDetails?.sessionId) {
     new AxiosDefaultsManager().setAuthorizationHeader(
       parsedUserDetails?.customerSessionDetails?.sessionId,
+      parsedUserDetails?.customerDetails?.id,
       version,
       deviceType,
       deviceId
@@ -45,6 +47,7 @@ setAuthorizationFromAsyncStorage();
 axiosinstance.interceptors.request.use(
   async (config) => {
     await setAuthorizationFromAsyncStorage();
+    console.log(config);
     return config;
   },
   (error) => {

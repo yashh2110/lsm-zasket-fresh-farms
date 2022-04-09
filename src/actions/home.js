@@ -1,7 +1,12 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import { Platform } from "react-native";
 import axiosinstance from "../axios/service/api";
-import { GET_CATEGORIES, GET_CONFIG, SET_BANNER_IMAGES } from "./types";
+import {
+  GET_CATEGORIES,
+  GET_CONFIG,
+  SET_BANNER_IMAGES,
+  SET_SHOW_PRICECHOP_ICON,
+} from "./types";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 
@@ -68,7 +73,7 @@ export const isPincodeServiceable = (lat, lon, callback) => async (
 export const getAllCategories = (callback) => async (dispatch) => {
   try {
     const res = await axiosinstance.get("/v2/categories");
-    // alert(JSON.stringify(res.data, null, "      "))
+    // alert(JSON.stringify(res.data, null, "      "));
     dispatch({
       type: GET_CATEGORIES,
       payload: res?.data,
@@ -199,4 +204,11 @@ export const getSupportDetails = (callback) => async (dispatch) => {
     callback(err, false);
     // Alert.alert(JSON.stringify(err.response.data, null, "     "))
   }
+};
+
+export const setShowPriceChopIcon = (payload, callback) => async (dispatch) => {
+  dispatch({
+    type: SET_SHOW_PRICECHOP_ICON,
+    payload: payload,
+  });
 };

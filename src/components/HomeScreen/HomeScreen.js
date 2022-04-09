@@ -29,6 +29,7 @@ import {
   getCustomerDetailsLanAndLon,
   getAllBanners,
   addCustomerDeviceDetails,
+  setShowPriceChopIcon,
 } from "../../actions/home";
 import { getBillingDetails } from "../../actions/cart";
 import { onLogout } from "../../actions/auth";
@@ -69,6 +70,7 @@ import Carousel, {
   Pagination,
   PaginationLight,
 } from "react-native-x2-carousel";
+import { getPriceChopList } from "../../actions/priceChop";
 RNUxcam.startWithKey("qercwheqrlqze96"); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
 RNUxcam.tagScreenName("homeScreen");
@@ -85,6 +87,7 @@ const HomeScreen = ({
   isPincodeServiceable,
   getAllBanners,
   isAuthenticated,
+  setShowPriceChopIcon,
   allUserAddress,
   bannerImages,
   addCustomerDeviceDetails,
@@ -102,6 +105,11 @@ const HomeScreen = ({
   const [partnerDetails, setPartnerDetails] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [modelSwip, setModelSwip] = useState("");
+  const [priorityCategories, setPriorityCategories] = useState([]);
+  const [fixedCategories, setFixedCategories] = useState({
+    vegitables: null,
+    fruits: null,
+  });
   const mapApiKey = Config.MAP_API_KEY;
   const oneSignalAppId = Config.ONESIGNAL_APP_ID;
   // useEffect(() => {
@@ -417,7 +425,20 @@ const HomeScreen = ({
       });
     }
   }, [isAuthenticated]);
-
+  useEffect(() => {
+    console.log(categories);
+    setPriorityCategories([]);
+    categories.map((el) => {
+      if (!(el.categoryName == "VEGETABLES" || el.categoryName == "FRUITS")) {
+        setPriorityCategories((e) => [...e, el]);
+      } else if (el.categoryName == "VEGETABLES") {
+        setFixedCategories((e) => ({ ...e, vegitables: el }));
+      } else {
+        setFixedCategories((e) => ({ ...e, fruits: el }));
+      }
+    });
+  }, [categories]);
+  console.log(fixedCategories, priorityCategories);
   const initialFunction = async () => {
     await getAllCategories((res, status) => {
       if (status) {
@@ -431,6 +452,19 @@ const HomeScreen = ({
       if (status) {
         // alert(JSON.stringify(res?.data?.subBanners[0], null, "      "))
         setSubBanners(res?.data?.subBanners[0]);
+        setRefresh(false);
+      } else {
+        setRefresh(false);
+      }
+    });
+    await getPriceChopList((res, status) => {
+      console.log(res?.data?.length, "resss");
+      if (status) {
+        if (res?.data?.length > 0) {
+          setShowPriceChopIcon(true);
+        } else {
+          setShowPriceChopIcon(false);
+        }
         setRefresh(false);
       } else {
         setRefresh(false);
@@ -947,12 +981,16 @@ const HomeScreen = ({
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ padding: 10, marginTop: 5 }}>
+          contentContainerStyle={{
+            padding: 10,
+            marginTop: 5,
+            paddingBottom: 0,
+          }}>
           {bannerImages?.map((el, index) => {
             return (
               <>
                 {/* <Text>{index}</Text> */}
-                <View style={{}}>
+                <View style={{}} key={el.id.toString()}>
                   <View style={{}}>
                     <View
                       style={{
@@ -1079,117 +1117,252 @@ const HomeScreen = ({
               backgroundColor: "white",
               height: 125,
               width: "112.5%",
-              // aspectRatio:3
+              // aspectRatio: 3,
             }}
             source={subBanners ? { uri: subBanners } : null}
             resizeMode={FastImage.resizeMode.cover}
           />
         ) : undefined}
-        <View
-          style={{
-            flexDirection: "row",
-            backgroundColor: "white",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 5,
-            marginTop: -10,
-          }}>
-          <FlatList
-            data={categories}
-            numColumns={3}
-            renderItem={({ item }) => (
-              <>
-                <TouchableOpacity
-                  activeOpacity={0.5}
-                  onPress={() => {
-                    navigation.navigate("ProductListScreen", { item: item });
-                  }}
-                  style={{
-                    // justifyContent: 'center',
-                    // flex: 1,
-                    minHeight: 100,
-                    width: "31%",
-                    // alignItems: 'center',
-                    margin: 5,
-                    // backgroundColor: '#00BCD4'
-                  }}>
+        <View style={{ marginTop: -12 }}>
+          {fixedCategories.fruits && fixedCategories.vegitables ? (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginHorizontal: 5,
+                padding: 5,
+              }}>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() => {
+                  navigation.navigate("ProductListScreen", {
+                    item: fixedCategories.vegitables,
+                  });
+                }}
+                style={{
+                  width: "48.5%",
+                  aspectRatio: 167 / 99,
+                  position: "relative",
+                }}>
+                {fixedCategories.vegitables?.categoryTag ? (
+                  <>
+                    <View
+                      style={{
+                        height: 18,
+                        width: "44%",
+                        position: "absolute",
+                        backgroundColor: "#7eb517",
+                        borderTopRightRadius: 6,
+                        borderBottomLeftRadius: 6,
+                        alignSelf: "flex-end",
+                        shadowColor: "#000",
+                        shadowOffset: {
+                          width: 0,
+                          height: 1,
+                        },
+                        shadowOpacity: 0.18,
+                        shadowRadius: 1.0,
+                        elevation: 0.8,
+                        marginRight: -1,
+                        // marginTop: -1,
+                        justifyContent: "center",
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 9,
+                          textAlign: "center",
+                          color: "#f7f7f7",
+                          fontWeight: "bold",
+                        }}>
+                        {fixedCategories.vegitables.categoryTag}
+                      </Text>
+                    </View>
+                  </>
+                ) : (
                   <View
                     style={{
-                      backgroundColor: "#F7F7F7",
-                      borderRadius: 6,
-                      borderColor: "#EDEDED",
-                      borderWidth: 1,
-                    }}>
-                    {item.categoryTag ? (
-                      <>
-                        <View
-                          style={{
-                            height: 18,
-                            width: "58%",
-                            backgroundColor: "#7eb517",
-                            borderTopRightRadius: 6,
-                            borderBottomLeftRadius: 6,
-                            alignSelf: "flex-end",
-                            shadowColor: "#000",
-                            shadowOffset: {
-                              width: 0,
-                              height: 1,
-                            },
-                            shadowOpacity: 0.18,
-                            shadowRadius: 1.0,
-                            elevation: 0.8,
-                            marginRight: -1,
-                            marginTop: -1,
-                            justifyContent: "center",
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 9,
-                              textAlign: "center",
-                              color: "#f7f7f7",
-                              fontWeight: "bold",
-                            }}>
-                            {item.categoryTag}
-                          </Text>
-                        </View>
-                      </>
-                    ) : (
+                      height: 18,
+                      width: "58%",
+                    }}></View>
+                )}
+                <Image
+                  style={{ width: "100%", height: "100%" }}
+                  source={require("../../assets/png/freshVegitables.png")}
+                  resizeMode={FastImage.resizeMode.contain}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() => {
+                  navigation.navigate("ProductListScreen", {
+                    item: fixedCategories.fruits,
+                  });
+                }}
+                style={{
+                  width: "48.5%",
+                  aspectRatio: 167 / 99,
+                  position: "relative",
+                }}>
+                {fixedCategories.fruits?.categoryTag ? (
+                  <>
+                    <View
+                      style={{
+                        height: 18,
+                        width: "44%",
+                        position: "absolute",
+                        backgroundColor: "#7eb517",
+                        borderTopRightRadius: 6,
+                        borderBottomLeftRadius: 6,
+                        alignSelf: "flex-end",
+                        shadowColor: "#000",
+                        shadowOffset: {
+                          width: 0,
+                          height: 1,
+                        },
+                        shadowOpacity: 0.18,
+                        shadowRadius: 1.0,
+                        elevation: 0.8,
+                        marginRight: -1,
+                        // marginTop: -1,
+                        justifyContent: "center",
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 9,
+                          textAlign: "center",
+                          color: "#f7f7f7",
+                          fontWeight: "bold",
+                        }}>
+                        {fixedCategories.fruits.categoryTag}
+                      </Text>
+                    </View>
+                  </>
+                ) : (
+                  <View
+                    style={{
+                      height: 18,
+                      width: "58%",
+                    }}></View>
+                )}
+                <Image
+                  style={{ width: "100%", height: "100%" }}
+                  source={require("../../assets/png/freshFruits.png")}
+                  resizeMode={FastImage.resizeMode.contain}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : null}
+          <View
+            style={{
+              flexDirection: "row",
+              backgroundColor: "white",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 5,
+              marginTop: 2,
+            }}>
+            {priorityCategories.length > 0 ? (
+              <FlatList
+                data={priorityCategories}
+                numColumns={3}
+                renderItem={({ item }) => (
+                  <>
+                    <TouchableOpacity
+                      activeOpacity={0.5}
+                      onPress={() => {
+                        navigation.navigate("ProductListScreen", {
+                          item: item,
+                        });
+                      }}
+                      style={{
+                        // justifyContent: 'center',
+                        // flex: 1,
+                        minHeight: 100,
+                        width: "31%",
+                        // alignItems: 'center',
+                        margin: 5,
+                        // backgroundColor: '#00BCD4'
+                      }}>
                       <View
                         style={{
-                          height: 18,
-                          width: "58%",
-                        }}></View>
-                    )}
-                    {/* <View style={[styles.categoriesCard, item.categories ? { padding: 9, marginTop: -5 } : undefined]}> */}
+                          backgroundColor: "#F7F7F7",
+                          borderRadius: 6,
+                          borderColor: "#EDEDED",
+                          borderWidth: 1,
+                        }}>
+                        {item.categoryTag ? (
+                          <>
+                            <View
+                              style={{
+                                height: 18,
+                                width: "58%",
+                                backgroundColor: "#7eb517",
+                                borderTopRightRadius: 6,
+                                borderBottomLeftRadius: 6,
+                                alignSelf: "flex-end",
+                                shadowColor: "#000",
+                                shadowOffset: {
+                                  width: 0,
+                                  height: 1,
+                                },
+                                shadowOpacity: 0.18,
+                                shadowRadius: 1.0,
+                                elevation: 0.8,
+                                marginRight: -1,
+                                marginTop: -1,
+                                justifyContent: "center",
+                              }}>
+                              <Text
+                                style={{
+                                  fontSize: 9,
+                                  textAlign: "center",
+                                  color: "#f7f7f7",
+                                  fontWeight: "bold",
+                                }}>
+                                {item.categoryTag}
+                              </Text>
+                            </View>
+                          </>
+                        ) : (
+                          <View
+                            style={{
+                              height: 18,
+                              width: "58%",
+                            }}></View>
+                        )}
+                        {/* <View style={[styles.categoriesCard, item.categories ? { padding: 9, marginTop: -5 } : undefined]}> */}
 
-                    <View style={{ padding: 10, marginTop: -8 }}>
-                      <Image
-                        style={{ aspectRatio: 1.3 }}
-                        // source={require('../../assets/png/HomeScreenVegetable.png')}
-                        resizeMode="contain"
-                        source={
-                          item?.categoryImage
-                            ? { uri: item?.categoryImage }
-                            : require("../../assets/png/default.png")
-                        }
-                      />
-                    </View>
-                  </View>
-                  <Text
-                    style={{
-                      alignSelf: "center",
-                      textAlign: "center",
-                      marginVertical: 5,
-                      fontWeight: "bold",
-                      fontSize: 13,
-                    }}>
-                    {item?.categoryDisplayName}
-                  </Text>
-                </TouchableOpacity>
-              </>
-            )}
-            keyExtractor={(item) => item?.id.toString()}
-          />
+                        <View style={{ padding: 10, marginTop: -8 }}>
+                          <Image
+                            style={{ aspectRatio: 1.3 }}
+                            // source={require('../../assets/png/HomeScreenVegetable.png')}
+                            resizeMode="contain"
+                            source={
+                              item?.categoryImage
+                                ? { uri: item?.categoryImage }
+                                : require("../../assets/png/default.png")
+                            }
+                          />
+                        </View>
+                      </View>
+                      <Text
+                        style={{
+                          alignSelf: "center",
+                          textAlign: "center",
+                          marginVertical: 5,
+                          fontWeight: "bold",
+                          fontSize: 13,
+                        }}>
+                        {item?.categoryDisplayName}
+                      </Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+                keyExtractor={(item) => item?.id.toString()}
+              />
+            ) : null}
+          </View>
         </View>
 
         <View style={{ alignItems: "center", flex: 1, marginVertical: 13 }}>
@@ -1219,14 +1392,15 @@ const HomeScreen = ({
                   backgroundColor: "rgba(128, 128, 128, 0.92)",
                 }}
               /> */}
-          <Carousel
+
+          {/* <Carousel
             pagination={(Pagination, PaginationLight)}
             renderItem={renderImageItem}
             data={images}
             autoplay
             loop
             autoplayInterval={2000}
-          />
+          /> */}
         </View>
         <FlatList
           data={categories}
@@ -1305,7 +1479,9 @@ const HomeScreen = ({
         ) : null}
         {/* <Text>{JSON.stringify(sectionlistData, null, "      ")} </Text> */}
       </ScrollView>
-      <CartDown navigation={navigation} />
+      <View style={{ position: "relative" }}>
+        <CartDown navigation={navigation} />
+      </View>
       {showAppUpdate ? (
         <View
           style={{
@@ -1370,7 +1546,7 @@ const HomeScreen = ({
           </TouchableOpacity>
         </View>
       ) : undefined}
-      {loading ? <InitialLoader /> : undefined}
+      {loading ? <Loader /> : undefined}
       <Modal
         isVisible={isVisible}
         onSwipeComplete={() => setIsVisible(false)}
@@ -1526,23 +1702,7 @@ const HomeScreen = ({
           </TouchableOpacity>
         </SafeAreaView> */}
       </Modal>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate("PriceChopStack");
-        }}
-        style={{
-          // width: 100,
-          position: "absolute",
-          bottom: 0,
-          right: 0,
-          margin: 10,
-        }}>
-        <Image
-          source={require("../../assets/png/priceChop.png")}
-          style={{ width: 68, height: 68 }}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
+
       <AddressModal
         addressModalVisible={addressModalVisible}
         setAddressModalVisible={(option) => setAddressModalVisible(option)}
@@ -1579,6 +1739,7 @@ export default connect(mapStateToProps, {
   isPincodeServiceable,
   getCustomerDetailsLanAndLon,
   onLogout,
+  setShowPriceChopIcon,
   getAllBanners,
   addHomeScreenLocation,
   getCartItemsApi,

@@ -40,6 +40,7 @@ import { addHomeScreenLocation } from "../../actions/homeScreenLocation";
 import { CheckGpsState, CheckPermissions } from "../../utils/utils";
 import RNUxcam from "react-native-ux-cam";
 import Config from "react-native-config";
+import { isPincodeServiceable } from "../../actions/home";
 
 RNUxcam.startWithKey("qercwheqrlqze96"); // Add this line after RNUxcam.optIntoSchematicRecordings();
 RNUxcam.optIntoSchematicRecordings();
@@ -96,6 +97,8 @@ class MyMapView extends React.Component {
     movetoadjust: false,
     scrollEnable: false,
     addressResult: [],
+    showSelectedLocation: true,
+    initialLocationCall: true,
   };
 
   setRegion(region) {
@@ -206,11 +209,8 @@ class MyMapView extends React.Component {
                 longitudeDelta,
               };
               await this.setRegion(region);
-
               geocodeing(position.coords.latitude, position.coords.longitude)
                 .then((response) => {
-                  console.log("map screen hit");
-
                   response.json().then(async (json) => {
                     // alert(JSON.stringify(json?.results?.[0], null, "      "))
                     // console.warn("aaaa", json?.results?.[0]?.formatted_address);
@@ -315,6 +315,8 @@ class MyMapView extends React.Component {
             postal_code?.long_name
           );
           await this.setState({ addressLoading: false });
+          await this.setState({ initialLocationCall: false });
+          await this.setState({ showSelectedLocation: true });
         });
       })
       .catch(async (err) => {
@@ -346,6 +348,7 @@ class MyMapView extends React.Component {
     if (!this.state.ready) {
       this.setState({ ready: true });
     }
+    // await this.getCurrentLocation();
   };
 
   onRegionChange = async (region) => {
@@ -355,10 +358,17 @@ class MyMapView extends React.Component {
   };
 
   onRegionChangeComplete = async (region) => {
-    await this.setState({
+    this.setState({
       region: region,
     });
-    await this.getCurrentLocation();
+    console.log("region", this.state.initialLocationCall);
+    // this.setState({ addressLoading: false });
+
+    if (this.state.initialLocationCall) {
+      await this.getCurrentLocation();
+    } else {
+      this.setState({ showSelectedLocation: false });
+    }
   };
 
   validate = () => {
@@ -507,6 +517,7 @@ class MyMapView extends React.Component {
 
   OnConfirmLocation = async () => {
     await this.setState({ loading: true });
+    await this.getCurrentLocation();
     let payload;
     payload = {
       addressLine1: this.state.address,
@@ -561,9 +572,10 @@ class MyMapView extends React.Component {
         }
       );
     } else {
-      await this.props.addNewCustomerAddress(
-        payload,
-        async (response, status) => {
+      await this.props.isPincodeServiceable(
+        this.state.latitude,
+        this.state.longitude,
+        async (res, status) => {
           if (status) {
             const {
               fromScreen,
@@ -572,27 +584,32 @@ class MyMapView extends React.Component {
               backToCheckoutScreen,
               backToAddressScreen,
             } = this.props.route?.params;
-            // Alert.alert(JSON.stringify(response, null, "   "))
-
             let location = {
-              id: response?.data?.id,
-              addressLine_1: response?.data?.addressLine_1,
-              pincode: response?.data?.pincode,
+              addressLine1: this.state.address,
+              houseNo: this.state.houseNumber,
+              pincode: this.state.pincode,
               isActive: true,
-              landmark: response?.data?.landMark,
-              lat: response?.data?.lat,
-              lon: response?.data?.lon,
-              recepientMobileNumber: response?.data?.recepientMobileNumber,
-              recepientName: response?.data?.recepientName,
-              saveAs: response?.data?.saveAs,
+              landmark: this.state.landMark,
+              lat: this.state.latitude,
+              lon: this.state.longitude,
+              recepientMobileNumber: this.state.mobileNumber.includes("+91")
+                ? this.state.mobileNumber
+                : "+91" + this.state.mobileNumber,
+              alternateMobileNumber: this.state.alternateMobileNumber.includes(
+                "+91"
+              )
+                ? this.state.alternateMobileNumber
+                : "+91" + this.state.alternateMobileNumber,
+              recepientName: this.state.name,
+              saveAs: this.state.saveAs,
             };
 
             this.props.addLocation(location);
             this.props.addHomeScreenLocation({
-              addressLine_1: response?.data?.addressLine_1,
-              pincode: response?.data?.pincode,
-              lat: response?.data?.lat,
-              lon: response?.data?.lon,
+              addressLine1: this.state.address,
+              pincode: this.state.pincode,
+              lat: this.state.latitude,
+              lon: this.state.longitude,
             });
             // await AsyncStorage.setItem("location", JSON.stringify(location));
             this.setState({ loading: false });
@@ -602,23 +619,82 @@ class MyMapView extends React.Component {
               errorMessageBanner: false,
             });
           } else {
-            if (__DEV__) {
-              alert(JSON.stringify(response?.data, null, "      "));
-            }
-            this.setState({ errorMessage: response?.data });
-            if (response?.data == "Your location is not serviceable") {
-              await this.setState({
-                mode: "AddNew_SCREEN",
-                scrollEnable: true,
-                errorMessageBanner: false,
-              });
-              this.setState({ errorMessageBanner: true });
-            }
+            this.setState({
+              errorMessage:
+                "We might be not available in all locations. We are expanding, very soon we will ne delivered in all locations.",
+            });
+            this.setState({ errorMessageBanner: true });
+            // if (res?.data == "Your location is not serviceable") {
+            //   await this.setState({
+            //     mode: "AddNew_SCREEN",
+            //     scrollEnable: true,
+            //     errorMessageBanner: false,
+            //   });
+            //   this.setState({ errorMessageBanner: true });
+            // }
             // this.refs._scrollView.scrollTo(0);
             this.setState({ loading: false });
           }
         }
       );
+      // await this.props.addNewCustomerAddress(
+      //   payload,
+      //   async (response, status) => {
+      //     if (status) {
+      //       const {
+      //         fromScreen,
+      //         regionalPositions,
+      //         backToCardScreen,
+      //         backToCheckoutScreen,
+      //         backToAddressScreen,
+      //       } = this.props.route?.params;
+      //       Alert.alert(JSON.stringify(response.data, null, "   "));
+
+      //       let location = {
+      //         id: response?.data?.id,
+      //         addressLine_1: response?.data?.addressLine_1,
+      //         pincode: response?.data?.pincode,
+      //         isActive: true,
+      //         landmark: response?.data?.landMark,
+      //         lat: response?.data?.lat,
+      //         lon: response?.data?.lon,
+      //         recepientMobileNumber: response?.data?.recepientMobileNumber,
+      //         recepientName: response?.data?.recepientName,
+      //         saveAs: response?.data?.saveAs,
+      //       };
+
+      //       this.props.addLocation(location);
+      //       this.props.addHomeScreenLocation({
+      //         addressLine_1: response?.data?.addressLine_1,
+      //         pincode: response?.data?.pincode,
+      //         lat: response?.data?.lat,
+      //         lon: response?.data?.lon,
+      //       });
+      //       // await AsyncStorage.setItem("location", JSON.stringify(location));
+      //       this.setState({ loading: false });
+      //       await this.setState({
+      //         mode: "EDIT_SCREEN",
+      //         scrollEnable: false,
+      //         errorMessageBanner: false,
+      //       });
+      //     } else {
+      //       if (__DEV__) {
+      //         alert(JSON.stringify(response?.data, null, "      "));
+      //       }
+      //       this.setState({ errorMessage: response?.data });
+      //       if (response?.data == "Your location is not serviceable") {
+      //         await this.setState({
+      //           mode: "AddNew_SCREEN",
+      //           scrollEnable: true,
+      //           errorMessageBanner: false,
+      //         });
+      //         this.setState({ errorMessageBanner: true });
+      //       }
+      //       // this.refs._scrollView.scrollTo(0);
+      //       this.setState({ loading: false });
+      //     }
+      //   }
+      // );
     }
   };
 
@@ -859,98 +935,102 @@ class MyMapView extends React.Component {
                                     <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>Order will be delivered here</Text>
                                     <Text style={{ color: 'white', fontSize: 12 }}>Place the pin accurately on the map</Text>
                                 </View> */}
-                {this.state.addressLoading ? (
-                  <View
-                    style={{
-                      backgroundColor: "#202741",
-                      alignSelf: "center",
-                      marginLeft: -125,
-                      width: 345,
-                      padding: 10,
-                      borderRadius: 5,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: -55,
-                      marginBottom: -28,
-                    }}>
-                    <Text
+
+                {this.state.showSelectedLocation ? (
+                  this.state.addressLoading ? (
+                    <View
                       style={{
-                        color: "#9BA2BC",
-                        fontWeight: "bold",
-                        fontSize: 13,
-                        letterSpacing: 0.2,
+                        backgroundColor: "#202741",
+                        alignSelf: "center",
+                        marginLeft: -125,
+                        width: 345,
+                        padding: 10,
+                        borderRadius: 5,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: -55,
+                        marginBottom: -28,
                       }}>
-                      Selected location{" "}
-                    </Text>
-                    <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>
-                      Locating...{" "}
-                    </Text>
-                  </View>
-                ) : (
-                  <View
-                    style={{
-                      backgroundColor: "#202741",
-                      alignSelf: "center",
-                      marginLeft: -125,
-                      width: 345,
-                      padding: 10,
-                      borderRadius: 5,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: -55,
-                      marginBottom: -28,
-                    }}>
-                    {this.state.address ? (
-                      <>
-                        <Text
-                          style={{
-                            color: "#9BA2BC",
-                            fontWeight: "bold",
-                            fontSize: 13,
-                            letterSpacing: 0.2,
-                          }}>
-                          Selected location{" "}
-                        </Text>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            width: "90%",
-                            alignSelf: "center",
-                            flex: 1,
-                            flexWrap: "wrap",
-                          }}>
-                          {this.state.addressResult.map((el, index) => {
-                            return (
-                              <View style={{ flexDirection: "row" }}>
-                                <Text
-                                  numberOfLines={2}
-                                  style={{ color: "#EFF4F6", fontSize: 14 }}>
-                                  {(index ? ", " : "") + el.long_name}
-                                </Text>
-                              </View>
-                            );
-                          })}
-                        </View>
-                        {/* <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14 }}>{this.state.address} </Text> */}
-                      </>
-                    ) : (
-                      <>
-                        <Text
-                          style={{
-                            color: "#9BA2BC",
-                            fontWeight: "bold",
-                            fontSize: 13,
-                            letterSpacing: 0.2,
-                          }}>
-                          Selected location{" "}
-                        </Text>
-                        <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>
-                          Locating...{" "}
-                        </Text>
-                      </>
-                    )}
-                  </View>
-                )}
+                      <Text
+                        style={{
+                          color: "#9BA2BC",
+                          fontWeight: "bold",
+                          fontSize: 13,
+                          letterSpacing: 0.2,
+                        }}>
+                        Selected location{" "}
+                      </Text>
+                      <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>
+                        Locating...{" "}
+                      </Text>
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        backgroundColor: "#202741",
+                        alignSelf: "center",
+                        marginLeft: -125,
+                        width: 345,
+                        padding: 10,
+                        borderRadius: 5,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: -55,
+                        marginBottom: -28,
+                      }}>
+                      {this.state.address ? (
+                        <>
+                          <Text
+                            style={{
+                              color: "#9BA2BC",
+                              fontWeight: "bold",
+                              fontSize: 13,
+                              letterSpacing: 0.2,
+                            }}>
+                            Selected location{" "}
+                          </Text>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              width: "90%",
+                              alignSelf: "center",
+                              flex: 1,
+                              flexWrap: "wrap",
+                            }}>
+                            {this.state.addressResult.map((el, index) => {
+                              return (
+                                <View style={{ flexDirection: "row" }}>
+                                  <Text
+                                    numberOfLines={2}
+                                    style={{ color: "#EFF4F6", fontSize: 14 }}>
+                                    {(index ? ", " : "") + el.long_name}
+                                  </Text>
+                                </View>
+                              );
+                            })}
+                          </View>
+                          {/* <Text numberOfLines={2} style={{ color: '#EFF4F6', fontSize: 14 }}>{this.state.address} </Text> */}
+                        </>
+                      ) : (
+                        <>
+                          <Text
+                            style={{
+                              color: "#9BA2BC",
+                              fontWeight: "bold",
+                              fontSize: 13,
+                              letterSpacing: 0.2,
+                            }}>
+                            Selected location{" "}
+                          </Text>
+                          <Text
+                            style={{ fontWeight: "bold", color: "#EFF4F6" }}>
+                            Locating...{" "}
+                          </Text>
+                        </>
+                      )}
+                    </View>
+                  )
+                ) : null}
 
                 {this.state.mode == "EDIT_SCREEN" ? (
                   <>
@@ -1427,7 +1507,7 @@ class MyMapView extends React.Component {
                       },
                       address: data.description,
                     });
-                    await this.getCurrentLocation();
+                    // await this.getCurrentLocation();
                     await this.map.animateToRegion(this.state.region), 100;
                   }}
                   onRequestClose={() => {
@@ -1688,6 +1768,7 @@ export default connect(mapStateToProps, {
   addNewCustomerAddress,
   getAllUserAddress,
   updateUserAddress,
+  isPincodeServiceable,
   addLocation,
   addHomeScreenLocation,
 })(MyMapView);

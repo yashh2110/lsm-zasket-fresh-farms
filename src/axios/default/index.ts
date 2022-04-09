@@ -7,6 +7,7 @@ export class AxiosDefaultsManager {
 
   setAuthorizationHeader(
     sessionId: string,
+    customerId: string,
     appVersion: string,
     appOS: string,
     deviceId: string
@@ -15,8 +16,8 @@ export class AxiosDefaultsManager {
 
     // console.log("app-Version", appVersion)
     // console.log("app-OS", appOS)
-    // console.log("session-id", sessionId)
     axiosinstance.defaults.headers["session-id"] = sessionId;
+    axiosinstance.defaults.headers["customer-id"] = customerId;
     axiosinstance.defaults.headers["app-version"] = appVersion;
     axiosinstance.defaults.headers["app-os"] = appOS;
     axiosinstance.defaults.headers["device-id"] = deviceId;

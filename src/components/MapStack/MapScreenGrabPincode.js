@@ -94,6 +94,8 @@ class MapScreenGrabPincode extends React.Component {
     gpsEnabled: false,
     movetoadjust: false,
     addressResult: [],
+    showSelectedLocation: true,
+    initialLocationCall: true,
   };
 
   setRegion(region) {
@@ -294,6 +296,8 @@ class MapScreenGrabPincode extends React.Component {
             postal_code?.long_name
           );
           await this.setState({ addressLoading: false });
+          await this.setState({ initialLocationCall: false });
+          await this.setState({ showSelectedLocation: true });
         });
       })
       .catch(async (err) => {
@@ -328,7 +332,11 @@ class MapScreenGrabPincode extends React.Component {
     await this.setState({
       region: region,
     });
-    await this.getCurrentLocation();
+    if (this.state.initialLocationCall) {
+      await this.getCurrentLocation();
+    } else {
+      this.setState({ showSelectedLocation: false });
+    }
   };
 
   onPressTurnOn = () => {
@@ -487,97 +495,100 @@ class MapScreenGrabPincode extends React.Component {
                                     <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>Order will be delivered here</Text>
                                     <Text style={{ color: 'white', fontSize: 12 }}>Place the pin accurately on the map</Text>
                                 </View> */}
-                {this.state.addressLoading ? (
-                  <View
-                    style={{
-                      backgroundColor: "#202741",
-                      alignSelf: "center",
-                      marginLeft: -125,
-                      width: 345,
-                      padding: 10,
-                      borderRadius: 5,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: -55,
-                      marginBottom: -28,
-                    }}>
-                    <Text
+                {this.state.showSelectedLocation ? (
+                  this.state.addressLoading ? (
+                    <View
                       style={{
-                        color: "#9BA2BC",
-                        fontWeight: "bold",
-                        fontSize: 12,
-                        letterSpacing: 0.2,
+                        backgroundColor: "#202741",
+                        alignSelf: "center",
+                        marginLeft: -125,
+                        width: 345,
+                        padding: 10,
+                        borderRadius: 5,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: -55,
+                        marginBottom: -28,
                       }}>
-                      SELECTED LOCATION{" "}
-                    </Text>
-                    <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>
-                      Locating...
-                    </Text>
-                  </View>
-                ) : (
-                  <View
-                    style={{
-                      backgroundColor: "#202741",
-                      alignSelf: "center",
-                      marginLeft: -125,
-                      width: 345,
-                      padding: 10,
-                      borderRadius: 5,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: -55,
-                      marginBottom: -28,
-                    }}>
-                    {this.state.address ? (
-                      <>
-                        <Text
-                          style={{
-                            color: "#9BA2BC",
-                            fontWeight: "bold",
-                            fontSize: 12,
-                            letterSpacing: 0.2,
-                          }}>
-                          SELECTED LOCATION{" "}
-                        </Text>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            width: "90%",
-                            alignSelf: "center",
-                            flex: 1,
-                            flexWrap: "wrap",
-                          }}>
-                          {this.state.addressResult.map((el, index) => {
-                            return (
-                              <View style={{ flexDirection: "row" }}>
-                                <Text
-                                  numberOfLines={2}
-                                  style={{ color: "#EFF4F6", fontSize: 14 }}>
-                                  {(index ? ",  " : "") + el.long_name}
-                                </Text>
-                              </View>
-                            );
-                          })}
-                        </View>
-                      </>
-                    ) : (
-                      <>
-                        <Text
-                          style={{
-                            color: "#9BA2BC",
-                            fontWeight: "bold",
-                            fontSize: 12,
-                            letterSpacing: 0.2,
-                          }}>
-                          SELECTED LOCATION{" "}
-                        </Text>
-                        <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>
-                          Locating...{" "}
-                        </Text>
-                      </>
-                    )}
-                  </View>
-                )}
+                      <Text
+                        style={{
+                          color: "#9BA2BC",
+                          fontWeight: "bold",
+                          fontSize: 12,
+                          letterSpacing: 0.2,
+                        }}>
+                        SELECTED LOCATION{" "}
+                      </Text>
+                      <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>
+                        Locating...
+                      </Text>
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        backgroundColor: "#202741",
+                        alignSelf: "center",
+                        marginLeft: -125,
+                        width: 345,
+                        padding: 10,
+                        borderRadius: 5,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: -55,
+                        marginBottom: -28,
+                      }}>
+                      {this.state.address ? (
+                        <>
+                          <Text
+                            style={{
+                              color: "#9BA2BC",
+                              fontWeight: "bold",
+                              fontSize: 12,
+                              letterSpacing: 0.2,
+                            }}>
+                            SELECTED LOCATION{" "}
+                          </Text>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              width: "90%",
+                              alignSelf: "center",
+                              flex: 1,
+                              flexWrap: "wrap",
+                            }}>
+                            {this.state.addressResult.map((el, index) => {
+                              return (
+                                <View style={{ flexDirection: "row" }}>
+                                  <Text
+                                    numberOfLines={2}
+                                    style={{ color: "#EFF4F6", fontSize: 14 }}>
+                                    {(index ? ",  " : "") + el.long_name}
+                                  </Text>
+                                </View>
+                              );
+                            })}
+                          </View>
+                        </>
+                      ) : (
+                        <>
+                          <Text
+                            style={{
+                              color: "#9BA2BC",
+                              fontWeight: "bold",
+                              fontSize: 12,
+                              letterSpacing: 0.2,
+                            }}>
+                            SELECTED LOCATION{" "}
+                          </Text>
+                          <Text
+                            style={{ fontWeight: "bold", color: "#EFF4F6" }}>
+                            Locating...{" "}
+                          </Text>
+                        </>
+                      )}
+                    </View>
+                  )
+                ) : null}
                 <LottieView
                   style={styles.marker}
                   source={require("../../assets/animations/favoriteDoctorHeart.json")}

@@ -41,13 +41,13 @@ const LoadingScreen = ({ route, navigation }) => {
         alignItems: "center",
         backgroundColor: "white",
       }}>
-      <LottieView
+      {/* <LottieView
         source={require("../assets/json/loader.json")}
         autoPlay
         loop
         style={{ width: 100, height: 100 }}
-      />
-      {/* <ActivityIndicator size="large" color={Theme.Colors.primary} /> */}
+      /> */}
+      <ActivityIndicator size="small" color={Theme.Colors.primary} />
     </View>
   );
 };

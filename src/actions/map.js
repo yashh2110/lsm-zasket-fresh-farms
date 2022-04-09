@@ -90,6 +90,7 @@ export const deleteAddress = (address_id, callback) => async (dispatch) => {
 };
 
 export const geocodeing = async (lat, lon) => {
+  console.log("geocoding api called");
   return await fetch(
     "https://maps.googleapis.com/maps/api/geocode/json?address=" +
       lat +

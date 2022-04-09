@@ -1,6 +1,6 @@
 {
   "name": "zasket",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "private": true,
   "scripts": {
     "ios": "react-native run-ios",
@@ -80,6 +80,7 @@
     "react-native-paper": "^4.2.0",
     "react-native-permissions": "^3.0.0",
     "react-native-phone-call": "^1.0.9",
+    "react-native-progress": "^5.0.0",
     "react-native-rate": "^1.2.9",
     "react-native-razorpay": "^2.2.2",
     "react-native-reanimated": "^1.13.1",
