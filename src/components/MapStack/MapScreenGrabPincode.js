@@ -16,6 +16,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Linking,
+  Dimensions,
 } from "react-native";
 import MapView, { Marker, Callout, ProviderPropType } from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
@@ -45,6 +46,7 @@ import RNAndroidLocationEnabler from "react-native-android-location-enabler";
 import { AuthContext } from "../../navigation/Routes";
 import { StackActions } from "@react-navigation/native";
 import Config from "react-native-config";
+const { width, height } = Dimensions.get("screen");
 const latitudeDelta = 0.005;
 const longitudeDelta = 0.005;
 
@@ -502,7 +504,8 @@ class MapScreenGrabPincode extends React.Component {
                         backgroundColor: "#202741",
                         alignSelf: "center",
                         marginLeft: -125,
-                        width: 345,
+                        width: width * 0.96,
+                        height: 70,
                         padding: 10,
                         borderRadius: 5,
                         justifyContent: "center",
@@ -529,7 +532,8 @@ class MapScreenGrabPincode extends React.Component {
                         backgroundColor: "#202741",
                         alignSelf: "center",
                         marginLeft: -125,
-                        width: 345,
+                        width: width * 0.96,
+                        height: 70,
                         padding: 10,
                         borderRadius: 5,
                         justifyContent: "center",
@@ -554,6 +558,7 @@ class MapScreenGrabPincode extends React.Component {
                               width: "90%",
                               alignSelf: "center",
                               flex: 1,
+                              marginTop: 3,
                               flexWrap: "wrap",
                             }}>
                             {this.state.addressResult.map((el, index) => {
@@ -588,7 +593,38 @@ class MapScreenGrabPincode extends React.Component {
                       )}
                     </View>
                   )
-                ) : null}
+                ) : (
+                  <View
+                    style={{
+                      backgroundColor: "#202741",
+                      alignSelf: "center",
+                      marginLeft: -125,
+                      width: width * 0.96,
+                      height: 70,
+                      padding: 10,
+                      borderRadius: 5,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: -55,
+                      marginBottom: -28,
+                    }}>
+                    <Text
+                      style={{
+                        color: "#9BA2BC",
+                        fontWeight: "bold",
+                        fontSize: 13,
+                        letterSpacing: 0.2,
+                      }}>
+                      Place the pin accurately on the map
+                    </Text>
+                    {/* <Text style={{ fontWeight: "bold", color: "#EFF4F6" }}>
+                  Your order will be delivered here
+                </Text> */}
+                    <Text style={{ color: "#EFF4F6", fontWeight: "bold" }}>
+                      Your order will be delivered here
+                    </Text>
+                  </View>
+                )}
                 <LottieView
                   style={styles.marker}
                   source={require("../../assets/animations/favoriteDoctorHeart.json")}

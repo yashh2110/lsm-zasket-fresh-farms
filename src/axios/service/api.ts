@@ -24,19 +24,25 @@ const axiosinstance = axios.create({
 let setAuthorizationFromAsyncStorage = async () => {
   let userDetails = await AsyncStorage.getItem("userDetails");
   let parsedUserDetails = await JSON.parse(userDetails!);
-  console.log(parsedUserDetails);
-  let version = DeviceInfo.getVersion();
-  let deviceId = DeviceInfo.getUniqueId();
+  console.log(parsedUserDetails, "requests detais");
+  let version = await DeviceInfo.getVersion();
+  let deviceId = await DeviceInfo.getUniqueId();
   // console.log("deviceId: " + deviceId);
   let deviceType = Platform.OS;
-
-  if (parsedUserDetails?.customerSessionDetails?.sessionId) {
+  // console.log(deviceType, deviceId);
+  if (
+    parsedUserDetails?.customerSessionDetails?.sessionId &&
+    parsedUserDetails?.customerDetails?.id &&
+    version &&
+    deviceId &&
+    deviceType
+  ) {
     new AxiosDefaultsManager().setAuthorizationHeader(
-      parsedUserDetails?.customerSessionDetails?.sessionId,
-      parsedUserDetails?.customerDetails?.id,
       version,
       deviceType,
-      deviceId
+      deviceId,
+      parsedUserDetails?.customerSessionDetails?.sessionId,
+      parsedUserDetails?.customerDetails?.id
     );
   }
 };
@@ -47,7 +53,7 @@ setAuthorizationFromAsyncStorage();
 axiosinstance.interceptors.request.use(
   async (config) => {
     await setAuthorizationFromAsyncStorage();
-    console.log(config);
+    console.log(config, "requests");
     return config;
   },
   (error) => {

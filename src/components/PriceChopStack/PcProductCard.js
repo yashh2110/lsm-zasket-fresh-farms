@@ -17,6 +17,7 @@ import Share from "react-native-share";
 import { getPcShareInfo } from "../../actions/priceChop";
 import Config from "react-native-config";
 import { Button } from "react-native-paper";
+import analytics from "@react-native-firebase/analytics";
 const PcProductCard = ({ item, navigation }) => {
   const PRICE_CHOP_WEB_URL = Config.PRICE_CHOP_WEB_URL;
   const date = moment().valueOf();
@@ -39,6 +40,9 @@ const PcProductCard = ({ item, navigation }) => {
     });
   }, []);
   const onShare = () => {
+    analytics().logEvent("free_item_share", {
+      free_item_share: item.name,
+    });
     Share.open(shareInfo)
       // .then((res) => alert(res))
       .catch((err) => console.log(err));

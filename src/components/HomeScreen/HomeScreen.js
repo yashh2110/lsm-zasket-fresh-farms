@@ -419,6 +419,8 @@ const HomeScreen = ({
           playerId: userID,
         };
         // alert(JSON.stringify(userID, null, "       "));
+        console.log(userID, "playerid");
+
         if (userID) {
           addCustomerDeviceDetails(payload, (res, status) => {});
         }

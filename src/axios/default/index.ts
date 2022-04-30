@@ -6,20 +6,28 @@ export class AxiosDefaultsManager {
   // }
 
   setAuthorizationHeader(
-    sessionId: string,
-    customerId: string,
     appVersion: string,
     appOS: string,
-    deviceId: string
+    deviceId: string,
+    sessionId: string,
+    customerId: string
   ) {
     // setAuthorizationHeader(sessionId: string) {
+    console.log(
+      sessionId,
+      customerId,
+      appVersion,
+      appOS,
+      deviceId,
+      "requests detais"
+    );
 
-    // console.log("app-Version", appVersion)
-    // console.log("app-OS", appOS)
-    axiosinstance.defaults.headers["session-id"] = sessionId;
-    axiosinstance.defaults.headers["customer-id"] = customerId;
-    axiosinstance.defaults.headers["app-version"] = appVersion;
-    axiosinstance.defaults.headers["app-os"] = appOS;
-    axiosinstance.defaults.headers["device-id"] = deviceId;
+    // console.log("app-Version", appVersion);
+    // console.log("app-OS", appOS);
+    if (sessionId) axiosinstance.defaults.headers["session-id"] = sessionId;
+    if (customerId) axiosinstance.defaults.headers["customer-id"] = customerId;
+    if (appVersion) axiosinstance.defaults.headers["app-version"] = appVersion;
+    if (appOS) axiosinstance.defaults.headers["app-os"] = appOS;
+    if (deviceId) axiosinstance.defaults.headers["device-id"] = deviceId;
   }
 }
