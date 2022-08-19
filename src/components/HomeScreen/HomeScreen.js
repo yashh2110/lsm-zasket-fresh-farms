@@ -1014,7 +1014,7 @@ const HomeScreen = ({
                           source={{ uri: el?.imagePath }}
                         />
                       ) : null}
-                      <TouchableOpacity
+                      {/* <TouchableOpacity
                         activeOpacity={0.9}
                         onPress={() =>
                           moreShare(el?.imagePath, el?.shareMessage)
@@ -1061,7 +1061,7 @@ const HomeScreen = ({
                             </Text>
                           </View>
                         </View>
-                      </TouchableOpacity>
+                      </TouchableOpacity> */}
                     </View>
                   </View>
                 </View>

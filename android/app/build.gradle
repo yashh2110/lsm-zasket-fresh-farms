@@ -151,8 +151,8 @@ android {
         applicationId "com.zasket"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 55
-        versionName "1.4.4"
+        versionCode 56
+        versionName "1.4.5"
         multiDexEnabled true //added by me for razorpay issue, checked here('https://github.com/facebook/screenshot-tests-for-android/issues/141')
     }
     splits {
